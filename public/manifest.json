@@ -1,0 +1,38 @@
+{
+    "name": "POS Retail - Kasir Modern",
+    "short_name": "POS Retail",
+    "description": "Sistem Kasir Modern untuk Toko Retail Indonesia",
+    "start_url": "/admin",
+    "display": "standalone",
+    "background_color": "#1e1b4b",
+    "theme_color": "#4f46e5",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/pwa/icon.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/pwa/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/pwa/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/marketing/screens/dashboard.png",
+            "sizes": "1440x900",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ],
+    "categories": ["business", "productivity"],
+    "lang": "id-ID"
+}
