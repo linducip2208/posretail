@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarWidth('16rem')
             ->collapsedSidebarWidth('4.5rem')
             ->databaseNotifications(true)
+            ->favicon('/favicon.svg')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => Color::Blue,
