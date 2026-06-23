@@ -24,7 +24,7 @@ class StockMovementResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsRightLeft;
 
-    protected static ?string $recordTitleAttribute = 'reference_number';
+    protected static ?string $recordTitleAttribute = 'reference_type';
 
     public static function form(Schema $schema): Schema
     {

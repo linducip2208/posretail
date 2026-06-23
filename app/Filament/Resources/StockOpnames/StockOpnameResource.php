@@ -24,7 +24,7 @@ class StockOpnameResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
-    protected static ?string $recordTitleAttribute = 'reference_number';
+    protected static ?string $recordTitleAttribute = 'opname_number';
 
     public static function form(Schema $schema): Schema
     {

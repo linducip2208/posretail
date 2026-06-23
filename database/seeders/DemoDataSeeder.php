@@ -33,6 +33,9 @@ class DemoDataSeeder extends Seeder
 
         // Clear in reverse FK order
         $tables = [
+            'cash_drawer_transactions', 'shifts', 'held_carts',
+            'payable_payments', 'supplier_payables',
+            'return_items', 'returns',
             'kitchen_tickets', 'installments',
             'recipe_items', 'raw_materials', 'discount_templates',
             'tables', 'table_areas',
@@ -45,10 +48,12 @@ class DemoDataSeeder extends Seeder
             'stock_movements',
             'product_variants', 'products',
             'customers',
+            'membership_tiers',
             'payment_methods', 'providers',
             'suppliers', 'loyalty_rewards',
             'customer_groups', 'units', 'brands',
             'system_settings', 'user_outlet',
+            'audit_logs',
             'categories',
             'outlets', 'users',
         ];
@@ -114,7 +119,42 @@ class DemoDataSeeder extends Seeder
         $this->seedLoyaltyPoints($now);
 
         // ============================================================
-        // PHASE 9: NEW FEATURES — Tables, Raw Materials, Discount Templates, Attendance
+        // PHASE 9: MEMBERSHIP TIERS
+        // ============================================================
+        $this->seedMembershipTiers($now);
+
+        // ============================================================
+        // PHASE 10: STOCK TRANSFERS (5)
+        // ============================================================
+        $this->seedStockTransfers($now);
+
+        // ============================================================
+        // PHASE 11: RETURNS (5)
+        // ============================================================
+        $this->seedReturns($now);
+
+        // ============================================================
+        // PHASE 12: INSTALLMENTS (for some orders)
+        // ============================================================
+        $this->seedInstallments($now);
+
+        // ============================================================
+        // PHASE 13: SUPPLIER PAYABLES (5)
+        // ============================================================
+        $this->seedSupplierPayables($now);
+
+        // ============================================================
+        // PHASE 14: SHIFTS & CASH DRAWER
+        // ============================================================
+        $this->seedShifts($now);
+
+        // ============================================================
+        // PHASE 15: HELD CARTS (3)
+        // ============================================================
+        $this->seedHeldCarts($now);
+
+        // ============================================================
+        // PHASE 16: NEW FEATURES — Tables, Raw Materials, Discount Templates, Attendance
         // ============================================================
         $this->seedTableAreas($now);
         $this->seedTables($now);
@@ -1247,6 +1287,337 @@ class DemoDataSeeder extends Seeder
             }
         }
         DB::table('attendances')->insert($records);
+    }
+
+    // ================================================================
+    // MEMBERSHIP TIERS (4)
+    // ================================================================
+    private function seedMembershipTiers(Carbon $now): void
+    {
+        DB::table('membership_tiers')->insert([
+            ['name' => 'Bronze', 'min_spent' => 0, 'min_orders' => 0, 'discount_percent' => 0, 'point_multiplier' => 1.0, 'sort_order' => 1, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Silver', 'min_spent' => 1000000, 'min_orders' => 5, 'discount_percent' => 2, 'point_multiplier' => 1.5, 'sort_order' => 2, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Gold', 'min_spent' => 5000000, 'min_orders' => 15, 'discount_percent' => 5, 'point_multiplier' => 2.0, 'sort_order' => 3, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Platinum', 'min_spent' => 15000000, 'min_orders' => 30, 'discount_percent' => 8, 'point_multiplier' => 3.0, 'sort_order' => 4, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+        ]);
+    }
+
+    // ================================================================
+    // STOCK TRANSFERS (5)
+    // ================================================================
+    private function seedStockTransfers(Carbon $now): void
+    {
+        $transfers = [];
+        $transferItems = [];
+        $transferId = 1;
+
+        $transferConfigs = [
+            ['from' => 1, 'to' => 2, 'status' => 'received', 'days' => 15],
+            ['from' => 2, 'to' => 3, 'status' => 'sent', 'days' => 10],
+            ['from' => 1, 'to' => 3, 'status' => 'received', 'days' => 7],
+            ['from' => 3, 'to' => 1, 'status' => 'received', 'days' => 5],
+            ['from' => 1, 'to' => 2, 'status' => 'draft', 'days' => 1],
+        ];
+
+        foreach ($transferConfigs as $cfg) {
+            $transferDate = $now->copy()->subDays($cfg['days']);
+            $transferNumber = 'STF-' . date('Ymd', $transferDate->timestamp) . '-' . str_pad($transferId, 4, '0', STR_PAD_LEFT);
+
+            $transfers[] = [
+                'transfer_number' => $transferNumber,
+                'from_outlet_id' => $cfg['from'],
+                'to_outlet_id' => $cfg['to'],
+                'user_id' => random_int(2, 3),
+                'status' => $cfg['status'],
+                'notes' => 'Transfer stok antar outlet ' . ($cfg['status'] === 'draft' ? '- draft' : ''),
+                'created_at' => $transferDate,
+                'updated_at' => $transferDate,
+            ];
+
+            $itemCount = random_int(3, 7);
+            $productsToTransfer = $this->pickRandomProducts($itemCount);
+            foreach ($productsToTransfer as $pid) {
+                $prod = $this->products[$pid];
+                $qty = random_int(10, 50);
+                $transferItems[] = [
+                    'stock_transfer_id' => $transferId,
+                    'product_id' => $pid,
+                    'quantity' => $qty,
+                    'created_at' => $transferDate,
+                    'updated_at' => $transferDate,
+                ];
+            }
+
+            $transferId++;
+        }
+
+        DB::table('stock_transfers')->insert($transfers);
+        DB::table('stock_transfer_items')->insert($transferItems);
+    }
+
+    // ================================================================
+    // RETURNS (5)
+    // ================================================================
+    private function seedReturns(Carbon $now): void
+    {
+        $returns = [];
+        $returnItems = [];
+        $returnId = 1;
+
+        $completedOrderIds = DB::table('orders')
+            ->where('order_status', 'completed')
+            ->inRandomOrder()
+            ->limit(5)
+            ->pluck('id')
+            ->toArray();
+
+        $returnConfigs = [
+            ['type' => 'customer_return', 'reason' => 'Produk rusak / kemasan bocor', 'status' => 'completed'],
+            ['type' => 'customer_return', 'reason' => 'Salah beli varian rasa', 'status' => 'completed'],
+            ['type' => 'customer_return', 'reason' => 'Produk kadaluarsa', 'status' => 'completed'],
+            ['type' => 'supplier_return', 'reason' => 'Kemasan tidak sesuai PO', 'status' => 'approved'],
+            ['type' => 'customer_return', 'reason' => 'Produk tidak sesuai deskripsi', 'status' => 'pending'],
+        ];
+
+        foreach ($returnConfigs as $i => $cfg) {
+            $orderId = $completedOrderIds[$i] ?? $completedOrderIds[0];
+            $order = DB::table('orders')->where('id', $orderId)->first();
+            $returnDate = $now->copy()->subDays(random_int(3, 20));
+            $returnNumber = 'RTN-' . date('Ymd', $returnDate->timestamp) . '-' . str_pad($returnId, 4, '0', STR_PAD_LEFT);
+
+            $returns[] = [
+                'return_number' => $returnNumber,
+                'order_id' => $orderId,
+                'outlet_id' => $order->outlet_id,
+                'user_id' => random_int(2, 4),
+                'type' => $cfg['type'],
+                'total_amount' => round($order->total_amount * (random_int(10, 30) / 100)),
+                'reason' => $cfg['reason'],
+                'status' => $cfg['status'],
+                'notes' => null,
+                'created_at' => $returnDate,
+                'updated_at' => $returnDate,
+            ];
+
+            $itemsInOrder = DB::table('order_items')->where('order_id', $orderId)->take(3)->get();
+            foreach ($itemsInOrder as $item) {
+                $returnQty = min($item->quantity, random_int(1, 2));
+                $returnItems[] = [
+                    'return_id' => $returnId,
+                    'product_id' => $item->product_id,
+                    'quantity' => $returnQty,
+                    'unit_price' => $item->unit_price,
+                    'subtotal' => $returnQty * $item->unit_price,
+                    'created_at' => $returnDate,
+                    'updated_at' => $returnDate,
+                ];
+            }
+
+            $returnId++;
+        }
+
+        DB::table('returns')->insert($returns);
+        DB::table('return_items')->insert($returnItems);
+    }
+
+    // ================================================================
+    // INSTALLMENTS (for 4 orders)
+    // ================================================================
+    private function seedInstallments(Carbon $now): void
+    {
+        $installments = [];
+
+        $ordersWithInstallments = DB::table('orders')
+            ->where('payment_status', 'partial')
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+
+        foreach ($ordersWithInstallments as $order) {
+            $totalInstallments = random_int(3, 6);
+            $amountPerInstallment = round($order->total_amount / $totalInstallments);
+            $remaining = $order->total_amount;
+            $dueStart = Carbon::parse($order->created_at);
+
+            for ($i = 1; $i <= $totalInstallments; $i++) {
+                $dueDate = $dueStart->copy()->addMonths($i);
+                $isPaid = $i <= ($totalInstallments - 1);
+                $amount = $i === $totalInstallments ? $remaining : $amountPerInstallment;
+                $remaining -= $amount;
+
+                $installments[] = [
+                    'order_id' => $order->id,
+                    'installment_number' => $i,
+                    'amount' => $amount,
+                    'due_date' => $dueDate->toDateString(),
+                    'paid_date' => $isPaid ? $dueDate->copy()->subDays(random_int(0, 5))->toDateString() : null,
+                    'status' => $isPaid ? 'paid' : 'pending',
+                    'created_at' => $order->created_at,
+                    'updated_at' => $now,
+                ];
+            }
+        }
+
+        DB::table('installments')->insert($installments);
+    }
+
+    // ================================================================
+    // SUPPLIER PAYABLES (5)
+    // ================================================================
+    private function seedSupplierPayables(Carbon $now): void
+    {
+        $payables = [];
+        $payments = [];
+
+        $receivedPOs = DB::table('purchase_orders')
+            ->where('status', 'received')
+            ->inRandomOrder()
+            ->limit(5)
+            ->get();
+
+        $payableId = 1;
+        foreach ($receivedPOs as $po) {
+            $poDate = Carbon::parse($po->created_at);
+            $dueDate = $poDate->copy()->addDays(random_int(14, 45));
+            $paidAmount = round($po->total_amount * (random_int(50, 100) / 100));
+            $status = $paidAmount >= $po->total_amount ? 'paid' : 'partial';
+
+            $invoiceNumber = 'INV-' . $po->po_number;
+
+            $payables[] = [
+                'supplier_id' => $po->supplier_id,
+                'purchase_order_id' => $po->id,
+                'invoice_number' => $invoiceNumber,
+                'total_amount' => $po->total_amount,
+                'paid_amount' => $paidAmount,
+                'due_date' => $dueDate->toDateString(),
+                'status' => $status,
+                'notes' => 'Tagihan untuk ' . $po->po_number,
+                'created_at' => $poDate,
+                'updated_at' => $now,
+            ];
+
+            $payments[] = [
+                'supplier_payable_id' => $payableId,
+                'amount' => $paidAmount,
+                'payment_method' => 'Transfer Bank',
+                'reference_number' => 'BAY-' . strtoupper(Str::random(10)),
+                'payment_date' => $dueDate->copy()->subDays(random_int(0, 7))->toDateString(),
+                'notes' => 'Pembayaran ' . $invoiceNumber,
+                'created_at' => $poDate,
+                'updated_at' => $now,
+            ];
+
+            $payableId++;
+        }
+
+        DB::table('supplier_payables')->insert($payables);
+        DB::table('payable_payments')->insert($payments);
+    }
+
+    // ================================================================
+    // SHIFTS & CASH DRAWER TRANSACTIONS
+    // ================================================================
+    private function seedShifts(Carbon $now): void
+    {
+        $shifts = [];
+        $cashTransactions = [];
+        $shiftId = 1;
+
+        for ($d = 5; $d >= 0; $d--) {
+            $date = $now->copy()->subDays($d);
+
+            foreach ([1, 2] as $outletId) {
+                $userId = $outletId === 1 ? 4 : 3;
+                $startHour = random_int(6, 8);
+                $endHour = random_int(14, 16);
+
+                $startedAt = $date->copy()->setTime($startHour, random_int(0, 59), 0);
+                $endedAt = $date->copy()->setTime($endHour, random_int(0, 59), 0);
+                $startingCash = 500000;
+                $expectedCash = random_int(1000000, 5000000);
+                $endingCash = $expectedCash + random_int(-50000, 50000);
+                $difference = $endingCash - $expectedCash;
+
+                $shifts[] = [
+                    'outlet_id' => $outletId,
+                    'user_id' => $userId,
+                    'started_at' => $startedAt,
+                    'ended_at' => $endedAt,
+                    'starting_cash' => $startingCash,
+                    'ending_cash' => $endingCash,
+                    'expected_cash' => $expectedCash,
+                    'difference' => $difference,
+                    'status' => 'closed',
+                    'notes' => $difference !== 0 ? 'Selisih kas: ' . number_format($difference) : null,
+                    'created_at' => $startedAt,
+                    'updated_at' => $endedAt,
+                ];
+
+                $saleAmount = random_int(500000, 3000000);
+                $cashTransactions[] = [
+                    'shift_id' => $shiftId,
+                    'order_id' => null,
+                    'type' => 'sale',
+                    'amount' => $saleAmount,
+                    'payment_method' => 'Tunai',
+                    'notes' => 'Total penjualan tunai shift',
+                    'created_at' => $endedAt,
+                    'updated_at' => $endedAt,
+                ];
+
+                $cashTransactions[] = [
+                    'shift_id' => $shiftId,
+                    'order_id' => null,
+                    'type' => 'cash_out',
+                    'amount' => random_int(50000, 200000),
+                    'payment_method' => 'Tunai',
+                    'notes' => 'Pengeluaran operasional',
+                    'created_at' => $endedAt,
+                    'updated_at' => $endedAt,
+                ];
+
+                $shiftId++;
+            }
+        }
+
+        DB::table('shifts')->insert($shifts);
+        DB::table('cash_drawer_transactions')->insert($cashTransactions);
+    }
+
+    // ================================================================
+    // HELD CARTS (3)
+    // ================================================================
+    private function seedHeldCarts(Carbon $now): void
+    {
+        $heldCarts = [];
+        $recentDate = $now->copy()->subHours(random_int(0, 4));
+
+        for ($i = 0; $i < 3; $i++) {
+            $productPool = $this->pickRandomProducts(random_int(2, 5));
+            $items = [];
+            foreach ($productPool as $pid) {
+                $prod = $this->products[$pid];
+                $items[] = [
+                    'id' => $pid,
+                    'name' => $prod['name'],
+                    'price' => $prod['sell'],
+                    'qty' => random_int(1, 3),
+                ];
+            }
+
+            $heldCarts[] = [
+                'outlet_id' => $this->outletIds[array_rand($this->outletIds)],
+                'user_id' => random_int(3, 5),
+                'customer_id' => random_int(1, 100) <= 50 ? $this->customerIds[array_rand($this->customerIds)] : null,
+                'label' => $i === 0 ? 'Pelanggan menunggu' : ($i === 1 ? 'Telepon dulu' : null),
+                'items' => json_encode($items),
+                'created_at' => $recentDate,
+                'updated_at' => $recentDate,
+            ];
+        }
+
+        DB::table('held_carts')->insert($heldCarts);
     }
 
     // ================================================================

@@ -24,7 +24,7 @@ class StockTransferResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowPath;
 
-    protected static ?string $recordTitleAttribute = 'reference_number';
+    protected static ?string $recordTitleAttribute = 'transfer_number';
 
     public static function form(Schema $schema): Schema
     {
