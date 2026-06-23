@@ -37,18 +37,18 @@ class ProductForm
                     ->required()
                     ->numeric()
                     ->default(0)
-                    ->prefix('$'),
+                    ->prefix('Rp'),
                 TextInput::make('selling_price')
                     ->required()
                     ->numeric()
                     ->default(0)
-                    ->prefix('$'),
+                    ->prefix('Rp'),
                 TextInput::make('wholesale_price')
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('Rp'),
                 TextInput::make('member_price')
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('Rp'),
                 TextInput::make('min_stock')
                     ->required()
                     ->numeric()

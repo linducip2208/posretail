@@ -37,16 +37,16 @@ class ProductsTable
                 TextColumn::make('barcode')
                     ->searchable(),
                 TextColumn::make('cost_price')
-                    ->money()
+                    ->money('IDR')
                     ->sortable(),
                 TextColumn::make('selling_price')
-                    ->money()
+                    ->money('IDR')
                     ->sortable(),
                 TextColumn::make('wholesale_price')
-                    ->money()
+                    ->money('IDR')
                     ->sortable(),
                 TextColumn::make('member_price')
-                    ->money()
+                    ->money('IDR')
                     ->sortable(),
                 TextColumn::make('min_stock')
                     ->numeric()
