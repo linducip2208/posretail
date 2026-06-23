@@ -1,9 +1,11 @@
 <x-filament-panels::page>
-    <x-filament-schemas::form wire:submit="save">
+    <form wire:submit="save" class="space-y-6">
         {{ $this->form }}
 
-        <x-filament::button type="submit" class="mt-4">
-            Simpan Pengaturan
-        </x-filament::button>
-    </x-filament-schemas::form>
+        <div class="flex justify-end">
+            <x-filament::button type="submit" size="lg">
+                Simpan Pengaturan
+            </x-filament::button>
+        </div>
+    </form>
 </x-filament-panels::page>
