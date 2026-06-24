@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Settings;
 
 use App\Models\SystemSetting;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -127,7 +128,8 @@ class PengaturanSistem extends Page
         $data = $this->form->getState();
 
         foreach ($data as $key => $value) {
-            if ($value !== null) {
+            if ($key === 'outlet_id') continue;
+            if ($value !== null && $value !== '') {
                 SystemSetting::setValue($key, $value, $data['outlet_id'] ?? 1);
             }
         }
@@ -136,5 +138,14 @@ class PengaturanSistem extends Page
             ->title('Pengaturan disimpan!')
             ->success()
             ->send();
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Simpan Pengaturan')
+                ->submit('save'),
+        ];
     }
 }
