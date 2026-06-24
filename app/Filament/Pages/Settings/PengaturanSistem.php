@@ -4,7 +4,6 @@ namespace App\Filament\Pages\Settings;
 
 use App\Models\SystemSetting;
 use BackedEnum;
-use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -125,12 +124,27 @@ class PengaturanSistem extends Page
 
     public function save(): void
     {
-        $data = $this->form->getState();
+        $state = $this->form->getState();
 
-        foreach ($data as $key => $value) {
-            if ($key === 'outlet_id') continue;
-            if ($value !== null && $value !== '') {
-                SystemSetting::setValue($key, $value, $data['outlet_id'] ?? 1);
+        $outletId = $state['outlet_id'] ?? 1;
+
+        // Text fields only — skip FileUpload (app_logo, login_illustration handled by Filament)
+        $textKeys = [
+            'app_name', 'tax_percent', 'currency', 'receipt_footer',
+            'approval_threshold', 'whatsapp_number', 'hero_headline',
+            'hero_subheadline', 'pos_price', 'pos_features',
+        ];
+
+        foreach ($textKeys as $key) {
+            if (isset($state[$key]) && $state[$key] !== null) {
+                SystemSetting::setValue($key, (string) $state[$key], $outletId);
+            }
+        }
+
+        // Handle file uploads separately
+        foreach (['app_logo', 'login_illustration'] as $fileKey) {
+            if (!empty($state[$fileKey]) && is_string($state[$fileKey])) {
+                SystemSetting::setValue($fileKey, $state[$fileKey], $outletId);
             }
         }
 
@@ -138,14 +152,5 @@ class PengaturanSistem extends Page
             ->title('Pengaturan disimpan!')
             ->success()
             ->send();
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Simpan Pengaturan')
-                ->submit('save'),
-        ];
     }
 }
