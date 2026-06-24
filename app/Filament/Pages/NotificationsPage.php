@@ -18,7 +18,7 @@ class NotificationsPage extends Page
 
     protected static ?string $navigationLabel = 'Notifikasi';
 
-    protected static string $view = 'filament.pages.notifications';
+    protected string $view = 'filament.pages.notifications';
 
     public function getNotificationsProperty()
     {

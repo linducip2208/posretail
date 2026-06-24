@@ -17,7 +17,7 @@ class PengaturanSistem extends Page
 
     protected static ?string $title = 'Pengaturan Sistem';
 
-    protected static string $view = 'filament.pages.settings.pengaturan-sistem';
+    protected string $view = 'filament.pages.settings.pengaturan-sistem';
 
     public $app_name = '';
     public $tax_percent = '11';
