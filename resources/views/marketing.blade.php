@@ -11,7 +11,7 @@
         $appName = \App\Models\SystemSetting::getAppName();
         $heroHeadline = \App\Models\SystemSetting::getValue('hero_headline', 'Solusi Kasir Modern untuk Toko Retail Anda');
         $heroSub = \App\Models\SystemSetting::getValue('hero_subheadline', 'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.');
-        $wa = \App\Models\SystemSetting::getValue('whatsapp_number', '6281234567890');
+        $wa = \App\Models\SystemSetting::getValue('whatsapp_number', '6281296052010');
         $logoUrl = \App\Models\SystemSetting::getLogoUrl();
     @endphp
     <title>{{ $appName }} — Solusi Kasir Modern untuk Toko Anda</title>
