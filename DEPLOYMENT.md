@@ -84,7 +84,7 @@ Seeder akan membuat:
 ```bash
 php artisan storage:link
 chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
+chown -R bang1436:bang1436 storage bootstrap/cache
 ```
 
 ---
@@ -180,7 +180,7 @@ autostart=true
 autorestart=true
 stopasgroup=true
 killasgroup=true
-user=www-data
+user=bang1436
 numprocs=2
 redirect_stderr=true
 stdout_logfile=/var/www/pos-retail/storage/logs/worker.log
@@ -195,7 +195,7 @@ process_name=%(program_name)s
 command=php /var/www/pos-retail/artisan schedule:work
 autostart=true
 autorestart=true
-user=www-data
+user=bang1436
 redirect_stderr=true
 stdout_logfile=/var/www/pos-retail/storage/logs/scheduler.log
 ```
