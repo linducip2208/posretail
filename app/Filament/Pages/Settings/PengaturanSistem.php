@@ -3,13 +3,14 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Models\SystemSetting;
+use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use UnitEnum;
 
 class PengaturanSistem extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static string|UnitEnum|null $navigationGroup = '⚙️ Sistem';
 
