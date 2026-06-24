@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 
 class UserResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '?? Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = '⚙️ Sistem';
 
-    protected static ?int $navigationSort = 200;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $model = User::class;
 

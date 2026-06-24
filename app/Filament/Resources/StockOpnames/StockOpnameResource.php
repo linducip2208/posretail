@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class StockOpnameResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '?? Inventori';
+    protected static string|\UnitEnum|null $navigationGroup = '📋 Inventori';
 
     protected static ?int $navigationSort = 1;
 
