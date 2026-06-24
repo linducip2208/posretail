@@ -54,6 +54,7 @@ class DemoDataSeeder extends Seeder
             'customer_groups', 'units', 'brands',
             'system_settings', 'user_outlet',
             'audit_logs',
+            'blog_posts', 'blog_categories',
             'categories',
             'outlets', 'users',
         ];
@@ -162,6 +163,12 @@ class DemoDataSeeder extends Seeder
         $this->seedRecipeItems($now);
         $this->seedDiscountTemplates($now);
         $this->seedAttendances($now);
+
+        // ============================================================
+        // PHASE 17: BLOG (categories + posts)
+        // ============================================================
+        $this->seedBlogCategories($now);
+        $this->seedBlogPosts($now);
 
         $this->command?->info('Demo data seeded: 500 orders, 200 customers, 50 products, 20 POs, and more!');
     }
@@ -550,9 +557,9 @@ class DemoDataSeeder extends Seeder
     private function seedSystemSettings(Carbon $now): void
     {
         $settings = [];
-        $keys = ['store_name', 'store_address', 'store_phone', 'tax_percent', 'loyalty_points_rate', 'low_stock_threshold', 'currency', 'timezone'];
+        $keys = ['app_name', 'store_address', 'store_phone', 'tax_percent', 'loyalty_points_rate', 'low_stock_threshold', 'currency', 'timezone', 'receipt_footer', 'approval_threshold'];
         $values = [
-            'Toko Retail POS',
+            'POS Retail',
             'Jl. Raya Malioboro No. 10, Yogyakarta 55271',
             '0274-555001',
             '11',
@@ -560,6 +567,8 @@ class DemoDataSeeder extends Seeder
             '10',
             'IDR',
             'Asia/Jakarta',
+            'Terima kasih telah berbelanja!',
+            '5000000',
         ];
         foreach ($keys as $i => $key) {
             $settings[] = [
@@ -572,9 +581,9 @@ class DemoDataSeeder extends Seeder
             foreach ([1, 2, 3] as $outletId) {
                 if ($i <= 2) {
                     $outletValues = [
-                        1 => ['Toko Pusat', 'Jl. Malioboro No. 10, Yogyakarta', '0274-555001'],
-                        2 => ['Cabang Timur', 'Jl. Solo Raya KM 5, Klaten', '0272-555002'],
-                        3 => ['Cabang Barat', 'Jl. Magelang KM 8, Sleman', '0274-555003'],
+                        1 => ['POS Retail - Toko Pusat', 'Jl. Malioboro No. 10, Yogyakarta', '0274-555001'],
+                        2 => ['POS Retail - Cabang Timur', 'Jl. Solo Raya KM 5, Klaten', '0272-555002'],
+                        3 => ['POS Retail - Cabang Barat', 'Jl. Magelang KM 8, Sleman', '0274-555003'],
                     ];
                     $settings[] = [
                         'key' => $key,
@@ -1662,5 +1671,109 @@ class DemoDataSeeder extends Seeder
             10 => ['sell' => 12000],
         ];
         return $map[$variantId] ?? null;
+    }
+
+    // ================================================================
+    // BLOG CATEGORIES
+    // ================================================================
+    private function seedBlogCategories(Carbon $now): void
+    {
+        $categories = [
+            ['name' => 'Tips Bisnis Retail', 'slug' => 'tips-bisnis-retail', 'description' => 'Tips dan trik menjalankan bisnis retail yang sukses.', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Manajemen Toko', 'slug' => 'manajemen-toko', 'description' => 'Panduan mengelola operasional toko sehari-hari.', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Strategi Penjualan', 'slug' => 'strategi-penjualan', 'description' => 'Strategi meningkatkan omzet dan loyalitas pelanggan.', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Teknologi Retail', 'slug' => 'teknologi-retail', 'description' => 'Peran teknologi dalam modernisasi bisnis retail.', 'created_at' => $now, 'updated_at' => $now],
+        ];
+        DB::table('blog_categories')->insert($categories);
+    }
+
+    // ================================================================
+    // BLOG POSTS (10 demo articles)
+    // ================================================================
+    private function seedBlogPosts(Carbon $now): void
+    {
+        $posts = [
+            [
+                'category_id' => 1, 'author_id' => 2, 'title' => '5 Strategi Mengelola Stok Barang Agar Tidak Kehabisan',
+                'slug' => '5-strategi-mengelola-stok-barang',
+                'excerpt' => 'Stok habis saat pelanggan datang bisa bikin kehilangan penjualan. Simak 5 strategi jitu mengelola inventori toko retail Anda.',
+                'content' => '<p>Salah satu masalah terbesar dalam bisnis retail adalah manajemen stok. Stok yang terlalu sedikit membuat Anda kehilangan penjualan, sementara stok berlebih mengikat modal kerja.</p><h3>1. Terapkan Sistem Minimum-Maximum Stock</h3><p>Tentukan batas minimum (reorder point) dan maksimum untuk setiap produk. Ketika stok menyentuh batas minimum, segera lakukan pembelian ulang. Aplikasi POS Retail memiliki fitur low stock alert yang otomatis memberi notifikasi saat stok di bawah threshold.</p><h3>2. Analisis Fast-Moving vs Slow-Moving</h3><p>Kategorikan produk berdasarkan kecepatan perputaran. Produk fast-moving perlu stok lebih banyak dan frekuensi restock lebih sering. Produk slow-moving bisa dipesan dalam jumlah kecil atau bahkan di-discontinue.</p><h3>3. Lakukan Stock Opname Rutin</h3><p>Perbedaan antara stok sistem dan stok fisik adalah masalah umum. Lakukan stock opname berkala — harian untuk produk bernilai tinggi, mingguan untuk produk fast-moving, dan bulanan untuk sisanya.</p><h3>4. Gunakan Data Historis untuk Forecasting</h3><p>Jangan hanya mengandalkan feeling. Gunakan data penjualan historis untuk memprediksi kebutuhan stok, terutama menjelang musim ramai seperti Lebaran atau Tahun Baru.</p><h3>5. Integrasi Supplier</h3><p>Bangun hubungan baik dengan supplier dan pastikan lead time pengiriman jelas. Dengan POS Retail, Anda bisa langsung membuat Purchase Order dari sistem begitu stok menipis.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(30), 'meta_title' => '5 Strategi Mengelola Stok Barang — POS Retail', 'meta_description' => 'Pelajari 5 strategi jitu mengelola stok barang retail agar tidak kehabisan dan tidak overstock.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 1, 'author_id' => 2, 'title' => 'Cara Menentukan Harga Jual yang Menguntungkan',
+                'slug' => 'cara-menentukan-harga-jual-menguntungkan',
+                'excerpt' => 'Harga jual yang tepat adalah kunci profit. Pelajari rumus sederhana menentukan harga jual retail yang kompetitif namun tetap menguntungkan.',
+                'content' => '<p>Menentukan harga jual bukan sekadar menaikkan harga beli sekian persen. Ada kalkulasi yang perlu diperhatikan agar bisnis tetap profit tanpa membuat pelanggan kabur.</p><h3>Rumus Dasar Markup</h3><p>Harga Jual = Harga Pokok + (Harga Pokok × Persentase Markup). Tapi markup tidak boleh sembarangan. Pertimbangkan: biaya operasional (sewa, listrik, gaji), biaya pemasaran, target margin, dan harga kompetitor.</p><h3>Multi-Tier Pricing</h3><p>POS Retail mendukung 3 level harga: eceran (harga normal), grosir (pembelian dalam jumlah besar), dan member (khusus pelanggan loyal). Ini memberi fleksibilitas untuk melayani berbagai segmen pelanggan.</p><h3>Monitor & Sesuaikan</h3><p>Harga bukan sesuatu yang statis. Pantau laporan penjualan, cek margin per produk, dan sesuaikan harga secara berkala berdasarkan data — bukan asumsi.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(25), 'meta_title' => 'Cara Menentukan Harga Jual yang Menguntungkan — POS Retail', 'meta_description' => 'Panduan lengkap menentukan harga jual retail dengan rumus markup, multi-tier pricing, dan strategi monitoring.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 2, 'author_id' => 3, 'title' => 'Checklist Buka Tutup Toko yang Wajib Dilakukan Setiap Hari',
+                'slug' => 'checklist-buka-tutup-toko',
+                'excerpt' => 'Disiplin operasional dimulai dari SOP buka dan tutup toko. Berikut checklist lengkap yang bisa Anda terapkan di bisnis retail.',
+                'content' => '<h3>Checklist Buka Toko</h3><ol><li>Datang 30 menit sebelum jam buka</li><li>Nyalakan semua perangkat: komputer, printer struk, barcode scanner</li><li>Login ke aplikasi POS Retail dan buka shift</li><li>Hitung saldo kas awal (cash drawer opening balance)</li><li>Cek stok display — isi ulang yang kosong</li><li>Pastikan koneksi internet dan payment gateway aktif</li><li>Bersihkan area kasir dan display produk</li></ol><h3>Checklist Tutup Toko</h3><ol><li>Hitung fisik uang di cash drawer</li><li>Cocokkan dengan total transaksi di sistem</li><li>Catat selisih (jika ada)</li><li>Tutup shift di aplikasi POS Retail</li><li>Matikan semua perangkat</li><li>Kunci semua akses dan aktifkan alarm</li></ol><p>Dengan fitur Shift Management di POS Retail, semua aktivitas buka-tutup tercatat rapi dan bisa diaudit kapan saja.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(20), 'meta_title' => 'Checklist Buka Tutup Toko — POS Retail', 'meta_description' => 'Checklist lengkap SOP buka dan tutup toko retail untuk menjaga disiplin operasional.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 2, 'author_id' => 3, 'title' => 'Cara Rekrut dan Latih Kasir yang Handal',
+                'slug' => 'cara-rekrut-dan-latih-kasir-handal',
+                'excerpt' => 'Kasir adalah ujung tombak bisnis retail. Pelajari cara merekrut dan melatih kasir yang cepat, teliti, dan ramah pelanggan.',
+                'content' => '<p>Kasir yang handal bukan hanya cepat dalam bertransaksi, tapi juga bisa menjadi aset dalam meningkatkan penjualan melalui upselling.</p><h3>Kriteria Rekrutmen Kasir</h3><p>Cari kandidat dengan: kejujuran tinggi, ketelitian, kemampuan berhitung cepat, komunikasi ramah, dan familiar dengan teknologi.</p><h3>Training 3 Hari</h3><p>Hari 1: Pengenalan produk dan layout toko. Hari 2: Operasional POS (scan, input manual, payment, refund). Hari 3: Handling customer + upselling technique + simulasi transaksi sibuk.</p><h3>Evaluasi Berkala</h3><p>Gunakan data dari POS Retail: rata-rata waktu transaksi, jumlah transaksi per shift, akurasi cash drawer. Kasir dengan performa terbaik bisa diberi insentif.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(18), 'meta_title' => 'Cara Rekrut dan Latih Kasir — POS Retail', 'meta_description' => 'Panduan merekrut dan melatih kasir retail yang handal, cepat, teliti, dan ramah.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 3, 'author_id' => 2, 'title' => 'Program Loyalitas Pelanggan: Investasi Kecil, Dampak Besar',
+                'slug' => 'program-loyalitas-pelanggan-investasi-kecil',
+                'excerpt' => 'Mempertahankan pelanggan lama 5x lebih murah daripada mencari pelanggan baru. Bangun program loyalitas yang efektif untuk bisnis retail Anda.',
+                'content' => '<p>Fakta bisnis: meningkatkan retensi pelanggan sebesar 5% bisa meningkatkan profit hingga 25-95%. Itulah kenapa program loyalitas adalah investasi, bukan biaya.</p><h3>Model Point-Based Loyalty</h3><p>Pelanggan mendapat poin setiap bertransaksi. Contoh: setiap Rp 10.000 pembelanjaan = 1 poin. 100 poin bisa ditukar diskon Rp 10.000. POS Retail menghitung loyalty points otomatis per transaksi — tanpa input manual.</p><h3>Membership Tier</h3><p>Buat jenjang keanggotaan: Silver (0-500rb/bulan), Gold (500rb-2jt/bulan), Platinum (>2jt/bulan). Setiap tier dapat benefit berbeda: diskon tambahan, gratis ongkir, akses early sale, dll. POS Retail support 3 tier membership out of the box.</p><h3>Promo Tematik</h3><p>Gunakan Discount Template untuk membuat promo tematik: diskon 20% produk tertentu, buy 1 get 1, diskon jam tertentu (happy hour), dll. Variasikan promo agar pelanggan tidak bosan.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(15), 'meta_title' => 'Program Loyalitas Pelanggan — POS Retail', 'meta_description' => 'Bangun program loyalitas dengan point system, membership tier, dan discount template di POS Retail.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 3, 'author_id' => 2, 'title' => 'Upselling dan Cross-selling: Tingkatkan Omzet Tanpa Tambah Pelanggan',
+                'slug' => 'upselling-cross-selling-tingkatkan-omzet',
+                'excerpt' => 'Teknik upselling dan cross-selling bisa meningkatkan nilai transaksi rata-rata 20-40%. Pelajari cara menerapkannya di toko retail Anda.',
+                'content' => '<p>Upselling = menawarkan versi lebih mahal dari produk yang sama. Cross-selling = menawarkan produk komplementer. Keduanya adalah cara termurah meningkatkan omzet.</p><h3>Contoh Up-Selling</h3><p>Pelanggan beli beras 5kg → tawarkan beras premium 5kg yang lebih pulen. Pelanggan beli deterjen 500ml → tawarkan yang 1L (lebih hemat per ml).</p><h3>Contoh Cross-Selling</h3><p>Pelanggan beli Indomie → tawarkan telur + sawi. Pelanggan beli kopi sachet → tawarkan gula + creamer. Pelanggan beli sabun mandi → tawarkan sikat gigi + pasta gigi.</p><h3>Pakai Data</h3><p>POS Retail mencatat history transaksi. Gunakan data untuk tahu produk apa yang sering dibeli bersamaan (market basket analysis). Latih kasir untuk merekomendasikan based on data — bukan asal tawarkan.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(12), 'meta_title' => 'Upselling & Cross-selling Retail — POS Retail', 'meta_description' => 'Teknik upselling dan cross-selling untuk meningkatkan omzet toko retail tanpa tambah pelanggan baru.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 1, 'author_id' => 3, 'title' => 'Laporan Keuangan untuk Pemilik Toko: Yang Perlu Anda Pantau',
+                'slug' => 'laporan-keuangan-untuk-pemilik-toko',
+                'excerpt' => 'Tidak perlu jadi akuntan untuk membaca laporan keuangan. Ini 3 laporan penting yang wajib dipantau pemilik toko retail setiap bulan.',
+                'content' => '<h3>1. Laporan Penjualan Harian</h3><p>Pantau: total omzet, jumlah transaksi, rata-rata nilai transaksi, dan top 10 produk. Jika ada anomali (misal omzet turun drastis di hari biasa), segera investigasi.</p><h3>2. Laporan Laba Rugi (P&L)</h3><p>Pendapatan - Harga Pokok Penjualan = Laba Kotor. Laba Kotor - Biaya Operasional = Laba Bersih. POS Retail generate P&L otomatis dengan filter tanggal dan outlet.</p><h3>3. Laporan Stok & Inventory Value</h3><p>Nilai total stok yang Anda pegang = modal yang tertahan. Pantau inventory turnover ratio: semakin cepat stok berputar, semakin efisien penggunaan modal. POS Retail menyediakan laporan stok lengkap dengan pergerakan per produk.</p><h3>Tips: Review Rutin</h3><p>Jadwalkan review laporan setiap minggu (Senin pagi) bersama manager toko. 30 menit cukup untuk baca 3 laporan di atas dan ambil keputusan cepat.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(10), 'meta_title' => 'Laporan Keuangan Pemilik Toko — POS Retail', 'meta_description' => 'Tiga laporan keuangan penting yang wajib dipantau pemilik toko retail: penjualan, P&L, dan stok.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 4, 'author_id' => 2, 'title' => 'POS Berbasis Cloud vs Lokal: Mana yang Cocok untuk Bisnis Anda?',
+                'slug' => 'pos-cloud-vs-lokal',
+                'excerpt' => 'Bingung pilih POS berbasis cloud atau on-premise? Bandingkan kelebihan dan kekurangan keduanya untuk bisnis retail Anda.',
+                'content' => '<h3>POS Cloud (Online)</h3><p><strong>Kelebihan:</strong> Akses dari mana saja, data real-time multi-cabang, update otomatis, tidak perlu server sendiri, biaya awal rendah (subscription).<br><strong>Kekurangan:</strong> Ketergantungan internet, biaya bulanan, data di server pihak ketiga.</p><h3>POS On-Premise / Self-Hosted</h3><p><strong>Kelebihan:</strong> Data di server sendiri (privasi), tidak ada biaya langganan setelah beli, tetap bisa transaksi tanpa internet (offline mode).<br><strong>Kekurangan:</strong> Perlu maintain server sendiri, update manual, butuh tenaga IT.</p><h3>POS Retail: The Best of Both Worlds</h3><p>POS Retail adalah aplikasi self-hosted yang bisa Anda install di server sendiri (VPS, dedicated, atau bahkan laptop untuk single store). Anda punya kontrol penuh atas data. Support multi-outlet dengan sinkronisasi real-time antar cabang. Tidak ada biaya bulanan — beli source code sekali, pakai selamanya.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(8), 'meta_title' => 'POS Cloud vs Lokal — POS Retail', 'meta_description' => 'Perbandingan POS cloud vs on-premise untuk bisnis retail Indonesia.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 4, 'author_id' => 3, 'title' => 'Integrasi Payment Gateway: Kenapa Toko Modern Wajib Punya',
+                'slug' => 'integrasi-payment-gateway',
+                'excerpt' => 'QRIS, GoPay, OVO, kartu kredit — pelanggan sekarang ingin bayar dengan cara mereka. Pelajari cara integrasi payment gateway di toko retail.',
+                'content' => '<p>2026: lebih dari 70% transaksi ritel di Indonesia melibatkan pembayaran non-tunai. Toko yang hanya terima cash akan kehilangan pelanggan.</p><h3>Kenapa Harus Multi-Payment?</h3><ol><li>Pelanggan tidak bawa uang tunai cukup</li><li>Transaksi lebih cepat (tap/scan vs hitung uang)</li><li>Mengurangi risiko uang palsu</li><li>Otomatis tercatat — tidak ada selisih kas</li><li>Data pembayaran untuk analisis customer behavior</li></ol><h3>POS Retail: Dynamic Provider System</h3><p>POS Retail tidak mengunci Anda ke satu payment gateway. Sistem provider dinamis memungkinkan Anda menambahkan Midtrans, Xendit, Duitku, atau gateway lain via admin panel. Tambah API key, pilih environment (sandbox/production), dan langsung bisa dipakai. Bahkan bisa multiple provider sekaligus — customer tinggal pilih metode bayar favoritnya.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(5), 'meta_title' => 'Integrasi Payment Gateway Retail — POS Retail', 'meta_description' => 'Kenapa toko modern wajib punya payment gateway: QRIS, e-wallet, kartu kredit. Integrasi mudah di POS Retail.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+            [
+                'category_id' => 2, 'author_id' => 2, 'title' => 'Anti-Fraud di Toko Retail: Cegah Kecurangan Kasir dan Karyawan',
+                'slug' => 'anti-fraud-toko-retail',
+                'excerpt' => 'Kecurangan internal bisa menggerogoti profit tanpa disadari. Terapkan 7 langkah anti-fraud untuk melindungi bisnis retail Anda.',
+                'content' => '<h3>Jenis Kecurangan di Retail</h3><ol><li>Kasir tidak memasukkan transaksi (no-sale fraud)</li><li>Diskon tidak sah / markdown fiktif</li><li>Markup harga dan ambil selisihnya</li><li>Fake return/refund</li><li>Kolusi kasir + customer (bagi-bagi diskon)</li><li>Pencurian stok gudang</li></ol><h3>7 Langkah Anti-Fraud</h3><ol><li><strong>Setiap user login sendiri</strong> — jangan sharing akun kasir</li><li><strong>Approval threshold</strong> — transaksi di atas Rp 5jt wajib approval manager</li><li><strong>Cash drawer reconciliation</strong> — cocokkan fisik vs sistem setiap shift tutup</li><li><strong>Audit log otomatis</strong> — POS Retail mencatat setiap create/update/delete data lengkap dengan user ID dan timestamp</li><li><strong>Role-based access</strong> — kasir tidak bisa akses laporan keuangan atau edit produk</li><li><strong>Stock opname random</strong> — jangan terjadwal, biar gudang tidak bisa "siap-siap"</li><li><strong>Review CCTV + data transaksi</strong> — cross-check transaksi mencurigakan dengan rekaman</li></ol><p>POS Retail menyediakan audit trail lengkap dan role-based access control. Kecurangan jadi lebih sulit dilakukan dan lebih mudah dideteksi.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(3), 'meta_title' => 'Anti-Fraud Toko Retail — POS Retail', 'meta_description' => '7 langkah mencegah kecurangan kasir dan karyawan di toko retail dengan audit trail dan role-based access.',
+                'created_at' => $now, 'updated_at' => $now,
+            ],
+        ];
+        DB::table('blog_posts')->insert($posts);
     }
 }

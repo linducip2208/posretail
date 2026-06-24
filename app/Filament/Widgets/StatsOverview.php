@@ -10,7 +10,15 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverview extends BaseWidget
 {
+    use DashboardWidgetFilter;
+
     protected static ?int $sort = 1;
+
+    public static function canView(): bool
+    {
+        $role = auth()->user()?->role;
+        return in_array($role, ['owner', 'manager', 'admin', 'gudang']);
+    }
 
     protected function getStats(): array
     {
