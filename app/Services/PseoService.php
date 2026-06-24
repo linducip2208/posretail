@@ -22,16 +22,16 @@ class PseoService
         return Cache::remember('pseo.all_pages', 86400, function () {
             $pages = [];
 
-            $cities = $this->indonesianCities();
+            $cities = array_slice($this->indonesianCities(), 0, 100);
             $features = $this->posFeatures();
             $industries = $this->industries();
 
             $pages = array_merge($pages, $this->cityPatterns($cities));
             $pages = array_merge($pages, $this->industryPatterns($industries));
             $pages = array_merge($pages, $this->featurePatterns($features));
-            $pages = array_merge($pages, $this->cityFeatureCombos($cities, $features));
-            $pages = array_merge($pages, $this->cityIndustryCombos($cities, $industries));
             $pages = array_merge($pages, $this->sourceCodePatterns($cities));
+            $pages = array_merge($pages, $this->cityFeatureCombos($cities, array_slice($features, 0, 20)));
+            $pages = array_merge($pages, $this->cityIndustryCombos($cities, $industries));
             $pages = array_merge($pages, $this->staticPatterns());
 
             return $pages;

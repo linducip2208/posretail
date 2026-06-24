@@ -17,7 +17,7 @@ class LoyaltyPointsRelationManager extends RelationManager
 {
     protected static string $relationship = 'loyaltyPoints';
 
-    protected static ?string $title = 'Poin Loyalitas';
+    protected static ?string $title = '⭐ Loyalitas';
 
     public function form(Schema $schema): Schema
     {
