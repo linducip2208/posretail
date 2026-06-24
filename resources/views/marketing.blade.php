@@ -7,16 +7,23 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>POS Retail — Solusi Kasir Modern untuk Toko Anda</title>
-    <meta name="description" content="POS Retail adalah sistem kasir modern untuk toko retail Indonesia. Kelola produk, transaksi, inventori, pelanggan, dan laporan dalam satu dashboard.">
+    @php
+        $appName = \App\Models\SystemSetting::getAppName();
+        $heroHeadline = \App\Models\SystemSetting::getValue('hero_headline', 'Solusi Kasir Modern untuk Toko Retail Anda');
+        $heroSub = \App\Models\SystemSetting::getValue('hero_subheadline', 'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.');
+        $wa = \App\Models\SystemSetting::getValue('whatsapp_number', '6281234567890');
+        $logoUrl = \App\Models\SystemSetting::getLogoUrl();
+    @endphp
+    <title>{{ $appName }} — Solusi Kasir Modern untuk Toko Anda</title>
+    <meta name="description" content="{{ $appName }} adalah sistem kasir modern untuk toko retail Indonesia. Kelola produk, transaksi, inventori, pelanggan, dan laporan dalam satu dashboard.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ config('app.url') }}/">
-    <meta property="og:title" content="POS Retail — Solusi Kasir Modern untuk Toko Anda">
+    <meta property="og:title" content="{{ $appName }} — Solusi Kasir Modern untuk Toko Anda">
     <meta property="og:description" content="Sistem kasir modern untuk toko retail Indonesia. Multi-outlet, inventori real-time, loyalitas pelanggan, laporan lengkap.">
     <meta property="og:url" content="{{ config('app.url') }}/">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="POS Retail — Solusi Kasir Modern untuk Toko Anda">
+    <meta name="twitter:title" content="{{ $appName }} — Solusi Kasir Modern untuk Toko Anda">
     <meta name="twitter:description" content="Sistem kasir modern untuk toko retail Indonesia. Multi-outlet, inventori real-time, loyalitas pelanggan, laporan lengkap.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -58,7 +65,7 @@
     {
         "@@context": "https://schema.org",
         "@@type": "SoftwareApplication",
-        "name": "POS Retail",
+        "name": "{{ $appName }}",
         "applicationCategory": "PointOfSaleApplication",
         "operatingSystem": "Web",
         "description": "Sistem kasir modern untuk toko retail Indonesia",
@@ -223,10 +230,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <a href="/" class="flex items-center gap-2.5 group">
-                <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30 transition-transform group-hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
-                </div>
-                <span class="font-bold text-lg tracking-tight">POS Retail</span>
+                @if($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $appName }}" class="h-8 w-auto">
+                @else
+                    <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30 transition-transform group-hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
+                    </div>
+                @endif
+                <span class="font-bold text-lg tracking-tight">{{ $appName }}</span>
             </a>
             <div class="hidden md:flex items-center gap-8 text-sm font-medium">
                 <a href="#fitur" class="hover:text-indigo-300 transition-colors">Fitur</a>
@@ -250,11 +261,11 @@
             <span class="text-indigo-200">POS Retail v1.0 — Sistem Kasir Modern</span>
         </div>
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-8">
-            Solusi Kasir Modern<br>
+            {{ $heroHeadline }}<br>
             <span class="gradient-text">untuk Toko Retail Anda</span>
         </h1>
         <p class="text-lg md:text-xl text-indigo-200 max-w-2xl mx-auto mb-12 leading-relaxed">
-            Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.
+            {{ $heroSub }}
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#fitur" class="px-8 py-3.5 btn-primary text-white rounded-xl font-bold text-lg inline-flex items-center gap-2 justify-center">
@@ -913,10 +924,14 @@
         <div class="grid md:grid-cols-4 gap-10 mb-12">
             <div class="md:col-span-1">
                 <div class="flex items-center gap-2.5 mb-4">
-                    <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
-                    </div>
-                    <span class="font-bold text-white text-lg">POS Retail</span>
+                    @if($logoUrl)
+                        <img src="{{ $logoUrl }}" alt="{{ $appName }}" class="h-8 w-auto">
+                    @else
+                        <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
+                        </div>
+                    @endif
+                    <span class="font-bold text-white text-lg">{{ $appName }}</span>
                 </div>
                 <p class="text-sm leading-relaxed">Sistem kasir modern untuk toko retail Indonesia. Dibangun dengan Laravel &amp; Filament.</p>
                 <div class="flex items-center gap-3 mt-4">
@@ -962,11 +977,16 @@
             </div>
         </div>
         <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-            <p>&copy; {{ date('Y') }} POS Retail. Seluruh hak cipta dilindungi.</p>
+            <p>&copy; {{ date('Y') }} {{ $appName }}. Seluruh hak cipta dilindungi.</p>
             <p class="text-gray-500">Dibangun dengan <span class="text-red-400">&hearts;</span> di Indonesia</p>
         </div>
     </div>
 </footer>
+
+{{-- WhatsApp Floating Button --}}
+<a href="https://wa.me/{{ $wa }}" target="_blank" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/40 hover:scale-110 hover:shadow-xl transition-all duration-300" title="Chat via WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="26" height="26"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M20.534 3.465A11.912 11.912 0 0 0 12 0C5.39 0 .002 5.384 0 11.992c0 2.117.555 4.144 1.59 5.931L0 24l6.305-1.654a11.95 11.95 0 0 0 5.688 1.448h.005C18.609 23.794 24 18.404 24 11.991c0-3.204-1.249-6.217-3.466-8.526zM12 21.803h-.004a9.923 9.923 0 0 1-5.078-1.39l-.365-.217-3.742.981.998-3.648-.239-.379a9.946 9.946 0 0 1-1.529-5.311c.003-5.488 4.471-9.952 9.964-9.952 2.66 0 5.159 1.034 7.039 2.913A9.891 9.891 0 0 1 21.96 12c-.002 5.489-4.47 9.803-9.96 9.803z"/></svg>
+</a>
 
 {{-- SCRIPTS --}}
 <script>

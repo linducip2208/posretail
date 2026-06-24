@@ -35,6 +35,9 @@ class PengaturanSistem extends Page
             'currency' => SystemSetting::getValue('currency', 'IDR'),
             'receipt_footer' => SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!'),
             'approval_threshold' => SystemSetting::getValue('approval_threshold', '5000000'),
+            'whatsapp_number' => SystemSetting::getValue('whatsapp_number', '6281234567890'),
+            'hero_headline' => SystemSetting::getValue('hero_headline', 'Solusi Kasir Modern untuk Toko Retail Anda'),
+            'hero_subheadline' => SystemSetting::getValue('hero_subheadline', 'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard.'),
             'outlet_id' => SystemSetting::getValue('outlet_id', '1'),
         ]);
     }
@@ -85,6 +88,23 @@ class PengaturanSistem extends Page
                         TextInput::make('receipt_footer')
                             ->label('Teks Footer Struk')
                             ->maxLength(255),
+                    ]),
+                Section::make('Halaman Marketing')
+                    ->description('Konten yang tampil di halaman depan (landing page)')
+                    ->schema([
+                        TextInput::make('hero_headline')
+                            ->label('Headline Hero')
+                            ->maxLength(200)
+                            ->helperText('Teks besar di bagian atas halaman depan.'),
+                        TextInput::make('hero_subheadline')
+                            ->label('Sub-headline Hero')
+                            ->maxLength(500)
+                            ->helperText('Deskripsi singkat di bawah headline.'),
+                        TextInput::make('whatsapp_number')
+                            ->label('Nomor WhatsApp')
+                            ->tel()
+                            ->maxLength(20)
+                            ->helperText('Contoh: 6281234567890 (kode negara tanpa +). Muncul di CTA & button chat.'),
                     ]),
             ])
             ->statePath('data');

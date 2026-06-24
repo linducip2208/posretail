@@ -557,7 +557,7 @@ class DemoDataSeeder extends Seeder
     private function seedSystemSettings(Carbon $now): void
     {
         $settings = [];
-        $keys = ['app_name', 'store_address', 'store_phone', 'tax_percent', 'loyalty_points_rate', 'low_stock_threshold', 'currency', 'timezone', 'receipt_footer', 'approval_threshold'];
+        $keys = ['app_name', 'store_address', 'store_phone', 'tax_percent', 'loyalty_points_rate', 'low_stock_threshold', 'currency', 'timezone', 'receipt_footer', 'approval_threshold', 'hero_headline', 'hero_subheadline', 'whatsapp_number'];
         $values = [
             'POS Retail',
             'Jl. Raya Malioboro No. 10, Yogyakarta 55271',
@@ -569,6 +569,9 @@ class DemoDataSeeder extends Seeder
             'Asia/Jakarta',
             'Terima kasih telah berbelanja!',
             '5000000',
+            'Solusi Kasir Modern untuk Toko Retail Anda',
+            'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.',
+            '6281234567890',
         ];
         foreach ($keys as $i => $key) {
             $settings[] = [
