@@ -71,11 +71,14 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">
                     @if($city)
                         Aplikasi POS di {{ $city['name'] }} — Point of Sale Terbaik
-                    @elseif($industry)
+                    @endif
+                    @if(!$city && $industry)
                         Solusi POS untuk Bisnis {{ $industry['name'] }}
-                    @elseif($feature)
+                    @endif
+                    @if(!$city && !$industry && $feature)
                         Aplikasi POS dengan {{ $feature['name'] }}
-                    @else
+                    @endif
+                    @if(!$city && !$industry && !$feature)
                         {{ $brand }} — Source Code Aplikasi POS
                     @endif
                 </h2>
