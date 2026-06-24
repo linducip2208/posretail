@@ -8,8 +8,14 @@ use Illuminate\Support\Str;
 class PseoService
 {
     protected string $brand = 'POS Retail';
-    protected string $waNumber = '6281296052010';
-    protected string $sourceCodePrice = 'Rp 4.999.000';
+    protected string $waNumber;
+    protected string $sourceCodePrice;
+
+    public function __construct()
+    {
+        $this->waNumber = \App\Models\SystemSetting::getValue('whatsapp_number', '6281296052010');
+        $this->sourceCodePrice = \App\Models\SystemSetting::getValue('pos_price', 'Rp 4.999.000');
+    }
 
     public function getAllPages(): array
     {

@@ -1,7 +1,10 @@
-{{-- Floating WhatsApp + delayed purchase popup — reads from admin settings --}}
+{{-- Floating WhatsApp + delayed purchase popup — dynamic from admin settings --}}
 @php
     $brandName = \App\Models\SystemSetting::getAppName();
     $waNumber = \App\Models\SystemSetting::getValue('whatsapp_number', '6281296052010');
+    $posPrice = \App\Models\SystemSetting::getValue('pos_price', 'Rp 4.999.000');
+    $posFeaturesRaw = \App\Models\SystemSetting::getValue('pos_features', "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support");
+    $posFeatures = array_filter(array_map('trim', explode("\n", $posFeaturesRaw)));
     $waMessage = urlencode("Halo, saya tertarik beli source code {$brandName}");
     $waLink = "https://wa.me/{$waNumber}?text={$waMessage}";
 @endphp
@@ -49,7 +52,7 @@
 
             {{-- Hero --}}
             <div class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white p-8 overflow-hidden">
-                <div class="absolute top-0 right-0 text-[10rem] opacity-10 leading-none">🏪</div>
+                <div class="absolute top-0 right-0 text-[10rem] opacity-10 leading-none">💻</div>
                 <div class="relative">
                     <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs font-semibold mb-4">
                         <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
@@ -63,14 +66,9 @@
             {{-- Content --}}
             <div class="p-6 space-y-4">
                 <ul class="space-y-2.5 text-sm text-slate-700">
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>Full source code — Laravel + Filament + TailwindCSS</span></li>
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>30+ admin resources, 3 dashboard report pages</span></li>
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>POS Kasir, Inventori, Pembelian, Loyalitas lengkap</span></li>
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>Payment gateway dinamis (Midtrans, Xendit, dll)</span></li>
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>Customer portal, API v1, PSEO directory built-in</span></li>
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>Multi-outlet + Blog + IndexNow SEO</span></li>
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>52 tabel DB, 21+ database tables, approval workflow</span></li>
-                    <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>Lifetime update + 6 bulan support</span></li>
+                    @foreach($posFeatures as $feature)
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">&check;</span><span>{{ $feature }}</span></li>
+                    @endforeach
                 </ul>
 
                 <div class="bg-slate-100 rounded-2xl p-4">
@@ -81,7 +79,7 @@
 
                 <a href="{{ $waLink }}" target="_blank" rel="noopener"
                    class="block w-full py-4 bg-gradient-to-br from-emerald-500 to-emerald-700 text-white text-center rounded-2xl font-bold shadow-xl shadow-emerald-500/30 hover:shadow-2xl active:scale-[0.98] transition">
-                    Chat WhatsApp Sekarang
+                    Chat WhatsApp Sekarang — {{ $posPrice }}
                 </a>
 
                 <a href="/docs" class="block w-full py-3 text-center text-sm text-slate-600 hover:text-blue-600 font-semibold transition">

@@ -557,7 +557,7 @@ class DemoDataSeeder extends Seeder
     private function seedSystemSettings(Carbon $now): void
     {
         $settings = [];
-        $keys = ['app_name', 'store_address', 'store_phone', 'tax_percent', 'loyalty_points_rate', 'low_stock_threshold', 'currency', 'timezone', 'receipt_footer', 'approval_threshold', 'hero_headline', 'hero_subheadline', 'whatsapp_number'];
+        $keys = ['app_name', 'store_address', 'store_phone', 'tax_percent', 'loyalty_points_rate', 'low_stock_threshold', 'currency', 'timezone', 'receipt_footer', 'approval_threshold', 'hero_headline', 'hero_subheadline', 'whatsapp_number', 'pos_price', 'pos_features'];
         $values = [
             'POS Retail',
             'Jl. Raya Malioboro No. 10, Yogyakarta 55271',
@@ -572,6 +572,8 @@ class DemoDataSeeder extends Seeder
             'Solusi Kasir Modern untuk Toko Retail Anda',
             'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.',
             '6281296052010',
+            'Rp 4.999.000',
+            "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support",
         ];
         foreach ($keys as $i => $key) {
             $settings[] = [

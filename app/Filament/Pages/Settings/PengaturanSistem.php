@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Settings;
 use App\Models\SystemSetting;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -35,9 +36,11 @@ class PengaturanSistem extends Page
             'currency' => SystemSetting::getValue('currency', 'IDR'),
             'receipt_footer' => SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!'),
             'approval_threshold' => SystemSetting::getValue('approval_threshold', '5000000'),
-            'whatsapp_number' => SystemSetting::getValue('whatsapp_number', '6281234567890'),
+            'whatsapp_number' => SystemSetting::getValue('whatsapp_number', '6281296052010'),
             'hero_headline' => SystemSetting::getValue('hero_headline', 'Solusi Kasir Modern untuk Toko Retail Anda'),
             'hero_subheadline' => SystemSetting::getValue('hero_subheadline', 'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard.'),
+            'pos_price' => SystemSetting::getValue('pos_price', 'Rp 4.999.000'),
+            'pos_features' => SystemSetting::getValue('pos_features', "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support"),
             'outlet_id' => SystemSetting::getValue('outlet_id', '1'),
         ]);
     }
@@ -104,7 +107,16 @@ class PengaturanSistem extends Page
                             ->label('Nomor WhatsApp')
                             ->tel()
                             ->maxLength(20)
-                            ->helperText('Contoh: 6281234567890 (kode negara tanpa +). Muncul di CTA & button chat.'),
+                            ->helperText('Contoh: 6281296052010 (kode negara tanpa +). Muncul di CTA & button chat.'),
+                        TextInput::make('pos_price')
+                            ->label('Harga Source Code')
+                            ->maxLength(50)
+                            ->default('Rp 4.999.000')
+                            ->helperText('Harga yang tampil di popup jual source code dan PSEO.'),
+                        Textarea::make('pos_features')
+                            ->label('Fitur di Popup')
+                            ->rows(8)
+                            ->helperText('Satu fitur per baris. Ditampilkan di popup jual source code (25 detik).'),
                     ]),
             ])
             ->statePath('data');
