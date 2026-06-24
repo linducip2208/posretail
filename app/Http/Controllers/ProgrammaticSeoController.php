@@ -14,9 +14,6 @@ class ProgrammaticSeoController extends Controller
         $this->pseo = $pseo;
     }
 
-    /**
-     * Generic PSEO page handler — handles all pattern-slug combinations.
-     */
     public function page(string $pattern, string $slug = ''): View
     {
         $data = $this->pseo->generatePageData($pattern, $slug);
@@ -25,6 +22,8 @@ class ProgrammaticSeoController extends Controller
         $data['features'] = array_slice($this->pseo->posFeatures(), 0, 8);
         $data['industries'] = array_slice($this->pseo->industries(), 0, 8);
         $data['relatedPages'] = $this->getRelatedPages($pattern, $slug);
+        $data['content'] = $this->buildContent($data);
+        $data['heading'] = $this->buildHeading($data);
 
         return view('pseo.generic', $data);
     }
@@ -65,9 +64,37 @@ class ProgrammaticSeoController extends Controller
             'features' => array_slice($this->pseo->posFeatures(), 0, 8),
             'industries' => array_slice($this->pseo->industries(), 0, 8),
             'relatedPages' => $this->getRelatedPages($slug, ''),
+            'content' => "POS Retail adalah aplikasi Point of Sale (POS) / sistem kasir modern untuk bisnis retail Indonesia. Source code siap pakai. WA 081296052010.",
+            'heading' => $staticTitles[$slug] ?? 'POS Retail — Source Code Point of Sale',
         ];
 
         return view('pseo.landing', $data);
+    }
+
+    protected function buildHeading(array $data): string
+    {
+        if ($data['city']) return "Aplikasi POS di {$data['city']['name']} — Point of Sale Terbaik";
+        if ($data['industry']) return "Solusi POS untuk Bisnis {$data['industry']['name']}";
+        if ($data['feature']) return "Aplikasi POS dengan {$data['feature']['name']}";
+        return $data['brand'] . " — Source Code Aplikasi POS";
+    }
+
+    protected function buildContent(array $data): string
+    {
+        $brand = $data['brand'];
+        $out = "<p><strong>{$brand}</strong> adalah aplikasi Point of Sale (POS) / sistem kasir modern yang dirancang khusus untuk bisnis retail di Indonesia. ";
+
+        if ($data['city']) {
+            $out .= "Jika Anda mencari aplikasi POS di <strong>{$data['city']['name']}</strong> dan sekitarnya, {$brand} adalah solusi tepat. ";
+        }
+
+        $out .= "Aplikasi ini dilengkapi fitur lengkap: multi-outlet, inventori real-time, payment gateway dinamis (QRIS, GoPay, OVO), laporan penjualan & keuangan, program loyalitas pelanggan, API v1, role-based access, dan anti-fraud.</p>";
+
+        if ($data['city']) {
+            $out .= "<p><strong>Butuh aplikasi POS di {$data['city']['name']}?</strong> {$brand} sudah digunakan oleh berbagai toko retail di Indonesia. Source code bisa dibeli dan di-custom sesuai kebutuhan. <strong>Lifetime update, 6 bulan support.</strong></p>";
+        }
+
+        return $out;
     }
 
     protected function getRelatedPages(string $pattern, string $slug): array
