@@ -1,11 +1,96 @@
 <x-filament-panels::page>
-    <form wire:submit="save" class="space-y-6">
-        {{ $this->form }}
+    <form wire:submit="save">
+        <div class="space-y-6">
+            {{-- Identitas Usaha --}}
+            <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                <div class="fi-section-header px-6 py-4">
+                    <h3 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">Identitas Usaha</h3>
+                </div>
+                <div class="fi-section-content p-6 pt-0 grid gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nama Usaha</label>
+                        <input type="text" wire:model="app_name" required maxlength="100" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                    </div>
+                </div>
+            </div>
 
-        <div class="flex justify-end">
-            <x-filament::button type="submit" size="lg">
-                Simpan Pengaturan
-            </x-filament::button>
+            {{-- Pengaturan Transaksi --}}
+            <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                <div class="fi-section-header px-6 py-4">
+                    <h3 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">Pengaturan Transaksi</h3>
+                </div>
+                <div class="fi-section-content p-6 pt-0 grid gap-4 md:grid-cols-3">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Persen Pajak (PPN)</label>
+                        <input type="number" wire:model="tax_percent" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Mata Uang</label>
+                        <input type="text" wire:model="currency" maxlength="10" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Threshold Approval (Rp)</label>
+                        <input type="number" wire:model="approval_threshold" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Transaksi di atas nominal ini perlu approval manager.</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Halaman Marketing --}}
+            <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                <div class="fi-section-header px-6 py-4">
+                    <h3 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">Halaman Marketing</h3>
+                    <p class="text-sm text-gray-500">Konten yang tampil di halaman depan (landing page)</p>
+                </div>
+                <div class="fi-section-content p-6 pt-0 grid gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Headline Hero</label>
+                        <input type="text" wire:model="hero_headline" maxlength="200" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Teks besar di bagian atas halaman depan.</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Sub-headline Hero</label>
+                        <input type="text" wire:model="hero_subheadline" maxlength="500" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Deskripsi singkat di bawah headline.</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nomor WhatsApp</label>
+                        <input type="text" wire:model="whatsapp_number" maxlength="20" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Contoh: 6281296052010 (tanpa +). Muncul di CTA & button chat.</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Harga Source Code</label>
+                        <input type="text" wire:model="pos_price" maxlength="50" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Harga yang tampil di popup jual source code dan PSEO.</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Fitur di Popup</label>
+                        <textarea wire:model="pos_features" rows="8" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Satu fitur per baris. Ditampilkan di popup jual source code (25 detik).</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Struk --}}
+            <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                <div class="fi-section-header px-6 py-4">
+                    <h3 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">Struk / Nota</h3>
+                </div>
+                <div class="fi-section-content p-6 pt-0">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Teks Footer Struk</label>
+                        <input type="text" wire:model="receipt_footer" maxlength="255" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                    </div>
+                </div>
+            </div>
+
+            {{-- Save Button --}}
+            <div class="flex justify-end">
+                <button type="submit" wire:loading.attr="disabled" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg px-6 py-3 text-base shadow-sm bg-primary-600 text-white hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400">
+                    <span wire:loading.remove>Simpan Pengaturan</span>
+                    <span wire:loading>Saving...</span>
+                </button>
+            </div>
         </div>
     </form>
 </x-filament-panels::page>
