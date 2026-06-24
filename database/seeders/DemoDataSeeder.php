@@ -571,7 +571,7 @@ class DemoDataSeeder extends Seeder
             '5000000',
             'Solusi Kasir Modern untuk Toko Retail Anda',
             'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.',
-            '6281234567890',
+            '6281296052010',
         ];
         foreach ($keys as $i => $key) {
             $settings[] = [

@@ -1,7 +1,7 @@
 {{-- Floating WhatsApp + delayed purchase popup — reads from admin settings --}}
 @php
     $brandName = \App\Models\SystemSetting::getAppName();
-    $waNumber = \App\Models\SystemSetting::getValue('whatsapp_number', '6281234567890');
+    $waNumber = \App\Models\SystemSetting::getValue('whatsapp_number', '6281296052010');
     $waMessage = urlencode("Halo, saya tertarik beli source code {$brandName}");
     $waLink = "https://wa.me/{$waNumber}?text={$waMessage}";
 @endphp

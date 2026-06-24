@@ -2,177 +2,151 @@
 
 namespace App\Services;
 
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Brand;
-use App\Models\Outlet;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class PseoService
 {
-    /**
-     * Generate ALL PSEO page URLs for sitemap and internal linking.
-     * Returns array of ['url' => '/path', 'title' => '...', 'type' => '...', 'priority' => '0.8']
-     */
+    protected string $brand = 'POS Retail';
+    protected string $waNumber = '6281296052010';
+    protected string $sourceCodePrice = 'Rp 4.999.000';
+
     public function getAllPages(): array
     {
         return Cache::remember('pseo.all_pages', 86400, function () {
             $pages = [];
 
-            $pages = array_merge($pages, $this->productPages());
-            $pages = array_merge($pages, $this->categoryPages());
-            $pages = array_merge($pages, $this->brandPages());
-            $pages = array_merge($pages, $this->bestCategoryPages());
-            $pages = array_merge($pages, $this->bestCategoryYearPages());
-            $pages = array_merge($pages, $this->alternativesPages());
-            $pages = array_merge($pages, $this->comparePages());
-            $pages = array_merge($pages, $this->daftarHargaPages());
-            $pages = array_merge($pages, $this->tipsMemilihPages());
-            $pages = array_merge($pages, $this->outletCityPages());
-            $pages = array_merge($pages, $this->staticPages());
+            $cities = $this->indonesianCities();
+            $features = $this->posFeatures();
+            $industries = $this->industries();
+
+            $pages = array_merge($pages, $this->cityPatterns($cities));
+            $pages = array_merge($pages, $this->industryPatterns($industries));
+            $pages = array_merge($pages, $this->featurePatterns($features));
+            $pages = array_merge($pages, $this->cityFeatureCombos($cities, $features));
+            $pages = array_merge($pages, $this->cityIndustryCombos($cities, $industries));
+            $pages = array_merge($pages, $this->sourceCodePatterns($cities));
+            $pages = array_merge($pages, $this->staticPatterns());
 
             return $pages;
         });
     }
 
-    private function productPages(): array
+    public function generatePageData(string $pattern, string $slug): array
     {
-        return Product::where('active', true)->get()->map(fn($p) => [
-            'url' => "/produk/{$p->slug}",
-            'title' => "{$p->name} — Harga, Spesifikasi & Review | POS Retail",
-            'description' => "Beli {$p->name} harga Rp " . number_format($p->selling_price, 0, ',', '.') . ". Produk asli, garansi, tersedia di outlet kami.",
-            'type' => 'product',
-            'priority' => '0.9',
-            'lastmod' => $p->updated_at->toAtomString(),
-        ])->toArray();
+        $city = $this->findCity($slug);
+        $feature = $this->findFeature($slug);
+        $industry = $this->findIndustry($slug);
+
+        $data = [
+            'seoMeta' => [
+                'title' => "Aplikasi POS Retail — Solusi Kasir Modern",
+                'description' => "Source code aplikasi POS / Point of Sale siap pakai. Kelola transaksi, stok, laporan, multi-outlet.",
+                'canonical' => url('/'),
+            ],
+            'brand' => $this->brand,
+            'waNumber' => $this->waNumber,
+            'sourceCodePrice' => $this->sourceCodePrice,
+            'pattern' => $pattern,
+            'slug' => $slug,
+            'city' => $city,
+            'feature' => $feature,
+            'industry' => $industry,
+        ];
+
+        $cityName = $city['name'] ?? '';
+        $featureName = $feature['name'] ?? '';
+        $industryName = $industry['name'] ?? '';
+
+        $titleMap = [
+            'aplikasi-pos' => "Aplikasi POS di {$cityName} — Point of Sale Terbaik",
+            'software-kasir' => "Software Kasir di {$cityName} — Solusi POS Retail",
+            'sistem-kasir' => "Sistem Kasir {$cityName} — Point of Sale Modern",
+            'program-kasir' => "Program Kasir di {$cityName} — POS Retail Source Code",
+            'aplikasi-toko' => "Aplikasi Toko di {$cityName} — POS Multi-Outlet",
+            'aplikasi-kasir' => "Aplikasi Kasir {$cityName} — POS System Terpercaya",
+            'point-of-sale' => "Point of Sale di {$cityName} — Aplikasi Kasir Modern",
+            'pos-system' => "POS System {$cityName} — Source Code Point of Sale",
+            'source-code-pos' => "Source Code POS {$cityName} — Jual Beli Aplikasi Kasir",
+            'beli-aplikasi-pos' => "Beli Aplikasi POS di {$cityName} — Harga Source Code",
+            'beli-source-code' => "Beli Source Code Aplikasi POS {$cityName}",
+            'harga-source-code' => "Harga Source Code POS di {$cityName} — {$this->sourceCodePrice}",
+            'jual-aplikasi-kasir' => "Jual Aplikasi Kasir {$cityName} — Source Code POS Retail",
+            'aplikasi-pos-murah' => "Aplikasi POS Murah {$cityName} — Harga Terjangkau",
+            'aplikasi-pos-terbaik' => "Aplikasi POS Terbaik di {$cityName} — Rekomendasi",
+            'aplikasi-pos-terjangkau' => "Aplikasi POS Terjangkau {$cityName} — Budget Friendly",
+            'rekomendasi-aplikasi-pos' => "Rekomendasi Aplikasi POS {$cityName} — Pilihan Terbaik",
+            'review-aplikasi-pos' => "Review Aplikasi POS {$cityName} — Testimoni Pengguna",
+            'cara-memilih-pos' => "Cara Memilih Aplikasi POS di {$cityName} — Panduan Lengkap",
+            'tips-memilih-kasir' => "Tips Memilih Software Kasir {$cityName}",
+            'daftar-aplikasi-pos' => "Daftar Aplikasi POS Terbaik di {$cityName}",
+            'pos-cloud-vs-lokal' => "POS Cloud vs Lokal di {$cityName} — Mana Lebih Baik?",
+            'aplikasi-pos-vs-manual' => "Aplikasi POS vs Manual di {$cityName} — Perbandingan",
+            // Industry
+            'aplikasi-pos-untuk' => "Aplikasi POS untuk {$industryName} — Solusi Kasir",
+            'software-kasir-untuk' => "Software Kasir untuk {$industryName} — POS Retail",
+            'pos-untuk' => "POS untuk {$industryName} — Aplikasi Point of Sale",
+            // Feature
+            'aplikasi-kasir-dengan' => "Aplikasi Kasir dengan {$featureName} — POS Retail",
+            'pos-dengan' => "POS dengan {$featureName} — Point of Sale Lengkap",
+            'sistem-kasir-dengan' => "Sistem Kasir dengan {$featureName} — POS Modern",
+            // City+Feature combo
+            'aplikasi-pos-fitur' => "Aplikasi POS {$cityName} dengan {$featureName}",
+            'software-kasir-fitur' => "Software Kasir {$cityName} — {$featureName}",
+            // City+Industry combo
+            'aplikasi-pos-industri' => "Aplikasi POS untuk {$industryName} di {$cityName}",
+        ];
+
+        $data['seoMeta']['title'] = $titleMap[$pattern] ?? $data['seoMeta']['title'];
+
+        $data['seoMeta']['description'] = $this->generateDescription($pattern, $cityName, $featureName, $industryName);
+
+        $data['seoMeta']['canonical'] = url("/{$pattern}-{$slug}");
+
+        return $data;
     }
 
-    private function categoryPages(): array
+    protected function generateDescription(string $pattern, string $city, string $feature, string $industry): string
     {
-        return Category::where('active', true)->get()->map(fn($c) => [
-            'url' => "/kategori/{$c->slug}",
-            'title' => "Koleksi {$c->name} Terlengkap — Harga Terbaik | POS Retail",
-            'description' => "Jelajahi koleksi {$c->name} terlengkap. Mulai dari harga ekonomis hingga premium. Ready stock, bisa beli grosir!",
-            'type' => 'category',
-            'priority' => '0.8',
-            'lastmod' => $c->updated_at->toAtomString(),
-        ])->toArray();
-    }
+        $base = "{$this->brand} — source code aplikasi Point of Sale / POS lengkap. ";
+        $cta = "Beli source code, lifetime update. WA {$this->waNumber}. {$this->sourceCodePrice}.";
 
-    private function brandPages(): array
-    {
-        return Brand::where('active', true)->get()->map(fn($b) => [
-            'url' => "/brand/{$b->slug}",
-            'title' => "Produk {$b->name} Original — Harga Resmi & Terpercaya | POS Retail",
-            'description' => "Produk {$b->name} 100% original. Harga resmi, garansi distributor. Tersedia di semua outlet kami.",
-            'type' => 'brand',
-            'priority' => '0.7',
-            'lastmod' => $b->updated_at->toAtomString(),
-        ])->toArray();
-    }
-
-    private function bestCategoryPages(): array
-    {
-        return Category::where('active', true)->get()->map(fn($c) => [
-            'url' => "/best-{$c->slug}",
-            'title' => "10+ {$c->name} Terbaik — Rekomendasi Produk Berkualitas",
-            'description' => "Rekomendasi {$c->name} terbaik dan paling laris. Produk original, harga kompetitif. Diskon khusus member!",
-            'type' => 'best-category',
-            'priority' => '0.9',
-            'lastmod' => now()->toAtomString(),
-        ])->toArray();
-    }
-
-    private function bestCategoryYearPages(): array
-    {
-        $pages = [];
-        $categories = Category::where('active', true)->get();
-        $years = range(2024, 2026);
-
-        foreach ($categories as $c) {
-            foreach ($years as $year) {
-                $pages[] = [
-                    'url' => "/best-{$c->slug}-{$year}",
-                    'title' => "{$c->name} Terbaik {$year} — Pilihan Tepat untuk Kebutuhan Anda",
-                    'description' => "Rekomendasi {$c->name} terbaik tahun {$year}. Produk original, harga terbaik. Tersedia di outlet kami!",
-                    'type' => 'best-category-year',
-                    'priority' => '0.8',
-                    'lastmod' => now()->toAtomString(),
-                ];
-            }
+        if ($city) {
+            return "{$base}Cari aplikasi POS di {$city}? Solusi kasir modern untuk toko, minimarket, retail. Multi-outlet, inventori, laporan keuangan. {$cta}";
         }
-        return $pages;
-    }
-
-    private function alternativesPages(): array
-    {
-        return Product::where('active', true)->get()->map(fn($p) => [
-            'url' => "/alternatives-to-{$p->slug}",
-            'title' => "10 Alternatif {$p->name} — Produk Serupa Harga Lebih Murah",
-            'description' => "Cari alternatif {$p->name}? Lihat produk serupa yang lebih terjangkau, kualitas setara.",
-            'type' => 'alternatives',
-            'priority' => '0.8',
-            'lastmod' => now()->toAtomString(),
-        ])->toArray();
-    }
-
-    private function comparePages(): array
-    {
-        $pages = [];
-        $products = Product::where('active', true)
-            ->orderByDesc('current_stock')
-            ->take(30)
-            ->get();
-
-        foreach ($products as $i => $a) {
-            foreach ($products as $j => $b) {
-                if ($j <= $i) continue;
-                if ($a->category_id !== $b->category_id) continue; // Only compare same category
-                $pages[] = [
-                    'url' => "/compare/{$a->slug}-vs-{$b->slug}",
-                    'title' => "{$a->name} vs {$b->name} — Perbandingan Lengkap Harga & Spesifikasi",
-                    'description' => "Bandingkan {$a->name} dan {$b->name}: harga, spesifikasi, kelebihan, dan mana yang lebih cocok.",
-                    'type' => 'compare',
-                    'priority' => '0.8',
-                    'lastmod' => now()->toAtomString(),
-                ];
-            }
+        if ($industry) {
+            return "{$base}Aplikasi POS khusus {$industry}. Kelola transaksi, stok bahan, laporan penjualan. {$cta}";
         }
-        return $pages;
+        if ($feature) {
+            return "{$base}Aplikasi kasir dengan {$feature} — solusi lengkap untuk bisnis Anda. {$cta}";
+        }
+
+        return "{$base}Kelola transaksi, stok, pelanggan, laporan dalam satu dashboard. Multi-outlet support. {$cta}";
     }
 
-    private function daftarHargaPages(): array
-    {
-        return Category::where('active', true)->get()->map(fn($c) => [
-            'url' => "/daftar-harga-{$c->slug}",
-            'title' => "Daftar Harga {$c->name} Terbaru Hari Ini — Update Setiap Hari | POS Retail",
-            'description' => "Daftar harga {$c->name} terbaru dan terlengkap. Update harga setiap hari. Cek harga eceran, grosir, dan member!",
-            'type' => 'price-list',
-            'priority' => '0.9',
-            'lastmod' => now()->toAtomString(),
-        ])->toArray();
-    }
+    // ================================================================
+    // PATTERN GENERATORS
+    // ================================================================
 
-    private function tipsMemilihPages(): array
+    protected function cityPatterns(array $cities): array
     {
-        $templates = [
-            'tips-memilih' => 'Tips Memilih',
-            'cara-merawat' => 'Cara Merawat',
-            'kelebihan-kekurangan' => 'Kelebihan & Kekurangan',
-            'perbandingan-harga' => 'Perbandingan Harga',
-            'review-terbaru' => 'Review Terbaru',
+        $patterns = [
+            'aplikasi-pos', 'software-kasir', 'sistem-kasir', 'program-kasir',
+            'aplikasi-toko', 'aplikasi-kasir', 'point-of-sale', 'pos-system',
+            'aplikasi-pos-murah', 'aplikasi-pos-terbaik', 'aplikasi-pos-terjangkau',
+            'rekomendasi-aplikasi-pos', 'review-aplikasi-pos', 'cara-memilih-pos',
+            'tips-memilih-kasir', 'daftar-aplikasi-pos',
+            'pos-cloud-vs-lokal', 'aplikasi-pos-vs-manual',
         ];
 
         $pages = [];
-        $categories = Category::where('active', true)->get();
-
-        foreach ($categories as $c) {
-            foreach ($templates as $prefix => $label) {
+        foreach ($cities as $city) {
+            $slug = Str::slug($city['name']);
+            foreach ($patterns as $pattern) {
                 $pages[] = [
-                    'url' => "/{$prefix}-{$c->slug}",
-                    'title' => "{$label} {$c->name} — Panduan Lengkap | POS Retail",
-                    'description' => "{$label} {$c->name} terlengkap. Panduan memilih produk terbaik sesuai kebutuhan dan budget Anda.",
-                    'type' => 'guide',
+                    'url' => "/{$pattern}-{$slug}",
+                    'title' => "Aplikasi POS " . ucwords($city['name']),
+                    'type' => 'city-pseo',
                     'priority' => '0.7',
                     'lastmod' => now()->toAtomString(),
                 ];
@@ -181,22 +155,22 @@ class PseoService
         return $pages;
     }
 
-    private function outletCityPages(): array
+    protected function sourceCodePatterns(array $cities): array
     {
-        $pages = [];
-        $outlets = Outlet::where('active', true)->get();
+        $patterns = [
+            'source-code-pos', 'beli-aplikasi-pos', 'beli-source-code',
+            'harga-source-code', 'jual-aplikasi-kasir',
+        ];
 
-        foreach ($outlets as $o) {
-            // Extract city from address
-            $city = $this->extractCity($o->address);
-            if ($city) {
-                $citySlug = \Illuminate\Support\Str::slug($city);
+        $pages = [];
+        foreach ($cities as $city) {
+            $slug = Str::slug($city['name']);
+            foreach ($patterns as $pattern) {
                 $pages[] = [
-                    'url' => "/toko-{$citySlug}",
-                    'title' => "Toko Retail di {$city} — Produk Lengkap Harga Terbaik | POS Retail",
-                    'description' => "Kunjungi toko kami di {$city}. Produk lengkap, harga terbaik, bisa beli grosir. Buka setiap hari!",
-                    'type' => 'store-location',
-                    'priority' => '0.6',
+                    'url' => "/{$pattern}-{$slug}",
+                    'title' => "Source Code POS " . ucwords($city['name']),
+                    'type' => 'source-code-pseo',
+                    'priority' => '0.9',
                     'lastmod' => now()->toAtomString(),
                 ];
             }
@@ -204,22 +178,256 @@ class PseoService
         return $pages;
     }
 
-    private function staticPages(): array
+    protected function cityFeatureCombos(array $cities, array $features): array
+    {
+        $patterns = ['aplikasi-pos-fitur', 'software-kasir-fitur', 'source-code-pos-fitur', 'beli-aplikasi-pos-fitur'];
+        $pages = [];
+
+        foreach ($cities as $city) {
+            $citySlug = Str::slug($city['name']);
+            foreach ($features as $feature) {
+                $featSlug = Str::slug($feature['name']);
+                foreach ($patterns as $pattern) {
+                    $pages[] = [
+                        'url' => "/{$pattern}-{$citySlug}-{$featSlug}",
+                        'title' => "POS {$city['name']} — {$feature['name']}",
+                        'type' => 'city-feature',
+                        'priority' => '0.6',
+                        'lastmod' => now()->toAtomString(),
+                    ];
+                }
+            }
+        }
+        return $pages;
+    }
+
+    protected function cityIndustryCombos(array $cities, array $industries): array
+    {
+        $patterns = ['aplikasi-pos-industri', 'software-kasir-industri'];
+        $pages = [];
+
+        foreach ($cities as $city) {
+            $citySlug = Str::slug($city['name']);
+            foreach ($industries as $industry) {
+                $indSlug = Str::slug($industry['name']);
+                foreach ($patterns as $pattern) {
+                    $pages[] = [
+                        'url' => "/{$pattern}-{$citySlug}-{$indSlug}",
+                        'title' => "POS {$industry['name']} di {$city['name']}",
+                        'type' => 'city-industry',
+                        'priority' => '0.6',
+                        'lastmod' => now()->toAtomString(),
+                    ];
+                }
+            }
+        }
+        return $pages;
+    }
+
+    protected function industryPatterns(array $industries): array
+    {
+        $patterns = ['aplikasi-pos-untuk', 'software-kasir-untuk', 'pos-untuk'];
+        $pages = [];
+
+        foreach ($industries as $industry) {
+            $slug = Str::slug($industry['name']);
+            foreach ($patterns as $pattern) {
+                $pages[] = [
+                    'url' => "/{$pattern}-{$slug}",
+                    'title' => "POS {$industry['name']}",
+                    'type' => 'industry',
+                    'priority' => '0.7',
+                    'lastmod' => now()->toAtomString(),
+                ];
+            }
+        }
+        return $pages;
+    }
+
+    protected function featurePatterns(array $features): array
+    {
+        $patterns = ['aplikasi-kasir-dengan', 'pos-dengan', 'sistem-kasir-dengan'];
+        $pages = [];
+
+        foreach ($features as $feature) {
+            $slug = Str::slug($feature['name']);
+            foreach ($patterns as $pattern) {
+                $pages[] = [
+                    'url' => "/{$pattern}-{$slug}",
+                    'title' => "POS dengan {$feature['name']}",
+                    'type' => 'feature',
+                    'priority' => '0.7',
+                    'lastmod' => now()->toAtomString(),
+                ];
+            }
+        }
+        return $pages;
+    }
+
+    protected function staticPatterns(): array
+    {
+        $pages = [];
+
+        $pages[] = ['url' => '/', 'title' => 'POS Retail — Solusi Point of Sale', 'type' => 'home', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/docs', 'title' => 'Dokumentasi POS Retail', 'type' => 'docs', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/pos', 'title' => 'POS Kasir — Point of Sale', 'type' => 'pos', 'priority' => '0.7', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/beli-aplikasi-pos', 'title' => 'Beli Aplikasi POS — Source Code Point of Sale', 'type' => 'landing', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/beli-source-code-pos', 'title' => 'Beli Source Code POS Retail — Full Source Code', 'type' => 'landing', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/jual-source-code-pos', 'title' => 'Jual Source Code Aplikasi POS — Siap Pakai', 'type' => 'landing', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/harga-source-code-pos', 'title' => 'Harga Source Code POS Retail — ' . $this->sourceCodePrice, 'type' => 'landing', 'priority' => '0.9', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/source-code-aplikasi-pos', 'title' => 'Source Code Aplikasi POS — Point of Sale', 'type' => 'landing', 'priority' => '0.9', 'lastmod' => now()->toAtomString()];
+        $pages[] = ['url' => '/sitemap', 'title' => 'Sitemap', 'type' => 'sitemap', 'priority' => '0.5', 'lastmod' => now()->toAtomString()];
+
+        return $pages;
+    }
+
+    // ================================================================
+    // DATA SOURCES
+    // ================================================================
+
+    public function indonesianCities(): array
     {
         return [
-            ['url' => '/', 'title' => 'POS Retail — Solusi Kasir Modern', 'type' => 'home', 'priority' => '1.0', 'lastmod' => now()->toAtomString(), 'description' => ''],
-            ['url' => '/docs', 'title' => 'Dokumentasi POS Retail', 'type' => 'docs', 'priority' => '0.8', 'lastmod' => now()->toAtomString(), 'description' => ''],
-            ['url' => '/pos', 'title' => 'POS Kasir — Point of Sale', 'type' => 'pos', 'priority' => '0.7', 'lastmod' => now()->toAtomString(), 'description' => ''],
-            ['url' => '/sitemap', 'title' => 'Sitemap — Daftar Semua Halaman', 'type' => 'sitemap', 'priority' => '0.5', 'lastmod' => now()->toAtomString(), 'description' => ''],
+            ['name' => 'Jakarta'], ['name' => 'Surabaya'], ['name' => 'Bandung'], ['name' => 'Medan'],
+            ['name' => 'Semarang'], ['name' => 'Makassar'], ['name' => 'Palembang'], ['name' => 'Tangerang'],
+            ['name' => 'Bekasi'], ['name' => 'Depok'], ['name' => 'Bogor'], ['name' => 'Yogyakarta'],
+            ['name' => 'Malang'], ['name' => 'Solo'], ['name' => 'Denpasar'], ['name' => 'Batam'],
+            ['name' => 'Pekanbaru'], ['name' => 'Padang'], ['name' => 'Balikpapan'], ['name' => 'Banjarmasin'],
+            ['name' => 'Samarinda'], ['name' => 'Manado'], ['name' => 'Pontianak'], ['name' => 'Ambon'],
+            ['name' => 'Mataram'], ['name' => 'Kupang'], ['name' => 'Jambi'], ['name' => 'Bandar Lampung'],
+            ['name' => 'Cirebon'], ['name' => 'Tasikmalaya'], ['name' => 'Sukabumi'], ['name' => 'Cimahi'],
+            ['name' => 'Cilegon'], ['name' => 'Serang'], ['name' => 'Tegal'], ['name' => 'Pekalongan'],
+            ['name' => 'Purwokerto'], ['name' => 'Magelang'], ['name' => 'Klaten'], ['name' => 'Salatiga'],
+            ['name' => 'Kediri'], ['name' => 'Madiun'], ['name' => 'Blitar'], ['name' => 'Probolinggo'],
+            ['name' => 'Pasuruan'], ['name' => 'Mojokerto'], ['name' => 'Jember'], ['name' => 'Banyuwangi'],
+            ['name' => 'Singaraja'], ['name' => 'Tabanan'], ['name' => 'Gresik'], ['name' => 'Sidoarjo'],
+            ['name' => 'Palu'], ['name' => 'Kendari'], ['name' => 'Gorontalo'], ['name' => 'Ternate'],
+            ['name' => 'Jayapura'], ['name' => 'Sorong'], ['name' => 'Manokwari'], ['name' => 'Merauke'],
+            ['name' => 'Banda Aceh'], ['name' => 'Lhokseumawe'], ['name' => 'Langsa'], ['name' => 'Binjai'],
+            ['name' => 'Pematangsiantar'], ['name' => 'Tebing Tinggi'], ['name' => 'Dumai'], ['name' => 'Bukittinggi'],
+            ['name' => 'Payakumbuh'], ['name' => 'Sawahlunto'], ['name' => 'Lubuklinggau'], ['name' => 'Prabumulih'],
+            ['name' => 'Pangkal Pinang'], ['name' => 'Tanjung Pinang'], ['name' => 'Bontang'], ['name' => 'Tarakan'],
+            ['name' => 'Banjarbaru'], ['name' => 'Palangkaraya'], ['name' => 'Bitung'], ['name' => 'Tomohon'],
+            ['name' => 'Kotamobagu'], ['name' => 'Bau Bau'], ['name' => 'Parepare'], ['name' => 'Palopo'],
+            ['name' => 'Bima'], ['name' => 'Sumbawa'], ['name' => 'Ende'], ['name' => 'Maumere'],
+            ['name' => 'Ruteng'], ['name' => 'Atambua'], ['name' => 'Kefamenanu'], ['name' => 'Soe'],
+            ['name' => 'Waingapu'], ['name' => 'Labuan Bajo'], ['name' => 'Tual'], ['name' => 'Masohi'],
+            ['name' => 'Namlea'], ['name' => 'Raja Ampat'], ['name' => 'Biak'], ['name' => 'Timika'],
+            ['name' => 'Wamena'], ['name' => 'Nabire'], ['name' => 'Serui'], ['name' => 'Tanjung Selor'],
+            ['name' => 'Singkawang'], ['name' => 'Mempawah'], ['name' => 'Ketapang'], ['name' => 'Putussibau'],
+            ['name' => 'Sintang'], ['name' => 'Sanggau'], ['name' => 'Martapura'], ['name' => 'Barabai'],
+            ['name' => 'Kandangan'], ['name' => 'Amuntai'], ['name' => 'Tanjung'], ['name' => 'Rantau'],
+            ['name' => 'Marabahan'], ['name' => 'Pelaihari'], ['name' => 'Kotabaru'], ['name' => 'Tenggarong'],
+            ['name' => 'Sangatta'], ['name' => 'Tanjung Redeb'], ['name' => 'Nunukan'], ['name' => 'Malinau'],
+            ['name' => 'Tana Toraja'], ['name' => 'Enrekang'], ['name' => 'Sinjai'], ['name' => 'Bulukumba'],
+            ['name' => 'Bantaeng'], ['name' => 'Jeneponto'], ['name' => 'Takalar'], ['name' => 'Maros'],
+            ['name' => 'Pangkep'], ['name' => 'Barru'], ['name' => 'Soppeng'], ['name' => 'Wajo'],
+            ['name' => 'Sidenreng'], ['name' => 'Pinrang'], ['name' => 'Luwu'], ['name' => 'Kolaka'],
+            ['name' => 'Raha'], ['name' => 'Unaaha'], ['name' => 'Andolo'], ['name' => 'Wangi Wangi'],
+            ['name' => 'Rangkasbitung'], ['name' => 'Pandeglang'], ['name' => 'Garut'], ['name' => 'Cianjur'],
+            ['name' => 'Sumedang'], ['name' => 'Indramayu'], ['name' => 'Majalengka'], ['name' => 'Kuningan'],
+            ['name' => 'Subang'], ['name' => 'Purwakarta'], ['name' => 'Karawang'], ['name' => 'Ciamis'],
+            ['name' => 'Banjar'], ['name' => 'Banjarnegara'], ['name' => 'Banyumas'], ['name' => 'Cilacap'],
+            ['name' => 'Kebumen'], ['name' => 'Purbalingga'], ['name' => 'Wonosobo'], ['name' => 'Temanggung'],
+            ['name' => 'Boyolali'], ['name' => 'Sragen'], ['name' => 'Karanganyar'], ['name' => 'Wonogiri'],
+            ['name' => 'Sukoharjo'], ['name' => 'Kudus'], ['name' => 'Jepara'], ['name' => 'Pati'],
+            ['name' => 'Rembang'], ['name' => 'Blora'], ['name' => 'Grobogan'], ['name' => 'Demak'],
+            ['name' => 'Batang'], ['name' => 'Kendal'], ['name' => 'Brebes'], ['name' => 'Pemalang'],
+            ['name' => 'Bojonegoro'], ['name' => 'Tuban'], ['name' => 'Lamongan'], ['name' => 'Nganjuk'],
+            ['name' => 'Ponorogo'], ['name' => 'Trenggalek'], ['name' => 'Tulungagung'], ['name' => 'Lumajang'],
+            ['name' => 'Bondowoso'], ['name' => 'Situbondo'], ['name' => 'Sumenep'], ['name' => 'Pamekasan'],
+            ['name' => 'Sampang'], ['name' => 'Bangkalan'], ['name' => 'Magetan'], ['name' => 'Ngawi'],
+            ['name' => 'Pacitan'], ['name' => 'Agam'], ['name' => 'Solok'], ['name' => 'Tanah Datar'],
+            ['name' => 'Batusangkar'], ['name' => 'Pariaman'], ['name' => 'Painan'], ['name' => 'Muara Bungo'],
+            ['name' => 'Bangka'], ['name' => 'Sungailiat'], ['name' => 'Mentok'], ['name' => 'Toboali'],
+            ['name' => 'Muntok'], ['name' => 'Belinyu'], ['name' => 'Koba'], ['name' => 'Manggar'],
+            ['name' => 'Tanjung Pandan'], ['name' => 'Muara Enim'], ['name' => 'Baturaja'], ['name' => 'Lahat'],
+            ['name' => 'Pagar Alam'], ['name' => 'Kayu Agung'], ['name' => 'Indralaya'], ['name' => 'Martapura OKU'],
+            ['name' => 'Muara Dua'], ['name' => 'Curup'], ['name' => 'Kepahiang'], ['name' => 'Arga Makmur'],
+            ['name' => 'Mukomuko'], ['name' => 'Manna'], ['name' => 'Tais'], ['name' => 'Kotabumi'],
+            ['name' => 'Kalianda'], ['name' => 'Liwa'], ['name' => 'Blambangan Umpu'], ['name' => 'Menggala'],
+            ['name' => 'Gedong Tataan'], ['name' => 'Pringsewu'], ['name' => 'Metro'], ['name' => 'Sukadana'],
+            ['name' => 'Gunung Sugih'], ['name' => 'Way Kanan'], ['name' => 'Tulang Bawang'], ['name' => 'Mesuji'],
+            ['name' => 'Rantau Prapat'], ['name' => 'Kisaran'], ['name' => 'Sibolga'], ['name' => 'Padangsidimpuan'],
+            ['name' => 'Gunungsitoli'], ['name' => 'Sidikalang'], ['name' => 'Balige'], ['name' => 'Tarutung'],
+            ['name' => 'Panyabungan'], ['name' => 'Padang Lawas'], ['name' => 'Tapaktuan'], ['name' => 'Meulaboh'],
+            ['name' => 'Sigli'], ['name' => 'Takengon'], ['name' => 'Blangkejeren'], ['name' => 'Kutacane'],
+            ['name' => 'Subulussalam'], ['name' => 'Sinabang'], ['name' => 'Calang'], ['name' => 'Idi'],
         ];
     }
 
-    private function extractCity(?string $address): ?string
+    public function posFeatures(): array
     {
-        if (!$address) return null;
-        $cities = ['Jakarta', 'Bandung', 'Surabaya', 'Medan', 'Semarang', 'Yogyakarta', 'Makassar', 'Palembang', 'Tangerang', 'Bekasi', 'Depok', 'Bogor'];
-        foreach ($cities as $city) {
-            if (stripos($address, $city) !== false) return $city;
+        return [
+            ['name' => 'Multi-Outlet'], ['name' => 'Inventori Real-Time'], ['name' => 'Laporan Keuangan'],
+            ['name' => 'Barcode Scanner'], ['name' => 'Payment Gateway'], ['name' => 'QRIS'],
+            ['name' => 'Loyalitas Pelanggan'], ['name' => 'Stok Opname'], ['name' => 'Transfer Stok'],
+            ['name' => 'Approval Workflow'], ['name' => 'Multi-User'], ['name' => 'Akses Role-Based'],
+            ['name' => 'Dashboard Analitik'], ['name' => 'Export Excel'], ['name' => 'Export PDF'],
+            ['name' => 'Notifikasi Stok'], ['name' => 'Manajemen Supplier'], ['name' => 'Purchase Order'],
+            ['name' => 'Customer Portal'], ['name' => 'API Integrasi'], ['name' => 'Cloud Sync'],
+            ['name' => 'Offline Mode'], ['name' => 'Cetak Struk'], ['name' => 'Shift Kasir'],
+            ['name' => 'Audit Trail'], ['name' => 'Multi-Gudang'], ['name' => 'Diskon Otomatis'],
+            ['name' => 'Promo Bundle'], ['name' => 'Membership Tier'], ['name' => 'Kitchen Display'],
+            ['name' => 'Table Management'], ['name' => 'Raw Material Tracking'], ['name' => 'Recipe Management'],
+            ['name' => 'Hold & Recall Cart'], ['name' => 'Split Payment'], ['name' => 'Installment'],
+            ['name' => 'Return & Refund'], ['name' => 'Anti-Fraud'], ['name' => 'Backup Otomatis'],
+            ['name' => 'Multi-Cabang'], ['name' => 'Laporan Pajak'], ['name' => 'Grafik Penjualan'],
+            ['name' => 'Top Produk'], ['name' => 'Cash Flow'], ['name' => 'Profit & Loss'],
+            ['name' => 'WhatsApp Gateway'], ['name' => 'Email Notifikasi'], ['name' => 'SMS Gateway'],
+            ['name' => 'Dark Mode'], ['name' => 'Mobile Responsive'], ['name' => 'Localization IDR'],
+        ];
+    }
+
+    public function industries(): array
+    {
+        return [
+            ['name' => 'Retail'], ['name' => 'Minimarket'], ['name' => 'Supermarket'],
+            ['name' => 'Toko Kelontong'], ['name' => 'Toko Baju'], ['name' => 'Toko Sepatu'],
+            ['name' => 'Toko Elektronik'], ['name' => 'Toko HP'], ['name' => 'Toko Buku'],
+            ['name' => 'Toko Mainan'], ['name' => 'Toko Furniture'], ['name' => 'Toko Bangunan'],
+            ['name' => 'Toko Obat'], ['name' => 'Apotek'], ['name' => 'Toko Kosmetik'],
+            ['name' => 'Toko Sembako'], ['name' => 'Toko Alat Tulis'], ['name' => 'Toko Souvenir'],
+            ['name' => 'Toko Olahraga'], ['name' => 'Restoran'], ['name' => 'Cafe'],
+            ['name' => 'Bakery'], ['name' => 'Coffee Shop'], ['name' => 'Warung Makan'],
+            ['name' => 'Kantin'], ['name' => 'Barbershop'], ['name' => 'Laundry'],
+            ['name' => 'Bengkel'], ['name' => 'Toko Sparepart'], ['name' => 'Toko Pertanian'],
+            ['name' => 'Toko Ikan'], ['name' => 'Toko Daging'], ['name' => 'Toko Buah'],
+            ['name' => 'Toko Kue'], ['name' => 'Distributor'], ['name' => 'Grosir'],
+            ['name' => 'Agen'], ['name' => 'Reseller'], ['name' => 'Dropshipper'],
+            ['name' => 'UMKM'], ['name' => 'Warung Sembako'], ['name' => 'Toko Oleh-Oleh'],
+            ['name' => 'Florist'], ['name' => 'Pet Shop'], ['name' => 'Toko Alat Musik'],
+            ['name' => 'Toko Aksesoris'], ['name' => 'Toko Jam'], ['name' => 'Optik'],
+            ['name' => 'Toko Foto Copy'], ['name' => 'Percetakan'],
+        ];
+    }
+
+    protected function findCity(string $slug): ?array
+    {
+        foreach ($this->indonesianCities() as $city) {
+            if (Str::slug($city['name']) === $slug || Str::contains($slug, Str::slug($city['name']))) {
+                return $city;
+            }
+        }
+        return null;
+    }
+
+    protected function findFeature(string $slug): ?array
+    {
+        foreach ($this->posFeatures() as $feature) {
+            if (Str::slug($feature['name']) === $slug || Str::contains($slug, Str::slug($feature['name']))) {
+                return $feature;
+            }
+        }
+        return null;
+    }
+
+    protected function findIndustry(string $slug): ?array
+    {
+        foreach ($this->industries() as $industry) {
+            if (Str::slug($industry['name']) === $slug || Str::contains($slug, Str::slug($industry['name']))) {
+                return $industry;
+            }
         }
         return null;
     }
