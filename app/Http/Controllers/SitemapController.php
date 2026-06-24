@@ -35,6 +35,7 @@ class SitemapController extends Controller
 
             // Add static pages
             $pages[] = ['url' => '/blog', 'type' => 'static', 'lastmod' => date('Y-m-d'), 'priority' => '0.9'];
+            $pages[] = ['url' => '/blog/feed.xml', 'type' => 'static', 'lastmod' => date('Y-m-d'), 'priority' => '0.5'];
             $pages[] = ['url' => '/faq', 'type' => 'static', 'lastmod' => date('Y-m-d'), 'priority' => '0.6'];
             $pages[] = ['url' => '/contact', 'type' => 'static', 'lastmod' => date('Y-m-d'), 'priority' => '0.6'];
 
