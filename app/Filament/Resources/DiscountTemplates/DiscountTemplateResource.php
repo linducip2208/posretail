@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class DiscountTemplateResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = 'Loyalitas';
+    protected static string|\UnitEnum|null $navigationGroup = '? Loyalitas';
 
     protected static ?int $navigationSort = 2;
 

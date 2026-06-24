@@ -16,7 +16,7 @@ use Filament\Support\Icons\Heroicon;
 
 class ReturResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = 'Transaksi';
+    protected static string|\UnitEnum|null $navigationGroup = '?? Transaksi';
 
     protected static ?int $navigationSort = 2;
 

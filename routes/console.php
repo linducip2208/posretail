@@ -12,3 +12,4 @@ Schedule::command('pos:escalate-overdue')->hourly();
 Schedule::command('pos:send-notifications')->everyFiveMinutes();
 Schedule::command('pos:send-reminders')->dailyAt('08:00');
 Schedule::command('pos:backup-database')->dailyAt('02:00');
+Schedule::command('seo:indexnow')->dailyAt('02:45')->withoutOverlapping();

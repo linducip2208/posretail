@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlogPost;
 use App\Services\PseoService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
@@ -19,7 +20,25 @@ class SitemapController extends Controller
     public function index(): Response
     {
         $xml = Cache::remember('sitemap.xml', 86400, function () {
-            return $this->buildXml($this->pseo->getAllPages());
+            $pages = $this->pseo->getAllPages();
+
+            // Add blog posts
+            $blogPosts = BlogPost::published()->get();
+            foreach ($blogPosts as $post) {
+                $pages[] = [
+                    'url' => '/blog/' . $post->slug,
+                    'type' => 'blog',
+                    'lastmod' => $post->updated_at->format('Y-m-d'),
+                    'priority' => '0.8',
+                ];
+            }
+
+            // Add static pages
+            $pages[] = ['url' => '/blog', 'type' => 'static', 'lastmod' => date('Y-m-d'), 'priority' => '0.9'];
+            $pages[] = ['url' => '/faq', 'type' => 'static', 'lastmod' => date('Y-m-d'), 'priority' => '0.6'];
+            $pages[] = ['url' => '/contact', 'type' => 'static', 'lastmod' => date('Y-m-d'), 'priority' => '0.6'];
+
+            return $this->buildXml($pages);
         });
 
         return response($xml, 200)

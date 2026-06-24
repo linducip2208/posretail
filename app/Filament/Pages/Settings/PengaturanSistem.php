@@ -19,7 +19,7 @@ class PengaturanSistem extends Page
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Sistem';
+        return '?? Sistem';
     }
 
     protected static ?string $title = 'Pengaturan Sistem';

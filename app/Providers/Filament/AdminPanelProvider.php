@@ -42,13 +42,14 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
             ])
             ->navigationGroups([
-                'Master Data',
-                'Transaksi',
-                'Pembelian',
-                'Inventori',
-                'Loyalitas',
-                'Laporan',
-                'Sistem',
+                '🏪 Master Data',
+                '🛒 Transaksi',
+                '📦 Pembelian',
+                '📋 Inventori',
+                '⭐ Loyalitas',
+                '📊 Laporan',
+                '📰 Marketing',
+                '⚙️ Sistem',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

@@ -5,6 +5,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProgrammaticSeoController;
+use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Portal\AuthController;
 use App\Http\Controllers\Portal\PortalController;
 
@@ -42,11 +43,24 @@ Route::prefix('portal')->name('portal.')->group(function () {
     });
 });
 
+// Public blog
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/feed.xml', [BlogController::class, 'feed'])->name('blog.feed');
+Route::get('/blog/category/{slug}', [BlogController::class, 'category'])->name('blog.category');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+
+// FAQ & Contact
+Route::get('/faq', fn () => view('pages.faq'))->name('faq');
+Route::get('/contact', fn () => view('pages.contact'))->name('contact');
+
 Route::get('/robots.txt', function () {
     $content = "User-agent: *\n";
     $content .= "Allow: /\$\n";
     $content .= "Allow: /portal\n";
     $content .= "Allow: /docs\n";
+    $content .= "Allow: /blog\n";
+    $content .= "Allow: /faq\n";
+    $content .= "Allow: /contact\n";
     $content .= "Allow: /marketing/\n";
     $content .= "Allow: /best-\n";
     $content .= "Allow: /alternatives-to-\n";

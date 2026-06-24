@@ -12,7 +12,7 @@ use Filament\Support\Icons\Heroicon;
 
 class AuditLogResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = '?? Sistem';
 
     protected static ?int $navigationSort = 4;
 
