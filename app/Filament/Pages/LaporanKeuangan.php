@@ -170,4 +170,3 @@ class LaporanKeuangan extends Page
             ->where('status', 'received');
     }
 }
-

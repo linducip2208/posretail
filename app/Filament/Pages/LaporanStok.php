@@ -114,4 +114,3 @@ class LaporanStok extends Page
             ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId));
     }
 }
-

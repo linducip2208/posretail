@@ -117,4 +117,3 @@ class LaporanPenjualan extends Page
             ->where('order_status', 'completed');
     }
 }
-

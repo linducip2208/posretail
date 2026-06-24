@@ -5,12 +5,13 @@ namespace App\Filament\Pages\Settings;
 use App\Models\SystemSetting;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use UnitEnum;
 
 class PengaturanSistem extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = '⚙️ Sistem';
+    protected static string|UnitEnum|null $navigationGroup = '⚙️ Sistem';
 
     protected static ?int $navigationSort = 6;
 
