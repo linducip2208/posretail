@@ -254,8 +254,20 @@
                 return;
             }
 
-            grid.innerHTML = products.map(p => `
-                <div class="product-card bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-indigo-300 hover:shadow-md" onclick="addToCart(${p.id}, '${escapeHtml(p.name)}', ${p.selling_price})">
+            grid.innerHTML = products.map(p => {
+                const out = Number(p.current_stock) <= 0;
+                const stockClass = out ? 'text-red-600' : (p.current_stock > 10 ? 'text-green-600' : 'text-orange-500');
+                const stockLabel = out ? 'Stok 0' : p.current_stock;
+                const cardClass = out
+                    ? 'bg-white rounded-xl border border-gray-200 overflow-hidden relative opacity-60 grayscale'
+                    : 'product-card bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-indigo-300 hover:shadow-md relative';
+                const clickAttr = out
+                    ? 'style="cursor:not-allowed" onclick="alert(\'Stok habis — tidak bisa ditambahkan\')"'
+                    : `onclick="addToCart(${p.id}, '${escapeHtml(p.name)}', ${p.selling_price})"`;
+                const badge = out ? '<div class="absolute top-1 right-1 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">HABIS</div>' : '';
+                return `
+                <div class="${cardClass}" ${clickAttr}>
+                    ${badge}
                     <div class="h-24 bg-gray-100 flex items-center justify-center overflow-hidden">
                         <img src="${p.image || '/marketing/screens/default-product.png'}" alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23e2e8f0%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%2394a3b8%22 font-size=%2212%22>No Image</text></svg>'">
                     </div>
@@ -264,11 +276,11 @@
                         <div class="text-indigo-700 font-bold text-xs font-mono mt-1">${formatRupiah(p.selling_price)}</div>
                         <div class="flex items-center justify-between mt-1">
                             <span class="text-[10px] text-gray-400 truncate max-w-[60px]">${p.sku || '-'}</span>
-                            <span class="text-[10px] ${p.current_stock > 10 ? 'text-green-600' : 'text-red-600'} font-semibold">${p.current_stock}</span>
+                            <span class="text-[10px] ${stockClass} font-semibold">${stockLabel}</span>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         function renderPagination(data) {

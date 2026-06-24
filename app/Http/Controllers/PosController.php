@@ -25,8 +25,7 @@ class PosController extends Controller
     public function products(Request $request): JsonResponse
     {
         $query = Product::with(['category', 'unit'])
-            ->where('active', true)
-            ->where('current_stock', '>', 0);
+            ->where('active', true);
 
         if ($request->search) {
             $query->where(function ($q) use ($request) {
@@ -40,7 +39,7 @@ class PosController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
-        $products = $query->orderBy('name')->paginate(24);
+        $products = $query->orderByRaw('current_stock <= 0')->orderBy('name')->paginate(24);
 
         return response()->json($products);
     }

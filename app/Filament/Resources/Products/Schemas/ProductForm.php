@@ -66,6 +66,7 @@ class ProductForm
                 Toggle::make('has_variants')
                     ->required(),
                 Toggle::make('active')
+                    ->default(true)
                     ->required(),
             ]);
     }
