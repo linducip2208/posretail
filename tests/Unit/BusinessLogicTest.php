@@ -2,10 +2,13 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class OrderFlowTest extends TestCase
+class BusinessLogicTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_order_model_has_relationships(): void
     {
         $order = new \App\Models\Order();

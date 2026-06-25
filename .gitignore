@@ -22,6 +22,8 @@
 /storage/app/.license.lock
 /storage/pail
 /vendor
+# build/distribution artifacts
+*.zip
 _ide_helper.php
 Homestead.json
 Homestead.yaml

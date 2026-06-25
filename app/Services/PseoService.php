@@ -32,6 +32,7 @@ class PseoService
             $pages = array_merge($pages, $this->sourceCodePatterns($cities));
             $pages = array_merge($pages, $this->cityFeatureCombos($cities, array_slice($features, 0, 20)));
             $pages = array_merge($pages, $this->cityIndustryCombos($cities, $industries));
+            $pages = array_merge($pages, $this->comparisonPatterns($industries));
             $pages = array_merge($pages, $this->staticPatterns());
 
             return $pages;
@@ -227,6 +228,38 @@ class PseoService
                 }
             }
         }
+        return $pages;
+    }
+
+    protected function comparisonPatterns(array $industries): array
+    {
+        $pages = [];
+        $competitors = [
+            'moka', 'pawoon', 'olsera', 'majoo', 'qasir', 'kasir-pintar',
+            'iseller', 'olsera-pos', 'esb-pos', 'gobiz', 'square', 'loyverse',
+        ];
+
+        // /best-{industry} & /aplikasi-pos-terbaik-untuk-{industry}
+        foreach ($industries as $industry) {
+            $slug = Str::slug($industry['name']);
+            $pages[] = ['url' => "/best-{$slug}", 'title' => "Aplikasi POS Terbaik untuk {$industry['name']}", 'type' => 'best-of', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
+            $pages[] = ['url' => "/aplikasi-pos-terbaik-untuk-{$slug}", 'title' => "Aplikasi POS Terbaik untuk {$industry['name']}", 'type' => 'best-of', 'priority' => '0.7', 'lastmod' => now()->toAtomString()];
+        }
+
+        // /alternatif-{competitor}
+        foreach ($competitors as $c) {
+            $name = ucwords(str_replace('-', ' ', $c));
+            $pages[] = ['url' => "/alternatif-{$c}", 'title' => "Alternatif {$name} — Aplikasi POS Pengganti", 'type' => 'alternatives', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
+            $pages[] = ['url' => "/alternatives-to-{$c}", 'title' => "Alternatives to {$name}", 'type' => 'alternatives', 'priority' => '0.6', 'lastmod' => now()->toAtomString()];
+        }
+
+        // /bandingkan/pos-retail-vs-{competitor}
+        foreach ($competitors as $c) {
+            $name = ucwords(str_replace('-', ' ', $c));
+            $pages[] = ['url' => "/bandingkan/pos-retail-vs-{$c}", 'title' => "POS Retail vs {$name}", 'type' => 'compare', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
+            $pages[] = ['url' => "/compare/pos-retail-vs-{$c}", 'title' => "POS Retail vs {$name}", 'type' => 'compare', 'priority' => '0.6', 'lastmod' => now()->toAtomString()];
+        }
+
         return $pages;
     }
 

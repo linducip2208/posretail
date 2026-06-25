@@ -34,7 +34,7 @@ class ApiTest extends TestCase
 
         Product::factory()->create(['active' => true, 'name' => 'Test Product']);
 
-        $response = $this->actingAs($user, 'sanctum')
+        $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/products');
 
         $response->assertStatus(200);
@@ -48,7 +48,7 @@ class ApiTest extends TestCase
 
         PaymentMethod::factory()->create(['active' => true, 'name' => 'Cash']);
 
-        $response = $this->actingAs($user, 'sanctum')
+        $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/payment-methods');
 
         $response->assertStatus(200);
@@ -59,7 +59,7 @@ class ApiTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'kasir']);
 
-        $response = $this->actingAs($user, 'sanctum')
+        $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/tables');
 
         $response->assertStatus(200);
@@ -70,7 +70,7 @@ class ApiTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'kasir']);
 
-        $response = $this->actingAs($user, 'sanctum')
+        $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/user');
 
         $response->assertStatus(200);
@@ -90,7 +90,7 @@ class ApiTest extends TestCase
         ]);
         $paymentMethod = PaymentMethod::factory()->create(['active' => true]);
 
-        $response = $this->actingAs($user, 'sanctum')
+        $response = $this->actingAs($user, 'api')
             ->postJson('/api/v1/orders', [
                 'items' => [
                     [
@@ -128,7 +128,7 @@ class ApiTest extends TestCase
         ]);
         $paymentMethod = PaymentMethod::factory()->create(['active' => true]);
 
-        $this->actingAs($user, 'sanctum')
+        $this->actingAs($user, 'api')
             ->postJson('/api/v1/orders', [
                 'items' => [
                     [
@@ -146,7 +146,7 @@ class ApiTest extends TestCase
                 'outlet_id' => $outlet->id,
             ]);
 
-        $response = $this->actingAs($user, 'sanctum')
+        $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/orders/today?outlet_id=' . $outlet->id);
 
         $response->assertStatus(200);

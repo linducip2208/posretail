@@ -60,6 +60,16 @@ Route::get('/jual-source-code-pos', [ProgrammaticSeoController::class, 'staticPa
 Route::get('/harga-source-code-pos', [ProgrammaticSeoController::class, 'staticPage'])->defaults('slug', 'harga-source-code-pos');
 Route::get('/source-code-aplikasi-pos', [ProgrammaticSeoController::class, 'staticPage'])->defaults('slug', 'source-code-aplikasi-pos');
 
+// PSEO — Comparison, alternatives & best-of (standar wajib)
+Route::get('/bandingkan/{slug}', [ProgrammaticSeoController::class, 'compare'])
+    ->where('slug', '[a-z0-9-]+-vs-[a-z0-9-]+')->name('pseo.compare');
+Route::get('/compare/{slug}', [ProgrammaticSeoController::class, 'compare'])
+    ->where('slug', '[a-z0-9-]+-vs-[a-z0-9-]+')->name('pseo.compare-en');
+Route::get('/alternatif-{slug}', [ProgrammaticSeoController::class, 'alternatives'])->name('pseo.alternatives-to');
+Route::get('/alternatives-to-{slug}', [ProgrammaticSeoController::class, 'alternatives'])->name('pseo.alternatives-to-en');
+Route::get('/best-{slug}', [ProgrammaticSeoController::class, 'bestCategory'])->name('pseo.best-category');
+Route::get('/aplikasi-pos-terbaik-untuk-{slug}', [ProgrammaticSeoController::class, 'bestCategory'])->name('pseo.best-category-id');
+
 // PSEO — City-based patterns
 Route::get('/aplikasi-pos-{slug}', [ProgrammaticSeoController::class, 'page'])->defaults('pattern', 'aplikasi-pos')->name('pseo.city');
 Route::get('/software-kasir-{slug}', [ProgrammaticSeoController::class, 'page'])->defaults('pattern', 'software-kasir');
@@ -125,6 +135,11 @@ Route::get('/robots.txt', function () {
     $content .= "Allow: /jual-\n";
     $content .= "Allow: /harga-\n";
     $content .= "Allow: /source-code-\n";
+    $content .= "Allow: /best-\n";
+    $content .= "Allow: /bandingkan/\n";
+    $content .= "Allow: /compare/\n";
+    $content .= "Allow: /alternatif-\n";
+    $content .= "Allow: /alternatives-to-\n";
     $content .= "Allow: /aplikasi-pos-\n";
     $content .= "Allow: /aplikasi-kasir-\n";
     $content .= "Allow: /aplikasi-toko-\n";

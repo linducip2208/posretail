@@ -22,6 +22,8 @@ POS Retail adalah sistem manajemen toko ritel lengkap yang mencakup:
 - **CRM & Loyalty** — poin, membership tier, reward otomatis
 - **Supplier & Purchasing** — purchase order, penerimaan barang, hutang supplier
 
+> **Kasir App (Flutter):** source code aplikasi kasir Android berada di project terpisah `D:\projekflutter\pos_kasir`, terhubung ke backend ini lewat **API v1** (`/api/v1`). Lihat `README.md` di project tersebut untuk setup.
+
 ---
 
 ## Tech Stack
@@ -149,10 +151,11 @@ Akses admin panel di **http://127.0.0.1:8765/admin**
 
 | Role | Email | Password | Scope |
 |------|-------|----------|-------|
-| Owner | owner@posretail.test | password | Full access, semua outlet |
-| Manager | manager@posretail.test | password | Stok, harga, supplier, laporan |
-| Admin | admin@posretail.test | password | Master data, customer |
-| Kasir 1 | kasir1@posretail.test | password | POS transaksi (outlet 1) |
+| Owner | owner@pos-retail.test | password | Full access, semua outlet |
+| Manager | manager@pos-retail.test | password | Stok, harga, supplier, laporan |
+| Admin | admin@pos-retail.test | password | Master data, customer |
+| Kasir | kasir@pos-retail.test | password | POS transaksi (outlet 1) |
+| Gudang | gudang@pos-retail.test | password | Inventori, stok, transfer |
 
 > **Login:** [http://127.0.0.1:8765/admin/login](http://127.0.0.1:8765/admin/login)
 
