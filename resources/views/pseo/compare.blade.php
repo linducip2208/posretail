@@ -18,7 +18,7 @@
     <style>body{font-family:'Inter',sans-serif}</style>
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
+        "@@context": "https://schema.org",
         "@type": "WebPage",
         "name": "{{ $seoMeta['title'] }}",
         "description": "{{ $seoMeta['description'] }}",

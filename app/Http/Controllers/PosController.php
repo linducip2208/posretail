@@ -19,7 +19,8 @@ class PosController extends Controller
     {
         $outlets = \App\Models\Outlet::where('active', true)->get();
         $paymentMethods = PaymentMethod::where('active', true)->get();
-        return view('pos.index', compact('outlets', 'paymentMethods'));
+        $taxPercent = (float) (\App\Models\SystemSetting::getValue('tax_percent', '0'));
+        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent'));
     }
 
     public function products(Request $request): JsonResponse
@@ -69,11 +70,15 @@ class PosController extends Controller
             'order_type' => 'nullable|in:dine_in,takeaway,delivery',
             'payment_method_id' => 'required|exists:payment_methods,id',
             'paid_amount' => 'required|numeric|min:0',
+            'use_tax' => 'nullable|boolean',
         ]);
 
         $order = DB::transaction(function () use ($request) {
             $subtotal = 0;
-            $taxPercent = (float) (\App\Models\SystemSetting::getValue('tax_percent', '11'));
+            $taxPercent = 0;
+            if ($request->boolean('use_tax', true)) {
+                $taxPercent = (float) (\App\Models\SystemSetting::getValue('tax_percent', '0'));
+            }
             $items = [];
 
             foreach ($request->items as $item) {

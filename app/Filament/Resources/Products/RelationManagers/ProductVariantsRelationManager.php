@@ -23,7 +23,9 @@ class ProductVariantsRelationManager extends RelationManager
             ->components([
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('sku'),
+                TextInput::make('sku')
+                    ->required()
+                    ->unique('product_variants', 'sku', ignoreRecord: true),
                 TextInput::make('barcode'),
                 TextInput::make('cost_price')
                     ->numeric()

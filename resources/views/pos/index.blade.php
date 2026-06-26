@@ -119,7 +119,13 @@
                 <div class="space-y-1 text-sm">
                     <div class="flex justify-between"><span>Subtotal</span><span id="subtotal" class="font-mono font-semibold">Rp 0</span></div>
                     <div class="flex justify-between"><span>Diskon</span><span id="discount" class="font-mono text-red-600">Rp 0</span></div>
-                    <div class="flex justify-between"><span>Pajak (11%)</span><span id="tax" class="font-mono">Rp 0</span></div>
+                    <div class="flex justify-between items-center">
+                        <span class="flex items-center gap-2">
+                            <input type="checkbox" id="useTax" checked onchange="updateSummary()" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span>Pajak (<span id="taxRateLabel">{{ $taxPercent }}</span>%)</span>
+                        </span>
+                        <span id="tax" class="font-mono">Rp 0</span>
+                    </div>
                     <div class="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total</span><span id="total" class="font-mono text-indigo-700">Rp 0</span></div>
                 </div>
                 <div class="flex gap-2 mt-3">
@@ -427,8 +433,9 @@
         function updateSummary() {
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const discount = 0;
-            const taxRate = 11; // from system setting
-            const tax = (subtotal - discount) * taxRate / 100;
+            const useTax = document.getElementById('useTax').checked;
+            const taxRate = parseFloat(document.getElementById('taxRateLabel').textContent);
+            const tax = useTax ? (subtotal - discount) * taxRate / 100 : 0;
             const total = subtotal - discount + tax;
 
             document.getElementById('subtotal').textContent = formatRupiah(subtotal);
@@ -442,16 +449,21 @@
             // Customer assignment handled server-side
         }
 
+        function getTotal() {
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const useTax = document.getElementById('useTax').checked;
+            const taxRate = parseFloat(document.getElementById('taxRateLabel').textContent);
+            return useTax ? subtotal * (1 + taxRate / 100) : subtotal;
+        }
+
         // === PAYMENT ===
         function showPayment() {
             if (cart.length === 0) return;
-            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            const total = subtotal * 1.11;
+            const total = getTotal();
             document.getElementById('paymentTotal').textContent = formatRupiah(total);
             document.getElementById('paymentModal').classList.remove('hidden');
             const paidInput = document.getElementById('paidAmount');
             paidInput.value = Math.ceil(total / 1000) * 1000;
-            // Focus and select after modal is visible
             setTimeout(() => { paidInput.focus(); paidInput.select(); }, 100);
             calculateChange();
         }
@@ -462,8 +474,7 @@
         }
 
         function calculateChange() {
-            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            const total = subtotal * 1.11;
+            const total = getTotal();
             const paid = parseInt(document.getElementById('paidAmount').value) || 0;
             const change = paid - total;
 
@@ -479,7 +490,7 @@
 
         async function processPayment() {
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            const total = subtotal * 1.11;
+            const total = getTotal();
             const paid = parseInt(document.getElementById('paidAmount').value) || 0;
             if (paid < total) { alert('Jumlah dibayar kurang!'); return; }
 
@@ -491,6 +502,7 @@
                 items: cart.map(i => ({ id: i.id, qty: i.qty, price: i.price })),
                 payment_method_id: document.getElementById('paymentMethod').value,
                 paid_amount: paid,
+                use_tax: document.getElementById('useTax').checked,
             };
 
             try {

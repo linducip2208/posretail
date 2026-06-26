@@ -17,7 +17,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800|jetbrains-mono:400,700" rel="stylesheet">
     <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"{{ $seoMeta['title'] }}","description":"{{ $seoMeta['description'] }}","inLanguage":"id"}</script>
+    <script type="application/ld+json">{"@@context":"https://schema.org","@type":"Article","headline":"{{ $seoMeta['title'] }}","description":"{{ $seoMeta['description'] }}","inLanguage":"id"}</script>
     <style>
         html{scroll-behavior:smooth}
         .gradient-hero{background:linear-gradient(160deg,#0c1d4a 0%,#1e3a8a 20%,#1e40af 40%,#2563eb 60%,#3b82f6 80%,#60a5fa 100%)}

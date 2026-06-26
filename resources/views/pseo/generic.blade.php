@@ -18,7 +18,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>body{font-family:Inter,sans-serif}</style>
     <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"SoftwareApplication","name":"{{ $brand }}","applicationCategory":"PointOfSaleApplication","operatingSystem":"Web","description":"{{ $seoMeta['description'] }}","offers":{"@type":"Offer","price":"4999000","priceCurrency":"IDR","availability":"https://schema.org/InStock"}}
+    {"@@context":"https://schema.org","@type":"SoftwareApplication","name":"{{ $brand }}","applicationCategory":"PointOfSaleApplication","operatingSystem":"Web","description":"{{ $seoMeta['description'] }}","offers":{"@type":"Offer","price":"4999000","priceCurrency":"IDR","availability":"https://schema.org/InStock"}}
     </script>
 </head>
 <body class="bg-gray-50 min-h-screen">

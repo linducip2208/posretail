@@ -16,7 +16,7 @@
     <style>body{font-family:'Inter',sans-serif}</style>
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
+        "@@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": "POS Retail {{ $cityName }}",
         "description": "{{ $seoMeta['description'] }}",
