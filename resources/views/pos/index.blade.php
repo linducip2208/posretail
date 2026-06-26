@@ -202,6 +202,14 @@
         let stream = null;
         let printerDevice = null;
 
+        const RECEIPT = {
+            appName: @json($appName),
+            appLogo: @json($appLogo),
+            footer: @json($receiptFooter),
+            storeAddress: @json($storeAddress),
+            storePhone: @json($storePhone),
+        };
+
         // === USB BARCODE SCANNER ===
         const barcodeInput = document.getElementById('barcodeInput');
         let barcodeBuffer = '';
@@ -543,13 +551,25 @@
 
         // === PRINT ===
         function printReceipt(orderNumber, paid, change) {
-            const total = cart.reduce((s, i) => s + (i.price * i.qty), 0) * 1.11;
+            const total = getTotal();
             const now = new Date();
             const dateStr = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
             let itemsHtml = cart.map(i =>
                 `<tr><td>${escapeHtml(i.name).substring(0,16)}</td><td class="r">${i.qty}</td><td class="r">${formatRupiah(i.price)}</td><td class="r">${formatRupiah(i.price * i.qty)}</td></tr>`
             ).join('');
+
+            let headerHtml = '';
+            if (RECEIPT.appLogo) {
+                headerHtml += `<div class="c" style="margin-bottom:2mm"><img src="${RECEIPT.appLogo}" style="max-width:60mm; max-height:20mm; display:block; margin:0 auto;" onerror="this.style.display='none'"></div>`;
+            }
+            headerHtml += `<div class="c b">${escapeHtml(RECEIPT.appName)}</div>`;
+            if (RECEIPT.storeAddress) {
+                headerHtml += `<div class="c" style="font-size:10px">${escapeHtml(RECEIPT.storeAddress)}</div>`;
+            }
+            if (RECEIPT.storePhone) {
+                headerHtml += `<div class="c" style="font-size:10px">Telp: ${escapeHtml(RECEIPT.storePhone)}</div>`;
+            }
 
             const win = window.open('', '_blank', 'width=300,height=600');
             win.document.write(`
@@ -560,7 +580,7 @@
                     hr { border: none; border-top: 1px dashed #000; }
                     table { width: 100%; } td { padding: 1px 0; }
                 </style></head><body>
-                    <div class="c b">POS RETAIL</div>
+                    ${headerHtml}
                     <div class="c" style="font-size:10px">${document.getElementById('outletId').options[document.getElementById('outletId').selectedIndex]?.text || ''}</div>
                     <hr>
                     <div>No: ${orderNumber}<span style="float:right">${dateStr}</span></div>
@@ -575,8 +595,7 @@
                     <div>Dibayar<span style="float:right">${formatRupiah(paid)}</span></div>
                     <div>Kembali<span style="float:right">${formatRupiah(change)}</span></div>
                     <hr>
-                    <div class="c" style="font-size:10px">Terima kasih!</div>
-                    <div class="c" style="font-size:10px">Barang yang sudah dibeli tidak dapat ditukar</div>
+                    <div class="c" style="font-size:10px">${escapeHtml(RECEIPT.footer)}</div>
                     <script>window.onload=function(){ window.print(); setTimeout(function(){ window.close(); }, 500); }</` + `script>
                 </body></html>
             `);

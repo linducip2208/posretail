@@ -6,10 +6,13 @@ use App\Models\SystemSetting;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 use UnitEnum;
 
 class PengaturanSistem extends Page
 {
+    use WithFileUploads;
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static string|UnitEnum|null $navigationGroup = '⚙️ Sistem';
@@ -31,6 +34,10 @@ class PengaturanSistem extends Page
     public $pos_price = 'Rp 4.999.000';
     public $pos_features = '';
     public $outlet_id = '1';
+    public $logo = null;
+    public $currentLogo = null;
+    public $store_address = '';
+    public $store_phone = '';
 
     public function mount(): void
     {
@@ -45,10 +52,25 @@ class PengaturanSistem extends Page
         $this->pos_price = SystemSetting::getValue('pos_price', 'Rp 4.999.000');
         $this->pos_features = SystemSetting::getValue('pos_features', "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support");
         $this->outlet_id = SystemSetting::getValue('outlet_id', '1');
+        $this->currentLogo = SystemSetting::getLogoUrl();
+        $this->store_address = SystemSetting::getValue('store_address', '');
+        $this->store_phone = SystemSetting::getValue('store_phone', '');
     }
 
     public function save(): void
     {
+        if ($this->logo) {
+            $this->validate([
+                'logo' => 'image|mimes:png,jpg,jpeg,gif,svg|max:2048',
+            ]);
+            $oldLogo = SystemSetting::getValue('app_logo');
+            if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
+                Storage::disk('public')->delete($oldLogo);
+            }
+            $path = $this->logo->store('settings', 'public');
+            SystemSetting::setValue('app_logo', $path, (int) $this->outlet_id);
+        }
+
         SystemSetting::setValue('app_name', (string) $this->app_name, (int) $this->outlet_id);
         SystemSetting::setValue('tax_percent', (string) $this->tax_percent, (int) $this->outlet_id);
         SystemSetting::setValue('currency', (string) $this->currency, (int) $this->outlet_id);
@@ -59,6 +81,8 @@ class PengaturanSistem extends Page
         SystemSetting::setValue('hero_subheadline', (string) $this->hero_subheadline, (int) $this->outlet_id);
         SystemSetting::setValue('pos_price', (string) $this->pos_price, (int) $this->outlet_id);
         SystemSetting::setValue('pos_features', (string) $this->pos_features, (int) $this->outlet_id);
+        SystemSetting::setValue('store_address', (string) $this->store_address, (int) $this->outlet_id);
+        SystemSetting::setValue('store_phone', (string) $this->store_phone, (int) $this->outlet_id);
 
         Notification::make()
             ->title('Pengaturan berhasil disimpan!')

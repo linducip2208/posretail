@@ -26,8 +26,25 @@
     </style>
 </head>
 <body>
-    <div class="center bold">POS RETAIL</div>
-    <div class="center text-sm">{{ $outlet ?? 'Outlet' }}</div>
+    @php
+        $appName = \App\Models\SystemSetting::getAppName();
+        $appLogo = \App\Models\SystemSetting::getLogoUrl();
+        $receiptFooter = \App\Models\SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!');
+        $storeAddress = \App\Models\SystemSetting::getValue('store_address', '');
+        $storePhone = \App\Models\SystemSetting::getValue('store_phone', '');
+    @endphp
+    @if($appLogo)
+    <div class="center" style="margin-bottom:2mm">
+        <img src="{{ $appLogo }}" alt="{{ $appName }}" style="max-width:60mm; max-height:20mm; display:block; margin:0 auto;">
+    </div>
+    @endif
+    <div class="center bold">{{ $appName }}</div>
+    @if($storeAddress)
+    <div class="center text-sm">{{ $storeAddress }}</div>
+    @endif
+    @if($storePhone)
+    <div class="center text-sm">Telp: {{ $storePhone }}</div>
+    @endif
     <hr>
 
     <div class="line">
@@ -99,8 +116,7 @@
     @endif
     <hr>
 
-    <div class="center text-sm">Terima kasih telah berbelanja!</div>
-    <div class="center text-sm">Barang yang sudah dibeli tidak dapat ditukar</div>
+    <div class="center text-sm">{{ $receiptFooter }}</div>
     <br>
 </body>
 </html>

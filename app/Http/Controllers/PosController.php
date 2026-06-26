@@ -20,7 +20,12 @@ class PosController extends Controller
         $outlets = \App\Models\Outlet::where('active', true)->get();
         $paymentMethods = PaymentMethod::where('active', true)->get();
         $taxPercent = (float) (\App\Models\SystemSetting::getValue('tax_percent', '0'));
-        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent'));
+        $appName = \App\Models\SystemSetting::getAppName();
+        $appLogo = \App\Models\SystemSetting::getLogoUrl();
+        $receiptFooter = \App\Models\SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!');
+        $storeAddress = \App\Models\SystemSetting::getValue('store_address', '');
+        $storePhone = \App\Models\SystemSetting::getValue('store_phone', '');
+        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent', 'appName', 'appLogo', 'receiptFooter', 'storeAddress', 'storePhone'));
     }
 
     public function products(Request $request): JsonResponse
@@ -59,7 +64,33 @@ class PosController extends Controller
         return response()->json($product);
     }
 
-    public function checkout(Request $request): JsonResponse
+    public function receipt(int $id): View
+    {
+        $order = Order::with(['items.product', 'payments', 'customer', 'outlet', 'user'])
+            ->findOrFail($id);
+
+        $orderData = [
+            'order_number' => $order->order_number,
+            'created_at' => $order->created_at,
+            'subtotal' => $order->subtotal,
+            'discount_amount' => $order->discount_amount,
+            'tax_amount' => $order->tax_amount,
+            'total_amount' => $order->total_amount,
+            'customer' => $order->customer ? ['name' => $order->customer->name] : null,
+            'items' => $order->items->map(fn($i) => [
+                'product' => ['name' => $i->product?->name],
+                'quantity' => $i->quantity,
+                'unit_price' => $i->unit_price,
+                'subtotal' => $i->subtotal,
+            ])->toArray(),
+            'payments' => $order->payments->map(fn($p) => ['amount' => $p->amount])->toArray(),
+        ];
+
+        $cashier = $order->user?->name ?? '-';
+        $outlet = $order->outlet?->name ?? 'Outlet';
+
+        return view('prints.receipt', ['order' => $orderData, 'cashier' => $cashier, 'outlet' => $outlet]);
+    }
     {
         $request->validate([
             'items' => 'required|array|min:1',

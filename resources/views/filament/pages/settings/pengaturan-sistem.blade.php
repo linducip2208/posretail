@@ -11,6 +11,16 @@
                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nama Usaha</label>
                         <input type="text" wire:model="app_name" required maxlength="100" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
                     </div>
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Usaha</label>
+                        <input type="text" wire:model="store_address" maxlength="255" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Tampil di struk cetak (opsional).</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Telepon Usaha</label>
+                        <input type="text" wire:model="store_phone" maxlength="50" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Tampil di struk cetak (opsional).</p>
+                    </div>
                 </div>
             </div>
 
@@ -75,11 +85,24 @@
             <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                 <div class="fi-section-header px-6 py-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">Struk / Nota</h3>
+                    <p class="text-sm text-gray-500">Logo dan teks footer yang tampil di struk cetak</p>
                 </div>
-                <div class="fi-section-content p-6 pt-0">
+                <div class="fi-section-content p-6 pt-0 grid gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Logo Struk</label>
+                        @if($currentLogo)
+                        <div class="mb-2">
+                            <img src="{{ $currentLogo }}" class="h-12 border rounded p-1">
+                        </div>
+                        @endif
+                        <input type="file" wire:model="logo" accept="image/png,image/jpg,image/jpeg,image/gif,image/svg+xml" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border text-sm">
+                        <p class="text-xs text-gray-500 mt-1">Maks 2MB. Direkomendasikan lebar max 250px (PNG transparan).</p>
+                        <div wire:loading wire:target="logo" class="text-xs text-blue-600 mt-1">Uploading...</div>
+                    </div>
                     <div>
                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Teks Footer Struk</label>
                         <input type="text" wire:model="receipt_footer" maxlength="255" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white px-4 py-2.5 border">
+                        <p class="text-xs text-gray-500 mt-1">Teks di bagian bawah struk (contoh: "Terima kasih telah berbelanja!").</p>
                     </div>
                 </div>
             </div>
