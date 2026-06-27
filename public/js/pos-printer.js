@@ -106,7 +106,7 @@ const PosPrinter = {
     },
 
     /**
-     * Print to Bluetooth thermal printer using Web Bluetooth API
+     * Print to Bluetooth thermal printer using Web Bluetooth API (auto-pair dialog)
      */
     printBluetooth: async function (orderData, outlet, cashier) {
         try {
@@ -114,108 +114,125 @@ const PosPrinter = {
                 acceptAllDevices: true,
                 optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] // Standard SPP UUID
             });
-
-            const server = await device.gatt.connect();
-            const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
-            const characteristic = await service.getCharacteristic(
-                '00002af1-0000-1000-8000-00805f9b34fb'
-            );
-
-            // Build ESC/POS bytes
-            const encoder = new TextEncoder();
-            const cmd = [];
-
-            // Initialize
-            cmd.push(0x1B, 0x40); // ESC @
-
-            // Center align
-            cmd.push(0x1B, 0x61, 0x01);
-
-            // Header
-            cmd.push(0x1B, 0x45, 0x01); // Bold on
-            cmd.push(...Array.from(encoder.encode(this.config.appName + '\n')));
-            cmd.push(0x1B, 0x45, 0x00); // Bold off
-            if (this.config.storeAddress) {
-                cmd.push(...Array.from(encoder.encode(this.config.storeAddress + '\n')));
-            }
-            if (this.config.storePhone) {
-                cmd.push(...Array.from(encoder.encode('Telp: ' + this.config.storePhone + '\n')));
-            }
-            cmd.push(...Array.from(encoder.encode((outlet || '') + '\n')));
-
-            // Left align
-            cmd.push(0x1B, 0x61, 0x00);
-            cmd.push(...Array.from(encoder.encode('------------------------------\n')));
-
-            // Order info
-            const date = new Date(orderData.created_at);
-            const dateStr = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit' }) +
-                ' ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
-            cmd.push(...Array.from(encoder.encode(`No: ${orderData.order_number}    ${dateStr}\n`)));
-            cmd.push(...Array.from(encoder.encode(`Kasir: ${cashier || '-'}\n`)));
-
-            if (orderData.customer) {
-                cmd.push(...Array.from(encoder.encode('Cust: ' + orderData.customer.name + '\n')));
-            }
-
-            cmd.push(...Array.from(encoder.encode('------------------------------\n')));
-
-            // Items
-            orderData.items.forEach(item => {
-                const name = (item.product?.name || 'Item').substring(0, 16).padEnd(16);
-                const qty = String(item.quantity).padStart(3);
-                const price = ('Rp ' + formatRupiah(item.unit_price)).padStart(12);
-                const subtotal = ('Rp ' + formatRupiah(item.subtotal || item.quantity * item.unit_price)).padStart(12);
-                cmd.push(...Array.from(encoder.encode(`${name}${qty}${price}${subtotal}\n`)));
-            });
-
-            cmd.push(...Array.from(encoder.encode('------------------------------\n')));
-
-            // Totals
-            cmd.push(...Array.from(encoder.encode(`Subtotal          Rp ${String(formatRupiah(orderData.subtotal || 0)).padStart(12)}\n`)));
-            if (orderData.discount_amount > 0) {
-                cmd.push(...Array.from(encoder.encode(`Diskon            Rp ${String(formatRupiah(orderData.discount_amount)).padStart(12)}\n`)));
-            }
-            if (orderData.tax_amount > 0) {
-                cmd.push(...Array.from(encoder.encode(`Pajak             Rp ${String(formatRupiah(orderData.tax_amount)).padStart(12)}\n`)));
-            }
-
-            cmd.push(0x1B, 0x45, 0x01); // Bold on
-            cmd.push(...Array.from(encoder.encode(`TOTAL             Rp ${String(formatRupiah(orderData.total_amount || 0)).padStart(12)}\n`)));
-            cmd.push(0x1B, 0x45, 0x00); // Bold off
-
-            cmd.push(...Array.from(encoder.encode('------------------------------\n')));
-
-            const totalPaid = (orderData.payments || []).reduce((s, p) => s + (p.amount || 0), 0);
-            const change = totalPaid - orderData.total_amount;
-
-            cmd.push(...Array.from(encoder.encode(`Dibayar           Rp ${String(formatRupiah(totalPaid)).padStart(12)}\n`)));
-            if (change > 0) {
-                cmd.push(...Array.from(encoder.encode(`Kembalian         Rp ${String(formatRupiah(change)).padStart(12)}\n`)));
-            }
-
-            cmd.push(...Array.from(encoder.encode('------------------------------\n')));
-
-            // Footer
-            cmd.push(0x1B, 0x61, 0x01); // Center
-            const footerLines = this.config.receiptFooter.split('\n');
-            footerLines.forEach(line => {
-                cmd.push(...Array.from(encoder.encode(line.trim() + '\n')));
-            });
-
-            // Feed + Cut
-            cmd.push(0x1B, 0x64, 0x03); // Feed 3 lines
-            cmd.push(0x1D, 0x56, 0x41, 0x10); // Full cut
-
-            await characteristic.writeValue(new Uint8Array(cmd));
-            await device.gatt.disconnect();
-
-            return true;
+            return await this._sendToBluetooth(device, orderData, outlet, cashier);
         } catch (e) {
             console.error('Bluetooth print error:', e);
             return false;
         }
+    },
+
+    /**
+     * Print to already-paired Bluetooth thermal printer (no dialog)
+     */
+    printBluetoothPaired: async function (device, orderData, outlet, cashier) {
+        try {
+            return await this._sendToBluetooth(device, orderData, outlet, cashier);
+        } catch (e) {
+            console.error('Bluetooth paired print error:', e);
+            return false;
+        }
+    },
+
+    /**
+     * Core ESC/POS builder + send to Bluetooth device
+     */
+    _sendToBluetooth: async function (device, orderData, outlet, cashier) {
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+        const characteristic = await service.getCharacteristic(
+            '00002af1-0000-1000-8000-00805f9b34fb'
+        );
+
+        const encoder = new TextEncoder();
+        const cmd = [];
+
+        // Initialize
+        cmd.push(0x1B, 0x40); // ESC @
+
+        // Center align
+        cmd.push(0x1B, 0x61, 0x01);
+
+        // Header
+        cmd.push(0x1B, 0x45, 0x01); // Bold on
+        cmd.push(...Array.from(encoder.encode(this.config.appName + '\n')));
+        cmd.push(0x1B, 0x45, 0x00); // Bold off
+        if (this.config.storeAddress) {
+            cmd.push(...Array.from(encoder.encode(this.config.storeAddress + '\n')));
+        }
+        if (this.config.storePhone) {
+            cmd.push(...Array.from(encoder.encode('Telp: ' + this.config.storePhone + '\n')));
+        }
+        cmd.push(...Array.from(encoder.encode((outlet || '') + '\n')));
+
+        // Left align
+        cmd.push(0x1B, 0x61, 0x00);
+        cmd.push(...Array.from(encoder.encode('------------------------------\n')));
+
+        // Order info
+        const date = new Date(orderData.created_at);
+        const dateStr = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit' }) +
+            ' ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+        cmd.push(...Array.from(encoder.encode(`No: ${orderData.order_number}    ${dateStr}\n`)));
+        cmd.push(...Array.from(encoder.encode(`Kasir: ${cashier || '-'}\n`)));
+
+        if (orderData.customer) {
+            cmd.push(...Array.from(encoder.encode('Cust: ' + orderData.customer.name + '\n')));
+        }
+
+        cmd.push(...Array.from(encoder.encode('------------------------------\n')));
+
+        // Items
+        (orderData.items || []).forEach(item => {
+            const name = (item.product?.name || 'Item').substring(0, 16).padEnd(16);
+            const qty = String(item.quantity).padStart(3);
+            const price = ('Rp ' + formatRupiah(item.unit_price)).padStart(12);
+            const subtotal = ('Rp ' + formatRupiah(item.subtotal || item.quantity * item.unit_price)).padStart(12);
+            cmd.push(...Array.from(encoder.encode(`${name}${qty}${price}${subtotal}\n`)));
+        });
+
+        cmd.push(...Array.from(encoder.encode('------------------------------\n')));
+
+        // Totals
+        cmd.push(...Array.from(encoder.encode(`Subtotal          Rp ${String(formatRupiah(orderData.subtotal || 0)).padStart(12)}\n`)));
+        if ((orderData.discount_amount || 0) > 0) {
+            cmd.push(...Array.from(encoder.encode(`Diskon            Rp ${String(formatRupiah(orderData.discount_amount)).padStart(12)}\n`)));
+        }
+        if ((orderData.tax_amount || 0) > 0) {
+            cmd.push(...Array.from(encoder.encode(`Pajak             Rp ${String(formatRupiah(orderData.tax_amount)).padStart(12)}\n`)));
+        }
+
+        cmd.push(0x1B, 0x45, 0x01); // Bold on
+        cmd.push(...Array.from(encoder.encode(`TOTAL             Rp ${String(formatRupiah(orderData.total_amount || 0)).padStart(12)}\n`)));
+        cmd.push(0x1B, 0x45, 0x00); // Bold off
+
+        cmd.push(...Array.from(encoder.encode('------------------------------\n')));
+
+        const totalPaid = (orderData.payments || []).reduce((s, p) => s + (p.amount || 0), 0);
+        const change = totalPaid - (orderData.total_amount || 0);
+
+        cmd.push(...Array.from(encoder.encode(`Dibayar           Rp ${String(formatRupiah(totalPaid)).padStart(12)}\n`)));
+        if (change > 0) {
+            cmd.push(...Array.from(encoder.encode(`Kembalian         Rp ${String(formatRupiah(change)).padStart(12)}\n`)));
+        }
+
+        cmd.push(...Array.from(encoder.encode('------------------------------\n')));
+
+        // Footer
+        cmd.push(0x1B, 0x61, 0x01); // Center
+        const footerLines = (this.config.receiptFooter || 'Terima kasih!').split('\n');
+        footerLines.forEach(line => {
+            cmd.push(...Array.from(encoder.encode(line.trim() + '\n')));
+        });
+
+        // Feed + Cut
+        cmd.push(0x1B, 0x64, 0x03); // Feed 3 lines
+        cmd.push(0x1D, 0x56, 0x41, 0x10); // Full cut
+
+        await characteristic.writeValue(new Uint8Array(cmd));
+        await device.gatt.disconnect();
+
+        return true;
     }
 };
 

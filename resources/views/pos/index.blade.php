@@ -517,6 +517,13 @@
                 use_tax: document.getElementById('useTax').checked,
             };
 
+            // Buka window print dulu (sebelum async) supaya ga kena popup blocker
+            const printWin = window.open('', '_blank', 'width=300,height=600');
+            if (printWin) {
+                printWin.document.write('<html><body style="font-family:sans-serif;text-align:center;padding:20px">Memproses...</body></html>');
+                printWin.document.close();
+            }
+
             try {
                 const res = await fetch('/pos/checkout', {
                     method: 'POST',
@@ -524,9 +531,9 @@
                     body: JSON.stringify(payload),
                 });
 
-                // If redirected to login (HTML response)
                 const text = await res.text();
                 if (text.startsWith('<!DOCTYPE') || text.startsWith('<html')) {
+                    if (printWin) printWin.close();
                     alert('Sesi habis. Silakan login dulu.');
                     window.location.href = '/admin/login';
                     return;
@@ -542,19 +549,22 @@
                         document.getElementById('queueDisplay').textContent = '#' + queueNumber;
                         document.getElementById('queueDisplay').classList.remove('hidden');
                     }
-                    printReceipt(orderNumber, paid, data.change || (paid - data.total));
+                    printReceiptToWindow(printWin, orderNumber, paid, data.change || (paid - data.total));
                     cart = [];
                     renderCart();
                 } else {
+                    if (printWin) printWin.close();
                     alert('Gagal: ' + (data.message || 'Unknown error'));
                 }
             } catch (e) {
+                if (printWin) printWin.close();
                 alert('Gagal memproses pembayaran: ' + e.message);
             }
         }
 
         // === PRINT ===
-        function printReceipt(orderNumber, paid, change) {
+        function printReceiptToWindow(win, orderNumber, paid, change) {
+            if (!win) return;
             const total = getTotal();
             const now = new Date();
             const dateStr = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -576,7 +586,6 @@
             }
             headerHtml += `<div class="c" style="font-size:10px">${document.getElementById('outletId').options[document.getElementById('outletId').selectedIndex]?.text || ''}</div>`;
 
-            const win = window.open('', '_blank', 'width=300,height=600');
             win.document.write(`
                 <html><head><style>
                     @page { margin: 0; size: 80mm auto; }
