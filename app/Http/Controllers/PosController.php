@@ -91,6 +91,8 @@ class PosController extends Controller
 
         return view('prints.receipt', ['order' => $orderData, 'cashier' => $cashier, 'outlet' => $outlet]);
     }
+
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'items' => 'required|array|min:1',

@@ -210,6 +210,10 @@
             storePhone: @json($storePhone),
         };
 
+        if (typeof PosPrinter !== 'undefined') {
+            PosPrinter.setConfig(RECEIPT);
+        }
+
         // === USB BARCODE SCANNER ===
         const barcodeInput = document.getElementById('barcodeInput');
         let barcodeBuffer = '';
@@ -570,6 +574,7 @@
             if (RECEIPT.storePhone) {
                 headerHtml += `<div class="c" style="font-size:10px">Telp: ${escapeHtml(RECEIPT.storePhone)}</div>`;
             }
+            headerHtml += `<div class="c" style="font-size:10px">${document.getElementById('outletId').options[document.getElementById('outletId').selectedIndex]?.text || ''}</div>`;
 
             const win = window.open('', '_blank', 'width=300,height=600');
             win.document.write(`
@@ -581,7 +586,6 @@
                     table { width: 100%; } td { padding: 1px 0; }
                 </style></head><body>
                     ${headerHtml}
-                    <div class="c" style="font-size:10px">${document.getElementById('outletId').options[document.getElementById('outletId').selectedIndex]?.text || ''}</div>
                     <hr>
                     <div>No: ${orderNumber}<span style="float:right">${dateStr}</span></div>
                     <hr>
@@ -713,5 +717,6 @@
             } catch(e) {}
         }, 4 * 60 * 1000);
     </script>
+    <script src="{{ asset('js/pos-printer.js') }}"></script>
 </body>
 </html>

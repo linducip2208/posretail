@@ -57,6 +57,21 @@ class PengaturanSistem extends Page
         $this->store_phone = SystemSetting::getValue('store_phone', '');
     }
 
+    public function deleteLogo(): void
+    {
+        $oldLogo = SystemSetting::getValue('app_logo');
+        if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
+            Storage::disk('public')->delete($oldLogo);
+        }
+        SystemSetting::setValue('app_logo', '', (int) $this->outlet_id);
+        $this->currentLogo = null;
+
+        Notification::make()
+            ->title('Logo berhasil dihapus!')
+            ->success()
+            ->send();
+    }
+
     public function save(): void
     {
         if ($this->logo) {

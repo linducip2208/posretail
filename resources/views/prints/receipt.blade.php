@@ -45,6 +45,7 @@
     @if($storePhone)
     <div class="center text-sm">Telp: {{ $storePhone }}</div>
     @endif
+    <div class="center text-sm">{{ $outlet ?? 'Outlet' }}</div>
     <hr>
 
     <div class="line">

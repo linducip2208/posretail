@@ -49,6 +49,7 @@ const PosPrinter = {
         if (this.config.storePhone) {
             headerHtml += `<div class="center" style="font-size:10px">Telp: ${this._esc(this.config.storePhone)}</div>`;
         }
+        headerHtml += `<div class="center" style="font-size:10px">${outlet || ''}</div>`;
 
         const html = `
         <!DOCTYPE html>
@@ -140,6 +141,7 @@ const PosPrinter = {
             if (this.config.storePhone) {
                 cmd.push(...Array.from(encoder.encode('Telp: ' + this.config.storePhone + '\n')));
             }
+            cmd.push(...Array.from(encoder.encode((outlet || '') + '\n')));
 
             // Left align
             cmd.push(0x1B, 0x61, 0x00);
