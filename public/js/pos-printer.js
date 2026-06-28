@@ -10,6 +10,11 @@ const PosPrinter = {
         receiptFooter: 'Terima kasih telah berbelanja!',
         storeAddress: '',
         storePhone: '',
+        showLogo: true,
+        showName: true,
+        showAddress: true,
+        showPhone: true,
+        showFooter: true,
     },
 
     setConfig: function(config) {
@@ -39,14 +44,16 @@ const PosPrinter = {
         const change = totalPaid - orderData.total_amount;
 
         let headerHtml = '';
-        if (this.config.appLogo) {
+        if (this.config.showLogo && this.config.appLogo) {
             headerHtml += `<div class="center" style="margin-bottom:2mm"><img src="${this.config.appLogo}" style="max-width:60mm; max-height:20mm; display:block; margin:0 auto;" onerror="this.style.display='none'"></div>`;
         }
-        headerHtml += `<div class="center bold">${this._esc(this.config.appName)}</div>`;
-        if (this.config.storeAddress) {
+        if (this.config.showName) {
+            headerHtml += `<div class="center bold">${this._esc(this.config.appName)}</div>`;
+        }
+        if (this.config.showAddress && this.config.storeAddress) {
             headerHtml += `<div class="center" style="font-size:10px">${this._esc(this.config.storeAddress)}</div>`;
         }
-        if (this.config.storePhone) {
+        if (this.config.showPhone && this.config.storePhone) {
             headerHtml += `<div class="center" style="font-size:10px">Telp: ${this._esc(this.config.storePhone)}</div>`;
         }
         headerHtml += `<div class="center" style="font-size:10px">${outlet || ''}</div>`;
@@ -89,7 +96,7 @@ const PosPrinter = {
             <div class="line"><span>Dibayar</span><span>Rp ${formatRupiah(totalPaid)}</span></div>
             ${change > 0 ? '<div class="line"><span>Kembali</span><span>Rp ' + formatRupiah(change) + '</span></div>' : ''}
             <hr>
-            <div class="center" style="font-size:10px">${this._esc(this.config.receiptFooter)}</div>
+            ${this.config.showFooter ? `<div class="center" style="font-size:10px">${this._esc(this.config.receiptFooter)}</div>` : ''}
             <br>
             <script>window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); }</` + `script>
         </body>
@@ -153,13 +160,15 @@ const PosPrinter = {
         cmd.push(0x1B, 0x61, 0x01);
 
         // Header
-        cmd.push(0x1B, 0x45, 0x01); // Bold on
-        cmd.push(...Array.from(encoder.encode(this.config.appName + '\n')));
-        cmd.push(0x1B, 0x45, 0x00); // Bold off
-        if (this.config.storeAddress) {
+        if (this.config.showName) {
+            cmd.push(0x1B, 0x45, 0x01); // Bold on
+            cmd.push(...Array.from(encoder.encode(this.config.appName + '\n')));
+            cmd.push(0x1B, 0x45, 0x00); // Bold off
+        }
+        if (this.config.showAddress && this.config.storeAddress) {
             cmd.push(...Array.from(encoder.encode(this.config.storeAddress + '\n')));
         }
-        if (this.config.storePhone) {
+        if (this.config.showPhone && this.config.storePhone) {
             cmd.push(...Array.from(encoder.encode('Telp: ' + this.config.storePhone + '\n')));
         }
         cmd.push(...Array.from(encoder.encode((outlet || '') + '\n')));
@@ -219,11 +228,13 @@ const PosPrinter = {
         cmd.push(...Array.from(encoder.encode('------------------------------\n')));
 
         // Footer
-        cmd.push(0x1B, 0x61, 0x01); // Center
-        const footerLines = (this.config.receiptFooter || 'Terima kasih!').split('\n');
-        footerLines.forEach(line => {
-            cmd.push(...Array.from(encoder.encode(line.trim() + '\n')));
-        });
+        if (this.config.showFooter) {
+            cmd.push(0x1B, 0x61, 0x01); // Center
+            const footerLines = (this.config.receiptFooter || 'Terima kasih!').split('\n');
+            footerLines.forEach(line => {
+                cmd.push(...Array.from(encoder.encode(line.trim() + '\n')));
+            });
+        }
 
         // Feed + Cut
         cmd.push(0x1B, 0x64, 0x03); // Feed 3 lines

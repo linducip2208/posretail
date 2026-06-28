@@ -206,8 +206,14 @@
             appName: @json($appName),
             appLogo: @json($appLogo),
             footer: @json($receiptFooter),
+            receiptFooter: @json($receiptFooter),
             storeAddress: @json($storeAddress),
             storePhone: @json($storePhone),
+            showLogo: @json($receiptShowLogo),
+            showName: @json($receiptShowName),
+            showAddress: @json($receiptShowAddress),
+            showPhone: @json($receiptShowPhone),
+            showFooter: @json($receiptShowFooter),
         };
 
         if (typeof PosPrinter !== 'undefined') {
@@ -574,14 +580,16 @@
             ).join('');
 
             let headerHtml = '';
-            if (RECEIPT.appLogo) {
+            if (RECEIPT.showLogo && RECEIPT.appLogo) {
                 headerHtml += `<div class="c" style="margin-bottom:2mm"><img src="${RECEIPT.appLogo}" style="max-width:60mm; max-height:20mm; display:block; margin:0 auto;" onerror="this.style.display='none'"></div>`;
             }
-            headerHtml += `<div class="c b">${escapeHtml(RECEIPT.appName)}</div>`;
-            if (RECEIPT.storeAddress) {
+            if (RECEIPT.showName) {
+                headerHtml += `<div class="c b">${escapeHtml(RECEIPT.appName)}</div>`;
+            }
+            if (RECEIPT.showAddress && RECEIPT.storeAddress) {
                 headerHtml += `<div class="c" style="font-size:10px">${escapeHtml(RECEIPT.storeAddress)}</div>`;
             }
-            if (RECEIPT.storePhone) {
+            if (RECEIPT.showPhone && RECEIPT.storePhone) {
                 headerHtml += `<div class="c" style="font-size:10px">Telp: ${escapeHtml(RECEIPT.storePhone)}</div>`;
             }
             headerHtml += `<div class="c" style="font-size:10px">${document.getElementById('outletId').options[document.getElementById('outletId').selectedIndex]?.text || ''}</div>`;
@@ -608,7 +616,7 @@
                     <div>Dibayar<span style="float:right">${formatRupiah(paid)}</span></div>
                     <div>Kembali<span style="float:right">${formatRupiah(change)}</span></div>
                     <hr>
-                    <div class="c" style="font-size:10px">${escapeHtml(RECEIPT.footer)}</div>
+                    ${RECEIPT.showFooter ? `<div class="c" style="font-size:10px">${escapeHtml(RECEIPT.footer)}</div>` : ''}
                     <script>window.onload=function(){ window.print(); setTimeout(function(){ window.close(); }, 500); }</` + `script>
                 </body></html>
             `);

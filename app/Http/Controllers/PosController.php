@@ -25,7 +25,12 @@ class PosController extends Controller
         $receiptFooter = \App\Models\SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!');
         $storeAddress = \App\Models\SystemSetting::getValue('store_address', '');
         $storePhone = \App\Models\SystemSetting::getValue('store_phone', '');
-        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent', 'appName', 'appLogo', 'receiptFooter', 'storeAddress', 'storePhone'));
+        $receiptShowLogo = \App\Models\SystemSetting::getBool('receipt_show_logo', true);
+        $receiptShowName = \App\Models\SystemSetting::getBool('receipt_show_name', true);
+        $receiptShowAddress = \App\Models\SystemSetting::getBool('receipt_show_address', true);
+        $receiptShowPhone = \App\Models\SystemSetting::getBool('receipt_show_phone', true);
+        $receiptShowFooter = \App\Models\SystemSetting::getBool('receipt_show_footer', true);
+        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent', 'appName', 'appLogo', 'receiptFooter', 'storeAddress', 'storePhone', 'receiptShowLogo', 'receiptShowName', 'receiptShowAddress', 'receiptShowPhone', 'receiptShowFooter'));
     }
 
     public function products(Request $request): JsonResponse

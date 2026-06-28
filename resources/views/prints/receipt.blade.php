@@ -32,17 +32,24 @@
         $receiptFooter = \App\Models\SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!');
         $storeAddress = \App\Models\SystemSetting::getValue('store_address', '');
         $storePhone = \App\Models\SystemSetting::getValue('store_phone', '');
+        $showLogo = \App\Models\SystemSetting::getBool('receipt_show_logo', true);
+        $showName = \App\Models\SystemSetting::getBool('receipt_show_name', true);
+        $showAddress = \App\Models\SystemSetting::getBool('receipt_show_address', true);
+        $showPhone = \App\Models\SystemSetting::getBool('receipt_show_phone', true);
+        $showFooter = \App\Models\SystemSetting::getBool('receipt_show_footer', true);
     @endphp
-    @if($appLogo)
+    @if($showLogo && $appLogo)
     <div class="center" style="margin-bottom:2mm">
         <img src="{{ $appLogo }}" alt="{{ $appName }}" style="max-width:60mm; max-height:20mm; display:block; margin:0 auto;">
     </div>
     @endif
+    @if($showName)
     <div class="center bold">{{ $appName }}</div>
-    @if($storeAddress)
+    @endif
+    @if($showAddress && $storeAddress)
     <div class="center text-sm">{{ $storeAddress }}</div>
     @endif
-    @if($storePhone)
+    @if($showPhone && $storePhone)
     <div class="center text-sm">Telp: {{ $storePhone }}</div>
     @endif
     <div class="center text-sm">{{ $outlet ?? 'Outlet' }}</div>
@@ -117,7 +124,9 @@
     @endif
     <hr>
 
+    @if($showFooter)
     <div class="center text-sm">{{ $receiptFooter }}</div>
+    @endif
     <br>
 </body>
 </html>

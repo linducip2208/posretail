@@ -38,6 +38,11 @@ class PengaturanSistem extends Page
     public $currentLogo = null;
     public $store_address = '';
     public $store_phone = '';
+    public bool $receipt_show_logo = true;
+    public bool $receipt_show_name = true;
+    public bool $receipt_show_address = true;
+    public bool $receipt_show_phone = true;
+    public bool $receipt_show_footer = true;
 
     public function mount(): void
     {
@@ -55,6 +60,11 @@ class PengaturanSistem extends Page
         $this->currentLogo = SystemSetting::getLogoUrl();
         $this->store_address = SystemSetting::getValue('store_address', '');
         $this->store_phone = SystemSetting::getValue('store_phone', '');
+        $this->receipt_show_logo = SystemSetting::getBool('receipt_show_logo', true);
+        $this->receipt_show_name = SystemSetting::getBool('receipt_show_name', true);
+        $this->receipt_show_address = SystemSetting::getBool('receipt_show_address', true);
+        $this->receipt_show_phone = SystemSetting::getBool('receipt_show_phone', true);
+        $this->receipt_show_footer = SystemSetting::getBool('receipt_show_footer', true);
     }
 
     public function deleteLogo(): void
@@ -98,6 +108,11 @@ class PengaturanSistem extends Page
         SystemSetting::setValue('pos_features', (string) $this->pos_features);
         SystemSetting::setValue('store_address', (string) $this->store_address);
         SystemSetting::setValue('store_phone', (string) $this->store_phone);
+        SystemSetting::setValue('receipt_show_logo', $this->receipt_show_logo ? '1' : '0');
+        SystemSetting::setValue('receipt_show_name', $this->receipt_show_name ? '1' : '0');
+        SystemSetting::setValue('receipt_show_address', $this->receipt_show_address ? '1' : '0');
+        SystemSetting::setValue('receipt_show_phone', $this->receipt_show_phone ? '1' : '0');
+        SystemSetting::setValue('receipt_show_footer', $this->receipt_show_footer ? '1' : '0');
 
         Notification::make()
             ->title('Pengaturan berhasil disimpan!')

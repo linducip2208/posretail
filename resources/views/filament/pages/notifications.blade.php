@@ -8,7 +8,7 @@
         </div>
         @if($this->unreadCount > 0)
         <button wire:click="markAllRead" wire:loading.attr="disabled"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50">
+            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50">
             <x-filament::icon icon="heroicon-o-check-badge" class="w-4 h-4" />
             Tandai Semua Dibaca
         </button>
@@ -30,14 +30,14 @@
         @endphp
         <div @class([
             'bg-white dark:bg-gray-800 rounded-xl shadow-sm border p-5',
-            'border-primary-300 dark:border-primary-700 border-l-4' => is_null($notification->read_at),
+            'border-blue-300 dark:border-blue-700 border-l-4' => is_null($notification->read_at),
             'border-gray-100 dark:border-gray-700' => !is_null($notification->read_at),
         ])>
             <div class="flex items-start gap-4">
                 <div class="mt-0.5 flex-shrink-0">
                     <x-filament::icon :icon="$icon" @class([
                         'w-5 h-5',
-                        'text-primary-500' => is_null($notification->read_at),
+                        'text-blue-500' => is_null($notification->read_at),
                         'text-gray-400 dark:text-gray-500' => !is_null($notification->read_at),
                     ]) />
                 </div>
@@ -47,7 +47,7 @@
                             {{ class_basename($notification->type) }}
                         </span>
                         @if(is_null($notification->read_at))
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
                             Baru
                         </span>
                         @endif
@@ -63,7 +63,7 @@
                         <span class="text-xs text-gray-400 dark:text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
                         @if(is_null($notification->read_at))
                         <button wire:click="markAsRead('{{ $notification->id }}')"
-                            class="text-xs text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 font-medium transition-colors">
+                            class="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors">
                             Tandai Dibaca
                         </button>
                         @else

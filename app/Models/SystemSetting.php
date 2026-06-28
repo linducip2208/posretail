@@ -41,6 +41,13 @@ class SystemSetting extends Model
         );
     }
 
+    public static function getBool(string $key, bool $default = true): bool
+    {
+        $value = static::getValue($key, $default ? '1' : '0');
+
+        return in_array((string) $value, ['1', 'true', 'on', 'yes'], true);
+    }
+
     public static function getLogoUrl(): ?string
     {
         $logo = static::getValue('app_logo');
