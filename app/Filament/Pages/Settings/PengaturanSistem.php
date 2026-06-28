@@ -63,7 +63,7 @@ class PengaturanSistem extends Page
         if ($oldLogo && Storage::disk('public')->exists($oldLogo)) {
             Storage::disk('public')->delete($oldLogo);
         }
-        SystemSetting::setValue('app_logo', '', (int) $this->outlet_id);
+        SystemSetting::setValue('app_logo', '');
         $this->currentLogo = null;
 
         Notification::make()
@@ -83,21 +83,21 @@ class PengaturanSistem extends Page
                 Storage::disk('public')->delete($oldLogo);
             }
             $path = $this->logo->store('settings', 'public');
-            SystemSetting::setValue('app_logo', $path, (int) $this->outlet_id);
+            SystemSetting::setValue('app_logo', $path);
         }
 
-        SystemSetting::setValue('app_name', (string) $this->app_name, (int) $this->outlet_id);
-        SystemSetting::setValue('tax_percent', (string) $this->tax_percent, (int) $this->outlet_id);
-        SystemSetting::setValue('currency', (string) $this->currency, (int) $this->outlet_id);
-        SystemSetting::setValue('receipt_footer', (string) $this->receipt_footer, (int) $this->outlet_id);
-        SystemSetting::setValue('approval_threshold', (string) $this->approval_threshold, (int) $this->outlet_id);
-        SystemSetting::setValue('whatsapp_number', (string) $this->whatsapp_number, (int) $this->outlet_id);
-        SystemSetting::setValue('hero_headline', (string) $this->hero_headline, (int) $this->outlet_id);
-        SystemSetting::setValue('hero_subheadline', (string) $this->hero_subheadline, (int) $this->outlet_id);
-        SystemSetting::setValue('pos_price', (string) $this->pos_price, (int) $this->outlet_id);
-        SystemSetting::setValue('pos_features', (string) $this->pos_features, (int) $this->outlet_id);
-        SystemSetting::setValue('store_address', (string) $this->store_address, (int) $this->outlet_id);
-        SystemSetting::setValue('store_phone', (string) $this->store_phone, (int) $this->outlet_id);
+        SystemSetting::setValue('app_name', (string) $this->app_name);
+        SystemSetting::setValue('tax_percent', (string) $this->tax_percent);
+        SystemSetting::setValue('currency', (string) $this->currency);
+        SystemSetting::setValue('receipt_footer', (string) $this->receipt_footer);
+        SystemSetting::setValue('approval_threshold', (string) $this->approval_threshold);
+        SystemSetting::setValue('whatsapp_number', (string) $this->whatsapp_number);
+        SystemSetting::setValue('hero_headline', (string) $this->hero_headline);
+        SystemSetting::setValue('hero_subheadline', (string) $this->hero_subheadline);
+        SystemSetting::setValue('pos_price', (string) $this->pos_price);
+        SystemSetting::setValue('pos_features', (string) $this->pos_features);
+        SystemSetting::setValue('store_address', (string) $this->store_address);
+        SystemSetting::setValue('store_phone', (string) $this->store_phone);
 
         Notification::make()
             ->title('Pengaturan berhasil disimpan!')

@@ -19,15 +19,24 @@ class SystemSetting extends Model
         return $this->belongsTo(Outlet::class);
     }
 
-    public static function getValue(string $key, mixed $default = null): mixed
+    public static function getValue(string $key, mixed $default = null, ?int $outletId = null): mixed
     {
-        return static::where('key', $key)->value('value') ?? $default;
+        $query = static::where('key', $key);
+
+        if ($outletId !== null) {
+            $value = (clone $query)->where('outlet_id', $outletId)->value('value');
+            if ($value !== null) {
+                return $value;
+            }
+        }
+
+        return $query->orderByRaw('outlet_id IS NOT NULL')->value('value') ?? $default;
     }
 
     public static function setValue(string $key, mixed $value, ?int $outletId = null): void
     {
         static::updateOrCreate(
-            ['key' => $key, 'outlet_id' => $outletId ?? 1],
+            ['key' => $key, 'outlet_id' => $outletId],
             ['value' => $value]
         );
     }
