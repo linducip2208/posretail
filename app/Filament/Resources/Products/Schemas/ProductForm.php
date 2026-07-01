@@ -16,9 +16,11 @@ class ProductForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug((string) $state))),
                 TextInput::make('slug')
-                    ->required(),
+                    ->helperText('Dikosongkan akan dibuat otomatis dari nama produk.'),
                 Textarea::make('description')
                     ->columnSpanFull(),
                 Select::make('category_id')

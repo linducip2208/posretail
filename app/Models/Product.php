@@ -7,10 +7,42 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::saving(function (Product $product) {
+            if (blank($product->slug) && filled($product->name)) {
+                $product->slug = Str::slug($product->name);
+            }
+
+            if (filled($product->slug)) {
+                $product->slug = static::uniqueSlug($product->slug, $product->getKey());
+            }
+        });
+    }
+
+    protected static function uniqueSlug(string $slug, $ignoreId = null): string
+    {
+        $base = Str::slug($slug) ?: 'product';
+        $slug = $base;
+        $i = 2;
+
+        while (
+            static::withTrashed()
+                ->where('slug', $slug)
+                ->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))
+                ->exists()
+        ) {
+            $slug = $base.'-'.$i++;
+        }
+
+        return $slug;
+    }
 
     protected $fillable = [
         'name', 'slug', 'description', 'category_id', 'brand_id',
