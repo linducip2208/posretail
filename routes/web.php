@@ -8,7 +8,6 @@ use App\Http\Controllers\ReportExportController;
 use App\Http\Controllers\ProgrammaticSeoController;
 use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Portal\AuthController;
-use App\Http\Controllers\Portal\PaymentProofController;
 use App\Http\Controllers\Portal\PortalController;
 
 Route::get('/', function () {
@@ -49,7 +48,6 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/', [PortalController::class, 'index'])->name('index');
         Route::post('/lookup', [PortalController::class, 'lookup'])->name('lookup');
         Route::get('/order/{id}', [PortalController::class, 'orderDetail'])->name('order');
-        Route::post('/order/{orderId}/proof', [PaymentProofController::class, 'store'])->name('order.proof');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

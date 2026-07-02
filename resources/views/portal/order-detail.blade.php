@@ -223,60 +223,6 @@
         </div>
     @endif
 
-    @if (in_array($order->payment_status, ['unpaid', 'partial']))
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 card">
-        <h2 class="text-sm font-semibold text-gray-900 mb-4">Upload Bukti Pembayaran</h2>
-
-        @if (session('success'))
-            <div class="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form action="{{ route('portal.order.proof', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-            @csrf
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Upload Gambar (JPG/PNG, max 5MB)</label>
-                <input type="file" name="payment_proof" accept="image/jpeg,image/png,image/webp"
-                       class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
-                @error('payment_proof') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Catatan (opsional)</label>
-                <textarea name="notes" rows="2" maxlength="500"
-                          class="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          placeholder="Contoh: Transfer via BCA, 15 Januari 2026, 14:30"></textarea>
-            </div>
-            <button type="submit"
-                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                Upload Bukti Bayar
-            </button>
-        </form>
-    </div>
-    @endif
-
-    @if ($order->paymentProofs->isNotEmpty())
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 card">
-        <h2 class="text-sm font-semibold text-gray-900 mb-4">Riwayat Upload Bukti Bayar</h2>
-        <div class="space-y-3">
-            @foreach ($order->paymentProofs as $proof)
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                <div class="flex items-center gap-3">
-                    <a href="{{ Storage::url($proof->file_path) }}" target="_blank" class="text-indigo-600 hover:underline text-sm font-medium">
-                        {{ $proof->original_name }}
-                    </a>
-                    <span class="text-xs text-gray-400">{{ $proof->created_at->format('d M Y H:i') }}</span>
-                </div>
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full
-                    {{ $proof->status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : ($proof->status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700') }}">
-                    {{ $proof->status === 'confirmed' ? 'Dikonfirmasi' : ($proof->status === 'rejected' ? 'Ditolak' : 'Menunggu') }}
-                </span>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
 
 </div>
 @endsection
