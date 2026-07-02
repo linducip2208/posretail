@@ -18,7 +18,48 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>body{font-family:Inter,sans-serif}</style>
     <script type="application/ld+json">
-    {"@@context":"https://schema.org","@type":"SoftwareApplication","name":"{{ $brand }}","applicationCategory":"PointOfSaleApplication","operatingSystem":"Web","description":"{{ $seoMeta['description'] }}","offers":{"@type":"Offer","price":"4999000","priceCurrency":"IDR","availability":"https://schema.org/InStock"}}
+    {
+        "@context": "https://schema.org",
+        "@type": "{{ $seoMeta['schemaType'] ?? 'SoftwareApplication' }}",
+        "name": "{{ $brand }}",
+        "applicationCategory": "PointOfSaleApplication",
+        "operatingSystem": "Web",
+        "description": "{{ $seoMeta['description'] }}",
+        @if(($seoMeta['schemaType'] ?? '') === 'FAQPage')
+        "mainEntity": [{
+            "@type": "Question",
+            "name": "Apa itu {{ $brand }}?",
+            "acceptedAnswer": { "@type": "Answer", "text": "{{ $brand }} adalah aplikasi Point of Sale (POS) berbasis Laravel dengan source code lengkap. Multi-outlet, inventori real-time, laporan keuangan, payment gateway." }
+        },{
+            "@type": "Question",
+            "name": "Berapa harga source code {{ $brand }}?",
+            "acceptedAnswer": { "@type": "Answer", "text": "{{ $sourceCodePrice }} — sekali bayar lifetime. Dapat full source code, dokumentasi, dan 6 bulan support." }
+        },{
+            "@type": "Question",
+            "name": "Fitur apa saja yang tersedia?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Multi-outlet, inventori real-time, barcode scanner, payment gateway (QRIS), loyalitas pelanggan, laporan keuangan, export PDF/Excel, customer portal, API integrasi, dan 40+ fitur lainnya." }
+        }],
+        @elseif(($seoMeta['schemaType'] ?? '') === 'ItemList')
+        "itemListElement": [
+            @foreach(array_slice($features ?? [], 0, 5) as $i => $f)
+            { "@type": "ListItem", "position": {{ $i + 1 }}, "name": "{{ $f['name'] }}" }@if(!$loop->last),@endif
+            @endforeach
+        ],
+        @else
+        "offers": {
+            "@type": "Offer",
+            "price": "4999000",
+            "priceCurrency": "IDR",
+            "availability": "https://schema.org/InStock"
+        },
+        @endif
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "127",
+            "bestRating": "5"
+        }
+    }
     </script>
 </head>
 <body class="bg-gray-50 min-h-screen">

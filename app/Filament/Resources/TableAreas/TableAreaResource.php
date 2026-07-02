@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 
 class TableAreaResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '🏪 Master Data';
+    protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $model = TableArea::class;
 

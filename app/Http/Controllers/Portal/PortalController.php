@@ -58,6 +58,7 @@ class PortalController extends Controller
                 'orderItems.product',
                 'orderItems.productVariant',
                 'payments.paymentMethod',
+                'paymentProofs',
                 'outlet',
             ])
             ->findOrFail($id);

@@ -18,7 +18,7 @@ class RawMaterialResource extends Resource
 {
     protected static string|\UnitEnum|null $navigationGroup = '🏪 Master Data';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $model = RawMaterial::class;
 

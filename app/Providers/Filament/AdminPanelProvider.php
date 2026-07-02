@@ -43,12 +43,15 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 '🏪 Master Data',
-                '🛒 Transaksi',
+                '💰 Transaksi',
                 '📦 Pembelian',
+                '💵 Finance',
                 '📋 Inventori',
+                '🔄 Operasional',
                 '⭐ Loyalitas',
                 '📊 Laporan',
                 '📰 Marketing',
+                '🔗 Integrasi',
                 '⚙️ Sistem',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

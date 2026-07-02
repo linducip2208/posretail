@@ -14,6 +14,10 @@ class StatsOverview extends BaseWidget
 
     protected static ?int $sort = 1;
 
+    protected int|string|array $columnSpan = 'full';
+
+    protected ?string $pollingInterval = '30s';
+
     public static function canView(): bool
     {
         $role = auth()->user()?->role;

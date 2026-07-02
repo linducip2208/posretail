@@ -13,6 +13,8 @@ class ManagerChartWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    protected ?string $pollingInterval = '30s';
+
     protected ?string $heading = 'Pendapatan 30 Hari Terakhir';
 
     public static function canView(): bool

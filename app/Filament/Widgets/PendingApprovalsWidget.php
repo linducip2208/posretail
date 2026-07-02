@@ -19,6 +19,8 @@ class PendingApprovalsWidget extends BaseWidget
 
     protected static ?string $heading = 'Menunggu Approval';
 
+    protected ?string $pollingInterval = '30s';
+
     public static function canView(): bool
     {
         return in_array(auth()->user()?->role, ['owner', 'manager', 'admin']);

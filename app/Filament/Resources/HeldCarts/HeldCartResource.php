@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 
 class HeldCartResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '🛒 Transaksi';
+    protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $model = HeldCart::class;
 

@@ -15,6 +15,8 @@ class KasirTodayWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    protected ?string $pollingInterval = '30s';
+
     public static function canView(): bool
     {
         return auth()->user()?->role === 'kasir';

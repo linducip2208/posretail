@@ -17,25 +17,200 @@ class PseoService
         $this->sourceCodePrice = \App\Models\SystemSetting::getValue('pos_price', 'Rp 4.999.000');
     }
 
+    public function getSitemapChunkCount(int $chunkSize): int
+    {
+        return (int) ceil($this->totalPatternCount() / $chunkSize);
+    }
+
+    public function totalPatternCount(): int
+    {
+        $cities = count($this->indonesianCities());
+        $features = count($this->posFeatures());
+        $industries = count($this->industries());
+        $competitors = 12;
+
+        $count = 0;
+
+        $count += $cities * 18;
+        $count += $cities * 5;
+        $count += $features * 3;
+        $count += $industries * 3;
+        $count += $industries * 2;
+        $count += $competitors * 5;
+        $count += 12;
+
+        $count += $cities * min($features, 20) * 4;
+        $count += $cities * $industries * 2;
+
+        $count += $cities * min($features, 15) * $industries * 1;
+        $count += $cities * min($features, 10) * min($features, 10) * 1;
+
+        $count += $cities * ($cities - 1);
+
+        return $count;
+    }
+
+    public function getSitemapChunk(int $offset, int $limit): array
+    {
+        $cities = $this->indonesianCities();
+        $features = $this->posFeatures();
+        $industries = $this->industries();
+        $competitors = [
+            'moka', 'pawoon', 'olsera', 'majoo', 'qasir', 'kasir-pintar',
+            'iseller', 'olsera-pos', 'esb-pos', 'gobiz', 'square', 'loyverse',
+        ];
+
+        $pages = [];
+        $current = 0;
+
+        $cursor = &$current;
+        $result = &$pages;
+        $chunkLimit = $offset + $limit;
+
+        $emit = function (string $url, string $type, string $priority, bool $indexable = true) use (&$current, &$result, $offset, $chunkLimit): bool {
+            if ($current >= $chunkLimit) return false;
+            $current++;
+            if ($current <= $offset) return true;
+            $result[] = [
+                'url' => $url,
+                'type' => $type,
+                'priority' => $priority,
+                'freq' => 'monthly',
+                'lastmod' => date('Y-m-d'),
+            ];
+            return true;
+        };
+
+        $emitMany = function (string $prefix, string $suffix, string $type, string $priority) use ($emit): bool {
+            return $emit("{$prefix}{$suffix}", $type, $priority);
+        };
+
+        $cityPatterns = [
+            'aplikasi-pos', 'software-kasir', 'sistem-kasir', 'program-kasir',
+            'aplikasi-toko', 'aplikasi-kasir', 'point-of-sale', 'pos-system',
+            'aplikasi-pos-murah', 'aplikasi-pos-terbaik', 'aplikasi-pos-terjangkau',
+            'rekomendasi-aplikasi-pos', 'review-aplikasi-pos', 'cara-memilih-pos',
+            'tips-memilih-kasir', 'daftar-aplikasi-pos',
+            'pos-cloud-vs-lokal', 'aplikasi-pos-vs-manual',
+        ];
+
+        foreach ($cities as $city) {
+            $slug = Str::slug($city['name']);
+            foreach ($cityPatterns as $pat) {
+                if (! $emit("/{$pat}-{$slug}", 'city', '0.7')) return $pages;
+            }
+        }
+
+        $scPatterns = ['source-code-pos', 'beli-aplikasi-pos', 'beli-source-code', 'harga-source-code', 'jual-aplikasi-kasir'];
+        foreach ($cities as $city) {
+            $slug = Str::slug($city['name']);
+            foreach ($scPatterns as $pat) {
+                if (! $emit("/{$pat}-{$slug}", 'source-code', '0.9')) return $pages;
+            }
+        }
+
+        foreach ($features as $feat) {
+            $slug = Str::slug($feat['name']);
+            foreach (['aplikasi-kasir-dengan', 'pos-dengan', 'sistem-kasir-dengan'] as $pat) {
+                if (! $emit("/{$pat}-{$slug}", 'feature', '0.7')) return $pages;
+            }
+        }
+
+        foreach ($industries as $ind) {
+            $slug = Str::slug($ind['name']);
+            foreach (['aplikasi-pos-untuk', 'software-kasir-untuk', 'pos-untuk'] as $pat) {
+                if (! $emit("/{$pat}-{$slug}", 'industry', '0.7')) return $pages;
+            }
+        }
+
+        foreach ($industries as $ind) {
+            $slug = Str::slug($ind['name']);
+            if (! $emit("/best-{$slug}", 'best-of', '0.8')) return $pages;
+            if (! $emit("/aplikasi-pos-terbaik-untuk-{$slug}", 'best-of', '0.7')) return $pages;
+        }
+
+        foreach ($competitors as $c) {
+            $cSlug = Str::slug($c);
+            if (! $emit("/alternatif-{$cSlug}", 'alternatives', '0.8')) return $pages;
+            if (! $emit("/alternatives-to-{$cSlug}", 'alternatives', '0.6')) return $pages;
+            if (! $emit("/bandingkan/pos-retail-vs-{$cSlug}", 'compare', '0.8')) return $pages;
+            if (! $emit("/compare/pos-retail-vs-{$cSlug}", 'compare', '0.6')) return $pages;
+            if (! $emit("/bandingkan/{$cSlug}-vs-pos-retail", 'compare', '0.7')) return $pages;
+        }
+
+        $staticPages = [
+            ['url' => '/', 'type' => 'home', 'priority' => '1.0'],
+            ['url' => '/docs', 'type' => 'docs', 'priority' => '0.8'],
+            ['url' => '/pos', 'type' => 'pos', 'priority' => '0.7'],
+            ['url' => '/blog', 'type' => 'blog', 'priority' => '0.9'],
+            ['url' => '/faq', 'type' => 'static', 'priority' => '0.6'],
+            ['url' => '/contact', 'type' => 'static', 'priority' => '0.6'],
+            ['url' => '/beli-aplikasi-pos', 'type' => 'landing', 'priority' => '1.0'],
+            ['url' => '/beli-source-code-pos', 'type' => 'landing', 'priority' => '1.0'],
+            ['url' => '/jual-source-code-pos', 'type' => 'landing', 'priority' => '1.0'],
+            ['url' => '/harga-source-code-pos', 'type' => 'landing', 'priority' => '0.9'],
+            ['url' => '/source-code-aplikasi-pos', 'type' => 'landing', 'priority' => '0.9'],
+            ['url' => '/sitemap', 'type' => 'sitemap', 'priority' => '0.5'],
+        ];
+        foreach ($staticPages as $s) {
+            if (! $emit($s['url'], $s['type'], $s['priority'])) return $pages;
+        }
+
+        $subFeatures = array_slice($features, 0, 20);
+        $comboPatterns = ['aplikasi-pos-fitur', 'software-kasir-fitur', 'source-code-pos-fitur', 'beli-aplikasi-pos-fitur'];
+        foreach ($cities as $city) {
+            $citySlug = Str::slug($city['name']);
+            foreach ($subFeatures as $feat) {
+                $featSlug = Str::slug($feat['name']);
+                foreach ($comboPatterns as $pat) {
+                    if (! $emit("/{$pat}-{$citySlug}-{$featSlug}", 'city-feature', '0.6')) return $pages;
+                }
+            }
+        }
+
+        $indComboPatterns = ['aplikasi-pos-industri', 'software-kasir-industri'];
+        foreach ($cities as $city) {
+            $citySlug = Str::slug($city['name']);
+            foreach ($industries as $ind) {
+                $indSlug = Str::slug($ind['name']);
+                foreach ($indComboPatterns as $pat) {
+                    if (! $emit("/{$pat}-{$citySlug}-{$indSlug}", 'city-industry', '0.6')) return $pages;
+                }
+            }
+        }
+
+        $topFeatures2 = array_slice($features, 0, 15);
+        foreach ($cities as $city) {
+            $citySlug = Str::slug($city['name']);
+            foreach ($topFeatures2 as $feat) {
+                $featSlug = Str::slug($feat['name']);
+                foreach ($industries as $ind) {
+                    $indSlug = Str::slug($ind['name']);
+                    if (! $emit("/aplikasi-pos-{$citySlug}-{$featSlug}-{$indSlug}", 'city-feat-industry', '0.5')) return $pages;
+                }
+            }
+        }
+
+        $topFeatures3 = array_slice($features, 0, 10);
+        foreach ($cities as $city) {
+            $citySlug = Str::slug($city['name']);
+            foreach ($topFeatures3 as $f1) {
+                $f1Slug = Str::slug($f1['name']);
+                foreach ($topFeatures3 as $f2) {
+                    if ($f1['name'] === $f2['name']) continue;
+                    $f2Slug = Str::slug($f2['name']);
+                    if (! $emit("/aplikasi-pos-{$citySlug}-{$f1Slug}-{$f2Slug}", 'city-dual-feature', '0.5')) return $pages;
+                }
+            }
+        }
+
+        return $pages;
+    }
+
     public function getAllPages(): array
     {
         return Cache::remember('pseo.all_pages', 86400, function () {
-            $pages = [];
-
-            $cities = array_slice($this->indonesianCities(), 0, 100);
-            $features = $this->posFeatures();
-            $industries = $this->industries();
-
-            $pages = array_merge($pages, $this->cityPatterns($cities));
-            $pages = array_merge($pages, $this->industryPatterns($industries));
-            $pages = array_merge($pages, $this->featurePatterns($features));
-            $pages = array_merge($pages, $this->sourceCodePatterns($cities));
-            $pages = array_merge($pages, $this->cityFeatureCombos($cities, array_slice($features, 0, 20)));
-            $pages = array_merge($pages, $this->cityIndustryCombos($cities, $industries));
-            $pages = array_merge($pages, $this->comparisonPatterns($industries));
-            $pages = array_merge($pages, $this->staticPatterns());
-
-            return $pages;
+            return $this->getSitemapChunk(0, 5000);
         });
     }
 
@@ -89,25 +264,19 @@ class PseoService
             'daftar-aplikasi-pos' => "Daftar Aplikasi POS Terbaik di {$cityName}",
             'pos-cloud-vs-lokal' => "POS Cloud vs Lokal di {$cityName} — Mana Lebih Baik?",
             'aplikasi-pos-vs-manual' => "Aplikasi POS vs Manual di {$cityName} — Perbandingan",
-            // Industry
             'aplikasi-pos-untuk' => "Aplikasi POS untuk {$industryName} — Solusi Kasir",
             'software-kasir-untuk' => "Software Kasir untuk {$industryName} — POS Retail",
             'pos-untuk' => "POS untuk {$industryName} — Aplikasi Point of Sale",
-            // Feature
             'aplikasi-kasir-dengan' => "Aplikasi Kasir dengan {$featureName} — POS Retail",
             'pos-dengan' => "POS dengan {$featureName} — Point of Sale Lengkap",
             'sistem-kasir-dengan' => "Sistem Kasir dengan {$featureName} — POS Modern",
-            // City+Feature combo
             'aplikasi-pos-fitur' => "Aplikasi POS {$cityName} dengan {$featureName}",
             'software-kasir-fitur' => "Software Kasir {$cityName} — {$featureName}",
-            // City+Industry combo
             'aplikasi-pos-industri' => "Aplikasi POS untuk {$industryName} di {$cityName}",
         ];
 
         $data['seoMeta']['title'] = $titleMap[$pattern] ?? $data['seoMeta']['title'];
-
         $data['seoMeta']['description'] = $this->generateDescription($pattern, $cityName, $featureName, $industryName);
-
         $data['seoMeta']['canonical'] = url("/{$pattern}-{$slug}");
 
         return $data;
@@ -118,6 +287,12 @@ class PseoService
         $base = "{$this->brand} — source code aplikasi Point of Sale / POS lengkap. ";
         $cta = "Beli source code, lifetime update. WA {$this->waNumber}. {$this->sourceCodePrice}.";
 
+        if ($city && $industry) {
+            return "{$base}Solusi POS khusus {$industry} di {$city}. Kelola transaksi, stok, laporan keuangan. {$cta}";
+        }
+        if ($city && $feature) {
+            return "{$base}Cari aplikasi POS {$city} dengan {$feature}? Solusi kasir modern untuk toko, minimarket. {$cta}";
+        }
         if ($city) {
             return "{$base}Cari aplikasi POS di {$city}? Solusi kasir modern untuk toko, minimarket, retail. Multi-outlet, inventori, laporan keuangan. {$cta}";
         }
@@ -131,198 +306,35 @@ class PseoService
         return "{$base}Kelola transaksi, stok, pelanggan, laporan dalam satu dashboard. Multi-outlet support. {$cta}";
     }
 
-    // ================================================================
-    // PATTERN GENERATORS
-    // ================================================================
-
-    protected function cityPatterns(array $cities): array
+    protected function findCity(string $slug): ?array
     {
-        $patterns = [
-            'aplikasi-pos', 'software-kasir', 'sistem-kasir', 'program-kasir',
-            'aplikasi-toko', 'aplikasi-kasir', 'point-of-sale', 'pos-system',
-            'aplikasi-pos-murah', 'aplikasi-pos-terbaik', 'aplikasi-pos-terjangkau',
-            'rekomendasi-aplikasi-pos', 'review-aplikasi-pos', 'cara-memilih-pos',
-            'tips-memilih-kasir', 'daftar-aplikasi-pos',
-            'pos-cloud-vs-lokal', 'aplikasi-pos-vs-manual',
-        ];
-
-        $pages = [];
-        foreach ($cities as $city) {
-            $slug = Str::slug($city['name']);
-            foreach ($patterns as $pattern) {
-                $pages[] = [
-                    'url' => "/{$pattern}-{$slug}",
-                    'title' => "Aplikasi POS " . ucwords($city['name']),
-                    'type' => 'city-pseo',
-                    'priority' => '0.7',
-                    'lastmod' => now()->toAtomString(),
-                ];
+        foreach ($this->indonesianCities() as $city) {
+            if (Str::slug($city['name']) === $slug || Str::contains($slug, Str::slug($city['name']))) {
+                return $city;
             }
         }
-        return $pages;
+        return null;
     }
 
-    protected function sourceCodePatterns(array $cities): array
+    protected function findFeature(string $slug): ?array
     {
-        $patterns = [
-            'source-code-pos', 'beli-aplikasi-pos', 'beli-source-code',
-            'harga-source-code', 'jual-aplikasi-kasir',
-        ];
-
-        $pages = [];
-        foreach ($cities as $city) {
-            $slug = Str::slug($city['name']);
-            foreach ($patterns as $pattern) {
-                $pages[] = [
-                    'url' => "/{$pattern}-{$slug}",
-                    'title' => "Source Code POS " . ucwords($city['name']),
-                    'type' => 'source-code-pseo',
-                    'priority' => '0.9',
-                    'lastmod' => now()->toAtomString(),
-                ];
+        foreach ($this->posFeatures() as $feature) {
+            if (Str::slug($feature['name']) === $slug || Str::contains($slug, Str::slug($feature['name']))) {
+                return $feature;
             }
         }
-        return $pages;
+        return null;
     }
 
-    protected function cityFeatureCombos(array $cities, array $features): array
+    protected function findIndustry(string $slug): ?array
     {
-        $patterns = ['aplikasi-pos-fitur', 'software-kasir-fitur', 'source-code-pos-fitur', 'beli-aplikasi-pos-fitur'];
-        $pages = [];
-
-        foreach ($cities as $city) {
-            $citySlug = Str::slug($city['name']);
-            foreach ($features as $feature) {
-                $featSlug = Str::slug($feature['name']);
-                foreach ($patterns as $pattern) {
-                    $pages[] = [
-                        'url' => "/{$pattern}-{$citySlug}-{$featSlug}",
-                        'title' => "POS {$city['name']} — {$feature['name']}",
-                        'type' => 'city-feature',
-                        'priority' => '0.6',
-                        'lastmod' => now()->toAtomString(),
-                    ];
-                }
+        foreach ($this->industries() as $industry) {
+            if (Str::slug($industry['name']) === $slug || Str::contains($slug, Str::slug($industry['name']))) {
+                return $industry;
             }
         }
-        return $pages;
+        return null;
     }
-
-    protected function cityIndustryCombos(array $cities, array $industries): array
-    {
-        $patterns = ['aplikasi-pos-industri', 'software-kasir-industri'];
-        $pages = [];
-
-        foreach ($cities as $city) {
-            $citySlug = Str::slug($city['name']);
-            foreach ($industries as $industry) {
-                $indSlug = Str::slug($industry['name']);
-                foreach ($patterns as $pattern) {
-                    $pages[] = [
-                        'url' => "/{$pattern}-{$citySlug}-{$indSlug}",
-                        'title' => "POS {$industry['name']} di {$city['name']}",
-                        'type' => 'city-industry',
-                        'priority' => '0.6',
-                        'lastmod' => now()->toAtomString(),
-                    ];
-                }
-            }
-        }
-        return $pages;
-    }
-
-    protected function comparisonPatterns(array $industries): array
-    {
-        $pages = [];
-        $competitors = [
-            'moka', 'pawoon', 'olsera', 'majoo', 'qasir', 'kasir-pintar',
-            'iseller', 'olsera-pos', 'esb-pos', 'gobiz', 'square', 'loyverse',
-        ];
-
-        // /best-{industry} & /aplikasi-pos-terbaik-untuk-{industry}
-        foreach ($industries as $industry) {
-            $slug = Str::slug($industry['name']);
-            $pages[] = ['url' => "/best-{$slug}", 'title' => "Aplikasi POS Terbaik untuk {$industry['name']}", 'type' => 'best-of', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
-            $pages[] = ['url' => "/aplikasi-pos-terbaik-untuk-{$slug}", 'title' => "Aplikasi POS Terbaik untuk {$industry['name']}", 'type' => 'best-of', 'priority' => '0.7', 'lastmod' => now()->toAtomString()];
-        }
-
-        // /alternatif-{competitor}
-        foreach ($competitors as $c) {
-            $name = ucwords(str_replace('-', ' ', $c));
-            $pages[] = ['url' => "/alternatif-{$c}", 'title' => "Alternatif {$name} — Aplikasi POS Pengganti", 'type' => 'alternatives', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
-            $pages[] = ['url' => "/alternatives-to-{$c}", 'title' => "Alternatives to {$name}", 'type' => 'alternatives', 'priority' => '0.6', 'lastmod' => now()->toAtomString()];
-        }
-
-        // /bandingkan/pos-retail-vs-{competitor}
-        foreach ($competitors as $c) {
-            $name = ucwords(str_replace('-', ' ', $c));
-            $pages[] = ['url' => "/bandingkan/pos-retail-vs-{$c}", 'title' => "POS Retail vs {$name}", 'type' => 'compare', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
-            $pages[] = ['url' => "/compare/pos-retail-vs-{$c}", 'title' => "POS Retail vs {$name}", 'type' => 'compare', 'priority' => '0.6', 'lastmod' => now()->toAtomString()];
-        }
-
-        return $pages;
-    }
-
-    protected function industryPatterns(array $industries): array
-    {
-        $patterns = ['aplikasi-pos-untuk', 'software-kasir-untuk', 'pos-untuk'];
-        $pages = [];
-
-        foreach ($industries as $industry) {
-            $slug = Str::slug($industry['name']);
-            foreach ($patterns as $pattern) {
-                $pages[] = [
-                    'url' => "/{$pattern}-{$slug}",
-                    'title' => "POS {$industry['name']}",
-                    'type' => 'industry',
-                    'priority' => '0.7',
-                    'lastmod' => now()->toAtomString(),
-                ];
-            }
-        }
-        return $pages;
-    }
-
-    protected function featurePatterns(array $features): array
-    {
-        $patterns = ['aplikasi-kasir-dengan', 'pos-dengan', 'sistem-kasir-dengan'];
-        $pages = [];
-
-        foreach ($features as $feature) {
-            $slug = Str::slug($feature['name']);
-            foreach ($patterns as $pattern) {
-                $pages[] = [
-                    'url' => "/{$pattern}-{$slug}",
-                    'title' => "POS dengan {$feature['name']}",
-                    'type' => 'feature',
-                    'priority' => '0.7',
-                    'lastmod' => now()->toAtomString(),
-                ];
-            }
-        }
-        return $pages;
-    }
-
-    protected function staticPatterns(): array
-    {
-        $pages = [];
-
-        $pages[] = ['url' => '/', 'title' => 'POS Retail — Solusi Point of Sale', 'type' => 'home', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/docs', 'title' => 'Dokumentasi POS Retail', 'type' => 'docs', 'priority' => '0.8', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/pos', 'title' => 'POS Kasir — Point of Sale', 'type' => 'pos', 'priority' => '0.7', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/beli-aplikasi-pos', 'title' => 'Beli Aplikasi POS — Source Code Point of Sale', 'type' => 'landing', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/beli-source-code-pos', 'title' => 'Beli Source Code POS Retail — Full Source Code', 'type' => 'landing', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/jual-source-code-pos', 'title' => 'Jual Source Code Aplikasi POS — Siap Pakai', 'type' => 'landing', 'priority' => '1.0', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/harga-source-code-pos', 'title' => 'Harga Source Code POS Retail — ' . $this->sourceCodePrice, 'type' => 'landing', 'priority' => '0.9', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/source-code-aplikasi-pos', 'title' => 'Source Code Aplikasi POS — Point of Sale', 'type' => 'landing', 'priority' => '0.9', 'lastmod' => now()->toAtomString()];
-        $pages[] = ['url' => '/sitemap', 'title' => 'Sitemap', 'type' => 'sitemap', 'priority' => '0.5', 'lastmod' => now()->toAtomString()];
-
-        return $pages;
-    }
-
-    // ================================================================
-    // DATA SOURCES
-    // ================================================================
 
     public function indonesianCities(): array
     {
@@ -439,35 +451,5 @@ class PseoService
             ['name' => 'Toko Aksesoris'], ['name' => 'Toko Jam'], ['name' => 'Optik'],
             ['name' => 'Toko Foto Copy'], ['name' => 'Percetakan'],
         ];
-    }
-
-    protected function findCity(string $slug): ?array
-    {
-        foreach ($this->indonesianCities() as $city) {
-            if (Str::slug($city['name']) === $slug || Str::contains($slug, Str::slug($city['name']))) {
-                return $city;
-            }
-        }
-        return null;
-    }
-
-    protected function findFeature(string $slug): ?array
-    {
-        foreach ($this->posFeatures() as $feature) {
-            if (Str::slug($feature['name']) === $slug || Str::contains($slug, Str::slug($feature['name']))) {
-                return $feature;
-            }
-        }
-        return null;
-    }
-
-    protected function findIndustry(string $slug): ?array
-    {
-        foreach ($this->industries() as $industry) {
-            if (Str::slug($industry['name']) === $slug || Str::contains($slug, Str::slug($industry['name']))) {
-                return $industry;
-            }
-        }
-        return null;
     }
 }

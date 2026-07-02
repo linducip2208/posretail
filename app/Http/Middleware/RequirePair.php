@@ -48,9 +48,29 @@ class RequirePair
         // Public marketing & docs (accessible without license)
         if ($path === '/' || $path === '') return true;
         if ($path === '/docs' || str_starts_with($path, '/docs/')) return true;
-        if ($path === '/sitemap.xml') return true;
+        if ($path === '/sitemap.xml' || str_starts_with($path, '/sitemap-')) return true;
+        if ($path === '/sitemap') return true;
         if ($path === '/robots.txt') return true;
         if (str_starts_with($path, '/marketing/')) return true;
+
+        // Blog (public content, SEO)
+        if (str_starts_with($path, '/blog')) return true;
+
+        // FAQ & Contact (public)
+        if ($path === '/faq' || $path === '/contact') return true;
+
+        // PSEO routes (public marketing pages)
+        $pseoPrefixes = [
+            '/beli-', '/jual-', '/harga-', '/source-code-',
+            '/bandingkan/', '/compare/', '/alternatif-', '/alternatives-to-',
+            '/best-', '/aplikasi-pos-', '/aplikasi-kasir-', '/aplikasi-toko-',
+            '/software-kasir-', '/sistem-kasir-', '/program-kasir-',
+            '/point-of-sale-', '/pos-system-', '/daftar-', '/rekomendasi-',
+            '/tips-', '/cara-', '/review-', '/pos-',
+        ];
+        foreach ($pseoPrefixes as $prefix) {
+            if (str_starts_with($path, $prefix)) return true;
+        }
 
         // Portal customer area (accessible without license)
         if (str_starts_with($path, '/portal')) return true;
@@ -59,7 +79,7 @@ class RequirePair
         if (str_starts_with($path, '/api/')) return true;
 
         // Localhost dev bypass
-        if (config('license.dev_bypass') && app()->environment('local')) {
+        if (config('license.dev_bypass') && (app()->environment('local') || app()->environment('testing'))) {
             $host = $request->getHost();
             if ($this->isDevHost($host)) return true;
         }

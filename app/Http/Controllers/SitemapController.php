@@ -12,31 +12,52 @@ class SitemapController extends Controller
 {
     protected PseoService $pseo;
 
+    protected int $chunkSize = 50000;
+
     public function __construct(PseoService $pseo)
     {
         $this->pseo = $pseo;
     }
 
-    /**
-     * Sitemap index — limits to 10k URLs per file to avoid memory exhaustion.
-     * /sitemap.xml routes to this if we use index.
-     * For shared hosting, just return the first 10000 URLs directly.
-     */
     public function index(): Response
     {
-        $xml = Cache::remember('sitemap.xml', 86400, function () {
+        $xml = Cache::remember('sitemap.index', 86400, function () {
             $baseUrl = rtrim(config('app.url'), '/');
+            $today = date('Y-m-d');
 
             $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+            $xml .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-            // Static pages (priority)
+            $xml .= "  <sitemap>\n    <loc>{$baseUrl}/sitemap-static.xml</loc>\n    <lastmod>{$today}</lastmod>\n  </sitemap>\n";
+
+            $count = BlogPost::published()->count();
+            if ($count > 0) {
+                $xml .= "  <sitemap>\n    <loc>{$baseUrl}/sitemap-blog.xml</loc>\n    <lastmod>{$today}</lastmod>\n  </sitemap>\n";
+            }
+
+            $totalChunks = $this->pseo->getSitemapChunkCount($this->chunkSize);
+
+            for ($i = 0; $i < $totalChunks; $i++) {
+                $xml .= "  <sitemap>\n    <loc>{$baseUrl}/sitemap-pseo-{$i}.xml</loc>\n    <lastmod>{$today}</lastmod>\n  </sitemap>\n";
+            }
+
+            $xml .= '</sitemapindex>';
+            return $xml;
+        });
+
+        return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
+    }
+
+    public function staticSitemap(): Response
+    {
+        $xml = Cache::remember('sitemap.static', 86400, function () {
+            $baseUrl = rtrim(config('app.url'), '/');
+
             $static = [
                 ['url' => '/', 'priority' => '1.0', 'freq' => 'daily'],
                 ['url' => '/docs', 'priority' => '0.8', 'freq' => 'weekly'],
                 ['url' => '/pos', 'priority' => '0.7', 'freq' => 'monthly'],
                 ['url' => '/blog', 'priority' => '0.9', 'freq' => 'daily'],
-                ['url' => '/blog/feed.xml', 'priority' => '0.5', 'freq' => 'daily'],
                 ['url' => '/faq', 'priority' => '0.6', 'freq' => 'monthly'],
                 ['url' => '/contact', 'priority' => '0.6', 'freq' => 'monthly'],
                 ['url' => '/beli-aplikasi-pos', 'priority' => '1.0', 'freq' => 'daily'],
@@ -44,64 +65,98 @@ class SitemapController extends Controller
                 ['url' => '/jual-source-code-pos', 'priority' => '1.0', 'freq' => 'daily'],
                 ['url' => '/harga-source-code-pos', 'priority' => '0.9', 'freq' => 'daily'],
                 ['url' => '/source-code-aplikasi-pos', 'priority' => '0.9', 'freq' => 'daily'],
+                ['url' => '/sitemap', 'priority' => '0.5', 'freq' => 'monthly'],
             ];
 
-            foreach ($static as $s) {
-                $xml .= $this->urlTag($baseUrl, $s['url'], $s['priority'], $s['freq']);
-            }
-
-            // Blog posts
-            BlogPost::published()->chunk(500, function ($posts) use (&$xml, $baseUrl) {
-                foreach ($posts as $post) {
-                    $xml .= $this->urlTag($baseUrl, '/blog/'.$post->slug, '0.8', 'weekly', $post->updated_at->format('Y-m-d'));
-                }
-            });
-
-            // PSEO pages — stream in chunks, max 5000
-            $pseoPages = $this->pseo->getAllPages();
-            $count = 0;
-            foreach ($pseoPages as $page) {
-                if ($count >= 5000) break;
-                $xml .= $this->urlTag($baseUrl, $page['url'], $page['priority'] ?? '0.5', 'monthly');
-                $count++;
-            }
-
-            $xml .= '</urlset>';
-            return $xml;
+            return $this->buildUrlset($static, $baseUrl);
         });
 
         return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
     }
 
-    protected function urlTag(string $base, string $url, string $priority, string $freq, ?string $lastmod = null): string
+    public function blogSitemap(): Response
     {
-        $s = "  <url>\n";
-        $s .= '    <loc>' . htmlspecialchars($base . $url, ENT_XML1, 'UTF-8') . "</loc>\n";
-        if ($lastmod) {
-            $s .= '    <lastmod>' . $lastmod . "</lastmod>\n";
-        } else {
-            $s .= '    <lastmod>' . date('Y-m-d') . "</lastmod>\n";
+        $xml = Cache::remember('sitemap.blog', 86400, function () {
+            $baseUrl = rtrim(config('app.url'), '/');
+            $pages = [];
+
+            BlogPost::published()->chunk(500, function ($posts) use (&$pages) {
+                foreach ($posts as $post) {
+                    $pages[] = [
+                        'url' => '/blog/' . $post->slug,
+                        'priority' => '0.8',
+                        'freq' => 'weekly',
+                        'lastmod' => $post->updated_at->format('Y-m-d'),
+                    ];
+                }
+            });
+
+            return $this->buildUrlset($pages, $baseUrl);
+        });
+
+        return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
+    }
+
+    public function pseoSitemap(int $chunk): Response
+    {
+        $cacheKey = "sitemap.pseo.{$chunk}";
+
+        $xml = Cache::remember($cacheKey, 86400, function () use ($chunk) {
+            $baseUrl = rtrim(config('app.url'), '/');
+            $offset = $chunk * $this->chunkSize;
+
+            $pages = $this->pseo->getSitemapChunk($offset, $this->chunkSize);
+
+            return $this->buildUrlset($pages, $baseUrl);
+        });
+
+        return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
+    }
+
+    protected function buildUrlset(array $pages, string $baseUrl): string
+    {
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        foreach ($pages as $page) {
+            $xml .= "  <url>\n";
+            $xml .= '    <loc>' . htmlspecialchars($baseUrl . $page['url'], ENT_XML1, 'UTF-8') . "</loc>\n";
+            $xml .= '    <lastmod>' . ($page['lastmod'] ?? date('Y-m-d')) . "</lastmod>\n";
+            $xml .= '    <changefreq>' . ($page['freq'] ?? 'monthly') . "</changefreq>\n";
+            $xml .= '    <priority>' . ($page['priority'] ?? '0.5') . "</priority>\n";
+            $xml .= "  </url>\n";
         }
-        $s .= '    <changefreq>' . $freq . "</changefreq>\n";
-        $s .= '    <priority>' . $priority . "</priority>\n";
-        $s .= "  </url>\n";
-        return $s;
+
+        $xml .= '</urlset>';
+        return $xml;
     }
 
     public function html(): View
     {
-        $pages = Cache::remember('sitemap.html', 86400, function () {
-            $all = $this->pseo->getAllPages();
-            return array_slice($all, 0, 5000);
+        $data = Cache::remember('sitemap.html', 86400, function () {
+            $baseUrl = rtrim(config('app.url'), '/');
+            $totalChunks = $this->pseo->getSitemapChunkCount($this->chunkSize);
+            $totalPseoPages = $totalChunks * $this->chunkSize;
+            $totalBlogPosts = BlogPost::published()->count();
+
+            $samplePages = $this->pseo->getSitemapChunk(0, 200);
+            $grouped = [];
+            foreach ($samplePages as $page) {
+                $type = $page['type'] ?? 'pseo';
+                $grouped[$type][] = $page;
+            }
+
+            $stats = [
+                'total_pseo_pages' => $totalPseoPages,
+                'total_blog_posts' => $totalBlogPosts,
+                'total_chunks' => $totalChunks,
+                'chunk_size' => $this->chunkSize,
+                'estimated_total' => $totalPseoPages + $totalBlogPosts + 12,
+            ];
+
+            return compact('grouped', 'stats');
         });
 
-        $grouped = [];
-        foreach ($pages as $page) {
-            $grouped[$page['type']][] = $page;
-        }
-
-        $totalPages = count($pages);
-
-        return view('pseo.sitemap', compact('grouped', 'totalPages'));
+        return view('pseo.sitemap', $data);
     }
 }

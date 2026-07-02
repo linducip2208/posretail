@@ -101,7 +101,7 @@ class ProgrammaticSeoController extends Controller
         $content .= "<p>Sementara <strong>{$b}</strong> mungkin menawarkan kemudahan setup, model SaaS umumnya mengunci data dan biaya operasional jangka panjang lebih tinggi. Untuk bisnis yang berkembang dan ingin skalabilitas tanpa batasan lisensi per-device, memiliki source code POS adalah investasi yang jauh lebih hemat.</p>";
         $content .= "<p><strong>Kesimpulan:</strong> Jika Anda memprioritaskan kepemilikan, fleksibilitas custom, dan total biaya kepemilikan yang rendah, {$brand} adalah pilihan tepat. Hubungi kami via WhatsApp untuk demo lengkap dan penawaran source code.</p>";
 
-        return view('pseo.generic', $this->baseData($title, $description, url("/bandingkan/{$slug}"), "{$a} vs {$b}: Mana Aplikasi POS Terbaik?", $content));
+        return view('pseo.generic', $this->baseData($title, $description, url("/bandingkan/{$slug}"), "{$a} vs {$b}: Mana Aplikasi POS Terbaik?", $content, 'FAQPage'));
     }
 
     public function alternatives(string $slug): View
@@ -123,7 +123,7 @@ class ProgrammaticSeoController extends Controller
         $content .= "<p><strong>Mengapa {$brand} jadi alternatif {$target} terbaik:</strong></p><ul class='list-disc pl-5 space-y-1 my-4'>{$list}</ul>";
         $content .= "<p>Dengan kepemilikan source code, Anda terhindar dari vendor lock-in dan biaya langganan yang terus naik. Cocok untuk toko, minimarket, supermarket, restoran, hingga distributor. Hubungi kami via WhatsApp untuk demo dan migrasi data dari {$target}.</p>";
 
-        return view('pseo.generic', $this->baseData($title, $description, url("/alternatif-{$slug}"), "Alternatif {$target}: Beralih ke {$brand}", $content));
+        return view('pseo.generic', $this->baseData($title, $description, url("/alternatif-{$slug}"), "Alternatif {$target}: Beralih ke {$brand}", $content, 'SoftwareApplication'));
     }
 
     public function bestCategory(string $slug): View
@@ -154,16 +154,17 @@ class ProgrammaticSeoController extends Controller
         $content .= "<p>Fitur yang sangat berguna untuk {$cat} antara lain: barcode scanner, stok opname, transfer stok antar cabang, program loyalitas pelanggan, integrasi payment gateway (QRIS, GoPay, OVO), dan laporan profit margin per produk. Semua tersedia dalam satu dashboard terintegrasi.</p>";
         $content .= "<p><strong>Kesimpulan:</strong> {$brand} adalah pilihan terbaik untuk {$cat} yang menginginkan solusi POS lengkap, hemat, dan dapat dimiliki selamanya. Hubungi kami via WhatsApp untuk demo dan penawaran source code.</p>";
 
-        return view('pseo.generic', $this->baseData($title, $description, url("/best-{$slug}"), "Aplikasi POS Terbaik untuk {$cat}", $content));
+        return view('pseo.generic', $this->baseData($title, $description, url("/best-{$slug}"), "Aplikasi POS Terbaik untuk {$cat}", $content, 'ItemList'));
     }
 
-    protected function baseData(string $title, string $description, string $canonical, string $heading, string $content): array
+    protected function baseData(string $title, string $description, string $canonical, string $heading, string $content, string $schemaType = 'SoftwareApplication'): array
     {
         return [
             'seoMeta' => [
                 'title' => $title,
                 'description' => $description,
                 'canonical' => $canonical,
+                'schemaType' => $schemaType,
             ],
             'brand' => 'POS Retail',
             'waNumber' => '6281296052010',

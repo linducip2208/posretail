@@ -76,6 +76,11 @@ class Order extends Model
         return $this->hasMany(Installment::class);
     }
 
+    public function paymentProofs(): HasMany
+    {
+        return $this->hasMany(PaymentProof::class);
+    }
+
     public function kitchenTicket(): HasOne
     {
         return $this->hasOne(KitchenTicket::class);

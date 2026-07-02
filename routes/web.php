@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\ReportExportController;
 use App\Http\Controllers\ProgrammaticSeoController;
 use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Portal\AuthController;
+use App\Http\Controllers\Portal\PaymentProofController;
 use App\Http\Controllers\Portal\PortalController;
 
 Route::get('/', function () {
@@ -26,7 +28,14 @@ Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.chec
 Route::get('/admin/orders/{id}/receipt', [PosController::class, 'receipt'])->name('orders.receipt')->middleware('auth');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap-static.xml', [SitemapController::class, 'staticSitemap'])->name('sitemap.static');
+Route::get('/sitemap-blog.xml', [SitemapController::class, 'blogSitemap'])->name('sitemap.blog');
+Route::get('/sitemap-pseo-{chunk}.xml', [SitemapController::class, 'pseoSitemap'])->name('sitemap.pseo')->where('chunk', '[0-9]+');
 Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html');
+
+Route::get('/export/laporan/penjualan', [ReportExportController::class, 'sales'])->name('export.sales')->middleware('auth');
+Route::get('/export/laporan/keuangan', [ReportExportController::class, 'financial'])->name('export.financial')->middleware('auth');
+Route::get('/export/laporan/stok', [ReportExportController::class, 'stock'])->name('export.stock')->middleware('auth');
 
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('guest:customer')->group(function () {
@@ -40,6 +49,7 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/', [PortalController::class, 'index'])->name('index');
         Route::post('/lookup', [PortalController::class, 'lookup'])->name('lookup');
         Route::get('/order/{id}', [PortalController::class, 'orderDetail'])->name('order');
+        Route::post('/order/{orderId}/proof', [PaymentProofController::class, 'store'])->name('order.proof');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
@@ -164,5 +174,7 @@ Route::get('/robots.txt', function () {
     return response($content, 200)
         ->header('Content-Type', 'text/plain; charset=utf-8');
 })->name('robots');
+
+Route::redirect('/login', '/admin/login')->name('login');
 
 require base_path('routes/pair-routes.php');
