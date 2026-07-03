@@ -36,6 +36,11 @@ class ProductsTable
                     ->searchable(),
                 TextColumn::make('barcode')
                     ->searchable(),
+                ImageColumn::make('barcode_image')
+                    ->getStateUsing(fn ($record) => $record->barcode ? route('barcode.image', ['code' => $record->barcode, 'width' => 1, 'height' => 25]) : null)
+                    ->label('Barcode')
+                    ->size(120)
+                    ->defaultImageUrl(null),
                 TextColumn::make('cost_price')
                     ->money('IDR')
                     ->sortable(),

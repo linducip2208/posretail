@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -34,7 +35,16 @@ class ProductForm
                 TextInput::make('sku')
                     ->label('SKU')
                     ->required(),
-                TextInput::make('barcode'),
+                TextInput::make('barcode')
+                    ->unique('products', 'barcode', ignoreRecord: true)
+                    ->suffixAction(
+                        Action::make('generateBarcode')
+                            ->icon('heroicon-m-arrow-path')
+                            ->tooltip('Generate barcode otomatis')
+                            ->action(function ($set) {
+                                $set('barcode', \App\Helpers\BarcodeHelper::generate());
+                            })
+                    ),
                 TextInput::make('cost_price')
                     ->required()
                     ->numeric()

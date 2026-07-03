@@ -5,9 +5,11 @@ namespace App\Filament\Resources\Products\RelationManagers;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -26,7 +28,16 @@ class ProductVariantsRelationManager extends RelationManager
                 TextInput::make('sku')
                     ->required()
                     ->unique('product_variants', 'sku', ignoreRecord: true),
-                TextInput::make('barcode'),
+                TextInput::make('barcode')
+                    ->unique('product_variants', 'barcode', ignoreRecord: true)
+                    ->suffixAction(
+                        Action::make('generateVariantBarcode')
+                            ->icon('heroicon-m-arrow-path')
+                            ->tooltip('Generate barcode otomatis')
+                            ->action(function ($set) {
+                                $set('barcode', \App\Helpers\BarcodeHelper::generate());
+                            })
+                    ),
                 TextInput::make('cost_price')
                     ->numeric()
                     ->default(0),
@@ -48,6 +59,11 @@ class ProductVariantsRelationManager extends RelationManager
                     ->searchable(),
                 TextColumn::make('sku'),
                 TextColumn::make('barcode'),
+                ImageColumn::make('barcode_image')
+                    ->getStateUsing(fn ($record) => $record->barcode ? route('barcode.image', ['code' => $record->barcode, 'width' => 1, 'height' => 25]) : null)
+                    ->label('Barcode')
+                    ->size(120)
+                    ->defaultImageUrl(null),
                 TextColumn::make('cost_price')
                     ->money('IDR'),
                 TextColumn::make('selling_price')

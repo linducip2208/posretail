@@ -9,6 +9,7 @@ use App\Http\Controllers\ProgrammaticSeoController;
 use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Portal\AuthController;
 use App\Http\Controllers\Portal\PortalController;
+use App\Http\Controllers\BarcodeController;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -20,6 +21,8 @@ Route::get('/', function () {
 Route::get('/docs', [DocsController::class, 'index'])->name('docs');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos');
+
+Route::get('/barcode/{code}', [BarcodeController::class, 'show'])->name('barcode.image');
 
 Route::get('/api/pos/products', [PosController::class, 'products']);
 Route::get('/api/pos/barcode/{barcode}', [PosController::class, 'barcode']);
