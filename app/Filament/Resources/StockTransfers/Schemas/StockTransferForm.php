@@ -16,10 +16,10 @@ class StockTransferForm
                 TextInput::make('transfer_number')
                     ->required(),
                 Select::make('from_outlet_id')
-                    ->relationship('fromOutlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required(),
                 Select::make('to_outlet_id')
-                    ->relationship('toOutlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required(),
                 Select::make('user_id')
                     ->relationship('user', 'name')

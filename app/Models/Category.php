@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasOutletScope;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, HasOutletScope;
+
+    protected bool $outletNullable = true;
 
     protected $fillable = [
         'name', 'slug', 'description', 'parent_id', 'outlet_id', 'active',

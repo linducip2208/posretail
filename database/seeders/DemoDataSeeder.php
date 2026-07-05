@@ -230,6 +230,21 @@ class DemoDataSeeder extends Seeder
                 'updated_at' => $now,
             ],
         ]);
+
+        $this->assignRolesToUsers();
+    }
+
+    private function assignRolesToUsers(): void
+    {
+        $roleMap = \App\Models\Role::pluck('id', 'slug');
+        $users = \App\Models\User::all();
+
+        foreach ($users as $user) {
+            $roleSlug = $user->role;
+            if ($roleSlug && isset($roleMap[$roleSlug])) {
+                $user->roles()->sync([$roleMap[$roleSlug]]);
+            }
+        }
     }
 
     // ================================================================

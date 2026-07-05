@@ -31,7 +31,7 @@ class ProductForm
                 Select::make('unit_id')
                     ->relationship('unit', 'name'),
                 Select::make('outlet_id')
-                    ->relationship('outlet', 'name'),
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id')),
                 TextInput::make('sku')
                     ->label('SKU')
                     ->required(),

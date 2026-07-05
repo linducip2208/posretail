@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Models\Role;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -45,6 +46,19 @@ class UserForm
                         'kasir' => 'Kasir',
                         'gudang' => 'Gudang',
                     ]),
+                Select::make('roles')
+                    ->label('Role & Permission')
+                    ->helperText('Role menentukan hak akses user ke menu dan fitur')
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->preload()
+                    ->options(fn () => Role::pluck('name', 'id'))
+                    ->createOptionForm([
+                        TextInput::make('name')->required(),
+                        TextInput::make('slug')->required(),
+                        TextInput::make('description'),
+                    ])
+                    ->createOptionAction(fn ($action) => $action->label('Buat Role Baru')),
             ]);
     }
 }

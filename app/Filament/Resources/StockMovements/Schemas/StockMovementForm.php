@@ -19,7 +19,7 @@ class StockMovementForm
                 Select::make('product_variant_id')
                     ->relationship('productVariant', 'name'),
                 Select::make('outlet_id')
-                    ->relationship('outlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required(),
                 TextInput::make('type')
                     ->required(),

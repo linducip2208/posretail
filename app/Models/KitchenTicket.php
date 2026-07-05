@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\HasOutletScope;
 
 class KitchenTicket extends Model
 {
-    use HasFactory;
+    use HasFactory, HasOutletScope;
 
     protected $fillable = [
         'order_id', 'outlet_id', 'ticket_number', 'status',

@@ -29,6 +29,13 @@ class UsersTable
                         'gudang' => 'gray',
                         default => 'gray',
                     }),
+                TextColumn::make('roles.name')
+                    ->label('Role Permission')
+                    ->badge()
+                    ->color('primary')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -18,7 +18,7 @@ class TableRestoForm
                 TextInput::make('code')
                     ->required(),
                 Select::make('outlet_id')
-                    ->relationship('outlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required(),
                 Select::make('table_area_id')
                     ->relationship('tableArea', 'name'),

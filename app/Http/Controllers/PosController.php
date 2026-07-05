@@ -17,7 +17,7 @@ class PosController extends Controller
 {
     public function index(): View
     {
-        $outlets = \App\Models\Outlet::where('active', true)->get();
+        $outlets = auth()->user()?->accessibleOutlets() ?? \App\Models\Outlet::where('active', true)->get();
         $paymentMethods = PaymentMethod::where('active', true)->get();
         $taxPercent = (float) (\App\Models\SystemSetting::getValue('tax_percent', '0'));
         $appName = \App\Models\SystemSetting::getAppName();
@@ -110,6 +110,11 @@ class PosController extends Controller
             'paid_amount' => 'required|numeric|min:0',
             'use_tax' => 'nullable|boolean',
         ]);
+
+        $user = auth()->user();
+        if ($user && !in_array($request->outlet_id, $user->getAccessibleOutletIds())) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
 
         $order = DB::transaction(function () use ($request) {
             $subtotal = 0;

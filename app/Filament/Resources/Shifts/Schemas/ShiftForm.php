@@ -20,7 +20,7 @@ class ShiftForm
                     ->searchable()
                     ->label('Kasir'),
                 Select::make('outlet_id')
-                    ->relationship('outlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required()
                     ->label('Outlet'),
                 TextInput::make('starting_cash')

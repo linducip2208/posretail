@@ -19,7 +19,7 @@ class RawMaterialForm
                     ->required()
                     ->unique(ignoreRecord: true),
                 Select::make('outlet_id')
-                    ->relationship('outlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required(),
                 Select::make('unit_id')
                     ->relationship('unit', 'name')

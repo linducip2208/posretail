@@ -79,7 +79,8 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/pos')
                     ->icon('heroicon-o-shopping-cart')
                     ->openUrlInNewTab()
-                    ->sort(100),
+                    ->sort(100)
+                    ->visible(fn (): bool => auth()->check() && auth()->user()?->hasPermission('pos-access')),
             ]);
     }
 }

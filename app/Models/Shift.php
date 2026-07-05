@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Traits\HasOutletScope;
 
 class Shift extends Model
 {
-    use HasFactory;
+    use HasFactory, HasOutletScope;
 
     protected $fillable = [
         'outlet_id', 'user_id', 'started_at', 'ended_at',

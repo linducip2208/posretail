@@ -6,10 +6,20 @@ trait DashboardWidgetFilter
 {
     public static function canView(): bool
     {
-        return static::isVisibleToRole(auth()->user()?->role);
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+        return static::isVisibleToRole($user->role)
+            && static::isVisibleToUser($user);
     }
 
     protected static function isVisibleToRole(?string $role): bool
+    {
+        return true;
+    }
+
+    protected static function isVisibleToUser($user): bool
     {
         return true;
     }

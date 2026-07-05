@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasRoles;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,7 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +55,32 @@ class User extends Authenticatable
     public function outlets(): BelongsToMany
     {
         return $this->belongsToMany(Outlet::class, 'user_outlet')->withTimestamps();
+    }
+
+    /**
+     * Get outlet IDs this user can access.
+     * Owner with '*' permission sees all outlets.
+     * Others only see their assigned outlets.
+     */
+    public function getAccessibleOutletIds(): array
+    {
+        if ($this->hasPermission('*')) {
+            return Outlet::pluck('id')->toArray();
+        }
+
+        return $this->outlets()->pluck('outlet_id')->toArray();
+    }
+
+    /**
+     * Get accessible outlets as a query builder.
+     */
+    public function accessibleOutlets()
+    {
+        if ($this->hasPermission('*')) {
+            return Outlet::where('active', true)->orderBy('name');
+        }
+
+        return $this->outlets()->where('active', true)->orderBy('name');
     }
 
     public function orders(): HasMany

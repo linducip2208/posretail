@@ -23,7 +23,7 @@ class CategoryForm
                 Select::make('parent_id')
                     ->relationship('parent', 'name'),
                 Select::make('outlet_id')
-                    ->relationship('outlet', 'name'),
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id')),
                 Toggle::make('active')
                     ->required(),
             ]);

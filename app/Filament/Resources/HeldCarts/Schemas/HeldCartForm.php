@@ -16,7 +16,7 @@ class HeldCartForm
                     ->maxLength(255),
                 Select::make('outlet_id')
                     ->label('Outlet')
-                    ->relationship('outlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required(),
                 Select::make('user_id')
                     ->label('Kasir')

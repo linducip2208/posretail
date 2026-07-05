@@ -23,7 +23,7 @@ class KitchenTicketForm
                     ->dehydrated(),
                 Select::make('outlet_id')
                     ->label('Outlet')
-                    ->relationship('outlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->disabled()
                     ->dehydrated(),
                 TextInput::make('ticket_number')

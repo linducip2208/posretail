@@ -38,7 +38,7 @@ class OrderForm
                     ->relationship('customer', 'name')
                     ->searchable(),
                 Select::make('outlet_id')
-                    ->relationship('outlet', 'name')
+                    ->options(fn () => auth()->user()?->accessibleOutlets()->pluck('name', 'id'))
                     ->required(),
                 Select::make('user_id')
                     ->relationship('user', 'name')
