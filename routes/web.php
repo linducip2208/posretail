@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 Route::get('/docs', [DocsController::class, 'index'])->name('docs');
 
-Route::get('/pos', [PosController::class, 'index'])->name('pos');
+Route::get('/pos', [PosController::class, 'index'])->name('pos')->middleware('auth');
 
 Route::get('/barcode/{code}', [BarcodeController::class, 'show'])->name('barcode.image');
 
