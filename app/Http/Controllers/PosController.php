@@ -17,7 +17,10 @@ class PosController extends Controller
 {
     public function index(): View
     {
-        $outlets = auth()->user()?->accessibleOutlets()?->get() ?? \App\Models\Outlet::where('active', true)->get();
+        $outlets = auth()->user()?->accessibleOutlets()?->get();
+        if ($outlets === null || $outlets->isEmpty()) {
+            $outlets = \App\Models\Outlet::where('active', true)->orderBy('name')->get();
+        }
         $paymentMethods = PaymentMethod::where('active', true)->get();
         $taxPercent = (float) (\App\Models\SystemSetting::getValue('tax_percent', '0'));
         $appName = \App\Models\SystemSetting::getAppName();
