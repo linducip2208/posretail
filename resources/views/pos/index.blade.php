@@ -530,10 +530,15 @@
                     body: JSON.stringify(payload),
                 });
 
-                const text = await res.text();
-                if (text.startsWith('<!DOCTYPE') || text.startsWith('<html')) {
+                if (res.status === 401 || res.status === 419) {
                     alert('Sesi habis. Silakan login dulu.');
                     window.location.href = '/admin/login';
+                    return;
+                }
+
+                const text = await res.text();
+                if (!res.ok && (text.startsWith('<!DOCTYPE') || text.startsWith('<html'))) {
+                    alert('Terjadi kesalahan server. Silakan coba lagi.');
                     return;
                 }
 
