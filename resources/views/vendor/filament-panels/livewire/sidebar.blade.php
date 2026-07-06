@@ -14,7 +14,7 @@
         @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
             x-cloak
         @else
-            x-cloak="-lg"
+            x-cloak
         @endif
         x-bind:class="{ 'fi-sidebar-open': $store.sidebar.isOpen }"
         class="fi-sidebar fi-main-sidebar"

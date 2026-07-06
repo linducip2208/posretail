@@ -31,7 +31,7 @@ class LaporanStok extends Page
 
     public function getOutletsProperty()
     {
-        return auth()->user()?->accessibleOutlets() ?? Outlet::where('active', true)->orderBy('name')->get();
+        return auth()->user()?->accessibleOutlets()?->get() ?? Outlet::where('active', true)->orderBy('name')->get();
     }
 
     public function getTotalStockValueProperty()
