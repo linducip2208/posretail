@@ -191,4 +191,14 @@ class LaporanKeuangan extends Page
             ->orderByDesc('payments.created_at')
             ->get();
     }
+
+    public function getOrdersDetailProperty()
+    {
+        return Order::with(['customer', 'outlet', 'user', 'payments.paymentMethod'])
+            ->whereBetween('created_at', [$this->startDate, $this->endDate.' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
+            ->where('order_status', 'completed')
+            ->latest()
+            ->get();
+    }
 }

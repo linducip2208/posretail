@@ -161,6 +161,68 @@
             </table>
         </div>
     </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mt-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-gray-900">Daftar Transaksi Order</h3>
+            <span class="text-xs text-gray-400">{{ $this->ordersDetail->count() }} order</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left border-b border-gray-100">
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">No. Order</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Tanggal</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Outlet</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Pelanggan</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Subtotal</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Pajak</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Total</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Metode</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($this->ordersDetail as $order)
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50">
+                        <td class="py-3 font-mono text-xs font-semibold">{{ $order->order_number }}</td>
+                        <td class="py-3 text-xs text-gray-500">{{ $order->created_at->format('d/m/y H:i') }}</td>
+                        <td class="py-3 text-xs">{{ $order->outlet?->name ?: '-' }}</td>
+                        <td class="py-3">{{ $order->customer?->name ?: '-' }}</td>
+                        <td class="py-3 text-right">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right">Rp {{ number_format($order->tax_amount, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right font-semibold">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                        <td class="py-3">
+                            @php $pm = $order->payments->first()?->paymentMethod?->name; @endphp
+                            @if($pm)
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                                {{ $pm === 'Cash' || $pm === 'Tunai' ? 'bg-emerald-100 text-emerald-700' : '' }}
+                                {{ $pm === 'QRIS' ? 'bg-indigo-100 text-indigo-700' : '' }}
+                                {{ $pm === 'Transfer' || $pm === 'Debit' ? 'bg-amber-100 text-amber-700' : '' }}">
+                                {{ $pm }}
+                            </span>
+                            @else
+                            <span class="text-gray-400 text-xs">-</span>
+                            @endif
+                        </td>
+                        <td class="py-3">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                                {{ $order->payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : '' }}
+                                {{ $order->payment_status === 'partial' ? 'bg-amber-100 text-amber-700' : '' }}
+                                {{ $order->payment_status === 'unpaid' ? 'bg-red-100 text-red-700' : '' }}">
+                                {{ $order->payment_status === 'paid' ? 'Lunas' : ($order->payment_status === 'partial' ? 'Sebagian' : 'Belum') }}
+                            </span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="9" class="py-10 text-center text-gray-400">Belum ada data transaksi</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
