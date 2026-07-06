@@ -1,12 +1,6 @@
-const CACHE_NAME = 'pos-retail-v2';
+const CACHE_NAME = 'pos-retail-v3';
 
 const STATIC_ASSETS = [
-    '/',
-    '/admin',
-    '/admin/login',
-    '/pos',
-    '/docs',
-    '/manifest.json',
     '/build/assets/theme-BAMPIXKs.css',
 ];
 
@@ -33,7 +27,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
-    // API requests - network first, fallback offline
     if (event.request.url.includes('/api/')) {
         event.respondWith(
             fetch(event.request)
@@ -47,14 +40,5 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Static assets - cache first, network fallback
-    event.respondWith(
-        caches.match(event.request).then(cached => {
-            const fetchPromise = fetch(event.request).then(response => {
-                caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
-                return response;
-            });
-            return cached || fetchPromise;
-        })
-    );
+    event.respondWith(fetch(event.request));
 });
