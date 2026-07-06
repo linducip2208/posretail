@@ -190,8 +190,8 @@
         </div>
     </div>
 
-    {{-- RECEIPT PRINT WINDOW --}}
-    <div id="receiptContent" class="hidden"></div>
+    {{-- RECEIPT PRINT IFRAME — menghindari popup blocker --}}
+    <iframe id="printFrame" name="printFrame" style="display:none" title="Print Receipt"></iframe>
 
     <script>
         const API = '/api/pos';
@@ -523,14 +523,6 @@
                 use_tax: document.getElementById('useTax').checked,
             };
 
-            // Buka window print dulu (sebelum async) supaya ga kena popup blocker
-            const printWin = window.open('', '_blank', 'width=300,height=600');
-            const popupBlocked = !printWin;
-            if (printWin) {
-                printWin.document.write('<html><body style="font-family:sans-serif;text-align:center;padding:20px">Memproses...</body></html>');
-                printWin.document.close();
-            }
-
             try {
                 const res = await fetch('/pos/checkout', {
                     method: 'POST',
@@ -540,7 +532,6 @@
 
                 const text = await res.text();
                 if (text.startsWith('<!DOCTYPE') || text.startsWith('<html')) {
-                    if (printWin) printWin.close();
                     alert('Sesi habis. Silakan login dulu.');
                     window.location.href = '/admin/login';
                     return;
@@ -560,24 +551,19 @@
                     cart = [];
                     renderCart();
 
-                    if (printWin) {
-                        printReceiptToWindow(printWin, cartSnapshot, orderNumber, paid, data.change || (paid - data.total));
-                    } else {
-                        window.open('/admin/orders/' + data.id + '/receipt', '_blank');
-                    }
+                    printToIframe(cartSnapshot, orderNumber, paid, data.change || (paid - data.total));
                 } else {
-                    if (printWin) printWin.close();
                     alert('Gagal: ' + (data.message || 'Unknown error'));
                 }
             } catch (e) {
-                if (printWin) printWin.close();
                 alert('Gagal memproses pembayaran: ' + e.message);
             }
         }
 
-        // === PRINT ===
-        function printReceiptToWindow(win, cartItems, orderNumber, paid, change) {
-            if (!win) return;
+        // === PRINT via IFRAME (tidak kena popup blocker) ===
+        function printToIframe(cartItems, orderNumber, paid, change) {
+            const iframe = document.getElementById('printFrame');
+            if (!iframe) return;
             const subtotal = cartItems.reduce((s, i) => s + (i.price * i.qty), 0);
             const useTax = document.getElementById('useTax').checked;
             const taxRate = parseFloat(document.getElementById('taxRateLabel').textContent);
@@ -604,10 +590,11 @@
             }
             headerHtml += `<div class="c" style="font-size:10px">${document.getElementById('outletId').options[document.getElementById('outletId').selectedIndex]?.text || ''}</div>`;
 
-            win.document.write(`
-                <html><head><style>
+            const receiptHtml = `
+                <!DOCTYPE html>
+                <html><head><meta charset="UTF-8"><style>
                     @page { margin: 0; size: 80mm auto; }
-                    body { font-family: 'Courier New', monospace; font-size: 12px; width: 72mm; margin: 4mm auto; }
+                    body { font-family: 'Courier New', monospace; font-size: 12px; width: 72mm; margin: 4mm auto; -webkit-print-color-adjust: exact; }
                     .c { text-align: center; } .r { text-align: right; } .b { font-weight: bold; }
                     hr { border: none; border-top: 1px dashed #000; }
                     table { width: 100%; } td { padding: 1px 0; }
@@ -628,13 +615,19 @@
                     <hr>
                     ${RECEIPT.showFooter ? `<div class="c" style="font-size:10px">${escapeHtml(RECEIPT.footer)}</div>` : ''}
                 </body></html>
-            `);
-            win.document.close();
-            win.focus();
-            setTimeout(function() {
-                win.print();
-                setTimeout(function() { win.close(); }, 500);
-            }, 250);
+            `;
+
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+            iframe.onload = function() {
+                setTimeout(function() {
+                    iframe.contentWindow.print();
+                }, 300);
+            };
+
+            doc.open();
+            doc.write(receiptHtml);
+            doc.close();
         }
 
         async function connectPrinter() {
