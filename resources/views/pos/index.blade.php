@@ -49,9 +49,11 @@
                 <option value="delivery">Delivery</option>
             </select>
             <select id="outletId" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
-                @foreach($outlets as $o)
+                @forelse($outlets as $o)
                 <option value="{{ $o->id }}">{{ $o->name }}</option>
-                @endforeach
+                @empty
+                <option value="">-- Tidak ada outlet --</option>
+                @endforelse
             </select>
             <span id="queueDisplay" class="bg-green-500 text-white px-2 py-0.5 rounded font-bold text-xs hidden">#001</span>
         </div>
@@ -512,8 +514,11 @@
             const paid = parseInt(document.getElementById('paidAmount').value) || 0;
             if (paid < total) { alert('Jumlah dibayar kurang!'); return; }
 
+            const outletId = document.getElementById('outletId').value;
+            if (!outletId) { alert('Anda belum memiliki akses outlet. Hubungi admin.'); return; }
+
             const payload = {
-                outlet_id: document.getElementById('outletId').value,
+                outlet_id: outletId,
                 order_type: document.getElementById('orderType').value,
                 customer_id: document.getElementById('customerId').value || null,
                 table_id: null,
