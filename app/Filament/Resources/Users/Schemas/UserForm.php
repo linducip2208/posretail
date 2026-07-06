@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Models\Outlet;
 use App\Models\Role;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Password;
 
@@ -59,6 +61,17 @@ class UserForm
                         TextInput::make('description'),
                     ])
                     ->createOptionAction(fn ($action) => $action->label('Buat Role Baru')),
+                Section::make('Akses Outlet')
+                    ->description('Pilih outlet yang dapat diakses user ini')
+                    ->schema([
+                        Select::make('outlets')
+                            ->label('Outlet')
+                            ->multiple()
+                            ->relationship('outlets', 'name')
+                            ->preload()
+                            ->options(fn () => Outlet::where('active', true)->pluck('name', 'id'))
+                            ->helperText('Kosongkan jika user tidak boleh akses outlet manapun'),
+                    ]),
             ]);
     }
 }
