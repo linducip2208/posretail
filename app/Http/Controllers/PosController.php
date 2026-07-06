@@ -200,6 +200,7 @@ class PosController extends Controller
 
         return response()->json([
             'success' => true,
+            'id' => $order->id,
             'order_number' => $order->order_number,
             'queue_number' => $order->queue_number,
             'total' => $order->total_amount,

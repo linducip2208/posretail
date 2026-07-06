@@ -525,6 +525,7 @@
 
             // Buka window print dulu (sebelum async) supaya ga kena popup blocker
             const printWin = window.open('', '_blank', 'width=300,height=600');
+            const popupBlocked = !printWin;
             if (printWin) {
                 printWin.document.write('<html><body style="font-family:sans-serif;text-align:center;padding:20px">Memproses...</body></html>');
                 printWin.document.close();
@@ -555,9 +556,15 @@
                         document.getElementById('queueDisplay').textContent = '#' + queueNumber;
                         document.getElementById('queueDisplay').classList.remove('hidden');
                     }
-                    printReceiptToWindow(printWin, orderNumber, paid, data.change || (paid - data.total));
+                    const cartSnapshot = [...cart];
                     cart = [];
                     renderCart();
+
+                    if (printWin) {
+                        printReceiptToWindow(printWin, cartSnapshot, orderNumber, paid, data.change || (paid - data.total));
+                    } else {
+                        window.open('/admin/orders/' + data.id + '/receipt', '_blank');
+                    }
                 } else {
                     if (printWin) printWin.close();
                     alert('Gagal: ' + (data.message || 'Unknown error'));
@@ -569,13 +576,16 @@
         }
 
         // === PRINT ===
-        function printReceiptToWindow(win, orderNumber, paid, change) {
+        function printReceiptToWindow(win, cartItems, orderNumber, paid, change) {
             if (!win) return;
-            const total = getTotal();
+            const subtotal = cartItems.reduce((s, i) => s + (i.price * i.qty), 0);
+            const useTax = document.getElementById('useTax').checked;
+            const taxRate = parseFloat(document.getElementById('taxRateLabel').textContent);
+            const total = useTax ? subtotal * (1 + taxRate / 100) : subtotal;
             const now = new Date();
             const dateStr = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-            let itemsHtml = cart.map(i =>
+            let itemsHtml = cartItems.map(i =>
                 `<tr><td>${escapeHtml(i.name).substring(0,16)}</td><td class="r">${i.qty}</td><td class="r">${formatRupiah(i.price)}</td><td class="r">${formatRupiah(i.price * i.qty)}</td></tr>`
             ).join('');
 
@@ -617,10 +627,14 @@
                     <div>Kembali<span style="float:right">${formatRupiah(change)}</span></div>
                     <hr>
                     ${RECEIPT.showFooter ? `<div class="c" style="font-size:10px">${escapeHtml(RECEIPT.footer)}</div>` : ''}
-                    <script>window.onload=function(){ window.print(); setTimeout(function(){ window.close(); }, 500); }</` + `script>
                 </body></html>
             `);
             win.document.close();
+            win.focus();
+            setTimeout(function() {
+                win.print();
+                setTimeout(function() { win.close(); }, 500);
+            }, 250);
         }
 
         async function connectPrinter() {

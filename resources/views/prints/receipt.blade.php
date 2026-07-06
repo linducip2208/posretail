@@ -128,5 +128,6 @@
     <div class="center text-sm">{{ $receiptFooter }}</div>
     @endif
     <br>
+    <script>window.onload=function(){ window.print(); setTimeout(function(){ window.close(); }, 500); }</script>
 </body>
 </html>
