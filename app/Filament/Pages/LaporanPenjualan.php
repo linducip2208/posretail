@@ -116,4 +116,40 @@ class LaporanPenjualan extends Page
             ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
             ->where('order_status', 'completed');
     }
+
+    public function getRevenueByPaymentProperty()
+    {
+        return DB::table('payments')
+            ->join('payment_methods', 'payments.payment_method_id', '=', 'payment_methods.id')
+            ->join('orders', 'payments.order_id', '=', 'orders.id')
+            ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
+            ->where('payments.status', 'confirmed')
+            ->selectRaw('payment_methods.name as method, SUM(payments.amount) as total')
+            ->groupBy('payment_methods.id', 'payment_methods.name')
+            ->orderByDesc('total')
+            ->get();
+    }
+
+    public function getPaymentsDetailProperty()
+    {
+        return DB::table('payments')
+            ->join('payment_methods', 'payments.payment_method_id', '=', 'payment_methods.id')
+            ->join('orders', 'payments.order_id', '=', 'orders.id')
+            ->leftJoin('customers', 'orders.customer_id', '=', 'customers.id')
+            ->leftJoin('outlets', 'orders.outlet_id', '=', 'outlets.id')
+            ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
+            ->where('payments.status', 'confirmed')
+            ->select([
+                'orders.order_number',
+                'customers.name as customer_name',
+                'payment_methods.name as method',
+                'payments.amount',
+                'payments.created_at',
+                'outlets.name as outlet_name',
+            ])
+            ->orderByDesc('payments.created_at')
+            ->get();
+    }
 }

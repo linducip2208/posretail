@@ -63,6 +63,79 @@
         <canvas id="salesChart" height="80"></canvas>
     </div>
 
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+        <h3 class="font-semibold text-gray-900 mb-4">Pendapatan per Metode Bayar</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left border-b border-gray-100">
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">#</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Metode Bayar</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Total</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Kontribusi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $revTotal = $this->revenueByPayment->sum('total'); @endphp
+                    @forelse($this->revenueByPayment as $i => $item)
+                    <tr class="border-b border-gray-50">
+                        <td class="py-3 text-gray-400">{{ $i + 1 }}</td>
+                        <td class="py-3 font-medium">{{ $item->method }}</td>
+                        <td class="py-3 text-right">Rp {{ number_format($item->total, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right">{{ $revTotal > 0 ? round(($item->total / $revTotal) * 100) : 0 }}%</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="4" class="py-6 text-center text-gray-400">Belum ada data</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-gray-900">Detail Transaksi Pembayaran</h3>
+            <span class="text-xs text-gray-400">{{ $this->paymentsDetail->count() }} transaksi</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left border-b border-gray-100">
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">#</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">No. Order</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Pelanggan</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Outlet</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Metode</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Jumlah</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($this->paymentsDetail as $i => $p)
+                    <tr class="border-b border-gray-50 hover:bg-gray-50/50">
+                        <td class="py-3 text-gray-400">{{ $i + 1 }}</td>
+                        <td class="py-3 font-mono text-xs">{{ $p->order_number }}</td>
+                        <td class="py-3">{{ $p->customer_name ?: '-' }}</td>
+                        <td class="py-3 text-xs text-gray-500">{{ $p->outlet_name ?: '-' }}</td>
+                        <td class="py-3">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                                {{ $p->method === 'Cash' || $p->method === 'Tunai' ? 'bg-emerald-100 text-emerald-700' : '' }}
+                                {{ $p->method === 'QRIS' ? 'bg-indigo-100 text-indigo-700' : '' }}
+                                {{ $p->method === 'Transfer' || $p->method === 'Debit' ? 'bg-amber-100 text-amber-700' : '' }}">
+                                {{ $p->method }}
+                            </span>
+                        </td>
+                        <td class="py-3 text-right font-medium">Rp {{ number_format($p->amount, 0, ',', '.') }}</td>
+                        <td class="py-3 text-xs text-gray-500">{{ \Carbon\Carbon::parse($p->created_at)->format('d/m/y H:i') }}</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="7" class="py-10 text-center text-gray-400">Belum ada data transaksi</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
         <h3 class="font-semibold text-gray-900 mb-4">Produk Terlaris</h3>
         <div class="overflow-x-auto">
