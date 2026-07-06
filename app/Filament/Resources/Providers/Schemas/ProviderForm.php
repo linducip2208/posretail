@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Providers\Schemas;
 
-use Filament\Forms\Components\Fieldset;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;

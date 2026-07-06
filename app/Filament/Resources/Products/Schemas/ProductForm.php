@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Schemas\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
