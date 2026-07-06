@@ -71,7 +71,7 @@ class LaporanKeuangan extends Page
             ->join('orders', 'payments.order_id', '=', 'orders.id')
             ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->where('payments.status', 'confirmed')
+            ->whereIn('payments.status', ['success', 'confirmed'])
             ->selectRaw('payment_methods.name as method, SUM(payments.amount) as total')
             ->groupBy('payment_methods.id', 'payment_methods.name')
             ->orderByDesc('total')
@@ -143,7 +143,7 @@ class LaporanKeuangan extends Page
             ->join('orders', 'payments.order_id', '=', 'orders.id')
             ->whereBetween('payments.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->where('payments.status', 'confirmed')
+            ->whereIn('payments.status', ['success', 'confirmed'])
             ->sum('payments.amount');
 
         $moneyOut = $this->totalExpense;
@@ -179,7 +179,7 @@ class LaporanKeuangan extends Page
             ->leftJoin('outlets', 'orders.outlet_id', '=', 'outlets.id')
             ->whereBetween('payments.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->where('payments.status', 'confirmed')
+            ->whereIn('payments.status', ['success', 'confirmed'])
             ->select([
                 'orders.order_number',
                 'customers.name as customer_name',
