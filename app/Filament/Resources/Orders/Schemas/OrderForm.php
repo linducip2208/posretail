@@ -31,7 +31,9 @@ class OrderForm
                     ->helperText('Auto-generated saat checkout'),
                 Select::make('table_id')
                     ->label('Meja')
-                    ->options(fn () => TableResto::where('status', 'available')->pluck('name', 'id'))
+                    ->options(fn ($get) => TableResto::where('status', 'available')
+                        ->when($get('outlet_id'), fn ($q, $oid) => $q->where('outlet_id', $oid))
+                        ->pluck('name', 'id'))
                     ->searchable()
                     ->visible(fn ($get) => $get('order_type') === 'dine_in'),
                 Select::make('customer_id')

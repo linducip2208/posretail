@@ -90,6 +90,9 @@ class OrdersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('outlet_id')
+                    ->relationship('outlet', 'name')
+                    ->label('Outlet'),
                 SelectFilter::make('order_type')
                     ->options([
                         'dine_in' => 'Dine In',

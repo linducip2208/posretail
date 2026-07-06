@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class StockTransferResource extends Resource
 {
@@ -41,6 +42,18 @@ class StockTransferResource extends Resource
         return [
             RelationManagers\StockTransferItemsRelationManager::class,
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $outletIds = auth()->user()?->getAccessibleOutletIds() ?? [];
+        if (empty($outletIds)) {
+            return parent::getEloquentQuery();
+        }
+        return parent::getEloquentQuery()->where(function ($q) use ($outletIds) {
+            $q->whereIn('from_outlet_id', $outletIds)
+              ->orWhereIn('to_outlet_id', $outletIds);
+        });
     }
 
     public static function getPages(): array

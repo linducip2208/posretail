@@ -22,6 +22,8 @@ class ReportExportController extends Controller
         $outletId = $request->query('outlet_id');
         $format = $request->query('format', 'csv');
 
+        $this->validateOutletAccess($outletId);
+
         if ($format === 'pdf') {
             return $this->pdfService->generateSalesReport($startDate, $endDate, $outletId ? (int) $outletId : null);
         }
@@ -36,6 +38,8 @@ class ReportExportController extends Controller
         $outletId = $request->query('outlet_id');
         $format = $request->query('format', 'csv');
 
+        $this->validateOutletAccess($outletId);
+
         if ($format === 'pdf') {
             return $this->pdfService->generateFinancialReport($startDate, $endDate, $outletId ? (int) $outletId : null);
         }
@@ -48,11 +52,23 @@ class ReportExportController extends Controller
         $outletId = $request->query('outlet_id');
         $format = $request->query('format', 'csv');
 
+        $this->validateOutletAccess($outletId);
+
         if ($format === 'pdf') {
             return $this->pdfService->generateStockReport($outletId ? (int) $outletId : null);
         }
 
         return $this->exportStockCsv($outletId);
+    }
+
+    protected function validateOutletAccess(?string $outletId): void
+    {
+        if (!$outletId) return;
+
+        $user = auth()->user();
+        if ($user && !in_array((int) $outletId, $user->getAccessibleOutletIds())) {
+            abort(403, 'Anda tidak memiliki akses ke outlet ini.');
+        }
     }
 
     protected function exportSalesCsv(string $startDate, string $endDate, ?string $outletId): mixed

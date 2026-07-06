@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class StockTransfersTable
@@ -34,7 +35,12 @@ class StockTransfersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('from_outlet_id')
+                    ->relationship('fromOutlet', 'name')
+                    ->label('Outlet Asal'),
+                SelectFilter::make('to_outlet_id')
+                    ->relationship('toOutlet', 'name')
+                    ->label('Outlet Tujuan'),
             ])
             ->recordActions([
                 EditAction::make(),

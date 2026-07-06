@@ -40,6 +40,11 @@ class OrderController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $outletIds = $request->user()->getAccessibleOutletIds();
+        if (!empty($outletIds) && !in_array((int) $request->outlet_id, $outletIds)) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
+
         $order = DB::transaction(function () use ($request) {
             $subtotal = 0;
             $discountAmount = 0;
@@ -146,13 +151,18 @@ class OrderController extends Controller
 
     public function today(Request $request): JsonResponse
     {
-        $orders = Order::with(['orderItems.product', 'payments', 'user', 'customer', 'outlet'])
-            ->where('outlet_id', $request->outlet_id ?? 1)
+        $outletIds = $request->user()->getAccessibleOutletIds();
+        $query = Order::with(['orderItems.product', 'payments', 'user', 'customer', 'outlet'])
             ->whereDate('created_at', today())
-            ->latest()
-            ->get();
+            ->latest();
 
-        return response()->json(['data' => $orders->map(fn ($o) => $this->formatOrder($o))]);
+        if ($request->outlet_id && in_array((int) $request->outlet_id, $outletIds)) {
+            $query->where('outlet_id', $request->outlet_id);
+        } elseif (!empty($outletIds)) {
+            $query->whereIn('outlet_id', $outletIds);
+        }
+
+        return response()->json(['data' => $query->get()->map(fn ($o) => $this->formatOrder($o))]);
     }
 
     public function show(Order $order): JsonResponse
