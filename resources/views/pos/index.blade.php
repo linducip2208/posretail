@@ -40,7 +40,7 @@
     <input type="text" id="barcodeInput" autocomplete="off">
 
     {{-- TOP BAR --}}
-    <header class="bg-blue-600 text-white px-4 py-2 flex items-center gap-4 shadow-lg z-10 shrink-0">
+    <header class="bg-blue-600 text-white px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-4 shadow-lg z-10 shrink-0">
         <div class="font-extrabold text-lg tracking-tight">POS</div>
         <div class="flex items-center gap-2 text-sm">
             <select id="orderType" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
@@ -97,12 +97,18 @@
             <div id="pagination" class="p-2 bg-white border-t flex justify-center gap-1 shrink-0"></div>
         </div>
 
+        {{-- CART DRAWER BACKDROP (mobile) --}}
+        <div id="cartBackdrop" onclick="closeCart()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
         {{-- CART PANEL --}}
-        <div class="w-96 bg-white border-l flex flex-col shrink-0 shadow-lg">
+        <div id="cartPanel" class="fixed md:static inset-y-0 right-0 z-40 w-full max-w-sm md:w-96 bg-white border-l flex flex-col shrink-0 shadow-2xl md:shadow-lg translate-x-full md:translate-x-0 transition-transform duration-300">
             <div class="p-4 border-b bg-gray-50">
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-lg">Keranjang</h2>
-                    <span id="cartCount" class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+                    <div class="flex items-center gap-2">
+                        <span id="cartCount" class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+                        <button onclick="closeCart()" class="md:hidden text-gray-400 hover:text-red-600 text-2xl leading-none">&times;</button>
+                    </div>
                 </div>
                 <div id="cartCustomer" class="mt-2 text-xs text-gray-500">
                     <select id="customerId" class="w-full border border-gray-200 rounded px-2 py-1 text-xs" onchange="updateCustomer()">
@@ -140,7 +146,12 @@
         </div>
     </div>
 
-    {{-- CAMERA SCANNER OVERLAY --}}
+    {{-- MOBILE CART FAB --}}
+    <button id="cartFab" onclick="openCart()" class="md:hidden fixed bottom-4 right-4 z-30 bg-blue-600 text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 font-bold hover:bg-blue-700 active:scale-95 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
+        <span id="cartFabCount" class="bg-white text-blue-700 rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
+        <span id="cartFabTotal" class="font-mono text-sm">Rp 0</span>
+    </button>
     <div id="scannerOverlay" class="fixed inset-0 bg-black/70 z-50 flex flex-col items-center justify-center hidden">
         <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
             <div class="flex items-center justify-between mb-4">
@@ -416,6 +427,8 @@
             const count = document.getElementById('cartCount');
 
             count.textContent = cart.length;
+            const fabCount = document.getElementById('cartFabCount');
+            if (fabCount) fabCount.textContent = cart.reduce((s, i) => s + i.qty, 0);
 
             if (cart.length === 0) {
                 container.innerHTML = '<div class="text-center text-gray-400 py-10 text-sm">Keranjang kosong</div>';
@@ -463,6 +476,18 @@
             document.getElementById('tax').textContent = formatRupiah(tax);
             document.getElementById('total').textContent = formatRupiah(total);
             document.getElementById('payBtn').textContent = 'Bayar ' + formatRupiah(total);
+            const fabTotal = document.getElementById('cartFabTotal');
+            if (fabTotal) fabTotal.textContent = formatRupiah(total);
+        }
+
+        // === MOBILE CART DRAWER ===
+        function openCart() {
+            document.getElementById('cartPanel').classList.remove('translate-x-full');
+            document.getElementById('cartBackdrop').classList.remove('hidden');
+        }
+        function closeCart() {
+            document.getElementById('cartPanel').classList.add('translate-x-full');
+            document.getElementById('cartBackdrop').classList.add('hidden');
         }
 
         function updateCustomer() {
