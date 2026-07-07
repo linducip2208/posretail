@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BlogPosts\Pages;
 
 use App\Filament\Resources\BlogPosts\BlogPostResource;
+use App\Services\Seo\GoogleIndexingService;
 use App\Services\Seo\IndexNowService;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -32,6 +33,12 @@ class EditBlogPost extends EditRecord
                 $indexNow->submit([$blogUrl, $blogListUrl, $homeUrl]);
 
                 cache()->put("indexnow_blog_{$record->id}", now()->toDateTimeString(), now()->addDays(30));
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
+            try {
+                app(GoogleIndexingService::class)->publish($blogUrl);
             } catch (\Throwable $e) {
                 report($e);
             }

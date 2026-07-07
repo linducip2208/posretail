@@ -170,7 +170,7 @@ Route::get('/robots.txt', function () {
     $content .= "Disallow: /api\n";
     $content .= "Disallow: /__pair\n";
     $content .= "Disallow: /webhooks\n";
-    $content .= "Sitemap: /sitemap.xml\n";
+    $content .= "Sitemap: " . rtrim(config('app.url'), '/') . "/sitemap.xml\n";
 
     return response($content, 200)
         ->header('Content-Type', 'text/plain; charset=utf-8');

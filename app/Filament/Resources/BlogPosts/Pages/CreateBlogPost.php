@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\BlogPosts\Pages;
 
 use App\Filament\Resources\BlogPosts\BlogPostResource;
+use App\Services\Seo\ContentBroadcastService;
+use App\Services\Seo\GoogleIndexingService;
 use App\Services\Seo\IndexNowService;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -22,6 +24,23 @@ class CreateBlogPost extends CreateRecord
             try {
                 $indexNow = app(IndexNowService::class);
                 $indexNow->submit([$blogUrl, $blogListUrl, $homeUrl]);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
+            try {
+                app(GoogleIndexingService::class)->publish($blogUrl);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
+            try {
+                app(ContentBroadcastService::class)->broadcastPost(
+                    $record->title,
+                    $blogUrl,
+                    $record->excerpt,
+                    $record->featured_image ? url('storage/' . $record->featured_image) : null,
+                );
             } catch (\Throwable $e) {
                 report($e);
             }

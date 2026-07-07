@@ -20,6 +20,10 @@ class OutletScope implements Scope
             return;
         }
 
+        if (!method_exists($user, 'getAccessibleOutletIds')) {
+            return;
+        }
+
         $outletIds = $user->getAccessibleOutletIds();
         if (empty($outletIds)) {
             return;
