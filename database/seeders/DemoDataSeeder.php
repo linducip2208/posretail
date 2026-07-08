@@ -11,9 +11,9 @@ use Faker\Factory as FakerFactory;
 class DemoDataSeeder extends Seeder
 {
     private array $outletIds = [1, 2, 3];
-    private array $categoryIds = [1, 2, 3, 4, 5, 6, 7, 8];
-    private array $brandIds = [1, 2, 3, 4, 5];
-    private array $unitIds = [1, 2, 3, 4, 5];
+    private array $categoryIds = [];
+    private array $brandIds = [];
+    private array $unitIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     private array $groupIds = [1, 2, 3];
     private array $paymentMethodIds = [1, 2, 3, 4, 5, 6];
     private array $rewardIds = [1, 2, 3];
@@ -23,6 +23,9 @@ class DemoDataSeeder extends Seeder
     private array $variantIds = [];
     private array $customerIds = [];
     private array $products = [];
+    private array $variantProductIds = [];
+    private array $variantIdsByProduct = [];
+    private array $variantSellById = [];
 
     public function run(): void
     {
@@ -31,7 +34,6 @@ class DemoDataSeeder extends Seeder
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
-        // Clear in reverse FK order
         $tables = [
             'cash_drawer_transactions', 'shifts', 'held_carts',
             'payable_payments', 'supplier_payables',
@@ -64,14 +66,7 @@ class DemoDataSeeder extends Seeder
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
-        // ============================================================
-        // PHASE 0: USERS (5 demo users)
-        // ============================================================
         $this->seedUsers($now);
-
-        // ============================================================
-        // PHASE 1: MASTER DATA
-        // ============================================================
         $this->seedOutlets($now);
         $this->seedCategories($now);
         $this->seedBrands($now);
@@ -84,93 +79,30 @@ class DemoDataSeeder extends Seeder
         $this->seedSystemSettings($now);
         $this->seedUserOutlet($now);
 
-        // ============================================================
-        // PHASE 2: PRODUCTS (50)
-        // ============================================================
-        $this->seedProducts($faker, $now);
-
-        // ============================================================
-        // PHASE 3: PRODUCT VARIANTS (10)
-        // ============================================================
+        $this->seedProducts($now);
         $this->seedProductVariants($now);
-
-        // ============================================================
-        // PHASE 4: CUSTOMERS (200)
-        // ============================================================
         $this->seedCustomers($faker, $now);
-
-        // ============================================================
-        // PHASE 5: ORDERS + ORDER ITEMS + PAYMENTS + STOCK MOVEMENTS (500)
-        // ============================================================
         $this->seedOrders($faker, $now);
-
-        // ============================================================
-        // PHASE 6: PURCHASE ORDERS (20)
-        // ============================================================
         $this->seedPurchaseOrders($now);
-
-        // ============================================================
-        // PHASE 7: STOCK OPNAMES (5)
-        // ============================================================
         $this->seedStockOpnames($now);
-
-        // ============================================================
-        // PHASE 8: LOYALTY POINTS
-        // ============================================================
         $this->seedLoyaltyPoints($now);
-
-        // ============================================================
-        // PHASE 9: MEMBERSHIP TIERS
-        // ============================================================
         $this->seedMembershipTiers($now);
-
-        // ============================================================
-        // PHASE 10: STOCK TRANSFERS (5)
-        // ============================================================
         $this->seedStockTransfers($now);
-
-        // ============================================================
-        // PHASE 11: RETURNS (5)
-        // ============================================================
         $this->seedReturns($now);
-
-        // ============================================================
-        // PHASE 12: INSTALLMENTS (for some orders)
-        // ============================================================
         $this->seedInstallments($now);
-
-        // ============================================================
-        // PHASE 13: SUPPLIER PAYABLES (5)
-        // ============================================================
         $this->seedSupplierPayables($now);
-
-        // ============================================================
-        // PHASE 14: SHIFTS & CASH DRAWER
-        // ============================================================
         $this->seedShifts($now);
-
-        // ============================================================
-        // PHASE 15: HELD CARTS (3)
-        // ============================================================
         $this->seedHeldCarts($now);
-
-        // ============================================================
-        // PHASE 16: NEW FEATURES — Tables, Raw Materials, Discount Templates, Attendance
-        // ============================================================
         $this->seedTableAreas($now);
         $this->seedTables($now);
         $this->seedRawMaterials($now);
         $this->seedRecipeItems($now);
         $this->seedDiscountTemplates($now);
         $this->seedAttendances($now);
-
-        // ============================================================
-        // PHASE 17: BLOG (categories + posts)
-        // ============================================================
         $this->seedBlogCategories($now);
         $this->seedBlogPosts($now);
 
-        $this->command?->info('Demo data seeded: 500 orders, 200 customers, 50 products, 20 POs, and more!');
+        $this->command?->info('Demo data seeded: 1000 produk, 500 orders, 200 customers, and more!');
     }
 
     // ================================================================
@@ -179,58 +111,12 @@ class DemoDataSeeder extends Seeder
     private function seedUsers(Carbon $now): void
     {
         DB::table('users')->insert([
-            [
-                'name' => 'Budi Hartono',
-                'email' => 'owner@pos-retail.test',
-                'email_verified_at' => $now,
-                'password' => bcrypt('password'),
-                'role' => 'owner',
-                'remember_token' => Str::random(10),
-                'created_at' => $now->copy()->subMonths(6),
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Sari Dewi',
-                'email' => 'manager@pos-retail.test',
-                'email_verified_at' => $now,
-                'password' => bcrypt('password'),
-                'role' => 'manager',
-                'remember_token' => Str::random(10),
-                'created_at' => $now->copy()->subMonths(5),
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Agus Prasetyo',
-                'email' => 'admin@pos-retail.test',
-                'email_verified_at' => $now,
-                'password' => bcrypt('password'),
-                'role' => 'admin',
-                'remember_token' => Str::random(10),
-                'created_at' => $now->copy()->subMonths(4),
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Rina Safitri',
-                'email' => 'kasir@pos-retail.test',
-                'email_verified_at' => $now,
-                'password' => bcrypt('password'),
-                'role' => 'kasir',
-                'remember_token' => Str::random(10),
-                'created_at' => $now->copy()->subMonths(3),
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Doni Kusuma',
-                'email' => 'gudang@pos-retail.test',
-                'email_verified_at' => $now,
-                'password' => bcrypt('password'),
-                'role' => 'gudang',
-                'remember_token' => Str::random(10),
-                'created_at' => $now->copy()->subMonths(2),
-                'updated_at' => $now,
-            ],
+            ['name' => 'Budi Hartono', 'email' => 'owner@pos-retail.test', 'email_verified_at' => $now, 'password' => bcrypt('password'), 'role' => 'owner', 'remember_token' => Str::random(10), 'created_at' => $now->copy()->subMonths(6), 'updated_at' => $now],
+            ['name' => 'Sari Dewi', 'email' => 'manager@pos-retail.test', 'email_verified_at' => $now, 'password' => bcrypt('password'), 'role' => 'manager', 'remember_token' => Str::random(10), 'created_at' => $now->copy()->subMonths(5), 'updated_at' => $now],
+            ['name' => 'Agus Prasetyo', 'email' => 'admin@pos-retail.test', 'email_verified_at' => $now, 'password' => bcrypt('password'), 'role' => 'admin', 'remember_token' => Str::random(10), 'created_at' => $now->copy()->subMonths(4), 'updated_at' => $now],
+            ['name' => 'Rina Safitri', 'email' => 'kasir@pos-retail.test', 'email_verified_at' => $now, 'password' => bcrypt('password'), 'role' => 'kasir', 'remember_token' => Str::random(10), 'created_at' => $now->copy()->subMonths(3), 'updated_at' => $now],
+            ['name' => 'Doni Kusuma', 'email' => 'gudang@pos-retail.test', 'email_verified_at' => $now, 'password' => bcrypt('password'), 'role' => 'gudang', 'remember_token' => Str::random(10), 'created_at' => $now->copy()->subMonths(2), 'updated_at' => $now],
         ]);
-
         $this->assignRolesToUsers();
     }
 
@@ -238,7 +124,6 @@ class DemoDataSeeder extends Seeder
     {
         $roleMap = \App\Models\Role::pluck('id', 'slug');
         $users = \App\Models\User::all();
-
         foreach ($users as $user) {
             $roleSlug = $user->role;
             if ($roleSlug && isset($roleMap[$roleSlug])) {
@@ -253,69 +138,84 @@ class DemoDataSeeder extends Seeder
     private function seedOutlets(Carbon $now): void
     {
         DB::table('outlets')->insert([
-            [
-                'name' => 'Toko Pusat',
-                'code' => 'TP001',
-                'address' => 'Jl. Raya Malioboro No. 10, Yogyakarta',
-                'phone' => '0274-555001',
-                'active' => true,
-                'created_at' => $now->copy()->subMonths(12),
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Cabang Timur',
-                'code' => 'CT002',
-                'address' => 'Jl. Solo Raya KM 5, Klaten',
-                'phone' => '0272-555002',
-                'active' => true,
-                'created_at' => $now->copy()->subMonths(8),
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Cabang Barat',
-                'code' => 'CB003',
-                'address' => 'Jl. Magelang KM 8, Sleman',
-                'phone' => '0274-555003',
-                'active' => true,
-                'created_at' => $now->copy()->subMonths(6),
-                'updated_at' => $now,
-            ],
+            ['name' => 'Toko Pusat', 'code' => 'TP001', 'address' => 'Jl. Raya Malioboro No. 10, Yogyakarta', 'phone' => '0274-555001', 'active' => true, 'created_at' => $now->copy()->subMonths(12), 'updated_at' => $now],
+            ['name' => 'Cabang Timur', 'code' => 'CT002', 'address' => 'Jl. Solo Raya KM 5, Klaten', 'phone' => '0272-555002', 'active' => true, 'created_at' => $now->copy()->subMonths(8), 'updated_at' => $now],
+            ['name' => 'Cabang Barat', 'code' => 'CB003', 'address' => 'Jl. Magelang KM 8, Sleman', 'phone' => '0274-555003', 'active' => true, 'created_at' => $now->copy()->subMonths(6), 'updated_at' => $now],
         ]);
     }
 
     // ================================================================
-    // CATEGORIES
+    // CATEGORIES (25 supermarket-style categories)
     // ================================================================
     private function seedCategories(Carbon $now): void
     {
         DB::table('categories')->insert([
-            ['name' => 'Makanan Ringan', 'slug' => 'makanan-ringan', 'description' => 'Snack, keripik, biskuit, dan camilan', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Minuman', 'slug' => 'minuman', 'description' => 'Air mineral, teh, kopi, sirup, dan minuman kemasan', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Bumbu Dapur', 'slug' => 'bumbu-dapur', 'description' => 'Kecap, sambal, penyedap rasa, dan bumbu masak', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Sabun & Kebersihan', 'slug' => 'sabun-kebersihan', 'description' => 'Sabun mandi, deterjen, pembersih lantai, dan perawatan rumah', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Alat Tulis', 'slug' => 'alat-tulis', 'description' => 'Buku, pulpen, pensil, dan perlengkapan kantor', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Elektronik Kecil', 'slug' => 'elektronik-kecil', 'description' => 'Baterai, lampu, kabel charger, dan aksesoris', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Rokok', 'slug' => 'rokok', 'description' => 'Rokok filter, kretek, dan tembakau', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Sembako', 'slug' => 'sembako', 'description' => 'Beras, gula, minyak goreng, telur, tepung', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Makanan Ringan', 'slug' => 'makanan-ringan', 'description' => 'Snack, keripik, biskuit, kacang, dan camilan', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Minuman Ringan', 'slug' => 'minuman-ringan', 'description' => 'Air mineral, teh, soda, jus, minuman energi, isotonik', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Mie & Bumbu Masak', 'slug' => 'mie-bumbu-masak', 'description' => 'Mie instan, bumbu instan, tepung bumbu, santan kemasan', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Sabun & Pembersih', 'slug' => 'sabun-pembersih', 'description' => 'Sabun mandi, deterjen, pembersih lantai, cuci piring, pewangi', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Alat Tulis & Kantor', 'slug' => 'alat-tulis-kantor', 'description' => 'Buku, pulpen, pensil, spidol, kertas, perlengkapan kantor', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Elektronik & Aksesoris', 'slug' => 'elektronik-aksesoris', 'description' => 'Baterai, lampu, kabel, charger, earphone, aksesoris HP', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Rokok & Tembakau', 'slug' => 'rokok-tembakau', 'description' => 'Rokok filter, kretek, mild, dan tembakau', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Sembako', 'slug' => 'sembako', 'description' => 'Beras, gula, minyak goreng, telur, tepung, garam', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Susu & Olahan Susu', 'slug' => 'susu-olahan', 'description' => 'Susu cair, susu bubuk, yogurt, keju, mentega', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Roti, Kue & Sereal', 'slug' => 'roti-kue-sereal', 'description' => 'Roti tawar, roti manis, biskuit, sereal sarapan, wafer', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Makanan Beku', 'slug' => 'makanan-beku', 'description' => 'Nugget, sosis, bakso, es krim, dimsum, kentang goreng beku', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Makanan Kaleng & Siap Saji', 'slug' => 'makanan-kaleng', 'description' => 'Sarden, kornet, abon, buah kaleng, sayur kaleng', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Saus, Sambal & Bumbu Cair', 'slug' => 'saus-sambal-bumbu', 'description' => 'Kecap, sambal botol, saus tomat, saus tiram, cuka', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Minyak Goreng & Mentega', 'slug' => 'minyak-mentega', 'description' => 'Minyak goreng, minyak zaitun, margarin, mentega', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Beras & Biji-bijian', 'slug' => 'beras-bijian', 'description' => 'Beras putih, beras merah, ketan, kacang-kacangan, jagung', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Kopi, Teh & Coklat', 'slug' => 'kopi-teh-coklat', 'description' => 'Kopi bubuk, kopi sachet, teh celup, coklat bubuk, minuman serbuk', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Permen & Coklat', 'slug' => 'permen-coklat', 'description' => 'Permen keras, permen lunak, coklat batang, coklat butir', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Perlengkapan Bayi', 'slug' => 'perlengkapan-bayi', 'description' => 'Popok bayi, susu formula, bubur bayi, minyak telon, tissue basah', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Perawatan Tubuh', 'slug' => 'perawatan-tubuh', 'description' => 'Body wash, lotion, deodorant, sabun muka, sunscreen', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Perawatan Rambut', 'slug' => 'perawatan-rambut', 'description' => 'Shampoo, conditioner, hair serum, hair color, pomade', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Obat & Kesehatan', 'slug' => 'obat-kesehatan', 'description' => 'Obat bebas, vitamin, suplemen, minyak angin, plester', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Makanan Hewan', 'slug' => 'makanan-hewan', 'description' => 'Makanan kucing, makanan anjing, pasir kucing, aksesoris hewan', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Mainan Anak', 'slug' => 'mainan-anak', 'description' => 'Mainan edukasi, boneka, action figure, puzzle, bola', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Peralatan Rumah Tangga', 'slug' => 'peralatan-rumah-tangga', 'description' => 'Peralatan dapur, alat mandi, perkakas ringan, tempat penyimpanan', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Produk Lainnya', 'slug' => 'produk-lainnya', 'description' => 'Produk musiman, bundle promo, dan produk lainnya', 'parent_id' => null, 'outlet_id' => null, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
         ]);
+        $this->categoryIds = range(1, 25);
     }
 
     // ================================================================
-    // BRANDS
+    // BRANDS (25 brands - supermarket style)
     // ================================================================
     private function seedBrands(Carbon $now): void
     {
         DB::table('brands')->insert([
             ['name' => 'Indofood', 'slug' => 'indofood', 'description' => 'PT Indofood Sukses Makmur Tbk', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Wings', 'slug' => 'wings', 'description' => 'Wings Group Indonesia', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Wings Group', 'slug' => 'wings-group', 'description' => 'Wings Group Indonesia', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'Unilever', 'slug' => 'unilever', 'description' => 'PT Unilever Indonesia Tbk', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Sido Muncul', 'slug' => 'sido-muncul', 'description' => 'PT Industri Jamu dan Farmasi Sido Muncul Tbk', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Mayora', 'slug' => 'mayora', 'description' => 'PT Mayora Indah Tbk', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Nestle', 'slug' => 'nestle', 'description' => 'PT Nestle Indonesia', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Danone', 'slug' => 'danone', 'description' => 'PT Danone Indonesia (Aqua, SGM, Mizone)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Sosro', 'slug' => 'sosro', 'description' => 'PT Sinar Sosro (Teh Botol, Fruit Tea)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Garudafood', 'slug' => 'garudafood', 'description' => 'PT Garudafood Putra Putri Jaya Tbk', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Kalbe', 'slug' => 'kalbe', 'description' => 'PT Kalbe Farma Tbk (Hydro Coco, Extra Joss)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'ABC', 'slug' => 'abc', 'description' => 'PT Heinz ABC Indonesia (Kecap, Sambal, Sirup)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'P&G', 'slug' => 'pg', 'description' => 'Procter & Gamble (Pampers, Gillette, Head & Shoulders)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Kapal Api', 'slug' => 'kapal-api', 'description' => 'PT Kapal Api Global (Kopi, Susu)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Ultrajaya', 'slug' => 'ultrajaya', 'description' => 'PT Ultrajaya Milk Industry Tbk', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Frisian Flag', 'slug' => 'frisian-flag', 'description' => 'PT Frisian Flag Indonesia', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Siantar Top', 'slug' => 'siantar-top', 'description' => 'PT Siantar Top Tbk (Taro, Mie Gemez)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Djarum', 'slug' => 'djarum', 'description' => 'PT Djarum (Djarum Super, LA Lights)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'Gudang Garam', 'slug' => 'gudang-garam', 'description' => 'PT Gudang Garam Tbk', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Sampoerna', 'slug' => 'sampoerna', 'description' => 'PT HM Sampoerna Tbk (A Mild, Dji Sam Soe)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Orang Tua Group', 'slug' => 'orang-tua', 'description' => 'OT Group (Tanggo, Fullo, Vitacharm)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Kino', 'slug' => 'kino', 'description' => 'PT Kino Indonesia Tbk (Ellips, Eskulin)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Mandom', 'slug' => 'mandom', 'description' => 'PT Mandom Indonesia Tbk (Gatsby, Pucelle, Pixy)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Ajinomoto', 'slug' => 'ajinomoto', 'description' => 'PT Ajinomoto Indonesia (Masako, Sajiku)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Bimoli', 'slug' => 'bimoli', 'description' => 'PT Salim Ivomas Pratama Tbk (Bimoli, Happy Soya)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Philips', 'slug' => 'philips', 'description' => 'PT Philips Indonesia (Lampu, Elektronik)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Maspion', 'slug' => 'maspion', 'description' => 'PT Maspion (Peralatan Rumah Tangga)', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
         ]);
+        $this->brandIds = range(1, 25);
     }
 
     // ================================================================
-    // UNITS
+    // UNITS (9)
     // ================================================================
     private function seedUnits(Carbon $now): void
     {
@@ -325,6 +225,10 @@ class DemoDataSeeder extends Seeder
             ['name' => 'BOX', 'code' => 'BOX', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'LTR', 'code' => 'LTR', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'RENCENG', 'code' => 'RENCENG', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'SACHET', 'code' => 'SACHET', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'BOTOL', 'code' => 'BOTOL', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'KALENG', 'code' => 'KALENG', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'PACK', 'code' => 'PACK', 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 
@@ -334,270 +238,66 @@ class DemoDataSeeder extends Seeder
     private function seedCustomerGroups(Carbon $now): void
     {
         DB::table('customer_groups')->insert([
-            [
-                'name' => 'Regular',
-                'discount_percent' => 0,
-                'min_spent' => 0,
-                'description' => 'Pelanggan baru / tidak terdaftar',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Silver',
-                'discount_percent' => 3,
-                'min_spent' => 500000,
-                'description' => 'Total belanja > 500rb dapat diskon 3%',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Gold',
-                'discount_percent' => 5,
-                'min_spent' => 2000000,
-                'description' => 'Total belanja > 2jt dapat diskon 5%',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
+            ['name' => 'Regular', 'discount_percent' => 0, 'min_spent' => 0, 'description' => 'Pelanggan baru / tidak terdaftar', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Silver', 'discount_percent' => 3, 'min_spent' => 500000, 'description' => 'Total belanja > 500rb dapat diskon 3%', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Gold', 'discount_percent' => 5, 'min_spent' => 2000000, 'description' => 'Total belanja > 2jt dapat diskon 5%', 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 
-    // ================================================================
-    // PROVIDERS
-    // ================================================================
     private function seedProviders(Carbon $now): void
     {
         DB::table('providers')->insert([
-            [
-                'name' => 'Midtrans Demo',
-                'type' => 'payment',
-                'api_format' => 'rest-redirect',
-                'base_url' => 'https://api.sandbox.midtrans.com/v2',
-                'api_key_encrypted' => null,
-                'api_secret_encrypted' => null,
-                'merchant_id' => 'G123456789',
-                'client_id' => null,
-                'extra_headers' => null,
-                'extra_config' => json_encode(['snap_js_url' => 'https://app.sandbox.midtrans.com/snap/snap.js']),
-                'is_active' => true,
-                'is_default' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'WhatsApp Gateway Demo',
-                'type' => 'notification',
-                'api_format' => 'rest-api',
-                'base_url' => 'https://api.whatsapp.com',
-                'api_key_encrypted' => null,
-                'api_secret_encrypted' => null,
-                'merchant_id' => null,
-                'client_id' => null,
-                'extra_headers' => null,
-                'extra_config' => null,
-                'is_active' => false,
-                'is_default' => false,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
+            ['name' => 'Midtrans Demo', 'type' => 'payment', 'api_format' => 'rest-redirect', 'base_url' => 'https://api.sandbox.midtrans.com/v2', 'api_key_encrypted' => null, 'api_secret_encrypted' => null, 'merchant_id' => 'G123456789', 'client_id' => null, 'extra_headers' => null, 'extra_config' => json_encode(['snap_js_url' => 'https://app.sandbox.midtrans.com/snap/snap.js']), 'is_active' => true, 'is_default' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'WhatsApp Gateway Demo', 'type' => 'notification', 'api_format' => 'rest-api', 'base_url' => 'https://api.whatsapp.com', 'api_key_encrypted' => null, 'api_secret_encrypted' => null, 'merchant_id' => null, 'client_id' => null, 'extra_headers' => null, 'extra_config' => null, 'is_active' => false, 'is_default' => false, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 
-    // ================================================================
-    // PAYMENT METHODS
-    // ================================================================
     private function seedPaymentMethods(Carbon $now): void
     {
         DB::table('payment_methods')->insert([
-            [
-                'name' => 'Tunai',
-                'code' => 'CASH',
-                'provider_id' => null,
-                'type' => 'offline',
-                'active' => true,
-                'is_gateway' => false,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'QRIS',
-                'code' => 'QRIS',
-                'provider_id' => 1,
-                'type' => 'online',
-                'active' => true,
-                'is_gateway' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Transfer Bank',
-                'code' => 'BANK_TRANSFER',
-                'provider_id' => 1,
-                'type' => 'online',
-                'active' => true,
-                'is_gateway' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'E-Wallet',
-                'code' => 'EWALLET',
-                'provider_id' => 1,
-                'type' => 'online',
-                'active' => true,
-                'is_gateway' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Kartu Debit',
-                'code' => 'DEBIT',
-                'provider_id' => 1,
-                'type' => 'online',
-                'active' => true,
-                'is_gateway' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Kredit',
-                'code' => 'CREDIT',
-                'provider_id' => null,
-                'type' => 'offline',
-                'active' => true,
-                'is_gateway' => false,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
+            ['name' => 'Tunai', 'code' => 'CASH', 'provider_id' => null, 'type' => 'offline', 'active' => true, 'is_gateway' => false, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'QRIS', 'code' => 'QRIS', 'provider_id' => 1, 'type' => 'online', 'active' => true, 'is_gateway' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Transfer Bank', 'code' => 'BANK_TRANSFER', 'provider_id' => 1, 'type' => 'online', 'active' => true, 'is_gateway' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'E-Wallet', 'code' => 'EWALLET', 'provider_id' => 1, 'type' => 'online', 'active' => true, 'is_gateway' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Kartu Debit', 'code' => 'DEBIT', 'provider_id' => 1, 'type' => 'online', 'active' => true, 'is_gateway' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Kredit', 'code' => 'CREDIT', 'provider_id' => null, 'type' => 'offline', 'active' => true, 'is_gateway' => false, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 
-    // ================================================================
-    // LOYALTY REWARDS
-    // ================================================================
     private function seedLoyaltyRewards(Carbon $now): void
     {
         DB::table('loyalty_rewards')->insert([
-            [
-                'name' => 'Diskon 5.000',
-                'points_required' => 50,
-                'discount_type' => 'fixed',
-                'discount_value' => 5000,
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Diskon 10%',
-                'points_required' => 100,
-                'discount_type' => 'percent',
-                'discount_value' => 10,
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'Gratis 1 Produk Pilihan',
-                'points_required' => 200,
-                'discount_type' => 'fixed',
-                'discount_value' => 25000,
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
+            ['name' => 'Diskon 5.000', 'points_required' => 50, 'discount_type' => 'fixed', 'discount_value' => 5000, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Diskon 10%', 'points_required' => 100, 'discount_type' => 'percent', 'discount_value' => 10, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Gratis 1 Produk Pilihan', 'points_required' => 200, 'discount_type' => 'fixed', 'discount_value' => 25000, 'active' => true, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 
-    // ================================================================
-    // SUPPLIERS
-    // ================================================================
     private function seedSuppliers(Carbon $now): void
     {
         DB::table('suppliers')->insert([
-            [
-                'name' => 'PT Indomarco Prismatama',
-                'contact_person' => 'Hendra Wijaya',
-                'phone' => '021-5550101',
-                'email' => 'hendra@indomarco.co.id',
-                'address' => 'Jl. Raya Bogor KM 28, Jakarta Timur',
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'CV Sumber Makmur',
-                'contact_person' => 'Susi Rahmawati',
-                'phone' => '0274-5550202',
-                'email' => 'susi@sumbermakmur.co.id',
-                'address' => 'Jl. Kusumanegara No. 45, Yogyakarta',
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'UD Lancar Jaya',
-                'contact_person' => 'Joko Santoso',
-                'phone' => '0271-5550303',
-                'email' => 'joko@lancarjaya.co.id',
-                'address' => 'Jl. Slamet Riyadi No. 120, Solo',
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'PT Mitra Distribusi Nusantara',
-                'contact_person' => 'Rudi Hartanto',
-                'phone' => '031-5550404',
-                'email' => 'rudi@mitranusantara.co.id',
-                'address' => 'Jl. Raya Darmo No. 88, Surabaya',
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'name' => 'CV Berkah Utama',
-                'contact_person' => 'Ani Lestari',
-                'phone' => '024-5550505',
-                'email' => 'ani@berkahutama.co.id',
-                'address' => 'Jl. Pandanaran No. 67, Semarang',
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
+            ['name' => 'PT Indomarco Prismatama', 'contact_person' => 'Hendra Wijaya', 'phone' => '021-5550101', 'email' => 'hendra@indomarco.co.id', 'address' => 'Jl. Raya Bogor KM 28, Jakarta Timur', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'CV Sumber Makmur', 'contact_person' => 'Susi Rahmawati', 'phone' => '0274-5550202', 'email' => 'susi@sumbermakmur.co.id', 'address' => 'Jl. Kusumanegara No. 45, Yogyakarta', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'UD Lancar Jaya', 'contact_person' => 'Joko Santoso', 'phone' => '0271-5550303', 'email' => 'joko@lancarjaya.co.id', 'address' => 'Jl. Slamet Riyadi No. 120, Solo', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'PT Mitra Distribusi Nusantara', 'contact_person' => 'Rudi Hartanto', 'phone' => '031-5550404', 'email' => 'rudi@mitranusantara.co.id', 'address' => 'Jl. Raya Darmo No. 88, Surabaya', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'CV Berkah Utama', 'contact_person' => 'Ani Lestari', 'phone' => '024-5550505', 'email' => 'ani@berkahutama.co.id', 'address' => 'Jl. Pandanaran No. 67, Semarang', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 
-    // ================================================================
-    // SYSTEM SETTINGS
-    // ================================================================
     private function seedSystemSettings(Carbon $now): void
     {
         $settings = [];
         $keys = ['app_name', 'store_address', 'store_phone', 'tax_percent', 'loyalty_points_rate', 'low_stock_threshold', 'currency', 'timezone', 'receipt_footer', 'approval_threshold', 'hero_headline', 'hero_subheadline', 'whatsapp_number', 'pos_price', 'pos_features'];
         $values = [
-            'POS Retail',
-            'Jl. Raya Malioboro No. 10, Yogyakarta 55271',
-            '0274-555001',
-            '11',
-            '10000',
-            '10',
-            'IDR',
-            'Asia/Jakarta',
-            'Terima kasih telah berbelanja!',
-            '5000000',
+            'POS Retail', 'Jl. Raya Malioboro No. 10, Yogyakarta 55271', '0274-555001', '11', '10000', '10', 'IDR', 'Asia/Jakarta',
+            'Terima kasih telah berbelanja!', '5000000',
             'Solusi Kasir Modern untuk Toko Retail Anda',
             'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.',
-            '6281296052010',
-            'Rp 4.999.000',
+            '6281296052010', 'Rp 4.999.000',
             "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support",
         ];
         foreach ($keys as $i => $key) {
-            $settings[] = [
-                'key' => $key,
-                'value' => $values[$i],
-                'outlet_id' => null,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+            $settings[] = ['key' => $key, 'value' => $values[$i], 'outlet_id' => null, 'created_at' => $now, 'updated_at' => $now];
             foreach ([1, 2, 3] as $outletId) {
                 if ($i <= 2) {
                     $outletValues = [
@@ -605,194 +305,527 @@ class DemoDataSeeder extends Seeder
                         2 => ['POS Retail - Cabang Timur', 'Jl. Solo Raya KM 5, Klaten', '0272-555002'],
                         3 => ['POS Retail - Cabang Barat', 'Jl. Magelang KM 8, Sleman', '0274-555003'],
                     ];
-                    $settings[] = [
-                        'key' => $key,
-                        'value' => $outletValues[$outletId][$i],
-                        'outlet_id' => $outletId,
-                        'created_at' => $now,
-                        'updated_at' => $now,
-                    ];
+                    $settings[] = ['key' => $key, 'value' => $outletValues[$outletId][$i], 'outlet_id' => $outletId, 'created_at' => $now, 'updated_at' => $now];
                 }
             }
         }
         DB::table('system_settings')->insert($settings);
+
+        DB::table('system_settings')->insert([
+            ['key' => 'order_types', 'value' => json_encode([
+                ['value' => 'walk_in', 'label' => 'Walk-in / Umum'],
+                ['value' => 'member', 'label' => 'Member'],
+                ['value' => 'online', 'label' => 'Online / Delivery'],
+            ]), 'outlet_id' => null, 'created_at' => $now, 'updated_at' => $now],
+        ]);
     }
 
-    // ================================================================
-    // USER_OUTLET
-    // ================================================================
     private function seedUserOutlet(Carbon $now): void
     {
         DB::table('user_outlet')->insert([
-            ['user_id' => 1, 'outlet_id' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 1, 'outlet_id' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 1, 'outlet_id' => 3, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 2, 'outlet_id' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 3, 'outlet_id' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 3, 'outlet_id' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 4, 'outlet_id' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 4, 'outlet_id' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 4, 'outlet_id' => 3, 'created_at' => $now, 'updated_at' => $now],
-            ['user_id' => 5, 'outlet_id' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['user_id' => 1, 'outlet_id' => 1], ['user_id' => 1, 'outlet_id' => 2], ['user_id' => 1, 'outlet_id' => 3],
+            ['user_id' => 2, 'outlet_id' => 1], ['user_id' => 3, 'outlet_id' => 1], ['user_id' => 3, 'outlet_id' => 2],
+            ['user_id' => 4, 'outlet_id' => 1], ['user_id' => 4, 'outlet_id' => 2], ['user_id' => 4, 'outlet_id' => 3],
+            ['user_id' => 5, 'outlet_id' => 1],
         ]);
     }
 
     // ================================================================
-    // PRODUCTS (50 realistic Indonesian retail products)
+    // PRODUCTS — 1000 realistic Indonesian supermarket products
     // ================================================================
-    private function seedProducts($faker, Carbon $now): void
+    private function seedProducts(Carbon $now): void
     {
-        $productDefinitions = [
-            // Makanan Ringan (cat 1) - Indofood
-            ['name' => 'Chitato Sapi Panggang 60gr', 'cat' => 1, 'brand' => 1, 'unit' => 1, 'cost' => 8000, 'sell' => 12000, 'whole' => 11000, 'mem' => 10500, 'stock' => 120, 'min' => 10, 'max' => 200],
-            ['name' => 'Qtela Singkong Balado 55gr', 'cat' => 1, 'brand' => 1, 'unit' => 1, 'cost' => 3500, 'sell' => 6000, 'whole' => 5500, 'mem' => 5000, 'stock' => 80, 'min' => 5, 'max' => 150],
-            ['name' => 'Lays Rumput Laut 68gr', 'cat' => 1, 'brand' => 1, 'unit' => 1, 'cost' => 9000, 'sell' => 13500, 'whole' => 12500, 'mem' => 12000, 'stock' => 60, 'min' => 5, 'max' => 100],
-            ['name' => 'Taro Net Rumput Laut 35gr', 'cat' => 1, 'brand' => 1, 'unit' => 1, 'cost' => 3000, 'sell' => 5000, 'whole' => 4500, 'mem' => 4000, 'stock' => 150, 'min' => 10, 'max' => 200],
-            ['name' => 'Cheetos Jagung Bakar 45gr', 'cat' => 1, 'brand' => 1, 'unit' => 1, 'cost' => 5500, 'sell' => 8500, 'whole' => 8000, 'mem' => 7500, 'stock' => 90, 'min' => 10, 'max' => 150],
-            ['name' => 'Beng Beng Coklat 30gr', 'cat' => 1, 'brand' => 2, 'unit' => 1, 'cost' => 2000, 'sell' => 3000, 'whole' => 2800, 'mem' => 2500, 'stock' => 200, 'min' => 20, 'max' => 300],
-            ['name' => 'Oreo Original 133gr', 'cat' => 1, 'brand' => 2, 'unit' => 1, 'cost' => 7000, 'sell' => 10500, 'whole' => 10000, 'mem' => 9500, 'stock' => 75, 'min' => 5, 'max' => 120],
-            ['name' => 'Kacang Garuda 150gr', 'cat' => 1, 'brand' => 2, 'unit' => 1, 'cost' => 8500, 'sell' => 12500, 'whole' => 11500, 'mem' => 11000, 'stock' => 45, 'min' => 5, 'max' => 80],
+        $faker = FakerFactory::create('id_ID');
 
-            // Minuman (cat 2)
-            ['name' => 'Teh Botol Sosro 450ml', 'cat' => 2, 'brand' => 4, 'unit' => 1, 'cost' => 3500, 'sell' => 5500, 'whole' => 5000, 'mem' => 4500, 'stock' => 180, 'min' => 20, 'max' => 300],
-            ['name' => 'Aqua 600ml', 'cat' => 2, 'brand' => 2, 'unit' => 1, 'cost' => 2000, 'sell' => 3500, 'whole' => 3000, 'mem' => 3000, 'stock' => 300, 'min' => 30, 'max' => 500],
-            ['name' => 'Kopi Kapal Api 380gr', 'cat' => 2, 'brand' => 2, 'unit' => 1, 'cost' => 18000, 'sell' => 25000, 'whole' => 23500, 'mem' => 22000, 'stock' => 40, 'min' => 5, 'max' => 60],
-            ['name' => 'Sirup Marjan Cocopandan 460ml', 'cat' => 2, 'brand' => 2, 'unit' => 1, 'cost' => 14000, 'sell' => 20000, 'whole' => 19000, 'mem' => 18000, 'stock' => 35, 'min' => 5, 'max' => 50],
-            ['name' => 'Mizone Lemon 500ml', 'cat' => 2, 'brand' => 2, 'unit' => 1, 'cost' => 4000, 'sell' => 6500, 'whole' => 6000, 'mem' => 5500, 'stock' => 110, 'min' => 10, 'max' => 200],
-            ['name' => 'Pocari Sweat 500ml', 'cat' => 2, 'brand' => 2, 'unit' => 1, 'cost' => 6000, 'sell' => 9000, 'whole' => 8500, 'mem' => 8000, 'stock' => 85, 'min' => 10, 'max' => 150],
-            ['name' => 'Frisian Flag Kaleng 370gr', 'cat' => 2, 'brand' => 3, 'unit' => 1, 'cost' => 12000, 'sell' => 17000, 'whole' => 16000, 'mem' => 15000, 'stock' => 30, 'min' => 5, 'max' => 50],
-            ['name' => 'Bear Brand 189ml', 'cat' => 2, 'brand' => 3, 'unit' => 1, 'cost' => 8000, 'sell' => 11000, 'whole' => 10500, 'mem' => 10000, 'stock' => 55, 'min' => 5, 'max' => 80],
-
-            // Bumbu Dapur (cat 3)
-            ['name' => 'Kecap Bango 300ml', 'cat' => 3, 'brand' => 3, 'unit' => 1, 'cost' => 12000, 'sell' => 17000, 'whole' => 16000, 'mem' => 15000, 'stock' => 50, 'min' => 5, 'max' => 80],
-            ['name' => 'Sambal ABC 335ml', 'cat' => 3, 'brand' => 1, 'unit' => 1, 'cost' => 7500, 'sell' => 11000, 'whole' => 10000, 'mem' => 9500, 'stock' => 65, 'min' => 5, 'max' => 100],
-            ['name' => 'Royco Ayam 9gr', 'cat' => 3, 'brand' => 3, 'unit' => 1, 'cost' => 1500, 'sell' => 2500, 'whole' => 2300, 'mem' => 2200, 'stock' => 250, 'min' => 20, 'max' => 400],
-            ['name' => 'Masako Ayam 8gr', 'cat' => 3, 'brand' => 1, 'unit' => 1, 'cost' => 1000, 'sell' => 2000, 'whole' => 1800, 'mem' => 1800, 'stock' => 300, 'min' => 30, 'max' => 500],
-            ['name' => 'Sedaap Mie Goreng 85gr', 'cat' => 3, 'brand' => 2, 'unit' => 1, 'cost' => 2200, 'sell' => 3500, 'whole' => 3200, 'mem' => 3000, 'stock' => 180, 'min' => 20, 'max' => 300],
-            ['name' => 'Indomie Goreng 85gr', 'cat' => 3, 'brand' => 1, 'unit' => 1, 'cost' => 2200, 'sell' => 3500, 'whole' => 3200, 'mem' => 3000, 'stock' => 200, 'min' => 20, 'max' => 350],
-
-            // Sabun & Kebersihan (cat 4)
-            ['name' => 'Lifebuoy Sabun Batang 70gr', 'cat' => 4, 'brand' => 3, 'unit' => 1, 'cost' => 2500, 'sell' => 4000, 'whole' => 3800, 'mem' => 3500, 'stock' => 160, 'min' => 15, 'max' => 250],
-            ['name' => 'Rinso Deterjen 770gr', 'cat' => 4, 'brand' => 3, 'unit' => 1, 'cost' => 12000, 'sell' => 17000, 'whole' => 16000, 'mem' => 15000, 'stock' => 40, 'min' => 5, 'max' => 60],
-            ['name' => 'Sunlight CIF 450ml', 'cat' => 4, 'brand' => 3, 'unit' => 1, 'cost' => 8500, 'sell' => 12500, 'whole' => 11500, 'mem' => 11000, 'stock' => 55, 'min' => 5, 'max' => 80],
-            ['name' => 'So Klin Lantai 800ml', 'cat' => 4, 'brand' => 2, 'unit' => 1, 'cost' => 10000, 'sell' => 14500, 'whole' => 13500, 'mem' => 13000, 'stock' => 45, 'min' => 5, 'max' => 70],
-            ['name' => 'Pepsodent 75gr', 'cat' => 4, 'brand' => 3, 'unit' => 1, 'cost' => 5500, 'sell' => 8500, 'whole' => 8000, 'mem' => 7500, 'stock' => 95, 'min' => 10, 'max' => 150],
-            ['name' => 'Clear Shampoo 170ml', 'cat' => 4, 'brand' => 3, 'unit' => 1, 'cost' => 11500, 'sell' => 16000, 'whole' => 15000, 'mem' => 14000, 'stock' => 35, 'min' => 5, 'max' => 55],
-            ['name' => 'Ekonomi Sabun Colet 585gr', 'cat' => 4, 'brand' => 2, 'unit' => 1, 'cost' => 7000, 'sell' => 10500, 'whole' => 10000, 'mem' => 9500, 'stock' => 30, 'min' => 5, 'max' => 50],
-
-            // Alat Tulis (cat 5)
-            ['name' => 'Buku Tulis Sidu 58 Lembar', 'cat' => 5, 'brand' => 2, 'unit' => 1, 'cost' => 3000, 'sell' => 4500, 'whole' => 4200, 'mem' => 4000, 'stock' => 200, 'min' => 20, 'max' => 350],
-            ['name' => 'Pulpen Faster C600', 'cat' => 5, 'brand' => 2, 'unit' => 3, 'cost' => 24000, 'sell' => 35000, 'whole' => 33000, 'mem' => 31000, 'stock' => 15, 'min' => 2, 'max' => 25],
-            ['name' => 'Pensil 2B Steadler', 'cat' => 5, 'brand' => 2, 'unit' => 1, 'cost' => 2000, 'sell' => 3500, 'whole' => 3200, 'mem' => 3000, 'stock' => 120, 'min' => 10, 'max' => 200],
-            ['name' => 'Spidol Snowman 12 Warna', 'cat' => 5, 'brand' => 2, 'unit' => 1, 'cost' => 28000, 'sell' => 40000, 'whole' => 38000, 'mem' => 36000, 'stock' => 10, 'min' => 2, 'max' => 20],
-            ['name' => 'Lakban Bening 45mm', 'cat' => 5, 'brand' => 2, 'unit' => 1, 'cost' => 6000, 'sell' => 9000, 'whole' => 8500, 'mem' => 8000, 'stock' => 40, 'min' => 5, 'max' => 60],
-
-            // Elektronik Kecil (cat 6)
-            ['name' => 'Baterai ABC AA (2pcs)', 'cat' => 6, 'brand' => 2, 'unit' => 1, 'cost' => 5000, 'sell' => 8000, 'whole' => 7500, 'mem' => 7000, 'stock' => 100, 'min' => 10, 'max' => 150],
-            ['name' => 'Lampu LED Philips 12W', 'cat' => 6, 'brand' => 2, 'unit' => 1, 'cost' => 22000, 'sell' => 32000, 'whole' => 30000, 'mem' => 28000, 'stock' => 25, 'min' => 3, 'max' => 40],
-            ['name' => 'Kabel USB Type-C 1M', 'cat' => 6, 'brand' => 2, 'unit' => 1, 'cost' => 12000, 'sell' => 18000, 'whole' => 17000, 'mem' => 16000, 'stock' => 35, 'min' => 5, 'max' => 50],
-            ['name' => 'Stop Kontak Broco 4 Lubang', 'cat' => 6, 'brand' => 2, 'unit' => 1, 'cost' => 18000, 'sell' => 26000, 'whole' => 24500, 'mem' => 23000, 'stock' => 20, 'min' => 2, 'max' => 30],
-
-            // Rokok (cat 7)
-            ['name' => 'Gudang Garam Merah 12', 'cat' => 7, 'brand' => 5, 'unit' => 5, 'cost' => 20500, 'sell' => 25000, 'whole' => 24000, 'mem' => 23500, 'stock' => 80, 'min' => 5, 'max' => 120],
-            ['name' => 'Gudang Garam Filter 12', 'cat' => 7, 'brand' => 5, 'unit' => 5, 'cost' => 22000, 'sell' => 27000, 'whole' => 26000, 'mem' => 25500, 'stock' => 70, 'min' => 5, 'max' => 100],
-            ['name' => 'Sampoerna A Mild 16', 'cat' => 7, 'brand' => 5, 'unit' => 5, 'cost' => 27500, 'sell' => 33000, 'whole' => 31500, 'mem' => 30500, 'stock' => 55, 'min' => 5, 'max' => 80],
-            ['name' => 'Djarum Super 12', 'cat' => 7, 'brand' => 5, 'unit' => 5, 'cost' => 19500, 'sell' => 23500, 'whole' => 22500, 'mem' => 22000, 'stock' => 65, 'min' => 5, 'max' => 100],
-
-            // Sembako (cat 8)
-            ['name' => 'Beras Pandan Wangi 5KG', 'cat' => 8, 'brand' => 1, 'unit' => 2, 'cost' => 65000, 'sell' => 78000, 'whole' => 75000, 'mem' => 73000, 'stock' => 30, 'min' => 3, 'max' => 50],
-            ['name' => 'Gula Pasir Gulaku 1KG', 'cat' => 8, 'brand' => 1, 'unit' => 2, 'cost' => 14000, 'sell' => 18000, 'whole' => 17000, 'mem' => 16500, 'stock' => 50, 'min' => 5, 'max' => 80],
-            ['name' => 'Minyak Goreng Bimoli 2L', 'cat' => 8, 'brand' => 1, 'unit' => 1, 'cost' => 32000, 'sell' => 38000, 'whole' => 36500, 'mem' => 36000, 'stock' => 35, 'min' => 3, 'max' => 50],
-            ['name' => 'Tepung Terigu Segitiga Biru 1KG', 'cat' => 8, 'brand' => 1, 'unit' => 2, 'cost' => 10000, 'sell' => 13500, 'whole' => 13000, 'mem' => 12500, 'stock' => 40, 'min' => 5, 'max' => 60],
-            ['name' => 'Telur Ayam 1KG', 'cat' => 8, 'brand' => 2, 'unit' => 2, 'cost' => 25000, 'sell' => 30000, 'whole' => 29000, 'mem' => 28000, 'stock' => 20, 'min' => 2, 'max' => 30],
-            ['name' => 'Susu Kental Manis Bendera 385gr', 'cat' => 8, 'brand' => 3, 'unit' => 1, 'cost' => 10500, 'sell' => 14500, 'whole' => 13800, 'mem' => 13000, 'stock' => 60, 'min' => 5, 'max' => 100],
-            ['name' => 'Kopi Bubuk ABC 350gr', 'cat' => 8, 'brand' => 2, 'unit' => 1, 'cost' => 17000, 'sell' => 23500, 'whole' => 22000, 'mem' => 21000, 'stock' => 25, 'min' => 3, 'max' => 40],
-            ['name' => 'Minyak Kita 1L', 'cat' => 8, 'brand' => 1, 'unit' => 1, 'cost' => 14500, 'sell' => 17500, 'whole' => 16800, 'mem' => 16000, 'stock' => 55, 'min' => 5, 'max' => 80],
-        ];
+        // First 200 curated products (categories 1-4), then generate the rest up to 1000.
+        $defs = $this->getHardcodedProducts();
+        $defs = array_merge($defs, $this->generateProducts($faker, count($defs), 1000));
 
         $products = [];
-        foreach ($productDefinitions as $i => $p) {
+        $usedSlugs = [];
+        foreach ($defs as $i => $p) {
             $slug = Str::slug($p['name']);
+            if (isset($usedSlugs[$slug])) {
+                $slug .= '-' . ($i + 1);
+            }
+            $usedSlugs[$slug] = true;
+
             $sku = 'SKU' . str_pad($i + 1, 5, '0', STR_PAD_LEFT);
-            $barcode = '899' . str_pad(random_int(10000000, 99999999), 10, '0', STR_PAD_LEFT);
-
+            $barcode = '899' . str_pad((string) ($i + 1), 10, '0', STR_PAD_LEFT);
             $products[] = [
-                'name' => $p['name'],
-                'slug' => $slug,
-                'description' => $p['name'] . ' - kualitas terjamin, harga hemat',
-                'category_id' => $p['cat'],
-                'brand_id' => $p['brand'],
-                'unit_id' => $p['unit'],
-                'outlet_id' => null,
-                'sku' => $sku,
-                'barcode' => $barcode,
-                'cost_price' => $p['cost'],
-                'selling_price' => $p['sell'],
-                'wholesale_price' => $p['whole'],
-                'member_price' => $p['mem'],
-                'min_stock' => $p['min'],
-                'max_stock' => $p['max'],
-                'current_stock' => $p['stock'],
+                'name' => $p['name'], 'slug' => $slug, 'description' => $p['name'] . ' - kualitas terjamin',
+                'category_id' => $p['cat'], 'brand_id' => $p['brand'], 'unit_id' => $p['unit'],
+                'outlet_id' => null, 'sku' => $sku, 'barcode' => $barcode,
+                'cost_price' => $p['cost'], 'selling_price' => $p['sell'],
+                'wholesale_price' => $p['whole'], 'member_price' => $p['mem'],
+                'min_stock' => $p['min'], 'max_stock' => $p['max'], 'current_stock' => $p['stock'],
                 'image' => 'https://picsum.photos/seed/' . urlencode($slug) . '/200/200',
-                'has_variants' => false,
-                'active' => true,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'has_variants' => false, 'active' => true,
+                'created_at' => $now, 'updated_at' => $now,
             ];
-
             $this->products[$i + 1] = $p;
         }
-
-        DB::table('products')->insert($products);
+        foreach (array_chunk($products, 100) as $chunk) {
+            DB::table('products')->insert($chunk);
+        }
         $this->productIds = range(1, count($products));
     }
 
+    /**
+     * Generate realistic Indonesian retail products to fill up to $target total.
+     * Distributed across categories 4-25 with brand/unit/price patterns.
+     */
+    private function generateProducts($faker, int $existingCount, int $target): array
+    {
+        $needed = $target - $existingCount;
+        if ($needed <= 0) {
+            return [];
+        }
+
+        // Per-category name templates: [prefixes], [variants/sizes], [unit], [brand pool], [cost range]
+        $catalog = [
+            4  => [ // Sabun & Pembersih
+                'items' => ['Sabun Cuci Piring', 'Deterjen Bubuk', 'Pembersih Lantai', 'Pemutih Pakaian', 'Pelembut Pakaian', 'Pembersih Kaca', 'Sabun Cair Antiseptik', 'Karbol Wangi', 'Spons Cuci', 'Pengharum Ruangan'],
+                'sizes' => ['refill 400ml', 'refill 800ml', 'botol 200ml', 'sachet 45gr', 'pouch 1kg', '250ml', '500ml', '1 liter'],
+                'units' => [7, 1, 6, 9], 'brands' => [2, 3, 10], 'cost' => [3000, 22000],
+            ],
+            5  => [ // Alat Tulis & Kantor
+                'items' => ['Buku Tulis', 'Pulpen', 'Pensil 2B', 'Spidol Whiteboard', 'Penghapus', 'Penggaris', 'Kertas HVS A4', 'Map Plastik', 'Lakban Bening', 'Lem Kertas', 'Stabilo', 'Tipe-X', 'Amplop', 'Binder Clip'],
+                'sizes' => ['isi 38 lembar', 'isi 58 lembar', '1 pcs', 'pak isi 12', '70gsm', 'lebar 45mm', 'ukuran 30cm', 'kecil', 'besar'],
+                'units' => [1, 9, 3], 'brands' => [24, 25, 19], 'cost' => [1500, 45000],
+            ],
+            6  => [ // Elektronik & Aksesoris
+                'items' => ['Baterai AA', 'Baterai AAA', 'Baterai 9V', 'Lampu LED', 'Kabel Data USB', 'Charger HP', 'Earphone', 'Powerbank', 'Kabel Roll', 'Fitting Lampu', 'Steker Listrik', 'Senter LED', 'Kabel HDMI'],
+                'sizes' => ['isi 2', 'isi 4', '5 watt', '12 watt', '23 watt', 'Type-C 1M', 'Micro 1M', '10000mAh', '1.5 meter', '3 meter'],
+                'units' => [1, 9], 'brands' => [24, 25], 'cost' => [4000, 120000],
+            ],
+            7  => [ // Rokok & Tembakau
+                'items' => ['Rokok Filter', 'Rokok Kretek', 'Rokok Mild', 'Rokok Menthol', 'Tembakau Lintingan'],
+                'sizes' => ['isi 12', 'isi 16', 'isi 20', 'kemasan 50gr'],
+                'units' => [5, 1], 'brands' => [16, 17, 18], 'cost' => [16000, 35000],
+            ],
+            8  => [ // Sembako
+                'items' => ['Beras Premium', 'Beras Medium', 'Gula Pasir', 'Minyak Goreng', 'Tepung Terigu', 'Telur Ayam', 'Garam Dapur', 'Kecap Manis', 'Margarin', 'Susu Kental Manis'],
+                'sizes' => ['1kg', '2kg', '5kg', 'pouch 2L', 'botol 1L', 'refill 900ml', 'kemasan 500gr'],
+                'units' => [2, 1, 4, 7], 'brands' => [1, 23, 14], 'cost' => [8000, 78000],
+            ],
+            9  => [ // Susu & Olahan Susu
+                'items' => ['Susu UHT Full Cream', 'Susu UHT Coklat', 'Susu Bubuk', 'Yogurt', 'Keju Cheddar', 'Mentega', 'Susu Kedelai', 'Krimer Kental Manis'],
+                'sizes' => ['200ml', '250ml', '1 liter', 'kotak 115gr', 'sachet 27gr', 'cup 80gr', 'refill 400gr'],
+                'units' => [7, 1, 6, 3], 'brands' => [13, 14, 5], 'cost' => [4000, 65000],
+            ],
+            10 => [ // Roti, Kue & Sereal
+                'items' => ['Roti Tawar', 'Roti Manis Coklat', 'Roti Sobek', 'Sereal Jagung', 'Wafer Coklat', 'Biskuit Gandum', 'Kue Kering Nastar', 'Cracker Asin'],
+                'sizes' => ['isi 10 lembar', 'kemasan 300gr', 'box 165gr', 'pouch 120gr', 'toples 250gr', 'roll 130gr'],
+                'units' => [1, 9, 3], 'brands' => [4, 8, 5], 'cost' => [5000, 45000],
+            ],
+            11 => [ // Makanan Beku
+                'items' => ['Nugget Ayam', 'Sosis Sapi', 'Bakso Sapi', 'Es Krim', 'Dimsum', 'Kentang Goreng', 'Otak-Otak', 'Chicken Katsu'],
+                'sizes' => ['pouch 250gr', 'pouch 500gr', 'kemasan 400gr', 'cup 100ml', 'box 200gr', 'isi 10'],
+                'units' => [9, 1, 3], 'brands' => [1, 8, 2], 'cost' => [8000, 55000],
+            ],
+            12 => [ // Makanan Kaleng & Siap Saji
+                'items' => ['Sarden Kaleng', 'Kornet Sapi', 'Abon Sapi', 'Buah Kaleng', 'Jamur Kaleng', 'Tuna Kaleng', 'Sosis Kaleng', 'Sup Krim Instan'],
+                'sizes' => ['155gr', '198gr', '340gr', 'kaleng 425gr', 'pouch 100gr'],
+                'units' => [8, 1, 6], 'brands' => [10, 1, 5], 'cost' => [7000, 42000],
+            ],
+            13 => [ // Saus, Sambal & Bumbu Cair
+                'items' => ['Kecap Manis', 'Kecap Asin', 'Saus Sambal', 'Saus Tomat', 'Saus Tiram', 'Cuka Masak', 'Sambal Botol', 'Saus Teriyaki'],
+                'sizes' => ['botol 135ml', 'botol 275ml', 'botol 340ml', 'refill 520ml', 'sachet 20ml'],
+                'units' => [7, 6, 1], 'brands' => [10, 3, 1], 'cost' => [3000, 22000],
+            ],
+            14 => [ // Minyak Goreng & Mentega
+                'items' => ['Minyak Goreng Sawit', 'Minyak Zaitun', 'Margarin', 'Mentega', 'Minyak Kelapa'],
+                'sizes' => ['pouch 1L', 'pouch 2L', 'botol 1L', 'kemasan 200gr', 'kaleng 250ml'],
+                'units' => [7, 1, 4], 'brands' => [23, 1, 14], 'cost' => [12000, 80000],
+            ],
+            15 => [ // Beras & Biji-bijian
+                'items' => ['Beras Merah', 'Beras Ketan', 'Kacang Hijau', 'Kacang Tanah', 'Kedelai', 'Jagung Pipil', 'Kacang Merah'],
+                'sizes' => ['pouch 500gr', 'pouch 1kg', 'kemasan 2kg', 'karung 5kg'],
+                'units' => [2, 1, 9], 'brands' => [1, 23, 2], 'cost' => [10000, 90000],
+            ],
+            16 => [ // Kopi, Teh & Coklat
+                'items' => ['Kopi Bubuk', 'Kopi Sachet 3in1', 'Teh Celup', 'Coklat Bubuk', 'Kopi Instan', 'Teh Tubruk', 'Minuman Serbuk Jahe'],
+                'sizes' => ['sachet 20gr', 'renceng isi 10', 'box isi 25', 'kemasan 165gr', 'kemasan 380gr', 'pouch 100gr'],
+                'units' => [6, 5, 3, 1], 'brands' => [12, 5, 4], 'cost' => [1500, 30000],
+            ],
+            17 => [ // Permen & Coklat
+                'items' => ['Permen Mint', 'Permen Susu', 'Coklat Batang', 'Coklat Butir', 'Permen Karet', 'Permen Jelly', 'Coklat Wafer'],
+                'sizes' => ['bungkus 125gr', 'roll isi 12', 'batang 40gr', 'toples 150gr', 'sachet 25gr'],
+                'units' => [1, 9, 3], 'brands' => [4, 8, 19], 'cost' => [1000, 18000],
+            ],
+            18 => [ // Perlengkapan Bayi
+                'items' => ['Popok Bayi', 'Susu Formula', 'Bubur Bayi', 'Minyak Telon', 'Tissue Basah Bayi', 'Sabun Bayi', 'Bedak Bayi', 'Sampo Bayi'],
+                'sizes' => ['isi 20 S', 'isi 24 M', 'isi 30 L', 'box 400gr', 'kemasan 120gr', 'botol 100ml', 'refill 50 sheet'],
+                'units' => [9, 3, 7, 1], 'brands' => [11, 6, 20], 'cost' => [8000, 130000],
+            ],
+            19 => [ // Perawatan Tubuh
+                'items' => ['Body Wash', 'Body Lotion', 'Deodorant Roll On', 'Sabun Muka', 'Sunscreen', 'Hand Sanitizer', 'Body Scrub', 'Lip Balm'],
+                'sizes' => ['botol 100ml', 'botol 250ml', 'refill 400ml', 'tube 50ml', 'roll 40ml', 'sachet 8ml'],
+                'units' => [7, 1, 6], 'brands' => [3, 20, 21], 'cost' => [5000, 55000],
+            ],
+            20 => [ // Perawatan Rambut
+                'items' => ['Shampoo Anti Ketombe', 'Conditioner', 'Hair Serum', 'Hair Tonic', 'Pomade', 'Vitamin Rambut', 'Hair Mask', 'Minyak Rambut'],
+                'sizes' => ['botol 170ml', 'botol 340ml', 'sachet 10ml', 'tube 100ml', 'kaleng 80gr', 'refill 400ml'],
+                'units' => [7, 6, 1], 'brands' => [3, 20, 21], 'cost' => [4000, 60000],
+            ],
+            21 => [ // Obat & Kesehatan
+                'items' => ['Obat Sakit Kepala', 'Vitamin C', 'Suplemen Daya Tahan', 'Minyak Angin', 'Plester Luka', 'Obat Batuk', 'Balsem Otot', 'Masker Medis', 'Obat Maag', 'Tetes Mata'],
+                'sizes' => ['strip isi 4', 'strip isi 10', 'botol 60ml', 'tube 20gr', 'box isi 20', 'roll 10ml', 'kemasan 30ml'],
+                'units' => [1, 5, 8, 7], 'brands' => [9, 5, 19], 'cost' => [2000, 45000],
+            ],
+            22 => [ // Makanan Hewan
+                'items' => ['Makanan Kucing', 'Makanan Anjing', 'Pasir Kucing', 'Snack Kucing', 'Snack Anjing', 'Susu Anak Kucing', 'Vitamin Hewan'],
+                'sizes' => ['pouch 85gr', 'kemasan 500gr', 'karung 1kg', 'kaleng 400gr', 'box 20L'],
+                'units' => [9, 1, 8, 2], 'brands' => [5, 24, 25], 'cost' => [6000, 95000],
+            ],
+            23 => [ // Mainan Anak
+                'items' => ['Mainan Edukasi Balok', 'Boneka Beruang', 'Action Figure', 'Puzzle Kayu', 'Bola Plastik', 'Mobil-Mobilan', 'Lego Set', 'Robot Mainan', 'Masak-Masakan'],
+                'sizes' => ['ukuran kecil', 'ukuran sedang', 'ukuran besar', 'isi 24 pcs', 'edisi deluxe'],
+                'units' => [1, 3, 9], 'brands' => [25, 24, 19], 'cost' => [15000, 150000],
+            ],
+            24 => [ // Peralatan Rumah Tangga
+                'items' => ['Sapu Lantai', 'Pel Lantai', 'Ember Plastik', 'Gelas Kaca', 'Piring Melamin', 'Sendok Set', 'Wajan Anti Lengket', 'Panci', 'Toples Plastik', 'Rak Piring', 'Sikat Kloset', 'Tempat Sampah'],
+                'sizes' => ['ukuran kecil', 'ukuran sedang', 'ukuran besar', 'isi 6', 'diameter 24cm', 'kapasitas 5L'],
+                'units' => [1, 9, 3], 'brands' => [25, 24, 19], 'cost' => [10000, 120000],
+            ],
+            25 => [ // Produk Lainnya
+                'items' => ['Paket Hemat Sembako', 'Bundle Snack', 'Voucher Belanja', 'Kantong Plastik', 'Tas Belanja', 'Korek Api', 'Lilin', 'Tusuk Gigi', 'Payung Lipat', 'Jas Hujan'],
+                'sizes' => ['1 paket', 'isi 100', 'ukuran sedang', 'kemasan 50gr', 'edisi promo'],
+                'units' => [9, 1, 3], 'brands' => [25, 24, 19], 'cost' => [2000, 75000],
+            ],
+        ];
+
+        $catKeys = array_keys($catalog);
+        $catCount = count($catKeys);
+        $result = [];
+        $used = [];
+
+        for ($n = 0; $n < $needed; $n++) {
+            $cat = $catKeys[$n % $catCount];
+            $cfg = $catalog[$cat];
+
+            $attempt = 0;
+            do {
+                $item = $cfg['items'][array_rand($cfg['items'])];
+                $size = $cfg['sizes'][array_rand($cfg['sizes'])];
+                $name = trim($item . ' ' . $size);
+                $attempt++;
+                if ($attempt > 6) {
+                    $name .= ' ' . strtoupper($faker->bothify('##?'));
+                    break;
+                }
+            } while (isset($used[$name]));
+            $used[$name] = true;
+
+            $cost = random_int((int) $cfg['cost'][0], (int) $cfg['cost'][1]);
+            $cost = (int) (round($cost / 500) * 500);
+            if ($cost < 500) {
+                $cost = 500;
+            }
+            $margin = random_int(25, 55) / 100;
+            $sell = (int) (round(($cost * (1 + $margin)) / 500) * 500);
+            $whole = (int) (round(($sell * 0.94) / 500) * 500);
+            $mem = (int) (round(($sell * 0.90) / 500) * 500);
+            $min = random_int(3, 20);
+            $max = random_int(60, 400);
+            $stock = random_int($min, $max);
+
+            $result[] = [
+                'name'  => $name,
+                'cat'   => $cat,
+                'brand' => $cfg['brands'][array_rand($cfg['brands'])],
+                'unit'  => $cfg['units'][array_rand($cfg['units'])],
+                'cost'  => $cost,
+                'sell'  => $sell,
+                'whole' => $whole,
+                'mem'   => $mem,
+                'stock' => $stock,
+                'min'   => $min,
+                'max'   => $max,
+            ];
+        }
+
+        return $result;
+    }
+
+    private function getHardcodedProducts(): array
+    {
+        /* Format: ['name', cat, brand, unit, cost, sell, whole, mem, stock, min, max] */
+        return [
+            // ==================== CAT 1: MAKANAN RINGAN (50) ====================
+            ['name'=>'Chitato Sapi Panggang 60gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>8000,'sell'=>12000,'whole'=>11000,'mem'=>10500,'stock'=>120,'min'=>10,'max'=>200],
+            ['name'=>'Chitato Ayam Bawang 60gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>8000,'sell'=>12000,'whole'=>11000,'mem'=>10500,'stock'=>110,'min'=>10,'max'=>200],
+            ['name'=>'Chitato Sapi Panggang 150gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>15500,'sell'=>22000,'whole'=>21000,'mem'=>19500,'stock'=>45,'min'=>5,'max'=>80],
+            ['name'=>'Qtela Singkong Balado 55gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>3500,'sell'=>6000,'whole'=>5500,'mem'=>5000,'stock'=>80,'min'=>5,'max'=>150],
+            ['name'=>'Qtela Tempe 50gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>3500,'sell'=>6000,'whole'=>5500,'mem'=>5000,'stock'=>75,'min'=>5,'max'=>150],
+            ['name'=>'Lays Rumput Laut 68gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>9000,'sell'=>13500,'whole'=>12500,'mem'=>12000,'stock'=>60,'min'=>5,'max'=>100],
+            ['name'=>'Lays Sapi Panggang 68gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>9000,'sell'=>13500,'whole'=>12500,'mem'=>12000,'stock'=>55,'min'=>5,'max'=>100],
+            ['name'=>'Taro Net Rumput Laut 35gr','cat'=>1,'brand'=>15,'unit'=>1,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4000,'stock'=>150,'min'=>10,'max'=>200],
+            ['name'=>'Taro Net Ayam Bawang 35gr','cat'=>1,'brand'=>15,'unit'=>1,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4000,'stock'=>140,'min'=>10,'max'=>200],
+            ['name'=>'Cheetos Jagung Bakar 45gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>5500,'sell'=>8500,'whole'=>8000,'mem'=>7500,'stock'=>90,'min'=>10,'max'=>150],
+            ['name'=>'Cheetos Keju 45gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>5500,'sell'=>8500,'whole'=>8000,'mem'=>7500,'stock'=>85,'min'=>10,'max'=>150],
+            ['name'=>'Doritos BBQ 65gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>9500,'sell'=>14000,'whole'=>13000,'mem'=>12500,'stock'=>40,'min'=>5,'max'=>70],
+            ['name'=>'Doritos Nacho Cheese 65gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>9500,'sell'=>14000,'whole'=>13000,'mem'=>12500,'stock'=>38,'min'=>5,'max'=>70],
+            ['name'=>'Beng Beng Coklat 30gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>2000,'sell'=>3000,'whole'=>2800,'mem'=>2500,'stock'=>200,'min'=>20,'max'=>300],
+            ['name'=>'Beng Beng Vanilla 30gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>2000,'sell'=>3000,'whole'=>2800,'mem'=>2500,'stock'=>180,'min'=>20,'max'=>300],
+            ['name'=>'Oreo Original 133gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>7000,'sell'=>10500,'whole'=>10000,'mem'=>9500,'stock'=>75,'min'=>5,'max'=>120],
+            ['name'=>'Oreo Vanilla 133gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>7000,'sell'=>10500,'whole'=>10000,'mem'=>9500,'stock'=>70,'min'=>5,'max'=>120],
+            ['name'=>'Oreo Strawberry 133gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>7000,'sell'=>10500,'whole'=>10000,'mem'=>9500,'stock'=>65,'min'=>5,'max'=>120],
+            ['name'=>'Biskuat Coklat 104gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6000,'stock'=>100,'min'=>10,'max'=>150],
+            ['name'=>'Roma Kelapa 81gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>5500,'sell'=>8000,'whole'=>7500,'mem'=>7000,'stock'=>110,'min'=>10,'max'=>180],
+            ['name'=>'Roma Malkist Coklat 108gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>95,'min'=>10,'max'=>150],
+            ['name'=>'Roma Sari Gandum 120gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>5500,'sell'=>8000,'whole'=>7500,'mem'=>7000,'stock'=>100,'min'=>10,'max'=>160],
+            ['name'=>'Khong Guan Assorted 600gr','cat'=>1,'brand'=>4,'unit'=>3,'cost'=>38000,'sell'=>52000,'whole'=>49000,'mem'=>47000,'stock'=>20,'min'=>3,'max'=>35],
+            ['name'=>'Kacang Garuda 150gr','cat'=>1,'brand'=>8,'unit'=>1,'cost'=>8500,'sell'=>12500,'whole'=>11500,'mem'=>11000,'stock'=>45,'min'=>5,'max'=>80],
+            ['name'=>'Kacang Garuda 75gr','cat'=>1,'brand'=>8,'unit'=>1,'cost'=>4500,'sell'=>6500,'whole'=>6000,'mem'=>5500,'stock'=>70,'min'=>5,'max'=>120],
+            ['name'=>'Kacang Sukro 150gr','cat'=>1,'brand'=>8,'unit'=>1,'cost'=>7000,'sell'=>10000,'whole'=>9500,'mem'=>9000,'stock'=>55,'min'=>5,'max'=>90],
+            ['name'=>'Kacang Dua Kelinci 150gr','cat'=>1,'brand'=>2,'unit'=>1,'cost'=>8000,'sell'=>12000,'whole'=>11000,'mem'=>10500,'stock'=>40,'min'=>5,'max'=>70],
+            ['name'=>'Rosta Kacang Panggang 150gr','cat'=>1,'brand'=>8,'unit'=>1,'cost'=>7500,'sell'=>11000,'whole'=>10000,'mem'=>9500,'stock'=>50,'min'=>5,'max'=>85],
+            ['name'=>'Pilus Garuda 50gr','cat'=>1,'brand'=>8,'unit'=>1,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4000,'stock'=>130,'min'=>10,'max'=>200],
+            ['name'=>'Basreng Pedas 100gr','cat'=>1,'brand'=>8,'unit'=>1,'cost'=>5500,'sell'=>8000,'whole'=>7500,'mem'=>7000,'stock'=>65,'min'=>5,'max'=>100],
+            ['name'=>'Keripik Singkong Balado 100gr','cat'=>1,'brand'=>15,'unit'=>1,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6000,'stock'=>85,'min'=>5,'max'=>140],
+            ['name'=>'Keripik Pisang Coklat 80gr','cat'=>1,'brand'=>15,'unit'=>1,'cost'=>5000,'sell'=>7500,'whole'=>7000,'mem'=>6500,'stock'=>60,'min'=>5,'max'=>100],
+            ['name'=>'Makaroni Panggang 70gr','cat'=>1,'brand'=>15,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>90,'min'=>10,'max'=>140],
+            ['name'=>'Hello Panda Coklat 35gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>120,'min'=>10,'max'=>200],
+            ['name'=>'Hello Panda Strawberry 35gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>110,'min'=>10,'max'=>200],
+            ['name'=>'Astor Wafer 128gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>6500,'sell'=>9500,'whole'=>9000,'mem'=>8500,'stock'=>55,'min'=>5,'max'=>90],
+            ['name'=>'Kusuka Singkong 100gr','cat'=>1,'brand'=>2,'unit'=>1,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6000,'stock'=>75,'min'=>5,'max'=>120],
+            ['name'=>'Kusuka Kentang Goreng 60gr','cat'=>1,'brand'=>2,'unit'=>1,'cost'=>4000,'sell'=>6500,'whole'=>6000,'mem'=>5500,'stock'=>80,'min'=>5,'max'=>130],
+            ['name'=>'Twisko Jagung Bakar 35gr','cat'=>1,'brand'=>2,'unit'=>1,'cost'=>2500,'sell'=>4000,'whole'=>3800,'mem'=>3500,'stock'=>160,'min'=>15,'max'=>250],
+            ['name'=>'Pocky Coklat 47gr','cat'=>1,'brand'=>2,'unit'=>1,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>70,'min'=>5,'max'=>110],
+            ['name'=>'Pocky Strawberry 47gr','cat'=>1,'brand'=>2,'unit'=>1,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>65,'min'=>5,'max'=>110],
+            ['name'=>'Good Time Chocochips 80gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>6500,'sell'=>9500,'whole'=>9000,'mem'=>8500,'stock'=>60,'min'=>5,'max'=>100],
+            ['name'=>'Slai Olai Keju 100gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>5000,'sell'=>8000,'whole'=>7500,'mem'=>7000,'stock'=>55,'min'=>5,'max'=>90],
+            ['name'=>'Slai Olai Nanas 100gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>5000,'sell'=>8000,'whole'=>7500,'mem'=>7000,'stock'=>50,'min'=>5,'max'=>90],
+            ['name'=>'Better Wafer Keju 86gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6000,'stock'=>80,'min'=>5,'max'=>130],
+            ['name'=>'Choki Choki Coklat 9gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1700,'stock'=>300,'min'=>30,'max'=>500],
+            ['name'=>'Potabee BBQ 60gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>7500,'sell'=>11000,'whole'=>10000,'mem'=>9500,'stock'=>70,'min'=>5,'max'=>120],
+            ['name'=>'Potabee Rumput Laut 60gr','cat'=>1,'brand'=>1,'unit'=>1,'cost'=>7500,'sell'=>11000,'whole'=>10000,'mem'=>9500,'stock'=>65,'min'=>5,'max'=>120],
+            ['name'=>'Nextar Brownies 84gr','cat'=>1,'brand'=>4,'unit'=>1,'cost'=>5000,'sell'=>8000,'whole'=>7500,'mem'=>7000,'stock'=>60,'min'=>5,'max'=>100],
+            ['name'=>'Sukro Panggang 50gr','cat'=>1,'brand'=>8,'unit'=>1,'cost'=>2500,'sell'=>4000,'whole'=>3800,'mem'=>3500,'stock'=>140,'min'=>10,'max'=>220],
+
+            // ==================== CAT 2: MINUMAN RINGAN (50) ====================
+            ['name'=>'Aqua 330ml','cat'=>2,'brand'=>6,'unit'=>1,'cost'=>2000,'sell'=>3000,'whole'=>2800,'mem'=>2700,'stock'=>500,'min'=>50,'max'=>800],
+            ['name'=>'Aqua 600ml','cat'=>2,'brand'=>6,'unit'=>1,'cost'=>2000,'sell'=>3500,'whole'=>3000,'mem'=>3000,'stock'=>300,'min'=>30,'max'=>500],
+            ['name'=>'Aqua 1500ml','cat'=>2,'brand'=>6,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Le Minerale 600ml','cat'=>2,'brand'=>6,'unit'=>1,'cost'=>2000,'sell'=>3000,'whole'=>2800,'mem'=>2700,'stock'=>280,'min'=>30,'max'=>450],
+            ['name'=>'Le Minerale 1500ml','cat'=>2,'brand'=>6,'unit'=>1,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4300,'stock'=>180,'min'=>20,'max'=>300],
+            ['name'=>'Nestle Pure Life 600ml','cat'=>2,'brand'=>5,'unit'=>1,'cost'=>2000,'sell'=>3000,'whole'=>2800,'mem'=>2700,'stock'=>250,'min'=>25,'max'=>400],
+            ['name'=>'Teh Botol Sosro 450ml','cat'=>2,'brand'=>7,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4500,'stock'=>180,'min'=>20,'max'=>300],
+            ['name'=>'Teh Kotak Original 200ml','cat'=>2,'brand'=>13,'unit'=>1,'cost'=>3000,'sell'=>4500,'whole'=>4200,'mem'=>4000,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Teh Pucuk Harum 500ml','cat'=>2,'brand'=>4,'unit'=>1,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4300,'stock'=>170,'min'=>15,'max'=>280],
+            ['name'=>'Frestea Jasmine 500ml','cat'=>2,'brand'=>1,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>120,'min'=>10,'max'=>200],
+            ['name'=>'NU Green Tea 500ml','cat'=>2,'brand'=>2,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>110,'min'=>10,'max'=>180],
+            ['name'=>'Coca Cola 390ml','cat'=>2,'brand'=>19,'unit'=>8,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6200,'stock'=>150,'min'=>15,'max'=>250],
+            ['name'=>'Coca Cola 1.5L','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>9000,'sell'=>13500,'whole'=>12500,'mem'=>12000,'stock'=>60,'min'=>5,'max'=>100],
+            ['name'=>'Sprite 390ml','cat'=>2,'brand'=>19,'unit'=>8,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6200,'stock'=>140,'min'=>15,'max'=>240],
+            ['name'=>'Fanta Strawberry 390ml','cat'=>2,'brand'=>19,'unit'=>8,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6200,'stock'=>130,'min'=>15,'max'=>230],
+            ['name'=>'Big Cola 500ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>160,'min'=>15,'max'=>260],
+            ['name'=>'Pulpy Orange 300ml','cat'=>2,'brand'=>4,'unit'=>7,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6200,'stock'=>90,'min'=>10,'max'=>150],
+            ['name'=>'Buavita Jambu 250ml','cat'=>2,'brand'=>13,'unit'=>7,'cost'=>5000,'sell'=>8000,'whole'=>7500,'mem'=>7200,'stock'=>70,'min'=>5,'max'=>120],
+            ['name'=>'Buavita Mangga 250ml','cat'=>2,'brand'=>13,'unit'=>7,'cost'=>5000,'sell'=>8000,'whole'=>7500,'mem'=>7200,'stock'=>65,'min'=>5,'max'=>120],
+            ['name'=>'Minute Maid Pulpy 250ml','cat'=>2,'brand'=>5,'unit'=>7,'cost'=>5000,'sell'=>7500,'whole'=>7000,'mem'=>6800,'stock'=>75,'min'=>5,'max'=>130],
+            ['name'=>'ABC Juice Jeruk 250ml','cat'=>2,'brand'=>10,'unit'=>7,'cost'=>4000,'sell'=>6500,'whole'=>6000,'mem'=>5800,'stock'=>80,'min'=>5,'max'=>140],
+            ['name'=>'Pocari Sweat 350ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>5500,'sell'=>8500,'whole'=>8000,'mem'=>7800,'stock'=>100,'min'=>10,'max'=>170],
+            ['name'=>'Pocari Sweat 500ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>7000,'sell'=>10500,'whole'=>10000,'mem'=>9500,'stock'=>85,'min'=>10,'max'=>150],
+            ['name'=>'Pocari Sweat 900ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>10000,'sell'=>15000,'whole'=>14000,'mem'=>13500,'stock'=>40,'min'=>5,'max'=>70],
+            ['name'=>'Mizone Lychee 500ml','cat'=>2,'brand'=>6,'unit'=>7,'cost'=>4000,'sell'=>6500,'whole'=>6000,'mem'=>5500,'stock'=>110,'min'=>10,'max'=>180],
+            ['name'=>'Mizone Lemon 500ml','cat'=>2,'brand'=>6,'unit'=>7,'cost'=>4000,'sell'=>6500,'whole'=>6000,'mem'=>5500,'stock'=>110,'min'=>10,'max'=>180],
+            ['name'=>'Hydro Coco 500ml','cat'=>2,'brand'=>9,'unit'=>7,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>75,'min'=>5,'max'=>130],
+            ['name'=>'Kratingdaeng 150ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>5000,'sell'=>8000,'whole'=>7500,'mem'=>7200,'stock'=>120,'min'=>10,'max'=>200],
+            ['name'=>'Kuku Bima 150ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>130,'min'=>10,'max'=>210],
+            ['name'=>'Extra Joss Susu 25g','cat'=>2,'brand'=>9,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Hemaviton Jreng 22g','cat'=>2,'brand'=>9,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>190,'min'=>20,'max'=>340],
+            ['name'=>'You C1000 Orange 140ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>5000,'sell'=>7500,'whole'=>7000,'mem'=>6800,'stock'=>95,'min'=>10,'max'=>160],
+            ['name'=>'You C1000 Lemon 140ml','cat'=>2,'brand'=>19,'unit'=>7,'cost'=>5000,'sell'=>7500,'whole'=>7000,'mem'=>6800,'stock'=>90,'min'=>10,'max'=>160],
+            ['name'=>'Ale-Ale Anggur 180ml','cat'=>2,'brand'=>4,'unit'=>1,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1700,'stock'=>250,'min'=>25,'max'=>400],
+            ['name'=>'Ale-Ale Melon 180ml','cat'=>2,'brand'=>4,'unit'=>1,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1700,'stock'=>240,'min'=>25,'max'=>400],
+            ['name'=>'Okky Jelly Drink 150ml','cat'=>2,'brand'=>19,'unit'=>1,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>220,'min'=>20,'max'=>380],
+            ['name'=>'Fruit Tea Apel 350ml','cat'=>2,'brand'=>7,'unit'=>7,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>130,'min'=>10,'max'=>210],
+            ['name'=>'Fruit Tea Stroberi 350ml','cat'=>2,'brand'=>7,'unit'=>7,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>125,'min'=>10,'max'=>210],
+            ['name'=>'Mountea 250ml','cat'=>2,'brand'=>4,'unit'=>7,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4200,'stock'=>140,'min'=>15,'max'=>240],
+            ['name'=>'Larutan Cap Kaki 3 200ml','cat'=>2,'brand'=>4,'unit'=>7,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>115,'min'=>10,'max'=>190],
+            ['name'=>'Adem Sari 7gr','cat'=>2,'brand'=>9,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>180,'min'=>20,'max'=>300],
+            ['name'=>'Bear Brand 140ml','cat'=>2,'brand'=>5,'unit'=>8,'cost'=>7000,'sell'=>10500,'whole'=>10000,'mem'=>9500,'stock'=>80,'min'=>10,'max'=>140],
+            ['name'=>'Milo 3in1 35gr','cat'=>2,'brand'=>5,'unit'=>6,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>150,'min'=>15,'max'=>250],
+            ['name'=>'Nutrisari Jeruk 14gr','cat'=>2,'brand'=>5,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Nutrisari Mangga 14gr','cat'=>2,'brand'=>5,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>190,'min'=>20,'max'=>350],
+            ['name'=>'Marimas Jeruk 8gr','cat'=>2,'brand'=>2,'unit'=>6,'cost'=>500,'sell'=>1000,'whole'=>900,'mem'=>800,'stock'=>500,'min'=>50,'max'=>800],
+            ['name'=>'Jas Jus Mangga 6gr','cat'=>2,'brand'=>2,'unit'=>6,'cost'=>500,'sell'=>1000,'whole'=>900,'mem'=>800,'stock'=>480,'min'=>50,'max'=>800],
+            ['name'=>'Pop Ice Coklat 25gr','cat'=>2,'brand'=>2,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>170,'min'=>15,'max'=>280],
+            ['name'=>'Pop Ice Vanila 25gr','cat'=>2,'brand'=>2,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>165,'min'=>15,'max'=>280],
+            ['name'=>'Good Day Cappuccino 25gr','cat'=>2,'brand'=>4,'unit'=>6,'cost'=>2000,'sell'=>3000,'whole'=>2800,'mem'=>2700,'stock'=>210,'min'=>20,'max'=>350],
+
+            // ==================== CAT 3: MIE & BUMBU MASAK (50) ====================
+            ['name'=>'Indomie Goreng 85gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>2200,'sell'=>3500,'whole'=>3200,'mem'=>3000,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Indomie Goreng Rendang 85gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>2200,'sell'=>3500,'whole'=>3200,'mem'=>3000,'stock'=>180,'min'=>20,'max'=>320],
+            ['name'=>'Indomie Kuah Ayam Bawang 70gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>220,'min'=>20,'max'=>380],
+            ['name'=>'Indomie Kuah Kari Ayam 72gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>210,'min'=>20,'max'=>360],
+            ['name'=>'Indomie Kuah Soto 70gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Indomie Kuah Baso 69gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>190,'min'=>20,'max'=>340],
+            ['name'=>'Indomie Empal Gentong 75gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>2200,'sell'=>3500,'whole'=>3200,'mem'=>3000,'stock'=>140,'min'=>15,'max'=>240],
+            ['name'=>'Mie Sedap Goreng 90gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>2200,'sell'=>3500,'whole'=>3200,'mem'=>3000,'stock'=>195,'min'=>20,'max'=>340],
+            ['name'=>'Mie Sedap Kuah Ayam 75gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Mie Sedap Kuah Soto 75gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>195,'min'=>20,'max'=>340],
+            ['name'=>'Mie Sedap Kuah Baso 75gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>190,'min'=>20,'max'=>330],
+            ['name'=>'Sarimi Isi 2 Goreng 115gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>3000,'sell'=>4500,'whole'=>4200,'mem'=>4000,'stock'=>130,'min'=>10,'max'=>220],
+            ['name'=>'Supermi Goreng 80gr','cat'=>3,'brand'=>1,'unit'=>1,'cost'=>1800,'sell'=>3000,'whole'=>2800,'mem'=>2500,'stock'=>170,'min'=>15,'max'=>280],
+            ['name'=>'Pop Mie Goreng 80gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>100,'min'=>10,'max'=>180],
+            ['name'=>'Pop Mie Baso 75gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>95,'min'=>10,'max'=>170],
+            ['name'=>'Royco Masako Ayam 9gr','cat'=>3,'brand'=>3,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>250,'min'=>20,'max'=>400],
+            ['name'=>'Royco Masako Sapi 9gr','cat'=>3,'brand'=>3,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>240,'min'=>20,'max'=>400],
+            ['name'=>'Masako Ayam 8gr','cat'=>3,'brand'=>22,'unit'=>6,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1800,'stock'=>300,'min'=>30,'max'=>500],
+            ['name'=>'Masako Sapi 8gr','cat'=>3,'brand'=>22,'unit'=>6,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1800,'stock'=>290,'min'=>30,'max'=>500],
+            ['name'=>'Maggi Kaldu Blok Ayam 6x10gr','cat'=>3,'brand'=>5,'unit'=>3,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>70,'min'=>5,'max'=>120],
+            ['name'=>'Maggi Kaldu Blok Sapi 6x10gr','cat'=>3,'brand'=>5,'unit'=>3,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>65,'min'=>5,'max'=>120],
+            ['name'=>'Sajiku Tepung Bumbu 80gr','cat'=>3,'brand'=>22,'unit'=>6,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4200,'stock'=>130,'min'=>10,'max'=>220],
+            ['name'=>'Sajiku Tepung Bumbu Pedas 80gr','cat'=>3,'brand'=>22,'unit'=>6,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4200,'stock'=>125,'min'=>10,'max'=>220],
+            ['name'=>'Sasa Tepung Bumbu 80gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4200,'stock'=>140,'min'=>10,'max'=>230],
+            ['name'=>'Bamboe Nasi Goreng 45gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>110,'min'=>10,'max'=>190],
+            ['name'=>'Bamboe Rendang 45gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>105,'min'=>10,'max'=>190],
+            ['name'=>'Bamboe Soto Ayam 45gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>100,'min'=>10,'max'=>180],
+            ['name'=>'Racik Nasi Goreng 45gr','cat'=>3,'brand'=>1,'unit'=>6,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>95,'min'=>10,'max'=>165],
+            ['name'=>'Racik Rendang 45gr','cat'=>3,'brand'=>1,'unit'=>6,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>90,'min'=>10,'max'=>160],
+            ['name'=>'Racik Ayam Goreng 45gr','cat'=>3,'brand'=>1,'unit'=>6,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>85,'min'=>10,'max'=>155],
+            ['name'=>'Kara Santan 200ml','cat'=>3,'brand'=>2,'unit'=>7,'cost'=>8000,'sell'=>12000,'whole'=>11000,'mem'=>10500,'stock'=>55,'min'=>5,'max'=>90],
+            ['name'=>'Sun Kara Santan 200ml','cat'=>3,'brand'=>2,'unit'=>7,'cost'=>7500,'sell'=>11000,'whole'=>10000,'mem'=>9500,'stock'=>60,'min'=>5,'max'=>100],
+            ['name'=>'Sasa Santan Bubuk 20gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4200,'stock'=>95,'min'=>10,'max'=>160],
+            ['name'=>'Tepung Terigu Segitiga Biru 1KG','cat'=>3,'brand'=>1,'unit'=>2,'cost'=>10000,'sell'=>13500,'whole'=>13000,'mem'=>12500,'stock'=>40,'min'=>5,'max'=>60],
+            ['name'=>'Tepung Beras Rose Brand 500gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>7000,'sell'=>10000,'whole'=>9500,'mem'=>9000,'stock'=>35,'min'=>5,'max'=>55],
+            ['name'=>'Tepung Tapioka Rose Brand 500gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>6500,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>38,'min'=>5,'max'=>60],
+            ['name'=>'Tepung Ketan Rose Brand 500gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>8000,'sell'=>11000,'whole'=>10000,'mem'=>9500,'stock'=>30,'min'=>3,'max'=>50],
+            ['name'=>'Tepung Maizena Maizenaku 150gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>4500,'sell'=>7000,'whole'=>6500,'mem'=>6000,'stock'=>55,'min'=>5,'max'=>90],
+            ['name'=>'Garam Refina 500gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>3000,'sell'=>4500,'whole'=>4200,'mem'=>4000,'stock'=>70,'min'=>5,'max'=>120],
+            ['name'=>'Garam Dolpin 500gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>2500,'sell'=>4000,'whole'=>3800,'mem'=>3500,'stock'=>75,'min'=>5,'max'=>130],
+            ['name'=>'Micin Sasa 50gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1800,'stock'=>200,'min'=>20,'max'=>350],
+            ['name'=>'Micin Ajinomoto 50gr','cat'=>3,'brand'=>22,'unit'=>6,'cost'=>1500,'sell'=>2500,'whole'=>2300,'mem'=>2200,'stock'=>180,'min'=>20,'max'=>320],
+            ['name'=>'Gula Pasir Gulaku 1KG','cat'=>3,'brand'=>2,'unit'=>2,'cost'=>14000,'sell'=>18000,'whole'=>17000,'mem'=>16500,'stock'=>50,'min'=>5,'max'=>80],
+            ['name'=>'Gula Merah Semut 250gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>45,'min'=>5,'max'=>75],
+            ['name'=>'Tepung Panir Putih 200gr','cat'=>3,'brand'=>2,'unit'=>1,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>50,'min'=>5,'max'=>85],
+            ['name'=>'Kobe Tepung Kentucky 75gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4200,'stock'=>120,'min'=>10,'max'=>200],
+            ['name'=>'Mama Suka Tepung Bumbu Serbaguna 80gr','cat'=>3,'brand'=>15,'unit'=>6,'cost'=>2500,'sell'=>4000,'whole'=>3800,'mem'=>3500,'stock'=>110,'min'=>10,'max'=>190],
+            ['name'=>'Indofood Bumbu Nasi Goreng Instan 20gr','cat'=>3,'brand'=>1,'unit'=>6,'cost'=>2000,'sell'=>3000,'whole'=>2800,'mem'=>2700,'stock'=>160,'min'=>15,'max'=>280],
+            ['name'=>'Ladaku Merica Bubuk 6gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1800,'stock'=>220,'min'=>20,'max'=>380],
+            ['name'=>'Ketumbar Bubuk Desaku 10gr','cat'=>3,'brand'=>2,'unit'=>6,'cost'=>1000,'sell'=>2000,'whole'=>1800,'mem'=>1800,'stock'=>180,'min'=>20,'max'=>320],
+
+            // ==================== CAT 4: SABUN & PEMBERSIH (50) ====================
+            ['name'=>'Lifebuoy Sabun Batang Merah 70gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>2500,'sell'=>4000,'whole'=>3800,'mem'=>3500,'stock'=>160,'min'=>15,'max'=>250],
+            ['name'=>'Lifebuoy Sabun Batang Kuning 70gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>2500,'sell'=>4000,'whole'=>3800,'mem'=>3500,'stock'=>150,'min'=>15,'max'=>250],
+            ['name'=>'Lifebuoy Sabun Batang Hijau 70gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>2500,'sell'=>4000,'whole'=>3800,'mem'=>3500,'stock'=>145,'min'=>15,'max'=>250],
+            ['name'=>'Lux Sabun Batang Pink 80gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>3500,'sell'=>5000,'whole'=>4800,'mem'=>4500,'stock'=>120,'min'=>10,'max'=>200],
+            ['name'=>'Lux Sabun Batang Putih 80gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>3500,'sell'=>5000,'whole'=>4800,'mem'=>4500,'stock'=>115,'min'=>10,'max'=>200],
+            ['name'=>'Dettol Sabun Batang Original 65gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>90,'min'=>10,'max'=>160],
+            ['name'=>'Dettol Sabun Batang Cool 65gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>85,'min'=>10,'max'=>160],
+            ['name'=>'Nuvo Sabun Batang Family 80gr','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>2200,'sell'=>3500,'whole'=>3200,'mem'=>3000,'stock'=>140,'min'=>15,'max'=>240],
+            ['name'=>'Giv Sabun Batang White 80gr','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>2000,'sell'=>3200,'whole'=>3000,'mem'=>2800,'stock'=>150,'min'=>15,'max'=>260],
+            ['name'=>'Rinso Deterjen 770gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>12000,'sell'=>17000,'whole'=>16000,'mem'=>15000,'stock'=>40,'min'=>5,'max'=>60],
+            ['name'=>'Rinso Deterjen 1.7KG','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>20000,'sell'=>28000,'whole'=>26500,'mem'=>25000,'stock'=>25,'min'=>3,'max'=>40],
+            ['name'=>'So Klin Deterjen 770gr','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>10000,'sell'=>14500,'whole'=>13500,'mem'=>13000,'stock'=>45,'min'=>5,'max'=>70],
+            ['name'=>'Daia Deterjen 700gr','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>8500,'sell'=>12500,'whole'=>11500,'mem'=>11000,'stock'=>50,'min'=>5,'max'=>80],
+            ['name'=>'Attack Deterjen 800gr','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>15000,'sell'=>21000,'whole'=>20000,'mem'=>19000,'stock'=>30,'min'=>3,'max'=>50],
+            ['name'=>'Sunlight CIF 450ml','cat'=>4,'brand'=>3,'unit'=>7,'cost'=>8500,'sell'=>12500,'whole'=>11500,'mem'=>11000,'stock'=>55,'min'=>5,'max'=>80],
+            ['name'=>'Sunlight CIF 750ml','cat'=>4,'brand'=>3,'unit'=>7,'cost'=>12000,'sell'=>17500,'whole'=>16500,'mem'=>15500,'stock'=>35,'min'=>5,'max'=>55],
+            ['name'=>'Mama Lemon 400ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>6500,'sell'=>9500,'whole'=>9000,'mem'=>8500,'stock'=>60,'min'=>5,'max'=>100],
+            ['name'=>'Mama Lemon 750ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>10000,'sell'=>15000,'whole'=>14000,'mem'=>13000,'stock'=>40,'min'=>5,'max'=>65],
+            ['name'=>'So Klin Lantai 800ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>10000,'sell'=>14500,'whole'=>13500,'mem'=>13000,'stock'=>45,'min'=>5,'max'=>70],
+            ['name'=>'So Klin Lantai 1600ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>16000,'sell'=>23000,'whole'=>21500,'mem'=>20500,'stock'=>25,'min'=>3,'max'=>40],
+            ['name'=>'Super Pell 800ml','cat'=>4,'brand'=>3,'unit'=>7,'cost'=>10500,'sell'=>15000,'whole'=>14000,'mem'=>13500,'stock'=>40,'min'=>5,'max'=>65],
+            ['name'=>'Wipol 450ml','cat'=>4,'brand'=>3,'unit'=>7,'cost'=>8000,'sell'=>11500,'whole'=>10800,'mem'=>10500,'stock'=>50,'min'=>5,'max'=>80],
+            ['name'=>'SOS Pembersih Lantai 900ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>9000,'sell'=>13000,'whole'=>12000,'mem'=>11500,'stock'=>48,'min'=>5,'max'=>75],
+            ['name'=>'SOS Pembersih Kamar Mandi 450ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>7000,'sell'=>10000,'whole'=>9500,'mem'=>9000,'stock'=>55,'min'=>5,'max'=>85],
+            ['name'=>'Bayfresh Spray 300ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>8500,'sell'=>12500,'whole'=>11500,'mem'=>11000,'stock'=>50,'min'=>5,'max'=>80],
+            ['name'=>'Stella Pewangi 225ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>4000,'sell'=>6500,'whole'=>6000,'mem'=>5500,'stock'=>85,'min'=>10,'max'=>140],
+            ['name'=>'Stella Pewangi 750ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>10000,'sell'=>15000,'whole'=>14000,'mem'=>13000,'stock'=>40,'min'=>5,'max'=>65],
+            ['name'=>'Glade Spray Lavender 300ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>14000,'sell'=>20000,'whole'=>19000,'mem'=>18000,'stock'=>30,'min'=>3,'max'=>50],
+            ['name'=>'Pepsodent 75gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>5500,'sell'=>8500,'whole'=>8000,'mem'=>7500,'stock'=>95,'min'=>10,'max'=>150],
+            ['name'=>'Pepsodent 120gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>8000,'sell'=>12000,'whole'=>11000,'mem'=>10500,'stock'=>65,'min'=>5,'max'=>110],
+            ['name'=>'Pepsodent 190gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>12000,'sell'=>17500,'whole'=>16500,'mem'=>15500,'stock'=>40,'min'=>5,'max'=>70],
+            ['name'=>'Close Up 75gr','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>85,'min'=>10,'max'=>140],
+            ['name'=>'Ciptadent 75gr','cat'=>4,'brand'=>19,'unit'=>1,'cost'=>4000,'sell'=>6000,'whole'=>5500,'mem'=>5200,'stock'=>100,'min'=>10,'max'=>170],
+            ['name'=>'Sikat Gigi Formula 1pc','cat'=>4,'brand'=>19,'unit'=>1,'cost'=>3500,'sell'=>5500,'whole'=>5000,'mem'=>4800,'stock'=>90,'min'=>10,'max'=>150],
+            ['name'=>'Sikat Gigi Pepsodent 1pc','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>5000,'sell'=>7500,'whole'=>7000,'mem'=>6800,'stock'=>75,'min'=>5,'max'=>130],
+            ['name'=>'Ekonomi Sabun Colet 585gr','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>7000,'sell'=>10500,'whole'=>10000,'mem'=>9500,'stock'=>30,'min'=>5,'max'=>50],
+            ['name'=>'Molto Pewangi 770ml','cat'=>4,'brand'=>3,'unit'=>7,'cost'=>9500,'sell'=>13500,'whole'=>12500,'mem'=>12000,'stock'=>42,'min'=>5,'max'=>68],
+            ['name'=>'Wipol Cairan Pembersih 780ml','cat'=>4,'brand'=>3,'unit'=>7,'cost'=>11000,'sell'=>16000,'whole'=>15000,'mem'=>14200,'stock'=>38,'min'=>5,'max'=>62],
+            ['name'=>'Bayfresh Gel Pengharum 10gr','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>3000,'sell'=>5000,'whole'=>4500,'mem'=>4200,'stock'=>110,'min'=>10,'max'=>180],
+            ['name'=>'Harpic Pembersih Kloset 450ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>9500,'sell'=>14000,'whole'=>13000,'mem'=>12500,'stock'=>35,'min'=>5,'max'=>58],
+            ['name'=>'HIT Spray 200ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>12000,'sell'=>17500,'whole'=>16500,'mem'=>15500,'stock'=>40,'min'=>5,'max'=>65],
+            ['name'=>'Baygon Spray 400ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>13500,'sell'=>19500,'whole'=>18500,'mem'=>17500,'stock'=>35,'min'=>5,'max'=>55],
+            ['name'=>'Vixal Pembersih Keramik 250ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>7500,'sell'=>11000,'whole'=>10000,'mem'=>9500,'stock'=>45,'min'=>5,'max'=>75],
+            ['name'=>'Mama Lime Pencuci Piring 400ml','cat'=>4,'brand'=>2,'unit'=>7,'cost'=>6500,'sell'=>9500,'whole'=>9000,'mem'=>8500,'stock'=>58,'min'=>5,'max'=>95],
+            ['name'=>'Tisu Paseo 250 Sheet','cat'=>4,'brand'=>2,'unit'=>3,'cost'=>8000,'sell'=>12000,'whole'=>11000,'mem'=>10500,'stock'=>55,'min'=>5,'max'=>90],
+            ['name'=>'Tisu Nice 250 Sheet','cat'=>4,'brand'=>2,'unit'=>3,'cost'=>6000,'sell'=>9000,'whole'=>8500,'mem'=>8000,'stock'=>65,'min'=>5,'max'=>105],
+            ['name'=>'Tisu basah Mitu Baby 50 Sheet','cat'=>4,'brand'=>2,'unit'=>1,'cost'=>7000,'sell'=>10500,'whole'=>10000,'mem'=>9500,'stock'=>50,'min'=>5,'max'=>80],
+            ['name'=>'Tisu basah Cussons Baby 50 Sheet','cat'=>4,'brand'=>3,'unit'=>1,'cost'=>8000,'sell'=>12000,'whole'=>11000,'mem'=>10500,'stock'=>45,'min'=>5,'max'=>75],
+            ['name'=>'Sikat Kloset 1pc','cat'=>4,'brand'=>25,'unit'=>1,'cost'=>10000,'sell'=>15000,'whole'=>14000,'mem'=>13000,'stock'=>25,'min'=>3,'max'=>40],
+            ['name'=>'Sapu Ijuk 1pc','cat'=>4,'brand'=>25,'unit'=>1,'cost'=>12000,'sell'=>18000,'whole'=>17000,'mem'=>16000,'stock'=>20,'min'=>3,'max'=>35],
+        ];
+    }
+
     // ================================================================
-    // PRODUCT VARIANTS (10)
+    // PRODUCT VARIANTS (dynamic - on selected products in range 201-1000)
     // ================================================================
     private function seedProductVariants(Carbon $now): void
     {
-        // Mark products with variants
-        DB::table('products')->whereIn('id', [3, 11, 16, 21, 27])->update(['has_variants' => true]);
+        // Choose products from the generated range to carry variants (flavors/sizes).
+        $maxId = count($this->productIds);
+        $candidates = range(201, max(201, $maxId));
+        shuffle($candidates);
+        $chosen = array_slice($candidates, 0, 40);
+        sort($chosen);
 
-        $variants = [
-            // Lays Rumput Laut - variant rasa
-            ['product_id' => 3, 'name' => 'Lays Ayam Lada Hitam 68gr', 'sku' => 'SKU00003B', 'barcode' => '8993000001123', 'cost' => 9500, 'sell' => 14000, 'stock' => 50],
-            ['product_id' => 3, 'name' => 'Lays Sapi Panggang 68gr', 'sku' => 'SKU00003C', 'barcode' => '8993000001124', 'cost' => 9000, 'sell' => 13500, 'stock' => 45],
+        $this->variantProductIds = $chosen;
+        if (!empty($chosen)) {
+            DB::table('products')->whereIn('id', $chosen)->update(['has_variants' => true]);
+        }
 
-            // Kopi Kapal Api - variant ukuran
-            ['product_id' => 11, 'name' => 'Kopi Kapal Api 165gr', 'sku' => 'SKU00011B', 'barcode' => '8991100001125', 'cost' => 10000, 'sell' => 14000, 'stock' => 60],
-            ['product_id' => 11, 'name' => 'Kopi Kapal Api 760gr', 'sku' => 'SKU00011C', 'barcode' => '8991100001126', 'cost' => 32000, 'sell' => 43000, 'stock' => 15],
-
-            // Bear Brand - variant ukuran
-            ['product_id' => 16, 'name' => 'Bear Brand 400gr', 'sku' => 'SKU00016B', 'barcode' => '8991600001127', 'cost' => 18000, 'sell' => 24000, 'stock' => 25],
-
-            // Indomie Goreng - variant rasa
-            ['product_id' => 21, 'name' => 'Indomie Goreng Rendang 85gr', 'sku' => 'SKU00021B', 'barcode' => '8992100001128', 'cost' => 2200, 'sell' => 3500, 'stock' => 170],
-            ['product_id' => 21, 'name' => 'Indomie Goreng Aceh 85gr', 'sku' => 'SKU00021C', 'barcode' => '8992100001129', 'cost' => 2200, 'sell' => 3500, 'stock' => 155],
-
-            // Pulpen Faster - variant warna
-            ['product_id' => 27, 'name' => 'Pulpen Faster C600 Hitam', 'sku' => 'SKU00027B', 'barcode' => '8992700001130', 'cost' => 8000, 'sell' => 12000, 'stock' => 120],
-            ['product_id' => 27, 'name' => 'Pulpen Faster C600 Biru', 'sku' => 'SKU00027C', 'barcode' => '8992700001131', 'cost' => 8000, 'sell' => 12000, 'stock' => 110],
-            ['product_id' => 27, 'name' => 'Pulpen Faster C600 Merah', 'sku' => 'SKU00027D', 'barcode' => '8992700001132', 'cost' => 8000, 'sell' => 12000, 'stock' => 85],
-        ];
+        $suffixes = ['Varian Kecil', 'Varian Besar', 'Varian Jumbo', 'Rasa Original', 'Rasa Pedas', 'Rasa Manis', 'Edisi Refill', 'Kemasan Ekonomis'];
+        $factors = [0.85, 1.0, 1.15, 1.25];
 
         $rows = [];
-        foreach ($variants as $v) {
-            $rows[] = [
-                'product_id' => $v['product_id'],
-                'name' => $v['name'],
-                'sku' => $v['sku'],
-                'barcode' => $v['barcode'],
-                'cost_price' => $v['cost'],
-                'selling_price' => $v['sell'],
-                'current_stock' => $v['stock'],
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+        $variantId = 1;
+        foreach ($chosen as $pid) {
+            $prod = $this->products[$pid];
+            $count = random_int(1, 3);
+            $pool = $suffixes;
+            shuffle($pool);
+            $ids = [];
+
+            for ($k = 0; $k < $count; $k++) {
+                $suffix = $pool[$k];
+                $factor = $factors[random_int(0, count($factors) - 1)];
+                $sell = (int) (round(($prod['sell'] * $factor) / 500) * 500);
+                $cost = (int) (round(($prod['cost'] * $factor) / 500) * 500);
+                if ($sell < 500) { $sell = 500; }
+                if ($cost < 500) { $cost = 500; }
+                $stock = random_int($prod['min'], $prod['max']);
+                $letter = chr(66 + $k); // B, C, D
+
+                $rows[] = [
+                    'product_id' => $pid,
+                    'name' => $prod['name'] . ' - ' . $suffix,
+                    'sku' => 'SKU' . str_pad((string) $pid, 5, '0', STR_PAD_LEFT) . $letter,
+                    'barcode' => '890' . str_pad((string) $variantId, 10, '0', STR_PAD_LEFT),
+                    'cost_price' => $cost,
+                    'selling_price' => $sell,
+                    'current_stock' => $stock,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+
+                $ids[] = $variantId;
+                $this->variantSellById[$variantId] = $sell;
+                $variantId++;
+            }
+
+            $this->variantIdsByProduct[$pid] = $ids;
         }
-        DB::table('product_variants')->insert($rows);
-        $this->variantIds = range(1, count($variants));
+
+        foreach (array_chunk($rows, 100) as $chunk) {
+            DB::table('product_variants')->insert($chunk);
+        }
+        $this->variantIds = range(1, count($rows));
     }
 
     // ================================================================
@@ -805,9 +838,9 @@ class DemoDataSeeder extends Seeder
         $usedEmails = [];
 
         for ($i = 0; $i < 200; $i++) {
-            $phone = '08' . str_pad(random_int(100000000, 999999999), 10, '0', STR_PAD_LEFT);
+            $phone = '08' . str_pad((string) random_int(100000000, 999999999), 10, '0', STR_PAD_LEFT);
             while (in_array($phone, $usedPhones)) {
-                $phone = '08' . str_pad(random_int(100000000, 999999999), 10, '0', STR_PAD_LEFT);
+                $phone = '08' . str_pad((string) random_int(100000000, 999999999), 10, '0', STR_PAD_LEFT);
             }
             $usedPhones[] = $phone;
 
@@ -818,10 +851,6 @@ class DemoDataSeeder extends Seeder
             $usedEmails[] = $email;
 
             $groupId = random_int(1, 3);
-            if ($groupId === 1 && random_int(1, 100) <= 30) {
-                $groupId = 1;
-            }
-
             $totalSpent = $groupId === 3 ? random_int(2000000, 15000000) : ($groupId === 2 ? random_int(500000, 5000000) : random_int(0, 2000000));
 
             $customers[] = [
@@ -929,7 +958,7 @@ class DemoDataSeeder extends Seeder
             $taxAmount = round($itemsSubtotal * 0.11);
             $totalAmount = $itemsSubtotal - $discountAmount + $taxAmount;
 
-            $orderNumber = 'INV-' . date('Ymd', $orderDate->timestamp) . '-' . str_pad($orderId, 5, '0', STR_PAD_LEFT);
+            $orderNumber = 'INV-' . date('Ymd', $orderDate->timestamp) . '-' . str_pad((string) $orderId, 5, '0', STR_PAD_LEFT);
 
             $orders[] = [
                 'order_number' => $orderNumber,
@@ -977,7 +1006,6 @@ class DemoDataSeeder extends Seeder
                 ];
             }
 
-            // Merge order items
             foreach ($orderItemsBatch as $oi) {
                 $orderItems[] = $oi;
             }
@@ -997,7 +1025,6 @@ class DemoDataSeeder extends Seeder
             }
         }
 
-        // Flush remaining
         if (!empty($orders)) {
             DB::table('orders')->insert($orders);
         }
@@ -1030,7 +1057,7 @@ class DemoDataSeeder extends Seeder
             $outletId = $this->outletIds[array_rand($this->outletIds)];
             $userId = random_int(1, 3);
 
-            $poNumber = 'PO-' . date('Ymd', $poDate->timestamp) . '-' . str_pad($poId, 4, '0', STR_PAD_LEFT);
+            $poNumber = 'PO-' . date('Ymd', $poDate->timestamp) . '-' . str_pad((string) $poId, 4, '0', STR_PAD_LEFT);
 
             $itemCount = random_int(2, 6);
             $productIds = $this->pickRandomProducts($itemCount);
@@ -1119,7 +1146,7 @@ class DemoDataSeeder extends Seeder
             $outletId = $this->outletIds[array_rand($this->outletIds)];
             $userId = random_int(1, 3);
 
-            $opnameNumber = 'OPN-' . date('Ymd', $opnameDate->timestamp) . '-' . str_pad($opnameId, 3, '0', STR_PAD_LEFT);
+            $opnameNumber = 'OPN-' . date('Ymd', $opnameDate->timestamp) . '-' . str_pad((string) $opnameId, 3, '0', STR_PAD_LEFT);
 
             $opnames[] = [
                 'opname_number' => $opnameNumber,
@@ -1133,7 +1160,6 @@ class DemoDataSeeder extends Seeder
 
             $productPool = $this->pickRandomProducts(random_int(10, 25));
             foreach ($productPool as $pid) {
-                $prod = $this->products[$pid];
                 $systemStock = random_int(5, 150);
                 $difference = random_int(-5, 5);
                 $actualStock = $systemStock + $difference;
@@ -1191,7 +1217,6 @@ class DemoDataSeeder extends Seeder
         $chosenCustomers = array_slice($customers, 0, min(count($customers), 80));
 
         foreach ($chosenCustomers as $customerId) {
-            // Get orders for this customer
             $orderIds = DB::table('orders')
                 ->where('customer_id', $customerId)
                 ->pluck('id')
@@ -1231,94 +1256,6 @@ class DemoDataSeeder extends Seeder
     }
 
     // ================================================================
-    // NEW FEATURES — Tables, Raw Materials, Discount Templates, Attendance
-    // ================================================================
-
-    private function seedTableAreas(Carbon $now): void
-    {
-        $areas = [
-            ['outlet_id' => 1, 'name' => 'Indoor', 'description' => 'Area dalam ruangan ber-AC', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'name' => 'Outdoor', 'description' => 'Area luar ruangan', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'name' => 'VIP', 'description' => 'Ruang VIP khusus', 'sort_order' => 3, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 2, 'name' => 'Lantai 1', 'description' => 'Area lantai dasar', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-        ];
-        DB::table('table_areas')->insert($areas);
-    }
-
-    private function seedTables(Carbon $now): void
-    {
-        $tables = [
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 1', 'code' => 'T01', 'capacity' => 4, 'status' => 'available', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 2', 'code' => 'T02', 'capacity' => 4, 'status' => 'available', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 3', 'code' => 'T03', 'capacity' => 2, 'status' => 'available', 'sort_order' => 3, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 4', 'code' => 'T04', 'capacity' => 6, 'status' => 'occupied', 'sort_order' => 4, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 2, 'name' => 'Meja Outdoor 1', 'code' => 'T05', 'capacity' => 4, 'status' => 'available', 'sort_order' => 5, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 3, 'name' => 'VIP 1', 'code' => 'T06', 'capacity' => 8, 'status' => 'reserved', 'sort_order' => 6, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 2, 'table_area_id' => 4, 'name' => 'Meja A1', 'code' => 'T07', 'capacity' => 4, 'status' => 'available', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 2, 'table_area_id' => 4, 'name' => 'Meja A2', 'code' => 'T08', 'capacity' => 4, 'status' => 'available', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
-        ];
-        DB::table('tables')->insert($tables);
-    }
-
-    private function seedRawMaterials(Carbon $now): void
-    {
-        $materials = [
-            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Tepung Terigu', 'code' => 'RM001', 'cost_per_unit' => 12000, 'current_stock' => 50, 'min_stock' => 10, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Gula Pasir', 'code' => 'RM002', 'cost_per_unit' => 15000, 'current_stock' => 30, 'min_stock' => 5, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Minyak Goreng', 'code' => 'RM003', 'cost_per_unit' => 20000, 'current_stock' => 20, 'min_stock' => 5, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Telur', 'code' => 'RM004', 'cost_per_unit' => 28000, 'current_stock' => 15, 'min_stock' => 3, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'unit_id' => 5, 'name' => 'Susu UHT', 'code' => 'RM005', 'cost_per_unit' => 18000, 'current_stock' => 25, 'min_stock' => 5, 'created_at' => $now, 'updated_at' => $now],
-        ];
-        DB::table('raw_materials')->insert($materials);
-    }
-
-    private function seedRecipeItems(Carbon $now): void
-    {
-        DB::table('recipe_items')->insert([
-            ['product_id' => 8, 'raw_material_id' => 1, 'quantity' => 0.5, 'created_at' => $now, 'updated_at' => $now],
-            ['product_id' => 8, 'raw_material_id' => 2, 'quantity' => 0.1, 'created_at' => $now, 'updated_at' => $now],
-            ['product_id' => 8, 'raw_material_id' => 4, 'quantity' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['product_id' => 12, 'raw_material_id' => 1, 'quantity' => 0.3, 'created_at' => $now, 'updated_at' => $now],
-            ['product_id' => 12, 'raw_material_id' => 5, 'quantity' => 0.25, 'created_at' => $now, 'updated_at' => $now],
-        ]);
-    }
-
-    private function seedDiscountTemplates(Carbon $now): void
-    {
-        DB::table('discount_templates')->insert([
-            ['name' => 'Diskon 10% Member', 'type' => 'percent', 'value' => 10, 'min_purchase' => 50000, 'buy_quantity' => null, 'get_quantity' => null, 'start_date' => '2026-06-01', 'end_date' => '2026-12-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Potongan 5rb', 'type' => 'fixed', 'value' => 5000, 'min_purchase' => 25000, 'buy_quantity' => null, 'get_quantity' => null, 'start_date' => '2026-06-01', 'end_date' => '2026-12-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Beli 3 Gratis 1', 'type' => 'buy_x_get_y', 'value' => 100, 'min_purchase' => 0, 'buy_quantity' => 3, 'get_quantity' => 1, 'start_date' => '2026-06-01', 'end_date' => '2026-07-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Diskon Weekend 15%', 'type' => 'percent', 'value' => 15, 'min_purchase' => 100000, 'buy_quantity' => null, 'get_quantity' => null, 'start_date' => '2026-06-01', 'end_date' => '2026-08-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
-        ]);
-    }
-
-    private function seedAttendances(Carbon $now): void
-    {
-        $records = [];
-        $users = [1, 2, 3, 4, 5];
-        for ($d = 5; $d >= 0; $d--) {
-            $date = $now->copy()->subDays($d);
-            foreach ($users as $uid) {
-                $clockIn = sprintf('%02d:%02d:%02d', rand(7, 9), rand(0, 59), rand(0, 59));
-                $clockOut = sprintf('%02d:%02d:%02d', rand(16, 18), rand(0, 59), rand(0, 59));
-                $status = $d > 1 ? 'present' : (rand(1, 10) > 8 ? 'late' : 'present');
-                $records[] = [
-                    'user_id' => $uid,
-                    'outlet_id' => rand(1, 2),
-                    'date' => $date->toDateString(),
-                    'clock_in' => $clockIn,
-                    'clock_out' => $clockOut,
-                    'status' => $status,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-            }
-        }
-        DB::table('attendances')->insert($records);
-    }
-
-    // ================================================================
     // MEMBERSHIP TIERS (4)
     // ================================================================
     private function seedMembershipTiers(Carbon $now): void
@@ -1350,7 +1287,7 @@ class DemoDataSeeder extends Seeder
 
         foreach ($transferConfigs as $cfg) {
             $transferDate = $now->copy()->subDays($cfg['days']);
-            $transferNumber = 'STF-' . date('Ymd', $transferDate->timestamp) . '-' . str_pad($transferId, 4, '0', STR_PAD_LEFT);
+            $transferNumber = 'STF-' . date('Ymd', $transferDate->timestamp) . '-' . str_pad((string) $transferId, 4, '0', STR_PAD_LEFT);
 
             $transfers[] = [
                 'transfer_number' => $transferNumber,
@@ -1366,7 +1303,6 @@ class DemoDataSeeder extends Seeder
             $itemCount = random_int(3, 7);
             $productsToTransfer = $this->pickRandomProducts($itemCount);
             foreach ($productsToTransfer as $pid) {
-                $prod = $this->products[$pid];
                 $qty = random_int(10, 50);
                 $transferItems[] = [
                     'stock_transfer_id' => $transferId,
@@ -1400,6 +1336,10 @@ class DemoDataSeeder extends Seeder
             ->pluck('id')
             ->toArray();
 
+        if (empty($completedOrderIds)) {
+            return;
+        }
+
         $returnConfigs = [
             ['type' => 'customer_return', 'reason' => 'Produk rusak / kemasan bocor', 'status' => 'completed'],
             ['type' => 'customer_return', 'reason' => 'Salah beli varian rasa', 'status' => 'completed'],
@@ -1412,7 +1352,7 @@ class DemoDataSeeder extends Seeder
             $orderId = $completedOrderIds[$i] ?? $completedOrderIds[0];
             $order = DB::table('orders')->where('id', $orderId)->first();
             $returnDate = $now->copy()->subDays(random_int(3, 20));
-            $returnNumber = 'RTN-' . date('Ymd', $returnDate->timestamp) . '-' . str_pad($returnId, 4, '0', STR_PAD_LEFT);
+            $returnNumber = 'RTN-' . date('Ymd', $returnDate->timestamp) . '-' . str_pad((string) $returnId, 4, '0', STR_PAD_LEFT);
 
             $returns[] = [
                 'return_number' => $returnNumber,
@@ -1446,11 +1386,13 @@ class DemoDataSeeder extends Seeder
         }
 
         DB::table('returns')->insert($returns);
-        DB::table('return_items')->insert($returnItems);
+        if (!empty($returnItems)) {
+            DB::table('return_items')->insert($returnItems);
+        }
     }
 
     // ================================================================
-    // INSTALLMENTS (for 4 orders)
+    // INSTALLMENTS (for up to 4 orders)
     // ================================================================
     private function seedInstallments(Carbon $now): void
     {
@@ -1487,7 +1429,9 @@ class DemoDataSeeder extends Seeder
             }
         }
 
-        DB::table('installments')->insert($installments);
+        if (!empty($installments)) {
+            DB::table('installments')->insert($installments);
+        }
     }
 
     // ================================================================
@@ -1540,8 +1484,10 @@ class DemoDataSeeder extends Seeder
             $payableId++;
         }
 
-        DB::table('supplier_payables')->insert($payables);
-        DB::table('payable_payments')->insert($payments);
+        if (!empty($payables)) {
+            DB::table('supplier_payables')->insert($payables);
+            DB::table('payable_payments')->insert($payments);
+        }
     }
 
     // ================================================================
@@ -1650,6 +1596,108 @@ class DemoDataSeeder extends Seeder
     }
 
     // ================================================================
+    // TABLE AREAS
+    // ================================================================
+    private function seedTableAreas(Carbon $now): void
+    {
+        $areas = [
+            ['outlet_id' => 1, 'name' => 'Indoor', 'description' => 'Area dalam ruangan ber-AC', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'name' => 'Outdoor', 'description' => 'Area luar ruangan', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'name' => 'VIP', 'description' => 'Ruang VIP khusus', 'sort_order' => 3, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 2, 'name' => 'Lantai 1', 'description' => 'Area lantai dasar', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
+        ];
+        DB::table('table_areas')->insert($areas);
+    }
+
+    // ================================================================
+    // TABLES
+    // ================================================================
+    private function seedTables(Carbon $now): void
+    {
+        $tables = [
+            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 1', 'code' => 'T01', 'capacity' => 4, 'status' => 'available', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 2', 'code' => 'T02', 'capacity' => 4, 'status' => 'available', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 3', 'code' => 'T03', 'capacity' => 2, 'status' => 'available', 'sort_order' => 3, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 4', 'code' => 'T04', 'capacity' => 6, 'status' => 'occupied', 'sort_order' => 4, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'table_area_id' => 2, 'name' => 'Meja Outdoor 1', 'code' => 'T05', 'capacity' => 4, 'status' => 'available', 'sort_order' => 5, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'table_area_id' => 3, 'name' => 'VIP 1', 'code' => 'T06', 'capacity' => 8, 'status' => 'reserved', 'sort_order' => 6, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 2, 'table_area_id' => 4, 'name' => 'Meja A1', 'code' => 'T07', 'capacity' => 4, 'status' => 'available', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 2, 'table_area_id' => 4, 'name' => 'Meja A2', 'code' => 'T08', 'capacity' => 4, 'status' => 'available', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
+        ];
+        DB::table('tables')->insert($tables);
+    }
+
+    // ================================================================
+    // RAW MATERIALS (5)
+    // ================================================================
+    private function seedRawMaterials(Carbon $now): void
+    {
+        $materials = [
+            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Tepung Terigu', 'code' => 'RM001', 'cost_per_unit' => 12000, 'current_stock' => 50, 'min_stock' => 10, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Gula Pasir', 'code' => 'RM002', 'cost_per_unit' => 15000, 'current_stock' => 30, 'min_stock' => 5, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Minyak Goreng', 'code' => 'RM003', 'cost_per_unit' => 20000, 'current_stock' => 20, 'min_stock' => 5, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'unit_id' => 4, 'name' => 'Telur', 'code' => 'RM004', 'cost_per_unit' => 28000, 'current_stock' => 15, 'min_stock' => 3, 'created_at' => $now, 'updated_at' => $now],
+            ['outlet_id' => 1, 'unit_id' => 5, 'name' => 'Susu UHT', 'code' => 'RM005', 'cost_per_unit' => 18000, 'current_stock' => 25, 'min_stock' => 5, 'created_at' => $now, 'updated_at' => $now],
+        ];
+        DB::table('raw_materials')->insert($materials);
+    }
+
+    // ================================================================
+    // RECIPE ITEMS
+    // ================================================================
+    private function seedRecipeItems(Carbon $now): void
+    {
+        DB::table('recipe_items')->insert([
+            ['product_id' => 8, 'raw_material_id' => 1, 'quantity' => 0.5, 'created_at' => $now, 'updated_at' => $now],
+            ['product_id' => 8, 'raw_material_id' => 2, 'quantity' => 0.1, 'created_at' => $now, 'updated_at' => $now],
+            ['product_id' => 8, 'raw_material_id' => 4, 'quantity' => 2, 'created_at' => $now, 'updated_at' => $now],
+            ['product_id' => 12, 'raw_material_id' => 1, 'quantity' => 0.3, 'created_at' => $now, 'updated_at' => $now],
+            ['product_id' => 12, 'raw_material_id' => 5, 'quantity' => 0.25, 'created_at' => $now, 'updated_at' => $now],
+        ]);
+    }
+
+    // ================================================================
+    // DISCOUNT TEMPLATES (4)
+    // ================================================================
+    private function seedDiscountTemplates(Carbon $now): void
+    {
+        DB::table('discount_templates')->insert([
+            ['name' => 'Diskon 10% Member', 'type' => 'percent', 'value' => 10, 'min_purchase' => 50000, 'buy_quantity' => null, 'get_quantity' => null, 'start_date' => '2026-06-01', 'end_date' => '2026-12-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Potongan 5rb', 'type' => 'fixed', 'value' => 5000, 'min_purchase' => 25000, 'buy_quantity' => null, 'get_quantity' => null, 'start_date' => '2026-06-01', 'end_date' => '2026-12-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Beli 3 Gratis 1', 'type' => 'buy_x_get_y', 'value' => 100, 'min_purchase' => 0, 'buy_quantity' => 3, 'get_quantity' => 1, 'start_date' => '2026-06-01', 'end_date' => '2026-07-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Diskon Weekend 15%', 'type' => 'percent', 'value' => 15, 'min_purchase' => 100000, 'buy_quantity' => null, 'get_quantity' => null, 'start_date' => '2026-06-01', 'end_date' => '2026-08-31', 'active' => true, 'created_at' => $now, 'updated_at' => $now],
+        ]);
+    }
+
+    // ================================================================
+    // ATTENDANCES (6 days x 5 users)
+    // ================================================================
+    private function seedAttendances(Carbon $now): void
+    {
+        $records = [];
+        $users = [1, 2, 3, 4, 5];
+        for ($d = 5; $d >= 0; $d--) {
+            $date = $now->copy()->subDays($d);
+            foreach ($users as $uid) {
+                $clockIn = sprintf('%02d:%02d:%02d', rand(7, 9), rand(0, 59), rand(0, 59));
+                $clockOut = sprintf('%02d:%02d:%02d', rand(16, 18), rand(0, 59), rand(0, 59));
+                $status = $d > 1 ? 'present' : (rand(1, 10) > 8 ? 'late' : 'present');
+                $records[] = [
+                    'user_id' => $uid,
+                    'outlet_id' => rand(1, 2),
+                    'date' => $date->toDateString(),
+                    'clock_in' => $clockIn,
+                    'clock_out' => $clockOut,
+                    'status' => $status,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+        }
+        DB::table('attendances')->insert($records);
+    }
+
+    // ================================================================
     // HELPER METHODS
     // ================================================================
     private function pickRandomProducts(int $count): array
@@ -1661,36 +1709,20 @@ class DemoDataSeeder extends Seeder
 
     private function hasVariants(int $productId): bool
     {
-        return in_array($productId, [3, 11, 16, 21, 27]);
+        return in_array($productId, $this->variantProductIds, true);
     }
 
     private function getVariantIdsForProduct(int $productId): array
     {
-        $map = [
-            3 => [1, 2],
-            11 => [3, 4],
-            16 => [5],
-            21 => [6, 7],
-            27 => [8, 9, 10],
-        ];
-        return $map[$productId] ?? [];
+        return $this->variantIdsByProduct[$productId] ?? [];
     }
 
     private function getVariantInfo(int $variantId): ?array
     {
-        $map = [
-            1 => ['sell' => 14000],
-            2 => ['sell' => 13500],
-            3 => ['sell' => 14000],
-            4 => ['sell' => 43000],
-            5 => ['sell' => 24000],
-            6 => ['sell' => 3500],
-            7 => ['sell' => 3500],
-            8 => ['sell' => 12000],
-            9 => ['sell' => 12000],
-            10 => ['sell' => 12000],
-        ];
-        return $map[$variantId] ?? null;
+        if (isset($this->variantSellById[$variantId])) {
+            return ['sell' => $this->variantSellById[$variantId]];
+        }
+        return null;
     }
 
     // ================================================================
@@ -1717,24 +1749,24 @@ class DemoDataSeeder extends Seeder
                 'category_id' => 1, 'author_id' => 2, 'title' => '5 Strategi Mengelola Stok Barang Agar Tidak Kehabisan',
                 'slug' => '5-strategi-mengelola-stok-barang',
                 'excerpt' => 'Stok habis saat pelanggan datang bisa bikin kehilangan penjualan. Simak 5 strategi jitu mengelola inventori toko retail Anda.',
-                'content' => '<p>Salah satu masalah terbesar dalam bisnis retail adalah manajemen stok. Stok yang terlalu sedikit membuat Anda kehilangan penjualan, sementara stok berlebih mengikat modal kerja.</p><h3>1. Terapkan Sistem Minimum-Maximum Stock</h3><p>Tentukan batas minimum (reorder point) dan maksimum untuk setiap produk. Ketika stok menyentuh batas minimum, segera lakukan pembelian ulang. Aplikasi POS Retail memiliki fitur low stock alert yang otomatis memberi notifikasi saat stok di bawah threshold.</p><h3>2. Analisis Fast-Moving vs Slow-Moving</h3><p>Kategorikan produk berdasarkan kecepatan perputaran. Produk fast-moving perlu stok lebih banyak dan frekuensi restock lebih sering. Produk slow-moving bisa dipesan dalam jumlah kecil atau bahkan di-discontinue.</p><h3>3. Lakukan Stock Opname Rutin</h3><p>Perbedaan antara stok sistem dan stok fisik adalah masalah umum. Lakukan stock opname berkala — harian untuk produk bernilai tinggi, mingguan untuk produk fast-moving, dan bulanan untuk sisanya.</p><h3>4. Gunakan Data Historis untuk Forecasting</h3><p>Jangan hanya mengandalkan feeling. Gunakan data penjualan historis untuk memprediksi kebutuhan stok, terutama menjelang musim ramai seperti Lebaran atau Tahun Baru.</p><h3>5. Integrasi Supplier</h3><p>Bangun hubungan baik dengan supplier dan pastikan lead time pengiriman jelas. Dengan POS Retail, Anda bisa langsung membuat Purchase Order dari sistem begitu stok menipis.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(30), 'meta_title' => '5 Strategi Mengelola Stok Barang — POS Retail', 'meta_description' => 'Pelajari 5 strategi jitu mengelola stok barang retail agar tidak kehabisan dan tidak overstock.',
+                'content' => '<p>Salah satu masalah terbesar dalam bisnis retail adalah manajemen stok. Stok yang terlalu sedikit membuat Anda kehilangan penjualan, sementara stok berlebih mengikat modal kerja.</p><h3>1. Terapkan Sistem Minimum-Maximum Stock</h3><p>Tentukan batas minimum (reorder point) dan maksimum untuk setiap produk. Ketika stok menyentuh batas minimum, segera lakukan pembelian ulang. Aplikasi POS Retail memiliki fitur low stock alert yang otomatis memberi notifikasi saat stok di bawah threshold.</p><h3>2. Analisis Fast-Moving vs Slow-Moving</h3><p>Kategorikan produk berdasarkan kecepatan perputaran. Produk fast-moving perlu stok lebih banyak dan frekuensi restock lebih sering. Produk slow-moving bisa dipesan dalam jumlah kecil atau bahkan di-discontinue.</p><h3>3. Lakukan Stock Opname Rutin</h3><p>Perbedaan antara stok sistem dan stok fisik adalah masalah umum. Lakukan stock opname berkala - harian untuk produk bernilai tinggi, mingguan untuk produk fast-moving, dan bulanan untuk sisanya.</p><h3>4. Gunakan Data Historis untuk Forecasting</h3><p>Jangan hanya mengandalkan feeling. Gunakan data penjualan historis untuk memprediksi kebutuhan stok, terutama menjelang musim ramai seperti Lebaran atau Tahun Baru.</p><h3>5. Integrasi Supplier</h3><p>Bangun hubungan baik dengan supplier dan pastikan lead time pengiriman jelas. Dengan POS Retail, Anda bisa langsung membuat Purchase Order dari sistem begitu stok menipis.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(30), 'meta_title' => '5 Strategi Mengelola Stok Barang - POS Retail', 'meta_description' => 'Pelajari 5 strategi jitu mengelola stok barang retail agar tidak kehabisan dan tidak overstock.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
                 'category_id' => 1, 'author_id' => 2, 'title' => 'Cara Menentukan Harga Jual yang Menguntungkan',
                 'slug' => 'cara-menentukan-harga-jual-menguntungkan',
                 'excerpt' => 'Harga jual yang tepat adalah kunci profit. Pelajari rumus sederhana menentukan harga jual retail yang kompetitif namun tetap menguntungkan.',
-                'content' => '<p>Menentukan harga jual bukan sekadar menaikkan harga beli sekian persen. Ada kalkulasi yang perlu diperhatikan agar bisnis tetap profit tanpa membuat pelanggan kabur.</p><h3>Rumus Dasar Markup</h3><p>Harga Jual = Harga Pokok + (Harga Pokok × Persentase Markup). Tapi markup tidak boleh sembarangan. Pertimbangkan: biaya operasional (sewa, listrik, gaji), biaya pemasaran, target margin, dan harga kompetitor.</p><h3>Multi-Tier Pricing</h3><p>POS Retail mendukung 3 level harga: eceran (harga normal), grosir (pembelian dalam jumlah besar), dan member (khusus pelanggan loyal). Ini memberi fleksibilitas untuk melayani berbagai segmen pelanggan.</p><h3>Monitor & Sesuaikan</h3><p>Harga bukan sesuatu yang statis. Pantau laporan penjualan, cek margin per produk, dan sesuaikan harga secara berkala berdasarkan data — bukan asumsi.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(25), 'meta_title' => 'Cara Menentukan Harga Jual yang Menguntungkan — POS Retail', 'meta_description' => 'Panduan lengkap menentukan harga jual retail dengan rumus markup, multi-tier pricing, dan strategi monitoring.',
+                'content' => '<p>Menentukan harga jual bukan sekadar menaikkan harga beli sekian persen. Ada kalkulasi yang perlu diperhatikan agar bisnis tetap profit tanpa membuat pelanggan kabur.</p><h3>Rumus Dasar Markup</h3><p>Harga Jual = Harga Pokok + (Harga Pokok x Persentase Markup). Tapi markup tidak boleh sembarangan. Pertimbangkan: biaya operasional (sewa, listrik, gaji), biaya pemasaran, target margin, dan harga kompetitor.</p><h3>Multi-Tier Pricing</h3><p>POS Retail mendukung 3 level harga: eceran (harga normal), grosir (pembelian dalam jumlah besar), dan member (khusus pelanggan loyal). Ini memberi fleksibilitas untuk melayani berbagai segmen pelanggan.</p><h3>Monitor & Sesuaikan</h3><p>Harga bukan sesuatu yang statis. Pantau laporan penjualan, cek margin per produk, dan sesuaikan harga secara berkala berdasarkan data - bukan asumsi.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(25), 'meta_title' => 'Cara Menentukan Harga Jual yang Menguntungkan - POS Retail', 'meta_description' => 'Panduan lengkap menentukan harga jual retail dengan rumus markup, multi-tier pricing, dan strategi monitoring.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
                 'category_id' => 2, 'author_id' => 3, 'title' => 'Checklist Buka Tutup Toko yang Wajib Dilakukan Setiap Hari',
                 'slug' => 'checklist-buka-tutup-toko',
                 'excerpt' => 'Disiplin operasional dimulai dari SOP buka dan tutup toko. Berikut checklist lengkap yang bisa Anda terapkan di bisnis retail.',
-                'content' => '<h3>Checklist Buka Toko</h3><ol><li>Datang 30 menit sebelum jam buka</li><li>Nyalakan semua perangkat: komputer, printer struk, barcode scanner</li><li>Login ke aplikasi POS Retail dan buka shift</li><li>Hitung saldo kas awal (cash drawer opening balance)</li><li>Cek stok display — isi ulang yang kosong</li><li>Pastikan koneksi internet dan payment gateway aktif</li><li>Bersihkan area kasir dan display produk</li></ol><h3>Checklist Tutup Toko</h3><ol><li>Hitung fisik uang di cash drawer</li><li>Cocokkan dengan total transaksi di sistem</li><li>Catat selisih (jika ada)</li><li>Tutup shift di aplikasi POS Retail</li><li>Matikan semua perangkat</li><li>Kunci semua akses dan aktifkan alarm</li></ol><p>Dengan fitur Shift Management di POS Retail, semua aktivitas buka-tutup tercatat rapi dan bisa diaudit kapan saja.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(20), 'meta_title' => 'Checklist Buka Tutup Toko — POS Retail', 'meta_description' => 'Checklist lengkap SOP buka dan tutup toko retail untuk menjaga disiplin operasional.',
+                'content' => '<h3>Checklist Buka Toko</h3><ol><li>Datang 30 menit sebelum jam buka</li><li>Nyalakan semua perangkat: komputer, printer struk, barcode scanner</li><li>Login ke aplikasi POS Retail dan buka shift</li><li>Hitung saldo kas awal (cash drawer opening balance)</li><li>Cek stok display - isi ulang yang kosong</li><li>Pastikan koneksi internet dan payment gateway aktif</li><li>Bersihkan area kasir dan display produk</li></ol><h3>Checklist Tutup Toko</h3><ol><li>Hitung fisik uang di cash drawer</li><li>Cocokkan dengan total transaksi di sistem</li><li>Catat selisih (jika ada)</li><li>Tutup shift di aplikasi POS Retail</li><li>Matikan semua perangkat</li><li>Kunci semua akses dan aktifkan alarm</li></ol><p>Dengan fitur Shift Management di POS Retail, semua aktivitas buka-tutup tercatat rapi dan bisa diaudit kapan saja.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(20), 'meta_title' => 'Checklist Buka Tutup Toko - POS Retail', 'meta_description' => 'Checklist lengkap SOP buka dan tutup toko retail untuk menjaga disiplin operasional.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -1742,23 +1774,23 @@ class DemoDataSeeder extends Seeder
                 'slug' => 'cara-rekrut-dan-latih-kasir-handal',
                 'excerpt' => 'Kasir adalah ujung tombak bisnis retail. Pelajari cara merekrut dan melatih kasir yang cepat, teliti, dan ramah pelanggan.',
                 'content' => '<p>Kasir yang handal bukan hanya cepat dalam bertransaksi, tapi juga bisa menjadi aset dalam meningkatkan penjualan melalui upselling.</p><h3>Kriteria Rekrutmen Kasir</h3><p>Cari kandidat dengan: kejujuran tinggi, ketelitian, kemampuan berhitung cepat, komunikasi ramah, dan familiar dengan teknologi.</p><h3>Training 3 Hari</h3><p>Hari 1: Pengenalan produk dan layout toko. Hari 2: Operasional POS (scan, input manual, payment, refund). Hari 3: Handling customer + upselling technique + simulasi transaksi sibuk.</p><h3>Evaluasi Berkala</h3><p>Gunakan data dari POS Retail: rata-rata waktu transaksi, jumlah transaksi per shift, akurasi cash drawer. Kasir dengan performa terbaik bisa diberi insentif.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(18), 'meta_title' => 'Cara Rekrut dan Latih Kasir — POS Retail', 'meta_description' => 'Panduan merekrut dan melatih kasir retail yang handal, cepat, teliti, dan ramah.',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(18), 'meta_title' => 'Cara Rekrut dan Latih Kasir - POS Retail', 'meta_description' => 'Panduan merekrut dan melatih kasir retail yang handal, cepat, teliti, dan ramah.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
                 'category_id' => 3, 'author_id' => 2, 'title' => 'Program Loyalitas Pelanggan: Investasi Kecil, Dampak Besar',
                 'slug' => 'program-loyalitas-pelanggan-investasi-kecil',
                 'excerpt' => 'Mempertahankan pelanggan lama 5x lebih murah daripada mencari pelanggan baru. Bangun program loyalitas yang efektif untuk bisnis retail Anda.',
-                'content' => '<p>Fakta bisnis: meningkatkan retensi pelanggan sebesar 5% bisa meningkatkan profit hingga 25-95%. Itulah kenapa program loyalitas adalah investasi, bukan biaya.</p><h3>Model Point-Based Loyalty</h3><p>Pelanggan mendapat poin setiap bertransaksi. Contoh: setiap Rp 10.000 pembelanjaan = 1 poin. 100 poin bisa ditukar diskon Rp 10.000. POS Retail menghitung loyalty points otomatis per transaksi — tanpa input manual.</p><h3>Membership Tier</h3><p>Buat jenjang keanggotaan: Silver (0-500rb/bulan), Gold (500rb-2jt/bulan), Platinum (>2jt/bulan). Setiap tier dapat benefit berbeda: diskon tambahan, gratis ongkir, akses early sale, dll. POS Retail support 3 tier membership out of the box.</p><h3>Promo Tematik</h3><p>Gunakan Discount Template untuk membuat promo tematik: diskon 20% produk tertentu, buy 1 get 1, diskon jam tertentu (happy hour), dll. Variasikan promo agar pelanggan tidak bosan.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(15), 'meta_title' => 'Program Loyalitas Pelanggan — POS Retail', 'meta_description' => 'Bangun program loyalitas dengan point system, membership tier, dan discount template di POS Retail.',
+                'content' => '<p>Fakta bisnis: meningkatkan retensi pelanggan sebesar 5% bisa meningkatkan profit hingga 25-95%. Itulah kenapa program loyalitas adalah investasi, bukan biaya.</p><h3>Model Point-Based Loyalty</h3><p>Pelanggan mendapat poin setiap bertransaksi. Contoh: setiap Rp 10.000 pembelanjaan = 1 poin. 100 poin bisa ditukar diskon Rp 10.000. POS Retail menghitung loyalty points otomatis per transaksi - tanpa input manual.</p><h3>Membership Tier</h3><p>Buat jenjang keanggotaan: Silver (0-500rb/bulan), Gold (500rb-2jt/bulan), Platinum (>2jt/bulan). Setiap tier dapat benefit berbeda: diskon tambahan, gratis ongkir, akses early sale, dll. POS Retail support 3 tier membership out of the box.</p><h3>Promo Tematik</h3><p>Gunakan Discount Template untuk membuat promo tematik: diskon 20% produk tertentu, buy 1 get 1, diskon jam tertentu (happy hour), dll. Variasikan promo agar pelanggan tidak bosan.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(15), 'meta_title' => 'Program Loyalitas Pelanggan - POS Retail', 'meta_description' => 'Bangun program loyalitas dengan point system, membership tier, dan discount template di POS Retail.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
                 'category_id' => 3, 'author_id' => 2, 'title' => 'Upselling dan Cross-selling: Tingkatkan Omzet Tanpa Tambah Pelanggan',
                 'slug' => 'upselling-cross-selling-tingkatkan-omzet',
                 'excerpt' => 'Teknik upselling dan cross-selling bisa meningkatkan nilai transaksi rata-rata 20-40%. Pelajari cara menerapkannya di toko retail Anda.',
-                'content' => '<p>Upselling = menawarkan versi lebih mahal dari produk yang sama. Cross-selling = menawarkan produk komplementer. Keduanya adalah cara termurah meningkatkan omzet.</p><h3>Contoh Up-Selling</h3><p>Pelanggan beli beras 5kg → tawarkan beras premium 5kg yang lebih pulen. Pelanggan beli deterjen 500ml → tawarkan yang 1L (lebih hemat per ml).</p><h3>Contoh Cross-Selling</h3><p>Pelanggan beli Indomie → tawarkan telur + sawi. Pelanggan beli kopi sachet → tawarkan gula + creamer. Pelanggan beli sabun mandi → tawarkan sikat gigi + pasta gigi.</p><h3>Pakai Data</h3><p>POS Retail mencatat history transaksi. Gunakan data untuk tahu produk apa yang sering dibeli bersamaan (market basket analysis). Latih kasir untuk merekomendasikan based on data — bukan asal tawarkan.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(12), 'meta_title' => 'Upselling & Cross-selling Retail — POS Retail', 'meta_description' => 'Teknik upselling dan cross-selling untuk meningkatkan omzet toko retail tanpa tambah pelanggan baru.',
+                'content' => '<p>Upselling = menawarkan versi lebih mahal dari produk yang sama. Cross-selling = menawarkan produk komplementer. Keduanya adalah cara termurah meningkatkan omzet.</p><h3>Contoh Up-Selling</h3><p>Pelanggan beli beras 5kg -> tawarkan beras premium 5kg yang lebih pulen. Pelanggan beli deterjen 500ml -> tawarkan yang 1L (lebih hemat per ml).</p><h3>Contoh Cross-Selling</h3><p>Pelanggan beli Indomie -> tawarkan telur + sawi. Pelanggan beli kopi sachet -> tawarkan gula + creamer. Pelanggan beli sabun mandi -> tawarkan sikat gigi + pasta gigi.</p><h3>Pakai Data</h3><p>POS Retail mencatat history transaksi. Gunakan data untuk tahu produk apa yang sering dibeli bersamaan (market basket analysis). Latih kasir untuk merekomendasikan based on data - bukan asal tawarkan.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(12), 'meta_title' => 'Upselling & Cross-selling Retail - POS Retail', 'meta_description' => 'Teknik upselling dan cross-selling untuk meningkatkan omzet toko retail tanpa tambah pelanggan baru.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -1766,31 +1798,31 @@ class DemoDataSeeder extends Seeder
                 'slug' => 'laporan-keuangan-untuk-pemilik-toko',
                 'excerpt' => 'Tidak perlu jadi akuntan untuk membaca laporan keuangan. Ini 3 laporan penting yang wajib dipantau pemilik toko retail setiap bulan.',
                 'content' => '<h3>1. Laporan Penjualan Harian</h3><p>Pantau: total omzet, jumlah transaksi, rata-rata nilai transaksi, dan top 10 produk. Jika ada anomali (misal omzet turun drastis di hari biasa), segera investigasi.</p><h3>2. Laporan Laba Rugi (P&L)</h3><p>Pendapatan - Harga Pokok Penjualan = Laba Kotor. Laba Kotor - Biaya Operasional = Laba Bersih. POS Retail generate P&L otomatis dengan filter tanggal dan outlet.</p><h3>3. Laporan Stok & Inventory Value</h3><p>Nilai total stok yang Anda pegang = modal yang tertahan. Pantau inventory turnover ratio: semakin cepat stok berputar, semakin efisien penggunaan modal. POS Retail menyediakan laporan stok lengkap dengan pergerakan per produk.</p><h3>Tips: Review Rutin</h3><p>Jadwalkan review laporan setiap minggu (Senin pagi) bersama manager toko. 30 menit cukup untuk baca 3 laporan di atas dan ambil keputusan cepat.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(10), 'meta_title' => 'Laporan Keuangan Pemilik Toko — POS Retail', 'meta_description' => 'Tiga laporan keuangan penting yang wajib dipantau pemilik toko retail: penjualan, P&L, dan stok.',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(10), 'meta_title' => 'Laporan Keuangan Pemilik Toko - POS Retail', 'meta_description' => 'Tiga laporan keuangan penting yang wajib dipantau pemilik toko retail: penjualan, P&L, dan stok.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
                 'category_id' => 4, 'author_id' => 2, 'title' => 'POS Berbasis Cloud vs Lokal: Mana yang Cocok untuk Bisnis Anda?',
                 'slug' => 'pos-cloud-vs-lokal',
                 'excerpt' => 'Bingung pilih POS berbasis cloud atau on-premise? Bandingkan kelebihan dan kekurangan keduanya untuk bisnis retail Anda.',
-                'content' => '<h3>POS Cloud (Online)</h3><p><strong>Kelebihan:</strong> Akses dari mana saja, data real-time multi-cabang, update otomatis, tidak perlu server sendiri, biaya awal rendah (subscription).<br><strong>Kekurangan:</strong> Ketergantungan internet, biaya bulanan, data di server pihak ketiga.</p><h3>POS On-Premise / Self-Hosted</h3><p><strong>Kelebihan:</strong> Data di server sendiri (privasi), tidak ada biaya langganan setelah beli, tetap bisa transaksi tanpa internet (offline mode).<br><strong>Kekurangan:</strong> Perlu maintain server sendiri, update manual, butuh tenaga IT.</p><h3>POS Retail: The Best of Both Worlds</h3><p>POS Retail adalah aplikasi self-hosted yang bisa Anda install di server sendiri (VPS, dedicated, atau bahkan laptop untuk single store). Anda punya kontrol penuh atas data. Support multi-outlet dengan sinkronisasi real-time antar cabang. Tidak ada biaya bulanan — beli source code sekali, pakai selamanya.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(8), 'meta_title' => 'POS Cloud vs Lokal — POS Retail', 'meta_description' => 'Perbandingan POS cloud vs on-premise untuk bisnis retail Indonesia.',
+                'content' => '<h3>POS Cloud (Online)</h3><p><strong>Kelebihan:</strong> Akses dari mana saja, data real-time multi-cabang, update otomatis, tidak perlu server sendiri, biaya awal rendah (subscription).<br><strong>Kekurangan:</strong> Ketergantungan internet, biaya bulanan, data di server pihak ketiga.</p><h3>POS On-Premise / Self-Hosted</h3><p><strong>Kelebihan:</strong> Data di server sendiri (privasi), tidak ada biaya langganan setelah beli, tetap bisa transaksi tanpa internet (offline mode).<br><strong>Kekurangan:</strong> Perlu maintain server sendiri, update manual, butuh tenaga IT.</p><h3>POS Retail: The Best of Both Worlds</h3><p>POS Retail adalah aplikasi self-hosted yang bisa Anda install di server sendiri (VPS, dedicated, atau bahkan laptop untuk single store). Anda punya kontrol penuh atas data. Support multi-outlet dengan sinkronisasi real-time antar cabang. Tidak ada biaya bulanan - beli source code sekali, pakai selamanya.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(8), 'meta_title' => 'POS Cloud vs Lokal - POS Retail', 'meta_description' => 'Perbandingan POS cloud vs on-premise untuk bisnis retail Indonesia.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
                 'category_id' => 4, 'author_id' => 3, 'title' => 'Integrasi Payment Gateway: Kenapa Toko Modern Wajib Punya',
                 'slug' => 'integrasi-payment-gateway',
-                'excerpt' => 'QRIS, GoPay, OVO, kartu kredit — pelanggan sekarang ingin bayar dengan cara mereka. Pelajari cara integrasi payment gateway di toko retail.',
-                'content' => '<p>2026: lebih dari 70% transaksi ritel di Indonesia melibatkan pembayaran non-tunai. Toko yang hanya terima cash akan kehilangan pelanggan.</p><h3>Kenapa Harus Multi-Payment?</h3><ol><li>Pelanggan tidak bawa uang tunai cukup</li><li>Transaksi lebih cepat (tap/scan vs hitung uang)</li><li>Mengurangi risiko uang palsu</li><li>Otomatis tercatat — tidak ada selisih kas</li><li>Data pembayaran untuk analisis customer behavior</li></ol><h3>POS Retail: Dynamic Provider System</h3><p>POS Retail tidak mengunci Anda ke satu payment gateway. Sistem provider dinamis memungkinkan Anda menambahkan Midtrans, Xendit, Duitku, atau gateway lain via admin panel. Tambah API key, pilih environment (sandbox/production), dan langsung bisa dipakai. Bahkan bisa multiple provider sekaligus — customer tinggal pilih metode bayar favoritnya.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(5), 'meta_title' => 'Integrasi Payment Gateway Retail — POS Retail', 'meta_description' => 'Kenapa toko modern wajib punya payment gateway: QRIS, e-wallet, kartu kredit. Integrasi mudah di POS Retail.',
+                'excerpt' => 'QRIS, GoPay, OVO, kartu kredit - pelanggan sekarang ingin bayar dengan cara mereka. Pelajari cara integrasi payment gateway di toko retail.',
+                'content' => '<p>2026: lebih dari 70% transaksi ritel di Indonesia melibatkan pembayaran non-tunai. Toko yang hanya terima cash akan kehilangan pelanggan.</p><h3>Kenapa Harus Multi-Payment?</h3><ol><li>Pelanggan tidak bawa uang tunai cukup</li><li>Transaksi lebih cepat (tap/scan vs hitung uang)</li><li>Mengurangi risiko uang palsu</li><li>Otomatis tercatat - tidak ada selisih kas</li><li>Data pembayaran untuk analisis customer behavior</li></ol><h3>POS Retail: Dynamic Provider System</h3><p>POS Retail tidak mengunci Anda ke satu payment gateway. Sistem provider dinamis memungkinkan Anda menambahkan Midtrans, Xendit, Duitku, atau gateway lain via admin panel. Tambah API key, pilih environment (sandbox/production), dan langsung bisa dipakai. Bahkan bisa multiple provider sekaligus - customer tinggal pilih metode bayar favoritnya.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(5), 'meta_title' => 'Integrasi Payment Gateway Retail - POS Retail', 'meta_description' => 'Kenapa toko modern wajib punya payment gateway: QRIS, e-wallet, kartu kredit. Integrasi mudah di POS Retail.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
                 'category_id' => 2, 'author_id' => 2, 'title' => 'Anti-Fraud di Toko Retail: Cegah Kecurangan Kasir dan Karyawan',
                 'slug' => 'anti-fraud-toko-retail',
                 'excerpt' => 'Kecurangan internal bisa menggerogoti profit tanpa disadari. Terapkan 7 langkah anti-fraud untuk melindungi bisnis retail Anda.',
-                'content' => '<h3>Jenis Kecurangan di Retail</h3><ol><li>Kasir tidak memasukkan transaksi (no-sale fraud)</li><li>Diskon tidak sah / markdown fiktif</li><li>Markup harga dan ambil selisihnya</li><li>Fake return/refund</li><li>Kolusi kasir + customer (bagi-bagi diskon)</li><li>Pencurian stok gudang</li></ol><h3>7 Langkah Anti-Fraud</h3><ol><li><strong>Setiap user login sendiri</strong> — jangan sharing akun kasir</li><li><strong>Approval threshold</strong> — transaksi di atas Rp 5jt wajib approval manager</li><li><strong>Cash drawer reconciliation</strong> — cocokkan fisik vs sistem setiap shift tutup</li><li><strong>Audit log otomatis</strong> — POS Retail mencatat setiap create/update/delete data lengkap dengan user ID dan timestamp</li><li><strong>Role-based access</strong> — kasir tidak bisa akses laporan keuangan atau edit produk</li><li><strong>Stock opname random</strong> — jangan terjadwal, biar gudang tidak bisa "siap-siap"</li><li><strong>Review CCTV + data transaksi</strong> — cross-check transaksi mencurigakan dengan rekaman</li></ol><p>POS Retail menyediakan audit trail lengkap dan role-based access control. Kecurangan jadi lebih sulit dilakukan dan lebih mudah dideteksi.</p>',
-                'is_published' => true, 'published_at' => $now->copy()->subDays(3), 'meta_title' => 'Anti-Fraud Toko Retail — POS Retail', 'meta_description' => '7 langkah mencegah kecurangan kasir dan karyawan di toko retail dengan audit trail dan role-based access.',
+                'content' => '<h3>Jenis Kecurangan di Retail</h3><ol><li>Kasir tidak memasukkan transaksi (no-sale fraud)</li><li>Diskon tidak sah / markdown fiktif</li><li>Markup harga dan ambil selisihnya</li><li>Fake return/refund</li><li>Kolusi kasir + customer (bagi-bagi diskon)</li><li>Pencurian stok gudang</li></ol><h3>7 Langkah Anti-Fraud</h3><ol><li><strong>Setiap user login sendiri</strong> - jangan sharing akun kasir</li><li><strong>Approval threshold</strong> - transaksi di atas Rp 5jt wajib approval manager</li><li><strong>Cash drawer reconciliation</strong> - cocokkan fisik vs sistem setiap shift tutup</li><li><strong>Audit log otomatis</strong> - POS Retail mencatat setiap create/update/delete data lengkap dengan user ID dan timestamp</li><li><strong>Role-based access</strong> - kasir tidak bisa akses laporan keuangan atau edit produk</li><li><strong>Stock opname random</strong> - jangan terjadwal, biar gudang tidak bisa "siap-siap"</li><li><strong>Review CCTV + data transaksi</strong> - cross-check transaksi mencurigakan dengan rekaman</li></ol><p>POS Retail menyediakan audit trail lengkap dan role-based access control. Kecurangan jadi lebih sulit dilakukan dan lebih mudah dideteksi.</p>',
+                'is_published' => true, 'published_at' => $now->copy()->subDays(3), 'meta_title' => 'Anti-Fraud Toko Retail - POS Retail', 'meta_description' => '7 langkah mencegah kecurangan kasir dan karyawan di toko retail dengan audit trail dan role-based access.',
                 'created_at' => $now, 'updated_at' => $now,
             ],
         ];

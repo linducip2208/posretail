@@ -66,5 +66,28 @@ class SystemSetting extends Model
     {
         return static::getValue('app_name', 'POS Retail');
     }
+
+    public static function getOrderTypes(): array
+    {
+        $raw = static::getValue('order_types', '');
+        if (empty($raw)) {
+            return [['value' => 'walk_in', 'label' => 'Walk-in']];
+        }
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded) || empty($decoded)) {
+            return [['value' => 'walk_in', 'label' => 'Walk-in']];
+        }
+        return $decoded;
+    }
+
+    public static function getValidOrderTypeValues(): string
+    {
+        return collect(static::getOrderTypes())->pluck('value')->implode(',');
+    }
+
+    public static function getDefaultOrderType(): string
+    {
+        return collect(static::getOrderTypes())->first()['value'] ?? 'walk_in';
+    }
 }
 

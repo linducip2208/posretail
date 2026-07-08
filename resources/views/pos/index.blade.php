@@ -24,7 +24,13 @@
     </script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100%; overflow: hidden; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+        #cartPanel { overflow: hidden !important; display: flex !important; flex-direction: column !important; }
+        #cartItems { overflow-y: auto !important; flex: 1 1 0% !important; min-height: 0; }
+        #cartSummary { flex-shrink: 0 !important; }
+        @media (max-width: 767px) {
+            #cartPanel { width: 100% !important; max-width: 24rem !important; }
+        }
         .cart-item-enter { animation: slideIn 0.2s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -35,18 +41,18 @@
         .product-card:active { transform: scale(0.97); }
     </style>
 </head>
-<body class="font-sans bg-gray-50 h-screen flex flex-col">
+<body class="font-sans bg-gray-50" style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
     {{-- Hidden barcode input for USB scanner --}}
     <input type="text" id="barcodeInput" autocomplete="off">
 
     {{-- TOP BAR --}}
-    <header class="bg-blue-600 text-white px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-4 shadow-lg z-10 shrink-0">
+    <header class="bg-blue-600 text-white px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-4 shadow-lg z-10" style="flex-shrink:0">
         <div class="font-extrabold text-lg tracking-tight">POS</div>
         <div class="flex items-center gap-2 text-sm">
-            <select id="orderType" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
-                <option value="dine_in">Dine In</option>
-                <option value="takeaway">Takeaway</option>
-                <option value="delivery">Delivery</option>
+            <select id="customerId" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
+                @foreach($orderTypes as $type)
+                <option value="{{ $type['value'] }}">{{ $type['label'] }}</option>
+                @endforeach
             </select>
             <select id="outletId" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
                 @forelse($outlets as $o)
@@ -75,11 +81,10 @@
     </header>
 
     {{-- MAIN LAYOUT --}}
-    <div class="flex flex-1 overflow-hidden">
-        {{-- PRODUCT PANEL --}}
-        <div class="flex-1 flex flex-col overflow-hidden">
+    <div id="mainLayout" style="display:flex;flex:1;min-height:0;overflow:hidden">
+        <div id="productPanel" style="display:flex;flex-direction:column;flex:1;min-width:0;overflow:hidden">
             {{-- Search --}}
-            <div class="p-3 bg-white border-b shrink-0">
+            <div class="p-3 bg-white border-b" style="flex-shrink:0">
                 <div class="flex gap-2">
                     <div class="relative flex-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#9ca3af" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
@@ -89,20 +94,20 @@
             </div>
 
             {{-- Product Grid --}}
-            <div id="productGrid" class="flex-1 overflow-y-auto p-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 content-start">
+            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 content-start" style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;padding:0.75rem">
                 <div class="col-span-full text-center text-gray-400 py-20">Memuat produk...</div>
             </div>
 
             {{-- Pagination --}}
-            <div id="pagination" class="p-2 bg-white border-t flex justify-center gap-1 shrink-0"></div>
+            <div id="pagination" class="p-2 bg-white border-t flex justify-center gap-1" style="flex-shrink:0"></div>
         </div>
 
         {{-- CART DRAWER BACKDROP (mobile) --}}
         <div id="cartBackdrop" onclick="closeCart()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
         {{-- CART PANEL --}}
-        <div id="cartPanel" class="fixed md:static inset-y-0 right-0 z-40 w-full max-w-sm md:w-96 bg-white border-l flex flex-col shrink-0 shadow-2xl md:shadow-lg translate-x-full md:translate-x-0 transition-transform duration-300">
-            <div class="p-4 border-b bg-gray-50">
+        <div id="cartPanel" class="fixed md:static inset-y-0 right-0 z-40 w-full max-w-sm md:w-auto bg-white border-l shadow-2xl md:shadow-lg translate-x-full md:translate-x-0 transition-transform duration-300" style="display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;width:20%">
+            <div class="p-4 border-b bg-gray-50" style="flex-shrink:0">
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-lg">Keranjang</h2>
                     <div class="flex items-center gap-2">
@@ -118,12 +123,12 @@
             </div>
 
             {{-- Cart Items --}}
-            <div id="cartItems" class="flex-1 overflow-y-auto p-2">
+            <div id="cartItems" style="flex:1;overflow-y:auto;padding:0.5rem;min-height:0">
                 <div class="text-center text-gray-400 py-10 text-sm">Keranjang kosong</div>
             </div>
 
             {{-- Cart Summary --}}
-            <div id="cartSummary" class="border-t bg-gray-50 p-4 hidden">
+            <div id="cartSummary" class="border-t bg-gray-50 p-4 hidden" style="flex-shrink:0">
                 <div class="space-y-1 text-sm">
                     <div class="flex justify-between"><span>Subtotal</span><span id="subtotal" class="font-mono font-semibold">Rp 0</span></div>
                     <div class="flex justify-between"><span>Diskon</span><span id="discount" class="font-mono text-red-600">Rp 0</span></div>
@@ -272,7 +277,7 @@
 
             grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-20">Memuat...</div>';
 
-            let url = `${API}/products?page=${page}&per_page=24`;
+            let url = `${API}/products?page=${page}&per_page=48`;
             if (search) url += `&search=${encodeURIComponent(search)}`;
             if (catId) url += `&category_id=${catId}`;
 
@@ -544,7 +549,7 @@
 
             const payload = {
                 outlet_id: outletId,
-                order_type: document.getElementById('orderType').value,
+                order_type: document.getElementById('customerId').value,
                 customer_id: document.getElementById('customerId').value || null,
                 table_id: null,
                 items: cart.map(i => ({ id: i.id, qty: i.qty, price: i.price })),

@@ -26,7 +26,39 @@ class Product extends Model
             if (filled($product->slug)) {
                 $product->slug = static::uniqueSlug($product->slug, $product->getKey());
             }
+
+            if (blank($product->sku)) {
+                $prefix = 'SKU';
+                $last = static::withTrashed()->where('sku', 'like', $prefix.'%')
+                    ->orderByRaw('LENGTH(sku) DESC, sku DESC')->first();
+                $num = $last ? (int) substr($last->sku, strlen($prefix)) + 1 : 1;
+                $product->sku = $prefix . str_pad($num, 6, '0', STR_PAD_LEFT);
+            }
+
+            if (blank($product->barcode)) {
+                $product->barcode = static::generateBarcode();
+            }
         });
+    }
+
+    public static function generateBarcode(): string
+    {
+        $prefix = '899';
+        $digits = $prefix;
+        for ($i = 0; $i < 9; $i++) {
+            $digits .= random_int(0, 9);
+        }
+        $checksum = static::ean13Checksum($digits);
+        return $digits . $checksum;
+    }
+
+    private static function ean13Checksum(string $digits): int
+    {
+        $sum = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $sum += (int) $digits[$i] * ($i % 2 === 0 ? 1 : 3);
+        }
+        return (10 - ($sum % 10)) % 10;
     }
 
     protected static function uniqueSlug(string $slug, $ignoreId = null): string

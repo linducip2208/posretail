@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\StockMovement;
+use App\Models\SystemSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class OrderController extends Controller
             'items.*.discount_percent' => 'nullable|numeric|min:0|max:100',
             'customer_id' => 'nullable|exists:customers,id',
             'outlet_id' => 'required|exists:outlets,id',
-            'order_type' => 'nullable|in:dine_in,takeaway,delivery',
+            'order_type' => 'nullable|in:' . SystemSetting::getValidOrderTypeValues(),
             'table_id' => 'nullable|exists:tables,id',
             'employee_id' => 'nullable|exists:users,id',
             'deposit_amount' => 'nullable|numeric|min:0',
@@ -61,13 +62,10 @@ class OrderController extends Controller
             $totalPaid = collect($request->payments)->sum('amount');
             $remainingAmount = $totalAmount - $totalPaid - ($request->deposit_amount ?? 0);
 
-            $queueNumber = null;
-            if ($request->order_type === 'dine_in' || $request->order_type === 'takeaway') {
-                $todayCount = Order::where('outlet_id', $request->outlet_id)
-                    ->whereDate('created_at', today())
-                    ->count();
-                $queueNumber = str_pad($todayCount + 1, 3, '0', STR_PAD_LEFT);
-            }
+            $todayCount = Order::where('outlet_id', $request->outlet_id)
+                ->whereDate('created_at', today())
+                ->count();
+            $queueNumber = str_pad($todayCount + 1, 3, '0', STR_PAD_LEFT);
 
             $order = Order::create([
                 'order_number' => 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6)),
@@ -76,7 +74,7 @@ class OrderController extends Controller
                 'user_id' => $request->user()->id,
                 'employee_id' => $request->employee_id,
                 'table_id' => $request->table_id,
-                'order_type' => $request->order_type ?? 'dine_in',
+                'order_type' => $request->order_type ?? SystemSetting::getDefaultOrderType(),
                 'queue_number' => $queueNumber,
                 'subtotal' => $subtotal,
                 'discount_amount' => $discountAmount,

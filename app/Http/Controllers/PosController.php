@@ -7,7 +7,9 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\StockMovement;
+use App\Models\SystemSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,18 +21,19 @@ class PosController extends Controller
     {
         $outlets = auth()->user()?->accessibleOutlets()?->get();
         $paymentMethods = PaymentMethod::where('active', true)->get();
-        $taxPercent = (float) (\App\Models\SystemSetting::getValue('tax_percent', '0'));
-        $appName = \App\Models\SystemSetting::getAppName();
-        $appLogo = \App\Models\SystemSetting::getLogoUrl();
-        $receiptFooter = \App\Models\SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!');
-        $storeAddress = \App\Models\SystemSetting::getValue('store_address', '');
-        $storePhone = \App\Models\SystemSetting::getValue('store_phone', '');
-        $receiptShowLogo = \App\Models\SystemSetting::getBool('receipt_show_logo', true);
-        $receiptShowName = \App\Models\SystemSetting::getBool('receipt_show_name', true);
-        $receiptShowAddress = \App\Models\SystemSetting::getBool('receipt_show_address', true);
-        $receiptShowPhone = \App\Models\SystemSetting::getBool('receipt_show_phone', true);
-        $receiptShowFooter = \App\Models\SystemSetting::getBool('receipt_show_footer', true);
-        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent', 'appName', 'appLogo', 'receiptFooter', 'storeAddress', 'storePhone', 'receiptShowLogo', 'receiptShowName', 'receiptShowAddress', 'receiptShowPhone', 'receiptShowFooter'));
+        $taxPercent = (float) (SystemSetting::getValue('tax_percent', '0'));
+        $appName = SystemSetting::getAppName();
+        $appLogo = SystemSetting::getLogoUrl();
+        $receiptFooter = SystemSetting::getValue('receipt_footer', 'Terima kasih telah berbelanja!');
+        $storeAddress = SystemSetting::getValue('store_address', '');
+        $storePhone = SystemSetting::getValue('store_phone', '');
+        $receiptShowLogo = SystemSetting::getBool('receipt_show_logo', true);
+        $receiptShowName = SystemSetting::getBool('receipt_show_name', true);
+        $receiptShowAddress = SystemSetting::getBool('receipt_show_address', true);
+        $receiptShowPhone = SystemSetting::getBool('receipt_show_phone', true);
+        $receiptShowFooter = SystemSetting::getBool('receipt_show_footer', true);
+        $orderTypes = SystemSetting::getOrderTypes();
+        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent', 'appName', 'appLogo', 'receiptFooter', 'storeAddress', 'storePhone', 'receiptShowLogo', 'receiptShowName', 'receiptShowAddress', 'receiptShowPhone', 'receiptShowFooter', 'orderTypes'));
     }
 
     public function products(Request $request): JsonResponse
@@ -99,13 +102,14 @@ class PosController extends Controller
 
     public function checkout(Request $request): JsonResponse
     {
+        $validTypes = SystemSetting::getValidOrderTypeValues();
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|exists:products,id',
             'items.*.qty' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
             'outlet_id' => 'required|exists:outlets,id',
-            'order_type' => 'nullable|in:dine_in,takeaway,delivery',
+            'order_type' => 'nullable|in:' . $validTypes,
             'payment_method_id' => 'required|exists:payment_methods,id',
             'paid_amount' => 'required|numeric|min:0',
             'use_tax' => 'nullable|boolean',
@@ -146,7 +150,7 @@ class PosController extends Controller
                 'outlet_id' => $request->outlet_id,
                 'user_id' => auth()->id(),
                 'table_id' => $request->table_id,
-                'order_type' => $request->order_type ?? 'dine_in',
+                'order_type' => $request->order_type ?? SystemSetting::getDefaultOrderType(),
                 'queue_number' => $queueNumber,
                 'subtotal' => $subtotal,
                 'discount_amount' => 0,
