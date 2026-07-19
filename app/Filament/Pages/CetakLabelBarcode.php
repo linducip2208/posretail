@@ -10,9 +10,9 @@ use UnitEnum;
 
 class CetakLabelBarcode extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = '📋 Inventori';
+    protected static string|UnitEnum|null $navigationGroup = '📦 Inventory';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 9;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 

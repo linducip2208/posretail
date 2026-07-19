@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 
 class MembershipTierResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '⭐ Loyalitas';
+    protected static string|\UnitEnum|null $navigationGroup = '👥 Customer';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Tier Member';
 

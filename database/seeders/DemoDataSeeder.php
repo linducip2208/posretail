@@ -32,6 +32,9 @@ class DemoDataSeeder extends Seeder
         $faker = FakerFactory::create('id_ID');
         $now = now();
 
+        // Seed default Chart of Accounts
+        \App\Services\JournalService::seedDefaultCOA();
+
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
 
         $tables = [

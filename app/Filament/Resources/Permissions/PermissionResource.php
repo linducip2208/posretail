@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 
 class PermissionResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '⚙️ Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = '⚙️ Pengaturan';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $model = Permission::class;
 

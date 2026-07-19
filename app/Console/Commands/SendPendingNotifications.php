@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Payment;
+use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Console\Command;
 
 class SendPendingNotifications extends Command
@@ -18,11 +20,17 @@ class SendPendingNotifications extends Command
             ->with(['order.customer', 'paymentMethod'])
             ->get();
 
-        foreach ($pendingPayments as $payment) {
-            $this->line("Notification: Payment #{$payment->id} for order {$payment->order?->order_number} still pending.");
+        if ($pendingPayments->isNotEmpty()) {
+            $recipients = User::whereIn('role', ['owner', 'manager', 'admin'])->get();
+            foreach ($recipients as $user) {
+                Notification::make()
+                    ->title('Pembayaran Pending')
+                    ->body("{$pendingPayments->count()} pembayaran masih dalam status pending dalam 48 jam terakhir.")
+                    ->warning()
+                    ->sendToDatabase($user);
+            }
+            $this->info("Processed {$pendingPayments->count()} pending payment notifications, sent to {$recipients->count()} users.");
         }
-
-        $this->info("Processed {$pendingPayments->count()} pending payment notifications.");
 
         return self::SUCCESS;
     }

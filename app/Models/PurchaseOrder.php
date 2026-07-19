@@ -12,6 +12,15 @@ class PurchaseOrder extends Model
 {
     use HasFactory, HasOutletScope;
 
+    protected static function booted(): void
+    {
+        static::updated(function (PurchaseOrder $po) {
+            if ($po->wasChanged('status') && $po->status === 'received') {
+                \App\Services\JournalService::postPOReceived($po);
+            }
+        });
+    }
+
     protected $fillable = [
         'po_number', 'supplier_id', 'outlet_id', 'user_id',
         'total_amount', 'status', 'notes',

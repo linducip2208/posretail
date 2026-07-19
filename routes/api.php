@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CustomerController;
+use App\Http\Controllers\Api\V1\MarketplaceWebhookController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\PaymentGatewayController;
 use App\Http\Controllers\Api\V1\PaymentMethodController;
@@ -11,9 +12,9 @@ use App\Http\Controllers\Api\V1\TableController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware(['auth:api', 'throttle:120,1'])->group(function () {
         Route::get('/user', [AuthController::class, 'user']);
         Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -42,7 +43,8 @@ Route::prefix('v1')->group(function () {
     });
 });
 
-// Webhooks (no auth - called by payment gateways)
+// Webhooks (no auth - called by payment gateways & marketplaces)
 Route::prefix('v1/webhooks')->group(function () {
-    Route::post('/{providerCode}', [PaymentGatewayController::class, 'webhook']);
+    Route::post('/{providerCode}', [PaymentGatewayController::class, 'webhook'])->middleware('throttle:30,1');
+    Route::post('/marketplace/{platform}', [MarketplaceWebhookController::class, 'handle'])->middleware('throttle:30,1');
 });

@@ -2247,6 +2247,145 @@ NOTIFICATION_DEFAULT_CHANNEL=whatsapp
 
 ---
 
+## 9. Multi-Outlet Architecture
+
+### OutletScope — Automatic Query Filtering
+
+Setiap model yang pakai `HasOutletScope` trait akan otomatis difilter berdasarkan outlet user yang login:
+
+```
+User login → getAccessibleOutletIds() 
+  → jika punya '*' permission → lihat SEMUA outlet 
+  → jika tidak → hanya outlet yang di-assign via user_outlet pivot
+  → OutletScope filter: WHERE outlet_id IN (...) [OR outlet_id IS NULL jika nullable]
+```
+
+**Model yang di-scope:** Product (nullable), Category (nullable), DiscountTemplate (nullable), Order, PurchaseOrder, StockMovement, StockOpname, Shift, Attendance, HeldCart, KitchenTicket, Retur, RawMaterial, TableArea, TableResto.
+
+**StockTransfer** menggunakan `HasMultiOutletScope` untuk filter `from_outlet_id` / `to_outlet_id` via `MultiOutletScope`.
+
+### SystemSetting Per-Outlet
+
+Settings bisa global (`outlet_id = NULL`) atau per-outlet. Method `SystemSetting::getValue('key', default, $outletId)`:
+1. Cek setting khusus outlet tersebut
+2. Fallback ke setting global
+3. Fallback ke `$default`
+
+### User Outlet Assignment
+
+Tabel pivot `user_outlet` — satu user bisa diassign ke banyak outlet. Owner dengan permission `*` otomatis lihat semua outlet tanpa filter.
+
+---
+
+## 10. Latest Features (Updated 9 Juli 2026)
+
+### Barcode Auto-Generate
+
+Setiap product & product variant yang dibuat via admin panel akan otomatis mendapat:
+- **SKU**: sequential (`SKU000001`, ...)
+- **Barcode**: EAN-13 valid (prefix `899` + 9 digit random + checksum)
+
+Implementasi di `Product::booted()` dan `ProductVariant::booted()`.
+
+### POS Web — Kiosk Layout
+
+Layout single-viewport pakai CSS Grid:
+- 80% produk (scroll vertical internal)
+- 20% keranjang (cart items scrollable, summary tetap)
+- Scan barcode via **USB scanner** (keyboard capture) atau **kamera HP** (BarcodeDetector API)
+- Produk 48 per halaman, pagination
+
+### Dynamic Order Types
+
+Tipe order (Walk-in, Member, Online, dll) dikonfigurasi via `system_settings` key `order_types` sebagai JSON array. Controller & API validation baca dari settings — tidak hardcode.
+
+### Report PDF Export
+
+Laporan bisa di-download sebagai PDF via `/export/laporan/*/pdf` menggunakan `ReportPdfService` + DomPDF.
+
+### Payment Proof Upload (Customer Portal)
+
+Customer bisa upload bukti pembayaran via `/portal/order/{id}/upload-proof`. Tersimpan di tabel `payment_proofs` dengan status pending → diverifikasi admin.
+
+### Invoice PDF Download (Customer Portal)
+
+Customer bisa download invoice PDF via `/portal/order/{id}/invoice`.
+
+### API Rate Limiting
+
+- Login: `throttle:10,1` (10 request/menit)
+- API authenticated: `throttle:120,1` (120 request/menit)
+- Webhooks: `throttle:30,1` (30 request/menit)
+
+### Demo Data: 1000 Products
+
+`DemoDataSeeder` menghasilkan:
+- 25 kategori supermarket-style
+- 25 brand
+- 1000 produk (200 hardcode + 800 programmatic)
+- 500 orders, 200 customers
+
+### Exporters
+
+- `CustomerExporter` — export data pelanggan
+- `StockExporter` — export data stok
+
+### Cash Drawer Transaction Resource
+
+Resource read-only `Riwayat Kas` di navigation group Penjualan — menampilkan semua transaksi cash drawer dengan filter tipe.
+
+### Navigation Reorganization (14 groups)
+
+Struktur menu dirombak dari 11 group ke 14 group fokus retail:
+
+| Group | Isi |
+|-------|-----|
+| 💰 Penjualan | Daftar Penjualan, Hold/Suspend, Retur, Riwayat Transaksi |
+| 🛒 Pembelian | Purchase Order, Supplier Invoice |
+| 📦 Inventory | Produk, Kategori, Brand, Unit, Stock Opname, Mutasi, Transfer, Raw Material, Barcode |
+| 👥 Customer | Customer, Group, Membership Tier, Poin, Hadiah/Reward |
+| 🚚 Supplier | Supplier |
+| 🏪 Outlet | Outlet |
+| 💳 Keuangan | Metode Bayar, Cicilan, Shift Kasir |
+| 🎁 Promo | Discount Template |
+| 📈 Laporan | Penjualan, Keuangan, Stok |
+| 👨‍💼 Pegawai | User/Pegawai, Absensi |
+| 🔔 Notifikasi | System Notifications |
+| 🔗 Integrasi | Payment Gateway Provider |
+| ⚙️ Pengaturan | Role & Permission, Audit Log |
+| 📰 Website | Blog Post, Blog Category |
+
+Resource restoran (KitchenTicket, TableResto, TableArea) disembunyikan dari navigasi.
+
+### Multi-Outlet Fixes
+
+- **DiscountTemplate** — migration fix: tambah kolom `outlet_id` yang sebelumnya hilang (model sudah pakai `HasOutletScope`)
+- **StockTransfer** — sekarang pakai `HasMultiOutletScope` trait + `MultiOutletScope` global scope untuk filter `from_outlet_id` / `to_outlet_id`
+- **HasMultiOutletScope** — trait yang sebelumnya dead code, sekarang aktif dengan global scope yang proper
+
+### Payment Proof System
+
+- Migration `payment_proofs` — order_id, file_path, amount, status
+- Model `PaymentProof` dengan relasi `belongsTo(Order)`
+- Customer portal: upload bukti bayar + download invoice PDF
+
+### Tests — Workflow Coverage (8 test, all pass)
+
+- Purchase Order workflow (draft → ordered → received)
+- Stock Transfer antar outlet (draft → sent → received)
+- Invalid order payload validation
+- API rate limiting verification
+- Customer portal auth gate
+- Payment proof upload auth requirement
+- Report PDF export auth requirement
+
+### Customer & Stock Exporters
+
+- `CustomerExporter` terpasang di ListCustomers
+- `StockExporter` terpasang di ListProducts (export stok)
+
+---
+
 Dokumen ini adalah living document — update saat arsitektur berubah.
 
-**Terakhir diperbarui:** 31 Mei 2026
+**Terakhir diperbarui:** 9 Juli 2026

@@ -16,15 +16,15 @@ use Filament\Support\Icons\Heroicon;
 
 class ReturResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
+    protected static string|\UnitEnum|null $navigationGroup = '💰 Penjualan';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $model = Retur::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUturnLeft;
 
-    protected static ?string $navigationLabel = 'Retur / Pengembalian';
+    protected static ?string $navigationLabel = 'Retur Penjualan';
 
     protected static ?string $label = 'Retur / Pengembalian';
 

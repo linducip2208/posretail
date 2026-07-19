@@ -64,6 +64,11 @@
             <span id="queueDisplay" class="bg-green-500 text-white px-2 py-0.5 rounded font-bold text-xs hidden">#001</span>
         </div>
         <div class="flex-1"></div>
+        <span id="syncQueueBadge" class="bg-amber-500 text-white px-2 py-0.5 rounded-full text-xs font-bold mr-2 hidden" title="Transaksi offline pending sync">0</span>
+        <button onclick="window.open('/pos/display','_blank','width=1024,height=768')" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded text-sm flex items-center gap-1 mr-2" title="Customer Display">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"/></svg>
+            Display
+        </button>
         @auth
         <span class="text-xs text-indigo-200">{{ auth()->user()->name }}</span>
         @else
@@ -780,7 +785,85 @@
                 });
             } catch(e) {}
         }, 4 * 60 * 1000);
+
+        // Offline mode
+        (function() {
+            const indicator = document.createElement('div');
+            indicator.id = 'offlineIndicator';
+            indicator.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;background:#ef4444;color:white;text-align:center;padding:4px;font-size:12px;font-weight:600;z-index:9999';
+            indicator.textContent = 'OFFLINE — Transaksi akan disimpan & otomatis sync saat online';
+            document.body.prepend(indicator);
+
+            function updateStatus() {
+                const offline = !navigator.onLine;
+                indicator.style.display = offline ? 'block' : 'none';
+                const syncBadge = document.getElementById('syncQueueBadge');
+                if (syncBadge) {
+                    const count = PosOffline.getQueueCount();
+                    syncBadge.textContent = count;
+                    syncBadge.style.display = count > 0 ? 'inline-block' : 'none';
+                }
+            }
+
+            window.addEventListener('online', async () => {
+                updateStatus();
+                const result = await PosOffline.syncQueue('/pos/checkout');
+                if (result.synced > 0) {
+                    alert('Sync: ' + result.synced + ' transaksi offline berhasil dikirim.' + (result.failed > 0 ? ' ' + result.failed + ' gagal.' : ''));
+                }
+                updateStatus();
+            });
+
+            window.addEventListener('offline', updateStatus);
+            updateStatus();
+
+            // Pre-cache products on load
+            PosOffline.cacheProducts('/api/pos/products');
+        })();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                if (e.key === 'Escape') e.target.blur();
+                return;
+            }
+            switch(e.key) {
+                case 'F1': document.getElementById('searchInput')?.focus(); e.preventDefault(); break;
+                case 'F2':
+                    document.getElementById('paymentModal')?.classList.remove('hidden');
+                    document.getElementById('paidAmount')?.focus();
+                    e.preventDefault();
+                    break;
+                case 'F3':
+                    if (typeof toggleScanner === 'function') toggleScanner();
+                    e.preventDefault();
+                    break;
+                case 'F4':
+                    if (typeof clearCart === 'function') {
+                        if (cart.length > 0 && confirm('Hapus semua item dari keranjang?')) clearCart();
+                    }
+                    e.preventDefault();
+                    break;
+                case 'F5':
+                    if (typeof heldCart === 'function' && cart.length > 0) heldCart();
+                    e.preventDefault();
+                    break;
+                case 'F8':
+                    if (typeof connectPrinter === 'function') connectPrinter();
+                    e.preventDefault();
+                    break;
+                case 'Escape':
+                    document.getElementById('paymentModal')?.classList.add('hidden');
+                    document.getElementById('scannerOverlay')?.classList.add('hidden');
+                    e.preventDefault();
+                    break;
+            }
+        });
+
+        // Show shortcuts hint
+        console.log('POS Shortcuts: F1=Search F2=Bayar F3=Scan F4=Clear F5=Hold F8=Print Esc=Tutup');
     </script>
+    <script src="{{ asset('js/pos-offline.js') }}"></script>
     <script src="{{ asset('js/pos-printer.js') }}"></script>
 </body>
 </html>

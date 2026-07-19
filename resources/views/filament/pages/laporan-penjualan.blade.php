@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Penjualan</div>
             <div class="text-2xl font-extrabold text-gray-900">Rp {{ number_format($this->totalSales, 0, ',', '.') }}</div>
@@ -47,6 +47,10 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Transaksi</div>
             <div class="text-2xl font-extrabold text-gray-900">{{ number_format($this->totalOrders, 0, ',', '.') }}</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Laba Kotor</div>
+            <div class="text-2xl font-extrabold text-emerald-600">Rp {{ number_format($this->totalProfit, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Rata-rata / Transaksi</div>
@@ -146,6 +150,8 @@
                         <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider">Produk</th>
                         <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Terjual</th>
                         <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Pendapatan</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Laba</th>
+                        <th class="pb-3 font-semibold text-gray-500 uppercase text-xs tracking-wider text-right">Margin</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,11 +160,17 @@
                         <td class="py-3 text-gray-400">{{ $i + 1 }}</td>
                         <td class="py-3 font-medium">{{ $product->name }}</td>
                         <td class="py-3 text-right">{{ number_format($product->total_qty) }}</td>
-                        <td class="py-3 text-right font-medium">Rp {{ number_format($product->total_revenue, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right">Rp {{ number_format($product->total_revenue, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right font-medium {{ $product->profit >= 0 ? 'text-emerald-600' : 'text-red-600' }}">Rp {{ number_format($product->profit, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $product->margin_percent >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
+                                {{ $product->margin_percent }}%
+                            </span>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="py-6 text-center text-gray-400">Belum ada data penjualan</td>
+                        <td colspan="6" class="py-6 text-center text-gray-400">Belum ada data penjualan</td>
                     </tr>
                     @endforelse
                 </tbody>

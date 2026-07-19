@@ -9,6 +9,7 @@ use App\Http\Controllers\ProgrammaticSeoController;
 use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Portal\AuthController;
 use App\Http\Controllers\Portal\PortalController;
+use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BarcodeController;
 
 Route::get('/', function () {
@@ -19,13 +20,25 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/docs', [DocsController::class, 'index'])->name('docs');
+Route::get('/docs/api', [ApiDocsController::class, 'index'])->name('docs.api');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos')->middleware('auth');
 
 Route::get('/barcode/{code}', [BarcodeController::class, 'show'])->name('barcode.image');
 
+Route::get('/pos/display', function () {
+    $appName = \App\Models\SystemSetting::getAppName();
+    return view('pos.customer-display', compact('appName'));
+})->name('pos.display');
+
+Route::get('/menu/{outlet}', function (\App\Models\Outlet $outlet) {
+    $table = request('table') ? \App\Models\TableResto::find(request('table')) : null;
+    return view('pos.digital-menu', compact('outlet', 'table'));
+})->name('menu.digital');
+
 Route::get('/api/pos/products', [PosController::class, 'products']);
 Route::get('/api/pos/barcode/{barcode}', [PosController::class, 'barcode']);
+Route::get('/api/pos/display', [PosController::class, 'display']);
 Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('auth');
 Route::get('/admin/orders/{id}/receipt', [PosController::class, 'receipt'])->name('orders.receipt')->middleware('auth');
 
@@ -38,6 +51,9 @@ Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html')
 Route::get('/export/laporan/penjualan', [ReportExportController::class, 'sales'])->name('export.sales')->middleware('auth');
 Route::get('/export/laporan/keuangan', [ReportExportController::class, 'financial'])->name('export.financial')->middleware('auth');
 Route::get('/export/laporan/stok', [ReportExportController::class, 'stock'])->name('export.stock')->middleware('auth');
+Route::get('/export/laporan/penjualan/pdf', [ReportExportController::class, 'salesPdf'])->name('export.sales.pdf')->middleware('auth');
+Route::get('/export/laporan/keuangan/pdf', [ReportExportController::class, 'financialPdf'])->name('export.financial.pdf')->middleware('auth');
+Route::get('/export/laporan/stok/pdf', [ReportExportController::class, 'stockPdf'])->name('export.stock.pdf')->middleware('auth');
 
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('guest:customer')->group(function () {
@@ -51,6 +67,8 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/', [PortalController::class, 'index'])->name('index');
         Route::post('/lookup', [PortalController::class, 'lookup'])->name('lookup');
         Route::get('/order/{id}', [PortalController::class, 'orderDetail'])->name('order');
+        Route::get('/order/{id}/invoice', [PortalController::class, 'downloadInvoice'])->name('order.invoice');
+        Route::post('/order/{id}/upload-proof', [PortalController::class, 'uploadProof'])->name('order.upload-proof');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
@@ -175,6 +193,11 @@ Route::get('/robots.txt', function () {
     return response($content, 200)
         ->header('Content-Type', 'text/plain; charset=utf-8');
 })->name('robots');
+
+Route::get('/tax-invoice/{taxInvoice}/pdf', function (\App\Models\TaxInvoice $taxInvoice) {
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.tax-invoice', compact('taxInvoice'));
+    return $pdf->download('faktur-pajak-' . $taxInvoice->invoice_number . '.pdf');
+})->name('tax-invoice.pdf')->middleware('auth');
 
 Route::redirect('/login', '/admin/login')->name('login');
 

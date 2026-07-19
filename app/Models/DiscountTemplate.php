@@ -11,6 +11,8 @@ class DiscountTemplate extends Model
 {
     use HasFactory, HasOutletScope;
 
+    protected bool $outletNullable = true;
+
     protected $fillable = [
         'name', 'type', 'value', 'min_purchase',
         'buy_quantity', 'get_quantity', 'start_date', 'end_date', 'active',

@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 
 class RawMaterialResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '🏪 Master Data';
+    protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $model = RawMaterial::class;
 

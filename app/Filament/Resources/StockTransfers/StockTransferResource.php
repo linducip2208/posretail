@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class StockTransferResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '📋 Inventori';
+    protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $model = StockTransfer::class;
 

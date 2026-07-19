@@ -8,9 +8,9 @@ use UnitEnum;
 
 class NotificationsPage extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = '⚙️ Sistem';
+    protected static string|UnitEnum|null $navigationGroup = '🔔 Notifikasi';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 1;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-bell-alert';
 

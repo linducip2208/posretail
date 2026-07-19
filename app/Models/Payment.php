@@ -10,6 +10,15 @@ class Payment extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::created(function (Payment $payment) {
+            if (in_array($payment->status, ['success', 'confirmed', 'completed'])) {
+                \App\Services\JournalService::postPaymentReceived($payment);
+            }
+        });
+    }
+
     protected $fillable = [
         'order_id', 'payment_method_id', 'amount',
         'split_index', 'reference_number', 'status', 'paid_at',

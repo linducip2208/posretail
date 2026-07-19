@@ -14,8 +14,9 @@ class Customer extends Model implements AuthenticatableContract
     use HasFactory, Authenticatable;
 
     protected $fillable = [
-        'name', 'email', 'phone', 'password', 'address', 'customer_group_id',
+        'name', 'email', 'phone', 'birth_date', 'password', 'address', 'customer_group_id',
         'membership_tier_id', 'points_expire_at', 'total_points', 'total_spent', 'active',
+        'deposit_balance', 'credit_limit', 'outstanding_balance',
     ];
 
     protected $hidden = [
@@ -27,6 +28,7 @@ class Customer extends Model implements AuthenticatableContract
     {
         return [
             'password' => 'hashed',
+            'birth_date' => 'date',
             'active' => 'boolean',
         ];
     }

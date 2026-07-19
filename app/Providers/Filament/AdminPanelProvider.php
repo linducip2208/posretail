@@ -16,6 +16,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use App\Models\SystemSetting;
 use Illuminate\Support\HtmlString;
@@ -42,17 +43,23 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
             ])
             ->navigationGroups([
-                '🏪 Master Data',
-                '💰 Transaksi',
-                '📦 Pembelian',
-                '💵 Finance',
-                '📋 Inventori',
-                '🔄 Operasional',
-                '⭐ Loyalitas',
-                '📊 Laporan',
-                '📰 Marketing',
-                '🔗 Integrasi',
-                '⚙️ Sistem',
+                NavigationGroup::make('💰 Penjualan')->collapsed(false),
+                NavigationGroup::make('🛒 Pembelian')->collapsed(true),
+                NavigationGroup::make('📦 Inventory')->collapsed(false),
+                NavigationGroup::make('👥 Customer')->collapsed(true),
+                NavigationGroup::make('🚚 Supplier')->collapsed(true),
+                NavigationGroup::make('🏪 Outlet')->collapsed(true),
+                NavigationGroup::make('🔄 Operasional')->collapsed(true),
+            NavigationGroup::make('💳 Keuangan')->collapsed(true),
+            NavigationGroup::make('📒 Akuntansi')->collapsed(true),
+            NavigationGroup::make('🎁 Promo')->collapsed(true),
+                NavigationGroup::make('📈 Laporan')->collapsed(false),
+                NavigationGroup::make('👨‍💼 Pegawai')->collapsed(true),
+                NavigationGroup::make('🔔 Notifikasi')->collapsed(true),
+                NavigationGroup::make('🔗 Integrasi')->collapsed(true),
+                NavigationGroup::make('⚙️ Pengaturan')->collapsed(true),
+                NavigationGroup::make('⚙️ Sistem')->collapsed(true),
+                NavigationGroup::make('📰 Website')->collapsed(true),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

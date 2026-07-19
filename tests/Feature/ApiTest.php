@@ -107,7 +107,7 @@ class ApiTest extends TestCase
                     ],
                 ],
                 'outlet_id' => $outlet->id,
-                'order_type' => 'dine_in',
+                'order_type' => 'walk_in',
             ]);
 
         $response->assertStatus(201);

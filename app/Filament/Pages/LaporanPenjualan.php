@@ -11,7 +11,7 @@ use UnitEnum;
 
 class LaporanPenjualan extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = '📊 Laporan';
+    protected static string|UnitEnum|null $navigationGroup = '📈 Laporan';
 
     protected static ?int $navigationSort = 1;
 
@@ -103,10 +103,45 @@ class LaporanPenjualan extends Page
             ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
             ->where('orders.order_status', 'completed')
-            ->selectRaw('products.name, SUM(order_items.quantity) as total_qty, SUM(order_items.subtotal) as total_revenue')
-            ->groupBy('products.id', 'products.name')
+            ->selectRaw("products.name, products.cost_price, SUM(order_items.quantity) as total_qty, SUM(order_items.subtotal) as total_revenue")
+            ->groupBy('products.id', 'products.name', 'products.cost_price')
             ->orderByDesc('total_qty')
             ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                $item->total_cost = $item->total_qty * $item->cost_price;
+                $item->profit = $item->total_revenue - $item->total_cost;
+                $item->margin_percent = $item->total_revenue > 0
+                    ? round(($item->profit / $item->total_revenue) * 100, 1)
+                    : 0;
+
+                return $item;
+            });
+    }
+
+    public function getTotalProfitProperty()
+    {
+        $items = DB::table('order_items')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
+            ->where('orders.order_status', 'completed')
+            ->selectRaw('SUM(order_items.subtotal) as revenue, SUM(order_items.quantity * products.cost_price) as cost')
+            ->first();
+
+        return (float) (($items->revenue ?? 0) - ($items->cost ?? 0));
+    }
+
+    public function getSupplierAgingProperty()
+    {
+        return DB::table('supplier_payables')
+            ->join('suppliers', 'supplier_payables.supplier_id', '=', 'suppliers.id')
+            ->join('purchase_orders', 'supplier_payables.purchase_order_id', '=', 'purchase_orders.id')
+            ->where('supplier_payables.status', 'pending')
+            ->where('supplier_payables.due_date', '<', now())
+            ->selectRaw("suppliers.name as supplier_name, supplier_payables.due_date, supplier_payables.amount, DATEDIFF(NOW(), supplier_payables.due_date) as days_overdue")
+            ->orderByDesc('days_overdue')
             ->get();
     }
 
@@ -124,7 +159,7 @@ class LaporanPenjualan extends Page
             ->join('orders', 'payments.order_id', '=', 'orders.id')
             ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->whereIn('payments.status', ['success', 'confirmed'])
+            ->whereIn('payments.status', ['success', 'confirmed', 'completed'])
             ->selectRaw('payment_methods.name as method, SUM(payments.amount) as total')
             ->groupBy('payment_methods.id', 'payment_methods.name')
             ->orderByDesc('total')
@@ -140,7 +175,7 @@ class LaporanPenjualan extends Page
             ->leftJoin('outlets', 'orders.outlet_id', '=', 'outlets.id')
             ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->whereIn('payments.status', ['success', 'confirmed'])
+            ->whereIn('payments.status', ['success', 'confirmed', 'completed'])
             ->select([
                 'orders.order_number',
                 'customers.name as customer_name',

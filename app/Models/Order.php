@@ -14,10 +14,34 @@ class Order extends Model
 {
     use HasFactory, SoftDeletes, HasOutletScope;
 
+    protected static function booted(): void
+    {
+        static::saving(function (Order $order) {
+            if ($order->isDirty('order_status') && $order->order_status === 'completed') {
+                $user = $order->user;
+                if ($user && $user->commission_percent > 0) {
+                    $order->commission_amount = $order->total_amount * $user->commission_percent / 100;
+                }
+            }
+        });
+
+        static::created(function (Order $order) {
+            if ($order->order_status === 'completed') {
+                \App\Services\JournalService::postOrderRevenue($order);
+            }
+        });
+
+        static::updated(function (Order $order) {
+            if ($order->wasChanged('order_status') && $order->order_status === 'completed') {
+                \App\Services\JournalService::postOrderRevenue($order);
+            }
+        });
+    }
+
     protected $fillable = [
         'order_number', 'customer_id', 'outlet_id', 'user_id',
         'subtotal', 'discount_amount', 'tax_amount', 'total_amount',
-        'payment_status', 'order_status', 'notes',
+        'commission_amount', 'currency', 'exchange_rate', 'payment_status', 'order_status', 'notes',
         'order_type', 'queue_number', 'deposit_amount', 'remaining_amount',
         'is_installment', 'installment_period', 'installment_count',
         'employee_id', 'order_notes', 'table_id',
@@ -29,6 +53,7 @@ class Order extends Model
             'is_installment' => 'boolean',
             'deposit_amount' => 'decimal:2',
             'remaining_amount' => 'decimal:2',
+            'commission_amount' => 'decimal:2',
         ];
     }
 
@@ -80,5 +105,15 @@ class Order extends Model
     public function kitchenTicket(): HasOne
     {
         return $this->hasOne(KitchenTicket::class);
+    }
+
+    public function paymentProofs(): HasMany
+    {
+        return $this->hasMany(PaymentProof::class);
+    }
+
+    public function taxInvoices(): HasMany
+    {
+        return $this->hasMany(TaxInvoice::class);
     }
 }

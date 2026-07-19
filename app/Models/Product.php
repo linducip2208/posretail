@@ -39,6 +39,36 @@ class Product extends Model
                 $product->barcode = static::generateBarcode();
             }
         });
+
+        static::saved(function (Product $product) {
+            $changed = [];
+            if ($product->isDirty('cost_price')) {
+                $changed[] = 'cost_price';
+            }
+            if ($product->isDirty('selling_price')) {
+                $changed[] = 'selling_price';
+            }
+            if ($product->isDirty('wholesale_price')) {
+                $changed[] = 'wholesale_price';
+            }
+            if ($product->isDirty('member_price')) {
+                $changed[] = 'member_price';
+            }
+
+            if (!empty($changed)) {
+                $original = $product->getOriginal();
+                PriceChange::create([
+                    'product_id' => $product->id,
+                    'user_id' => auth()->id(),
+                    'old_cost_price' => $original['cost_price'] ?? null,
+                    'new_cost_price' => $product->cost_price,
+                    'old_selling_price' => $original['selling_price'] ?? null,
+                    'new_selling_price' => $product->selling_price,
+                    'changed_fields' => implode(',', $changed),
+                    'source' => request()->is('api/*') ? 'api' : 'manual',
+                ]);
+            }
+        });
     }
 
     public static function generateBarcode(): string
@@ -81,8 +111,9 @@ class Product extends Model
 
     protected $fillable = [
         'name', 'slug', 'description', 'category_id', 'brand_id',
-        'unit_id', 'outlet_id', 'sku', 'barcode', 'cost_price',
-        'selling_price', 'wholesale_price', 'member_price',
+        'unit_id', 'outlet_id', 'sku', 'barcode', 'batch_number',
+        'cost_price',
+        'selling_price', 'wholesale_price', 'member_price', 'currency',
         'min_stock', 'max_stock', 'current_stock', 'image',
         'has_variants', 'active', 'expired_date',
     ];

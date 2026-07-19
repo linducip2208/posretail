@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class BlogCategoryResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '📰 Marketing';
+    protected static string|\UnitEnum|null $navigationGroup = '📰 Website';
 
     protected static ?int $navigationSort = 2;
 

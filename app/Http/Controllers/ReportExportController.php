@@ -61,6 +61,31 @@ class ReportExportController extends Controller
         return $this->exportStockCsv($outletId);
     }
 
+    public function salesPdf(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+        $this->validateOutletAccess($outletId);
+        return $this->pdfService->generateSalesReport($startDate, $endDate, $outletId ? (int) $outletId : null);
+    }
+
+    public function financialPdf(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+        $this->validateOutletAccess($outletId);
+        return $this->pdfService->generateFinancialReport($startDate, $endDate, $outletId ? (int) $outletId : null);
+    }
+
+    public function stockPdf(Request $request): mixed
+    {
+        $outletId = $request->query('outlet_id');
+        $this->validateOutletAccess($outletId);
+        return $this->pdfService->generateStockReport($outletId ? (int) $outletId : null);
+    }
+
     protected function validateOutletAccess(?string $outletId): void
     {
         if (!$outletId) return;

@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Order;
 use App\Models\Outlet;
+use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\PurchaseOrder;
 use Filament\Pages\Page;
@@ -13,7 +14,7 @@ use UnitEnum;
 
 class LaporanKeuangan extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = '📊 Laporan';
+    protected static string|UnitEnum|null $navigationGroup = '📈 Laporan';
 
     protected static ?int $navigationSort = 2;
 
@@ -49,7 +50,12 @@ class LaporanKeuangan extends Page
 
     public function getTotalExpenseProperty()
     {
-        return (float) $this->expenseQueryBase()->sum('total_amount');
+        $poExpense = (float) $this->expenseQueryBase()->sum('total_amount');
+        $opExpense = (float) Expense::whereBetween('expense_date', [$this->startDate, $this->endDate.' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
+            ->sum('amount');
+
+        return $poExpense + $opExpense;
     }
 
     public function getTotalProfitProperty()
@@ -71,7 +77,7 @@ class LaporanKeuangan extends Page
             ->join('orders', 'payments.order_id', '=', 'orders.id')
             ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->whereIn('payments.status', ['success', 'confirmed'])
+            ->whereIn('payments.status', ['success', 'confirmed', 'completed'])
             ->selectRaw('payment_methods.name as method, SUM(payments.amount) as total')
             ->groupBy('payment_methods.id', 'payment_methods.name')
             ->orderByDesc('total')
@@ -143,7 +149,7 @@ class LaporanKeuangan extends Page
             ->join('orders', 'payments.order_id', '=', 'orders.id')
             ->whereBetween('payments.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->whereIn('payments.status', ['success', 'confirmed'])
+            ->whereIn('payments.status', ['success', 'confirmed', 'completed'])
             ->sum('payments.amount');
 
         $moneyOut = $this->totalExpense;
@@ -179,7 +185,7 @@ class LaporanKeuangan extends Page
             ->leftJoin('outlets', 'orders.outlet_id', '=', 'outlets.id')
             ->whereBetween('payments.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
-            ->whereIn('payments.status', ['success', 'confirmed'])
+            ->whereIn('payments.status', ['success', 'confirmed', 'completed'])
             ->select([
                 'orders.order_number',
                 'customers.name as customer_name',

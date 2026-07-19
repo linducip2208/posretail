@@ -229,71 +229,32 @@ class DocsController extends Controller
     {
         return [
             [
-                'group' => 'Master Data',
-                'icon' => 'M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125v-3.75',
+                'group' => '💰 Penjualan',
+                'icon' => 'M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z',
                 'items' => [
                     [
-                        'title' => 'Outlet / Cabang',
-                        'desc' => 'Kelola satu atau banyak outlet dalam satu dashboard. Setiap outlet punya stok, transaksi, dan laporan terpisah namun terintegrasi.',
-                        'bullets' => [
-                            'Multi-outlet support dengan data terisolasi',
-                            'Informasi lengkap: nama, alamat, telepon, status aktif',
-                            'Laporan per outlet atau konsolidasi',
-                            'Transfer stok antar outlet',
-                            'Pengaturan pajak dan metode bayar per outlet',
-                        ],
-                        'screenshot' => 'outlets',
+                        'title' => 'Daftar Penjualan',
+                        'desc' => 'Lihat dan kelola semua transaksi penjualan dari semua outlet. Filter, search, dan update status pesanan.',
+                        'bullets' => ['Nomor order unik auto-generate', 'Filter: outlet, customer, status, tanggal', 'Detail item, diskon, pajak per order', 'Riwayat pembayaran per order', 'Export data ke Excel'],
+                        'screenshot' => 'orders',
                     ],
                     [
-                        'title' => 'Kategori & Brand',
-                        'desc' => 'Organisir produk Anda dengan kategori nested (induk-anak) dan brand. Memudahkan navigasi dan pelaporan.',
-                        'bullets' => [
-                            'Kategori bertingkat (parent-child) tanpa batas',
-                            'Brand sebagai pengelompokan tambahan',
-                            'Filter produk berdasarkan kategori atau brand',
-                            'Laporan penjualan per kategori dan brand',
-                            'Slug otomatis untuk SEO-friendly URL',
-                        ],
-                        'screenshot' => 'categories',
+                        'title' => 'Point of Sale',
+                        'desc' => 'Antarmuka kasir kiosk single-viewport: 80% produk yang bisa discroll vertikal, 20% keranjang dengan subtotal tetap. Scan barcode USB/kamera.',
+                        'bullets' => ['Layout kiosk 80/20 — produk scroll vertikal', 'Scan barcode USB atau kamera', 'Barcode & SKU auto-generate', '48 produk per halaman', 'Kalkulasi otomatis: subtotal → pajak → total', 'Multi-metode pembayaran', 'Cetak struk thermal'],
+                        'screenshot' => 'order-create',
                     ],
                     [
-                        'title' => 'Produk & Varian',
-                        'desc' => 'Kelola ribuan produk (demo seed 1000 produk, 25 kategori, 25 brand) dengan SKU, barcode, dan varian. Barcode EAN-13 auto-generate. Multi-harga: eceran, grosir, member.',
-                        'bullets' => [
-                            'Barcode EAN-13 & SKU auto-generate saat create',
-                            '25 kategori supermarket-style (makanan, minuman, elektronik, dll)',
-                            '25 brand ternama (Indofood, Unilever, Nestle, dll)',
-                            'Varian: warna, ukuran, rasa dengan stok terpisah',
-                            'Multi-harga: eceran, grosir, member',
-                            'Stok minimum & maksimum alert',
-                            'Upload gambar produk',
-                            'Status aktif/nonaktif untuk produk musiman',
-                        ],
-                        'screenshot' => 'products',
+                        'title' => 'Hold / Suspend',
+                        'desc' => 'Tahan transaksi yang belum selesai. Pelanggan bisa lanjut belanja nanti — keranjang tersimpan.',
+                        'bullets' => ['Simpan keranjang sementara', 'Label untuk identifikasi', 'Lanjutkan kapan saja', 'Auto-expire setelah 24 jam'],
+                        'screenshot' => 'orders',
                     ],
                     [
-                        'title' => 'Pelanggan & Grup',
-                        'desc' => 'Database pelanggan lengkap dengan grup dan riwayat belanja. Integrasi dengan program loyalitas poin.',
-                        'bullets' => [
-                            'Grup pelanggan: Regular, Member, Reseller',
-                            'Riwayat pembelian dan total belanja',
-                            'Poin loyalitas otomatis per transaksi',
-                            'Auto-upgrade grup berdasarkan total belanja',
-                            'Kontak lengkap: telepon, email, alamat',
-                        ],
-                        'screenshot' => 'customers',
-                    ],
-                    [
-                        'title' => 'Supplier & Metode Bayar',
-                        'desc' => 'Kelola pemasok barang dan konfigurasi metode pembayaran yang diterima di toko.',
-                        'bullets' => [
-                            'Data supplier lengkap dengan kontak',
-                            'Riwayat purchase order per supplier',
-                            'Metode bayar: Tunai, Debit, QRIS, Transfer',
-                            'Status aktif/nonaktif per metode',
-                            'Rekening tujuan untuk transfer',
-                        ],
-                        'screenshot' => 'suppliers',
+                        'title' => 'Retur Penjualan',
+                        'desc' => 'Proses pengembalian barang dengan alasan dan status approval. Stok otomatis kembali.',
+                        'bullets' => ['Customer return & supplier return', 'Alasan retur wajib', 'Approval workflow', 'Stok auto-kembali'],
+                        'screenshot' => 'orders',
                     ],
                 ],
             ],
@@ -345,7 +306,7 @@ class DocsController extends Controller
                 ],
             ],
             [
-                'group' => 'Pembelian',
+                'group' => '🛒 Pembelian',
                 'icon' => 'M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z',
                 'items' => [
                     [
@@ -364,7 +325,7 @@ class DocsController extends Controller
                 ],
             ],
             [
-                'group' => 'Inventori',
+                'group' => '📦 Inventory',
                 'icon' => 'M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m6 4.125 2.25 2.25m0 0 2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z',
                 'items' => [
                     [
@@ -406,7 +367,7 @@ class DocsController extends Controller
                 ],
             ],
             [
-                'group' => 'Loyalitas',
+                'group' => '👥 Customer & Loyalitas',
                 'icon' => 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z',
                 'items' => [
                     [

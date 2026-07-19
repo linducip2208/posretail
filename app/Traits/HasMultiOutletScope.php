@@ -2,11 +2,13 @@
 
 namespace App\Traits;
 
+use App\Scopes\MultiOutletScope;
+
 trait HasMultiOutletScope
 {
     public static function bootHasMultiOutletScope(): void
     {
-        // Don't add global scope — instead, provide helper methods
+        static::addGlobalScope(new MultiOutletScope);
     }
 
     public function getOutletColumns(): array

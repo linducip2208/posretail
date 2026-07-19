@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class PurchaseOrderResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '📦 Pembelian';
+    protected static string|\UnitEnum|null $navigationGroup = '🛒 Pembelian';
 
     protected static ?int $navigationSort = 1;
 

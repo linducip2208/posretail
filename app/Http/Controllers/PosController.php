@@ -38,7 +38,7 @@ class PosController extends Controller
 
     public function products(Request $request): JsonResponse
     {
-        $query = Product::with(['category', 'unit'])
+        $query = Product::with(['category', 'unit', 'variants'])
             ->where('active', true);
 
         if ($request->search) {
@@ -60,6 +60,26 @@ class PosController extends Controller
 
     public function barcode(string $barcode): JsonResponse
     {
+        $variant = ProductVariant::with('product.category', 'product.unit')
+            ->where('barcode', $barcode)
+            ->orWhere('sku', $barcode)
+            ->first();
+
+        if ($variant) {
+            return response()->json([
+                'id' => $variant->product_id,
+                'variant_id' => $variant->id,
+                'variant_name' => $variant->name,
+                'name' => $variant->product->name . ' (' . $variant->name . ')',
+                'sku' => $variant->sku,
+                'barcode' => $variant->barcode,
+                'selling_price' => $variant->selling_price ?: $variant->product->selling_price,
+                'current_stock' => $variant->current_stock,
+                'category' => $variant->product->category,
+                'unit' => $variant->product->unit,
+            ]);
+        }
+
         $product = Product::with(['category', 'unit'])
             ->where('barcode', $barcode)
             ->orWhere('sku', $barcode)
@@ -106,6 +126,7 @@ class PosController extends Controller
         $request->validate([
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|exists:products,id',
+            'items.*.variant_id' => 'nullable|exists:product_variants,id',
             'items.*.qty' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
             'outlet_id' => 'required|exists:outlets,id',
@@ -171,6 +192,7 @@ class PosController extends Controller
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item['id'],
+                    'product_variant_id' => $item['variant_id'] ?? null,
                     'quantity' => $item['qty'],
                     'unit_price' => $item['price'],
                     'discount_percent' => 0,
@@ -178,10 +200,15 @@ class PosController extends Controller
                     'subtotal' => $item['price'] * $item['qty'],
                 ]);
 
+                if (isset($item['variant_id'])) {
+                    ProductVariant::find($item['variant_id'])?->decrement('current_stock', $item['qty']);
+                }
+
                 Product::find($item['id'])->decrement('current_stock', $item['qty']);
 
                 StockMovement::create([
                     'product_id' => $item['id'],
+                    'product_variant_id' => $item['variant_id'] ?? null,
                     'outlet_id' => $request->outlet_id,
                     'type' => 'out',
                     'quantity' => $item['qty'],
@@ -209,6 +236,33 @@ class PosController extends Controller
             'queue_number' => $order->queue_number,
             'total' => $order->total_amount,
             'change' => $request->paid_amount - $order->total_amount,
+        ]);
+    }
+
+    public function display(Request $request): JsonResponse
+    {
+        $latest = Order::with(['items.product', 'outlet'])
+            ->whereDate('created_at', today())
+            ->when($request->outlet_id, fn ($q) => $q->where('outlet_id', $request->outlet_id))
+            ->latest()
+            ->first();
+
+        if (!$latest) {
+            return response()->json(['items' => [], 'total' => 0, 'queue_number' => null]);
+        }
+
+        return response()->json([
+            'order_id' => $latest->id,
+            'queue_number' => $latest->queue_number,
+            'total' => $latest->total_amount,
+            'outlet_name' => $latest->outlet?->name,
+            'items' => $latest->items->map(fn ($i) => [
+                'name' => $i->product?->name ?? '-',
+                'variant' => $i->productVariant?->name,
+                'qty' => $i->quantity,
+                'price' => $i->unit_price,
+                'subtotal' => $i->subtotal,
+            ])->toArray(),
         ]);
     }
 }

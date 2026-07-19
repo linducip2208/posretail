@@ -16,9 +16,10 @@ use Filament\Tables\Table;
 
 class TableAreaResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $model = TableArea::class;
 

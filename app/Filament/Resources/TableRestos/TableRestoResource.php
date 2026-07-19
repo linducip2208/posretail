@@ -16,9 +16,10 @@ use Filament\Tables\Table;
 
 class TableRestoResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $model = TableResto::class;
 

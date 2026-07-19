@@ -16,9 +16,9 @@ use Filament\Tables\Table;
 
 class AttendanceResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
+    protected static string|\UnitEnum|null $navigationGroup = '👨‍💼 Pegawai';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $model = Attendance::class;
 

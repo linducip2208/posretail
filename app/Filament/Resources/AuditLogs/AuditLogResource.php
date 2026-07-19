@@ -12,15 +12,15 @@ use Filament\Support\Icons\Heroicon;
 
 class AuditLogResource extends Resource
 {
-    protected static string|\UnitEnum|null $navigationGroup = '⚙️ Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = '⚙️ Pengaturan';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $model = AuditLog::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $navigationLabel = 'Log Audit';
+    protected static ?string $navigationLabel = 'Audit Log';
 
     protected static ?string $label = 'Log Audit';
 

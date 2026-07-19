@@ -15,9 +15,10 @@ use Filament\Support\Icons\Heroicon;
 
 class KitchenTicketResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $model = KitchenTicket::class;
 
