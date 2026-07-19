@@ -26,6 +26,8 @@ class Order extends Model
         });
 
         static::created(function (Order $order) {
+            \App\Events\OrderCreated::dispatch($order);
+
             if ($order->order_status === 'completed') {
                 \App\Services\JournalService::postOrderRevenue($order);
             }

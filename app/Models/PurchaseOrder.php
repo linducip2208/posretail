@@ -45,4 +45,14 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(PurchaseOrderItem::class);
     }
+
+    public static function generateNumber(): string
+    {
+        $prefix = 'PO-' . now()->format('Ymd') . '-';
+        $last = static::where('po_number', 'like', $prefix . '%')
+            ->orderBy('po_number', 'desc')
+            ->first();
+        $next = $last ? (int) substr($last->po_number, -4) + 1 : 1;
+        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
 }

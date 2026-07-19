@@ -114,6 +114,7 @@ class Product extends Model
         'unit_id', 'outlet_id', 'sku', 'barcode', 'batch_number',
         'cost_price',
         'selling_price', 'wholesale_price', 'member_price', 'currency',
+        'bin_location_id',
         'min_stock', 'max_stock', 'current_stock', 'image',
         'has_variants', 'active', 'expired_date',
     ];
