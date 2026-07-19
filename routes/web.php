@@ -54,6 +54,8 @@ Route::get('/export/laporan/stok', [ReportExportController::class, 'stock'])->na
 Route::get('/export/laporan/penjualan/pdf', [ReportExportController::class, 'salesPdf'])->name('export.sales.pdf')->middleware('auth');
 Route::get('/export/laporan/keuangan/pdf', [ReportExportController::class, 'financialPdf'])->name('export.financial.pdf')->middleware('auth');
 Route::get('/export/laporan/stok/pdf', [ReportExportController::class, 'stockPdf'])->name('export.stock.pdf')->middleware('auth');
+Route::get('/export/laporan/laba-rugi', [ReportExportController::class, 'labaRugi'])->name('export.laba-rugi')->middleware('auth');
+Route::get('/export/laporan/neraca', [ReportExportController::class, 'neraca'])->name('export.neraca')->middleware('auth');
 
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('guest:customer')->group(function () {

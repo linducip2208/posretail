@@ -191,6 +191,175 @@ class ReportExportController extends Controller
         return response($content, 200, $headers);
     }
 
+    public function labaRugi(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+
+        $this->validateOutletAccess($outletId);
+
+        return $this->exportLabaRugiCsv($startDate, $endDate, $outletId);
+    }
+
+    public function neraca(Request $request): mixed
+    {
+        $asOfDate = $request->query('as_of_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+
+        $this->validateOutletAccess($outletId);
+
+        return $this->exportNeracaCsv($asOfDate, $outletId);
+    }
+
+    protected function exportLabaRugiCsv(string $startDate, string $endDate, ?string $outletId): mixed
+    {
+        $items = DB::table('journal_entry_items')
+            ->join('accounts', 'journal_entry_items.account_id', '=', 'accounts.id')
+            ->join('journal_entries', 'journal_entry_items.journal_entry_id', '=', 'journal_entries.id')
+            ->whereBetween('journal_entries.journal_date', [$startDate, $endDate])
+            ->where('journal_entries.status', 'posted')
+            ->where('accounts.active', true)
+            ->whereIn('accounts.type', ['revenue', 'cogs', 'expense'])
+            ->when($outletId, fn ($q) => $this->applyJournalOutletFilter($q, (int) $outletId))
+            ->selectRaw("
+                accounts.code,
+                accounts.name,
+                accounts.type,
+                COALESCE(SUM(journal_entry_items.debit), 0) as total_debit,
+                COALESCE(SUM(journal_entry_items.credit), 0) as total_credit
+            ")
+            ->groupBy('accounts.id', 'accounts.code', 'accounts.name', 'accounts.type')
+            ->orderBy('accounts.code')
+            ->get();
+
+        $filename = 'laporan-laba-rugi-' . $startDate . '-sd-' . $endDate . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        fputcsv($handle, ['LAPORAN LABA RUGI', $startDate . ' s/d ' . $endDate]);
+        fputcsv($handle, []);
+        fputcsv($handle, ['Kode', 'Nama Akun', 'Tipe', 'Debit', 'Kredit', 'Saldo']);
+
+        foreach ($items as $item) {
+            $typeLabel = match ($item->type) {
+                'revenue' => 'Pendapatan',
+                'cogs' => 'HPP',
+                'expense' => 'Beban',
+                default => $item->type,
+            };
+            $balance = in_array($item->type, ['cogs', 'expense'])
+                ? $item->total_debit - $item->total_credit
+                : $item->total_credit - $item->total_debit;
+
+            fputcsv($handle, [
+                $item->code,
+                $item->name,
+                $typeLabel,
+                number_format($item->total_debit, 0, ',', '.'),
+                number_format($item->total_credit, 0, ',', '.'),
+                number_format($balance, 0, ',', '.'),
+            ]);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, $headers);
+    }
+
+    protected function exportNeracaCsv(string $asOfDate, ?string $outletId): mixed
+    {
+        $items = DB::table('journal_entry_items')
+            ->join('accounts', 'journal_entry_items.account_id', '=', 'accounts.id')
+            ->join('journal_entries', 'journal_entry_items.journal_entry_id', '=', 'journal_entries.id')
+            ->where('journal_entries.journal_date', '<=', $asOfDate)
+            ->where('journal_entries.status', 'posted')
+            ->where('accounts.active', true)
+            ->whereIn('accounts.type', ['asset', 'liability', 'equity'])
+            ->when($outletId, fn ($q) => $this->applyJournalOutletFilter($q, (int) $outletId))
+            ->selectRaw("
+                accounts.code,
+                accounts.name,
+                accounts.type,
+                COALESCE(SUM(journal_entry_items.debit), 0) as total_debit,
+                COALESCE(SUM(journal_entry_items.credit), 0) as total_credit
+            ")
+            ->groupBy('accounts.id', 'accounts.code', 'accounts.name', 'accounts.type')
+            ->orderBy('accounts.code')
+            ->get();
+
+        $filename = 'laporan-neraca-' . $asOfDate . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        fputcsv($handle, ['LAPORAN NERACA', 'Per ' . $asOfDate]);
+        fputcsv($handle, []);
+        fputcsv($handle, ['Kode', 'Nama Akun', 'Tipe', 'Debit', 'Kredit', 'Saldo']);
+
+        foreach ($items as $item) {
+            $typeLabel = match ($item->type) {
+                'asset' => 'Aset',
+                'liability' => 'Liabilitas',
+                'equity' => 'Ekuitas',
+                default => $item->type,
+            };
+            $balance = in_array($item->type, ['asset'])
+                ? $item->total_debit - $item->total_credit
+                : $item->total_credit - $item->total_debit;
+
+            fputcsv($handle, [
+                $item->code,
+                $item->name,
+                $typeLabel,
+                number_format($item->total_debit, 0, ',', '.'),
+                number_format($item->total_credit, 0, ',', '.'),
+                number_format($balance, 0, ',', '.'),
+            ]);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, $headers);
+    }
+
+    protected function applyJournalOutletFilter($query, int $outletId): void
+    {
+        $query->where(function ($q) use ($outletId) {
+            $q->where(function ($sub) use ($outletId) {
+                $sub->where('journal_entries.reference_type', 'order')
+                    ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {
+                        $inner->select('id')->from('orders')->where('outlet_id', $outletId);
+                    });
+            })->orWhere(function ($sub) use ($outletId) {
+                $sub->where('journal_entries.reference_type', 'expense')
+                    ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {
+                        $inner->select('id')->from('expenses')->where('outlet_id', $outletId);
+                    });
+            })->orWhere(function ($sub) use ($outletId) {
+                $sub->where('journal_entries.reference_type', 'purchase_order')
+                    ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {
+                        $inner->select('id')->from('purchase_orders')->where('outlet_id', $outletId);
+                    });
+            });
+        });
+    }
+
     protected function exportStockCsv(?string $outletId): mixed
     {
         $products = Product::with(['category', 'brand', 'unit', 'outlet'])

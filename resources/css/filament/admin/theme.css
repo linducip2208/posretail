@@ -495,20 +495,25 @@ textarea.fi-textarea:focus {
 
 @media (max-width: 640px) {
     .fi-topbar {
-        padding: 10px 12px;
+        padding: 8px 10px;
     }
 
     .fi-topbar nav {
-        gap: 6px;
+        gap: 4px;
     }
 
     .fi-page-header-heading {
-        font-size: 20px;
+        font-size: 18px;
+    }
+
+    .fi-page-header {
+        padding: 12px 0 8px;
     }
 
     .fi-btn {
-        min-height: 38px;
+        min-height: 42px;
         font-size: 13px;
+        padding: 8px 14px;
     }
 
     .fi-btn.fi-color {
@@ -517,24 +522,37 @@ textarea.fi-textarea:focus {
     }
 
     .fi-sidebar {
-        width: 280px;
+        width: 280px !important;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.18) !important;
+        border-right: 1px solid rgba(var(--primary-200), 0.5);
+    }
+
+    .fi-main-sidebar-open .fi-sidebar-overlay {
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(2px);
     }
 
     .fi-section {
-        border-radius: 8px;
+        border-radius: 10px;
     }
 
     .fi-section-content {
-        padding: 12px;
+        padding: 14px;
     }
 
     .fi-ta-cell {
+        padding: 10px 10px;
+        font-size: 12.5px;
+    }
+
+    .fi-ta-header-cell {
+        font-size: 10px;
+        letter-spacing: 0.03em;
         padding: 8px 10px;
-        font-size: 12px;
     }
 
     .fi-wi-stats-overview-stat-value {
-        font-size: 20px;
+        font-size: 22px;
     }
 
     .fi-wi-stats-overview-stat-label {
@@ -542,14 +560,15 @@ textarea.fi-textarea:focus {
     }
 
     .fi-wi-stats-overview-stat {
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 14px;
     }
 
     .fi-input-wrp,
     .fi-select-input,
-    .fi-textarea {
-        min-height: 40px;
+    .fi-textarea,
+    .fi-select-ctn button {
+        min-height: 44px;
         font-size: 15px;
     }
 
@@ -571,5 +590,60 @@ textarea.fi-textarea:focus {
 
     .fi-ta-ctn {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .fi-dropdown-panel {
+        max-width: 90vw;
+    }
+
+    .fi-modal-window {
+        max-width: 94vw !important;
+        margin: 10px !important;
+    }
+
+    /* Mobile: stats grid 2-column on small screens */
+    @media (max-width: 480px) {
+        .fi-wi-stats-overview-stat {
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .fi-wi-stats-overview-stat-value {
+            font-size: 20px;
+        }
+
+        .fi-page-header-heading {
+            font-size: 17px;
+        }
+
+        .fi-topbar {
+            padding: 6px 8px;
+        }
+    }
+}
+
+/* Touch-friendly: increase tap targets */
+@media (pointer: coarse) {
+    .fi-sidebar-item button,
+    .fi-sidebar-item a {
+        min-height: 44px;
+        padding: 10px 14px;
+    }
+
+    .fi-btn {
+        min-height: 44px;
+    }
+
+    .fi-icon-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .fi-checkbox,
+    .fi-radio,
+    .fi-toggle {
+        min-width: 24px;
+        min-height: 24px;
     }
 }

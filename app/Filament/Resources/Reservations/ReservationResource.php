@@ -18,7 +18,7 @@ class ReservationResource extends Resource
 {
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $model = Reservation::class;
 

@@ -12,7 +12,7 @@ class CetakLabelBarcode extends Page
 {
     protected static string|UnitEnum|null $navigationGroup = '📦 Inventory';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 15;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 

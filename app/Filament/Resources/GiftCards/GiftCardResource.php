@@ -18,7 +18,7 @@ class GiftCardResource extends Resource
 {
     protected static string|\UnitEnum|null $navigationGroup = '🎁 Promo';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Voucher';
 

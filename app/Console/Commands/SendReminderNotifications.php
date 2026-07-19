@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\PurchaseOrder;
 use App\Models\SupplierPayable;
+use App\Models\NotificationPreference;
 use Filament\Notifications\Notification;
 use Illuminate\Console\Command;
 
@@ -26,7 +27,9 @@ class SendReminderNotifications extends Command
             ->get();
 
         if ($lowStockProducts->isNotEmpty()) {
-            $recipients = User::whereIn('role', ['owner', 'manager', 'admin', 'gudang'])->get();
+            $recipients = User::whereIn('role', ['owner', 'manager', 'admin', 'gudang'])
+                ->get()
+                ->filter(fn ($u) => NotificationPreference::isEnabled($u->id, 'low_stock'));
             foreach ($recipients as $user) {
                 Notification::make()
                     ->title('Stok Rendah')
@@ -43,7 +46,9 @@ class SendReminderNotifications extends Command
             ->get();
 
         if ($overdueOrders->isNotEmpty()) {
-            $recipients = User::whereIn('role', ['owner', 'manager', 'admin'])->get();
+            $recipients = User::whereIn('role', ['owner', 'manager', 'admin'])
+                ->get()
+                ->filter(fn ($u) => NotificationPreference::isEnabled($u->id, 'overdue_order'));
             foreach ($recipients as $user) {
                 Notification::make()
                     ->title('Pembayaran Tertunda')
@@ -60,7 +65,9 @@ class SendReminderNotifications extends Command
             ->get();
 
         if ($overduePayables->isNotEmpty()) {
-            $recipients = User::whereIn('role', ['owner', 'manager', 'admin'])->get();
+            $recipients = User::whereIn('role', ['owner', 'manager', 'admin'])
+                ->get()
+                ->filter(fn ($u) => NotificationPreference::isEnabled($u->id, 'overdue_payable'));
             foreach ($recipients as $user) {
                 Notification::make()
                     ->title('Hutang Supplier Jatuh Tempo')
