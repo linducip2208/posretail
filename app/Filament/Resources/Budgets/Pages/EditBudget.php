@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Schema;
 
 class EditBudget extends EditRecord
 {
@@ -44,9 +45,12 @@ class EditBudget extends EditRecord
             ->whereBetween('created_at', [$start . ' 00:00:00', $end . ' 23:59:59'])
             ->sum('total_amount');
 
-        $actualExpense = Expense::where('outlet_id', $budget->outlet_id)
-            ->whereBetween('expense_date', [$start, $end])
-            ->sum('amount');
+        $actualExpense = 0;
+        if (Schema::hasTable('expenses')) {
+            $actualExpense = Expense::where('outlet_id', $budget->outlet_id)
+                ->whereBetween('expense_date', [$start, $end])
+                ->sum('amount');
+        }
 
         $poTotal = PurchaseOrder::where('outlet_id', $budget->outlet_id)
             ->where('status', 'received')

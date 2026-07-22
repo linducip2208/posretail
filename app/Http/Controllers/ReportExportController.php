@@ -8,6 +8,7 @@ use App\Models\StockMovement;
 use App\Services\ReportPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ReportExportController extends Controller
 {
@@ -346,11 +347,13 @@ class ReportExportController extends Controller
                     ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {
                         $inner->select('id')->from('orders')->where('outlet_id', $outletId);
                     });
-            })->orWhere(function ($sub) use ($outletId) {
-                $sub->where('journal_entries.reference_type', 'expense')
-                    ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {
-                        $inner->select('id')->from('expenses')->where('outlet_id', $outletId);
-                    });
+            })->when(Schema::hasTable('expenses'), function ($q) use ($outletId) {
+                $q->orWhere(function ($sub) use ($outletId) {
+                    $sub->where('journal_entries.reference_type', 'expense')
+                        ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {
+                            $inner->select('id')->from('expenses')->where('outlet_id', $outletId);
+                        });
+                });
             })->orWhere(function ($sub) use ($outletId) {
                 $sub->where('journal_entries.reference_type', 'purchase_order')
                     ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {

@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Outlet;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use BackedEnum;
 use UnitEnum;
 
@@ -208,11 +209,13 @@ class LaporanNeraca extends Page
                     ->whereIn('journal_entries.reference_id', function ($inner) {
                         $inner->select('id')->from('orders')->where('outlet_id', $this->outletId);
                     });
-            })->orWhere(function ($sub) {
-                $sub->where('journal_entries.reference_type', 'expense')
-                    ->whereIn('journal_entries.reference_id', function ($inner) {
-                        $inner->select('id')->from('expenses')->where('outlet_id', $this->outletId);
-                    });
+            })->when(Schema::hasTable('expenses'), function ($q) {
+                $q->orWhere(function ($sub) {
+                    $sub->where('journal_entries.reference_type', 'expense')
+                        ->whereIn('journal_entries.reference_id', function ($inner) {
+                            $inner->select('id')->from('expenses')->where('outlet_id', $this->outletId);
+                        });
+                });
             })->orWhere(function ($sub) {
                 $sub->where('journal_entries.reference_type', 'purchase_order')
                     ->whereIn('journal_entries.reference_id', function ($inner) {

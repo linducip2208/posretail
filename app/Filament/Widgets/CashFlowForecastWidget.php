@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\SupplierPayable;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CashFlowForecastWidget extends ChartWidget
 {
@@ -127,8 +128,11 @@ class CashFlowForecastWidget extends ChartWidget
             ->whereDate('due_date', $date)
             ->sum('amount');
 
-        $avgExpense = (float) Expense::whereDate('expense_date', '>=', now()->subDays(30))
-            ->avg('amount') ?? 0;
+        $avgExpense = 0;
+        if (Schema::hasTable('expenses')) {
+            $avgExpense = (float) Expense::whereDate('expense_date', '>=', now()->subDays(30))
+                ->avg('amount') ?? 0;
+        }
 
         return $payables + ($avgExpense * 0.3);
     }

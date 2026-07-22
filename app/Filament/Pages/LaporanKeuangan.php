@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\PurchaseOrder;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use BackedEnum;
 use UnitEnum;
 
@@ -51,9 +52,13 @@ class LaporanKeuangan extends Page
     public function getTotalExpenseProperty()
     {
         $poExpense = (float) $this->expenseQueryBase()->sum('total_amount');
-        $opExpense = (float) Expense::whereBetween('expense_date', [$this->startDate, $this->endDate.' 23:59:59'])
-            ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
-            ->sum('amount');
+
+        $opExpense = 0;
+        if (Schema::hasTable('expenses')) {
+            $opExpense = (float) Expense::whereBetween('expense_date', [$this->startDate, $this->endDate.' 23:59:59'])
+                ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
+                ->sum('amount');
+        }
 
         return $poExpense + $opExpense;
     }

@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Shift;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use BackedEnum;
 use UnitEnum;
 
@@ -70,9 +71,12 @@ class LaporanTutupHari extends Page
                 ->where('payment_methods.name', 'not like', '%tunai%'))
             ->sum('payments.amount');
 
-        $totalExpenses = (float) Expense::whereDate('expense_date', $this->date)
-            ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
-            ->sum('amount');
+        $totalExpenses = 0;
+        if (Schema::hasTable('expenses')) {
+            $totalExpenses = (float) Expense::whereDate('expense_date', $this->date)
+                ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
+                ->sum('amount');
+        }
 
         $activeShifts = Shift::with('user')
             ->whereDate('started_at', $this->date)
