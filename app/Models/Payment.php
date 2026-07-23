@@ -27,6 +27,10 @@ class Payment extends Model
     protected function casts(): array
     {
         return [
+            'order_id' => 'integer',
+            'payment_method_id' => 'integer',
+            'split_index' => 'integer',
+            'amount' => 'decimal:2',
             'paid_at' => 'datetime',
         ];
     }

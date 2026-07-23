@@ -129,9 +129,11 @@ class PosController extends Controller
             'items.*.variant_id' => 'nullable|exists:product_variants,id',
             'items.*.qty' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
-            'outlet_id' => 'required|exists:outlets,id',
+            'outlet_id' => 'required|integer|exists:outlets,id',
             'order_type' => 'nullable|in:' . $validTypes,
-            'payment_method_id' => 'required|exists:payment_methods,id',
+            'customer_id' => 'nullable|integer|exists:customers,id',
+            'table_id' => 'nullable|integer|exists:table_restos,id',
+            'payment_method_id' => 'required|integer|exists:payment_methods,id',
             'paid_amount' => 'required|numeric|min:0',
             'use_tax' => 'nullable|boolean',
         ]);
@@ -167,10 +169,10 @@ class PosController extends Controller
 
             $order = Order::create([
                 'order_number' => 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6)),
-                'customer_id' => $request->customer_id,
-                'outlet_id' => $request->outlet_id,
+                'customer_id' => is_numeric($request->customer_id) ? (int) $request->customer_id : null,
+                'outlet_id' => (int) $request->outlet_id,
                 'user_id' => auth()->id(),
-                'table_id' => $request->table_id,
+                'table_id' => $request->table_id ? (int) $request->table_id : null,
                 'order_type' => $request->order_type ?? SystemSetting::getDefaultOrderType(),
                 'queue_number' => $queueNumber,
                 'subtotal' => $subtotal,
@@ -220,7 +222,7 @@ class PosController extends Controller
 
             Payment::create([
                 'order_id' => $order->id,
-                'payment_method_id' => $request->payment_method_id,
+                'payment_method_id' => (int) $request->payment_method_id,
                 'amount' => $paidAmount,
                 'status' => 'success',
                 'paid_at' => now(),

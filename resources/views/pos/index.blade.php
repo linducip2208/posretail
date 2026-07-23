@@ -49,7 +49,7 @@
     <header class="bg-blue-600 text-white px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-4 shadow-lg z-10" style="flex-shrink:0">
         <div class="font-extrabold text-lg tracking-tight">POS</div>
         <div class="flex items-center gap-2 text-sm">
-            <select id="customerId" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
+            <select id="orderType" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
                 @foreach($orderTypes as $type)
                 <option value="{{ $type['value'] }}">{{ $type['label'] }}</option>
                 @endforeach
@@ -121,7 +121,7 @@
                     </div>
                 </div>
                 <div id="cartCustomer" class="mt-2 text-xs text-gray-500">
-                    <select id="customerId" class="w-full border border-gray-200 rounded px-2 py-1 text-xs" onchange="updateCustomer()">
+                    <select id="customerSelect" class="w-full border border-gray-200 rounded px-2 py-1 text-xs" onchange="updateCustomer()">
                         <option value="">Walk-in Customer</option>
                     </select>
                 </div>
@@ -554,8 +554,8 @@
 
             const payload = {
                 outlet_id: outletId,
-                order_type: document.getElementById('customerId').value,
-                customer_id: document.getElementById('customerId').value || null,
+                order_type: document.getElementById('orderType').value,
+                customer_id: parseInt(document.getElementById('customerSelect').value) || null,
                 table_id: null,
                 items: cart.map(i => ({ id: i.id, qty: i.qty, price: i.price })),
                 payment_method_id: document.getElementById('paymentMethod').value,

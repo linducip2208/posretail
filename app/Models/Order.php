@@ -52,10 +52,21 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'customer_id' => 'integer',
+            'outlet_id' => 'integer',
+            'user_id' => 'integer',
+            'table_id' => 'integer',
+            'employee_id' => 'integer',
             'is_installment' => 'boolean',
+            'installment_count' => 'integer',
             'deposit_amount' => 'decimal:2',
             'remaining_amount' => 'decimal:2',
             'commission_amount' => 'decimal:2',
+            'subtotal' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
+            'tax_amount' => 'decimal:2',
+            'total_amount' => 'decimal:2',
+            'exchange_rate' => 'decimal:4',
         ];
     }
 

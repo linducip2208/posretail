@@ -16,6 +16,20 @@ class OrderItem extends Model
         'discount_amount', 'subtotal',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'order_id' => 'integer',
+            'product_id' => 'integer',
+            'product_variant_id' => 'integer',
+            'quantity' => 'integer',
+            'unit_price' => 'decimal:2',
+            'discount_percent' => 'decimal:2',
+            'discount_amount' => 'decimal:2',
+            'subtotal' => 'decimal:2',
+        ];
+    }
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
