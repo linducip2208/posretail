@@ -132,7 +132,7 @@ class PosController extends Controller
             'outlet_id' => 'required|integer|exists:outlets,id',
             'order_type' => 'nullable|in:' . $validTypes,
             'customer_id' => 'nullable|integer|exists:customers,id',
-            'table_id' => 'nullable|integer|exists:table_restos,id',
+            'table_id' => 'nullable|integer|exists:tables,id',
             'payment_method_id' => 'required|integer|exists:payment_methods,id',
             'paid_amount' => 'required|numeric|min:0',
             'use_tax' => 'nullable|boolean',

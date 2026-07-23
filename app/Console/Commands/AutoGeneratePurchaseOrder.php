@@ -49,7 +49,7 @@ class AutoGeneratePurchaseOrder extends Command
                     $qty = max(10, $product->min_stock * 2);
                 }
 
-                $po->items()->create([
+                $po->purchaseOrderItems()->create([
                     'product_id' => $product->id,
                     'quantity' => $qty,
                     'unit_price' => $product->cost_price,

@@ -42,16 +42,16 @@ class Product extends Model
 
         static::saved(function (Product $product) {
             $changed = [];
-            if ($product->isDirty('cost_price')) {
+            if ($product->wasChanged('cost_price')) {
                 $changed[] = 'cost_price';
             }
-            if ($product->isDirty('selling_price')) {
+            if ($product->wasChanged('selling_price')) {
                 $changed[] = 'selling_price';
             }
-            if ($product->isDirty('wholesale_price')) {
+            if ($product->wasChanged('wholesale_price')) {
                 $changed[] = 'wholesale_price';
             }
-            if ($product->isDirty('member_price')) {
+            if ($product->wasChanged('member_price')) {
                 $changed[] = 'member_price';
             }
 
