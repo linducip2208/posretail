@@ -20,6 +20,7 @@ class PortalController extends Controller
 
         $recentOrders = Order::where('customer_id', $customer->id)
             ->with(['orderItems.product', 'payments'])
+            ->excludeCancelled()
             ->latest()
             ->take(10)
             ->get();
@@ -37,6 +38,7 @@ class PortalController extends Controller
 
         $query = Order::where('customer_id', $customer->id)
             ->with(['orderItems.product', 'payments'])
+            ->excludeCancelled()
             ->latest();
 
         if ($request->filled('order_number')) {
@@ -64,6 +66,7 @@ class PortalController extends Controller
                 'paymentProofs',
                 'outlet',
             ])
+            ->excludeCancelled()
             ->findOrFail($id);
 
         return view('portal.order-detail', compact('order'));
@@ -75,6 +78,7 @@ class PortalController extends Controller
 
         $order = Order::where('customer_id', $customer->id)
             ->with(['orderItems.product', 'payments.paymentMethod', 'outlet', 'customer'])
+            ->excludeCancelled()
             ->findOrFail($id);
 
         $pdf = Pdf::loadView('pdf.invoice', compact('order'))
@@ -87,7 +91,7 @@ class PortalController extends Controller
     {
         $customer = auth('customer')->user();
 
-        $order = Order::where('customer_id', $customer->id)->findOrFail($id);
+        $order = Order::where('customer_id', $customer->id)->excludeCancelled()->findOrFail($id);
 
         $request->validate([
             'proof_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',

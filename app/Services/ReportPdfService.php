@@ -39,6 +39,7 @@ class ReportPdfService
         $orders = Order::with(['user', 'outlet', 'payments'])
             ->whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
             ->when($outletId, fn ($q) => $q->where('outlet_id', $outletId))
+            ->excludeCancelled()
             ->latest()
             ->get();
 

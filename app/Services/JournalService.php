@@ -67,6 +67,55 @@ class JournalService
     }
 
     /**
+     * Reverse journal saat order dicancel.
+     * Reverse dari postOrderRevenue — balik semua debit/credit.
+     */
+    public static function reverseOrderRevenue(Order $order): ?JournalEntry
+    {
+        $arAccount = static::getAccount('1-1100', 'Piutang Usaha');
+        $revenueAccount = static::getAccount('4-1000', 'Pendapatan Penjualan');
+        $cogsAccount = static::getAccount('5-1000', 'HPP');
+        $inventoryAccount = static::getAccount('1-1300', 'Persediaan');
+        $discAccount = static::getAccount('4-1100', 'Diskon Penjualan');
+
+        if (!$revenueAccount) {
+            Log::warning('Journal reverse: revenue account not found');
+            return null;
+        }
+
+        $items = [];
+        $totalRevenue = $order->total_amount;
+        $totalDiscount = $order->discount_amount ?? 0;
+        $totalCOGS = 0;
+
+        foreach ($order->orderItems as $item) {
+            $cost = ($item->product?->cost_price ?? 0) * $item->quantity;
+            $totalCOGS += $cost;
+        }
+
+        // Reverse Piutang / Kas → credit (dulu debit)
+        if ($arAccount) {
+            $items[] = ['account_id' => $arAccount->id, 'debit' => 0, 'credit' => $totalRevenue - $totalDiscount, 'description' => 'Pembatalan piutang penjualan'];
+        }
+
+        // Reverse Diskon → credit (dulu debit)
+        if ($totalDiscount > 0 && $discAccount) {
+            $items[] = ['account_id' => $discAccount->id, 'debit' => 0, 'credit' => $totalDiscount, 'description' => 'Pembatalan diskon penjualan'];
+        }
+
+        // Reverse Pendapatan → debit (dulu credit)
+        $items[] = ['account_id' => $revenueAccount->id, 'debit' => $totalRevenue, 'credit' => 0, 'description' => 'Pembatalan pendapatan penjualan'];
+
+        // Reverse HPP → credit (dulu debit), Persediaan → debit (dulu credit)
+        if ($totalCOGS > 0 && $cogsAccount && $inventoryAccount) {
+            $items[] = ['account_id' => $cogsAccount->id, 'debit' => 0, 'credit' => $totalCOGS, 'description' => 'Pembatalan HPP penjualan'];
+            $items[] = ['account_id' => $inventoryAccount->id, 'debit' => $totalCOGS, 'credit' => 0, 'description' => 'Kembali persediaan'];
+        }
+
+        return static::createJournal(now(), $items, 'order_cancel', $order->id, "Pembatalan order #{$order->order_number}");
+    }
+
+    /**
      * Post journal saat payment diterima.
      * Debit: Kas    Credit: Piutang Usaha
      */

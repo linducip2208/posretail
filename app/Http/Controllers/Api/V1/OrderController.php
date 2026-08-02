@@ -151,6 +151,7 @@ class OrderController extends Controller
     {
         $outletIds = $request->user()->getAccessibleOutletIds();
         $query = Order::with(['orderItems.product', 'payments', 'user', 'customer', 'outlet'])
+            ->excludeCancelled()
             ->whereDate('created_at', today())
             ->latest();
 

@@ -117,6 +117,7 @@ class CashFlowForecastWidget extends ChartWidget
     private function getExpectedInflow($date): float
     {
         return (float) Order::where('payment_status', '!=', 'paid')
+            ->excludeCancelled()
             ->whereDate('created_at', '>=', $date->copy()->subDays(7))
             ->whereDate('created_at', '<=', $date)
             ->avg('total_amount') ?? 0;

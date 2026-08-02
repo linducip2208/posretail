@@ -23,6 +23,7 @@ class RealtimeDashboardWidget extends BaseWidget
             ->query(
                 Order::query()
                     ->with(['customer', 'outlet', 'user'])
+                    ->excludeCancelled()
                     ->orderByDesc('created_at')
                     ->limit(5)
             )

@@ -42,6 +42,7 @@ class SendReminderNotifications extends Command
         }
 
         $overdueOrders = Order::where('payment_status', 'pending')
+            ->excludeCancelled()
             ->where('created_at', '<', now()->subHours(24))
             ->get();
 

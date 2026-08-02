@@ -22,6 +22,7 @@ class RecentOrders extends BaseWidget
             ->query(
                 Order::query()
                     ->with(['user', 'outlet'])
+                    ->excludeCancelled()
                     ->whereDate('created_at', today())
                     ->latest()
                     ->limit(10)

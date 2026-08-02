@@ -23,6 +23,10 @@ class Order extends Model
                     $order->commission_amount = $order->total_amount * $user->commission_percent / 100;
                 }
             }
+
+            if ($order->isDirty('order_status') && $order->order_status === 'cancelled') {
+                $order->commission_amount = 0;
+            }
         });
 
         static::created(function (Order $order) {
@@ -37,7 +41,51 @@ class Order extends Model
             if ($order->wasChanged('order_status') && $order->order_status === 'completed') {
                 \App\Services\JournalService::postOrderRevenue($order);
             }
+
+            if ($order->wasChanged('order_status') && $order->order_status === 'cancelled') {
+                static::reverseOrderCancel($order);
+            }
         });
+    }
+
+    protected static function reverseOrderCancel(Order $order): void
+    {
+        $order->loadMissing('orderItems.product', 'orderItems.productVariant');
+
+        foreach ($order->orderItems as $item) {
+            if ($item->product_variant_id) {
+                \App\Models\ProductVariant::find($item->product_variant_id)?->increment('current_stock', $item->quantity);
+            }
+            \App\Models\Product::find($item->product_id)?->increment('current_stock', $item->quantity);
+
+            \App\Models\StockMovement::create([
+                'product_id' => $item->product_id,
+                'product_variant_id' => $item->product_variant_id ?? null,
+                'outlet_id' => $order->outlet_id,
+                'type' => 'in',
+                'quantity' => $item->quantity,
+                'reference_type' => 'order_cancel',
+                'reference_id' => $order->id,
+                'notes' => 'Pembatalan order #' . $order->order_number,
+            ]);
+        }
+
+        \App\Services\JournalService::reverseOrderRevenue($order);
+    }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where('order_status', 'completed');
+    }
+
+    public function scopeExcludeCancelled($query)
+    {
+        return $query->where('order_status', '!=', 'cancelled');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->whereIn('order_status', ['pending', 'processing', 'completed']);
     }
 
     protected $fillable = [

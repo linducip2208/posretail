@@ -31,6 +31,7 @@ class KasirTodayWidget extends BaseWidget
                 Order::query()
                     ->with(['customer', 'outlet'])
                     ->where('user_id', $userId)
+                    ->excludeCancelled()
                     ->whereDate('created_at', today())
                     ->latest()
                     ->limit(10)

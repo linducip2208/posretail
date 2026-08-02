@@ -244,6 +244,7 @@ class PosController extends Controller
     public function display(Request $request): JsonResponse
     {
         $latest = Order::with(['items.product', 'outlet'])
+            ->excludeCancelled()
             ->whereDate('created_at', today())
             ->when($request->outlet_id, fn ($q) => $q->where('outlet_id', $request->outlet_id))
             ->latest()
