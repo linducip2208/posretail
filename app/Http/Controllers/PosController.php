@@ -164,6 +164,7 @@ class PosController extends Controller
 
             $todayCount = Order::where('outlet_id', $request->outlet_id)
                 ->whereDate('created_at', today())
+                ->excludeCancelled()
                 ->count();
             $queueNumber = str_pad($todayCount + 1, 3, '0', STR_PAD_LEFT);
 

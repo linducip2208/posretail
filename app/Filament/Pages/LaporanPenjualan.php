@@ -159,6 +159,7 @@ class LaporanPenjualan extends Page
             ->join('orders', 'payments.order_id', '=', 'orders.id')
             ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
+            ->where('orders.order_status', '!=', 'cancelled')
             ->whereIn('payments.status', ['success', 'confirmed', 'completed'])
             ->selectRaw('payment_methods.name as method, SUM(payments.amount) as total')
             ->groupBy('payment_methods.id', 'payment_methods.name')
@@ -175,6 +176,7 @@ class LaporanPenjualan extends Page
             ->leftJoin('outlets', 'orders.outlet_id', '=', 'outlets.id')
             ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
             ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
+            ->where('orders.order_status', '!=', 'cancelled')
             ->whereIn('payments.status', ['success', 'confirmed', 'completed'])
             ->select([
                 'orders.order_number',
