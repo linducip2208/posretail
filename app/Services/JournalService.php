@@ -140,6 +140,30 @@ class JournalService
     }
 
     /**
+     * Reverse journal saat payment direfund karena order dicancel.
+     * Reverse dari postPaymentReceived — balik debit/credit.
+     */
+    public static function reversePaymentReceived(Payment $payment): ?JournalEntry
+    {
+        $cashAccount = static::getAccount('1-1000', 'Kas');
+        $arAccount = static::getAccount('1-1100', 'Piutang Usaha');
+
+        if (!$cashAccount) {
+            Log::warning('Journal reverse: cash account not found');
+            return null;
+        }
+
+        $items = [];
+        $items[] = ['account_id' => $cashAccount->id, 'debit' => 0, 'credit' => $payment->amount, 'description' => 'Refund pembayaran'];
+
+        if ($arAccount) {
+            $items[] = ['account_id' => $arAccount->id, 'debit' => $payment->amount, 'credit' => 0, 'description' => 'Kembali piutang'];
+        }
+
+        return static::createJournal(now(), $items, 'payment_refund', $payment->id, "Refund pembayaran order #{$payment->order?->order_number}");
+    }
+
+    /**
      * Post journal saat expense dibuat.
      * Debit: Beban    Credit: Kas
      */

@@ -50,7 +50,7 @@ class Order extends Model
 
     protected static function reverseOrderCancel(Order $order): void
     {
-        $order->loadMissing('orderItems.product', 'orderItems.productVariant');
+        $order->loadMissing('orderItems.product', 'orderItems.productVariant', 'payments');
 
         foreach ($order->orderItems as $item) {
             if ($item->product_variant_id) {
@@ -70,7 +70,16 @@ class Order extends Model
             ]);
         }
 
+        foreach ($order->payments as $payment) {
+            if (in_array($payment->status, ['success', 'confirmed', 'completed'])) {
+                \App\Services\JournalService::reversePaymentReceived($payment);
+                $payment->update(['status' => 'refunded']);
+            }
+        }
+
         \App\Services\JournalService::reverseOrderRevenue($order);
+
+        $order->updateQuietly(['payment_status' => 'refunded']);
     }
 
     public function scopeCompleted($query)
