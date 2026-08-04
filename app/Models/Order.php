@@ -50,7 +50,7 @@ class Order extends Model
 
     protected static function reverseOrderCancel(Order $order): void
     {
-        $order->loadMissing('orderItems.product', 'orderItems.productVariant', 'payments');
+        $order->loadMissing('orderItems.product', 'orderItems.productVariant', 'payments', 'kitchenTicket', 'installments.schedules', 'taxInvoices', 'table', 'giftCardUsages.giftCard', 'loyaltyPoints.customer', 'paymentProofs');
 
         foreach ($order->orderItems as $item) {
             if ($item->product_variant_id) {
@@ -70,16 +70,115 @@ class Order extends Model
             ]);
         }
 
+        foreach ($order->loyaltyPoints as $point) {
+            if ($point->customer) {
+                $point->customer->decrement('total_points', $point->points_earned);
+            }
+            $point->update([
+                'description' => ($point->description ?? '') . ' [DIBATALKAN — order #' . $order->order_number . ']',
+            ]);
+        }
+
         foreach ($order->payments as $payment) {
             if (in_array($payment->status, ['success', 'confirmed', 'completed'])) {
                 \App\Services\JournalService::reversePaymentReceived($payment);
                 $payment->update(['status' => 'refunded']);
+
+                $activeShift = \App\Models\Shift::where('outlet_id', $order->outlet_id)
+                    ->where('status', 'open')
+                    ->latest('started_at')
+                    ->first();
+
+                \App\Models\CashDrawerTransaction::create([
+                    'shift_id' => $activeShift?->id,
+                    'order_id' => $order->id,
+                    'type' => 'cash_out',
+                    'amount' => $payment->amount,
+                    'payment_method' => $payment->payment_method_id,
+                    'notes' => 'Refund pembatalan order #' . $order->order_number,
+                ]);
             }
+        }
+
+        if ($order->kitchenTicket) {
+            $order->kitchenTicket->update(['status' => 'cancelled']);
+        }
+
+        foreach ($order->installments as $installment) {
+            $installment->update(['status' => 'cancelled']);
+            $installment->schedules()->update(['status' => 'cancelled']);
+        }
+
+        foreach ($order->taxInvoices as $taxInvoice) {
+            $taxInvoice->update(['status' => 'voided']);
+        }
+
+        $order->paymentProofs()->where('status', 'pending')->update([
+            'status' => 'rejected',
+            'notes' => \Illuminate\Support\Facades\DB::raw("COALESCE(notes, '') || ' | Otomatis ditolak — order #{$order->order_number} dibatalkan'"),
+        ]);
+
+        if ($order->order_type === 'dine_in' && $order->table_id) {
+            \App\Models\TableResto::where('id', $order->table_id)->update(['status' => 'available']);
+        }
+
+        \App\Models\Delivery::where('order_id', $order->id)
+            ->whereIn('status', ['pending', 'packed', 'shipped'])
+            ->update([
+                'status' => 'cancelled',
+                'delivery_notes' => \Illuminate\Support\Facades\DB::raw("COALESCE(delivery_notes, '') || ' | Otomatis dibatalkan — order #{$order->order_number} dicancel'"),
+            ]);
+
+        \App\Models\MarketplaceOrder::where('order_id', $order->id)
+            ->where('status', '!=', 'cancelled')
+            ->update(['status' => 'cancelled']);
+
+        foreach ($order->giftCardUsages as $usage) {
+            $giftCard = $usage->giftCard;
+            if ($giftCard) {
+                $giftCard->increment('remaining_balance', $usage->amount_used);
+                if ($giftCard->used_count > 0) {
+                    $giftCard->decrement('used_count');
+                }
+            }
+        }
+
+        if ($order->deposit_amount > 0 && $order->customer_id) {
+            $newBalance = (\App\Models\Customer::find($order->customer_id)?->deposit_balance ?? 0) + $order->deposit_amount;
+
+            \App\Models\CustomerDeposit::create([
+                'customer_id' => $order->customer_id,
+                'outlet_id' => $order->outlet_id,
+                'user_id' => $order->user_id,
+                'type' => 'refund',
+                'amount' => $order->deposit_amount,
+                'balance_after' => $newBalance,
+                'reference' => 'order_cancel',
+                'notes' => 'Refund deposit — pembatalan order #' . $order->order_number,
+            ]);
+
+            \App\Models\Customer::where('id', $order->customer_id)->increment('deposit_balance', $order->deposit_amount);
         }
 
         \App\Services\JournalService::reverseOrderRevenue($order);
 
-        $order->updateQuietly(['payment_status' => 'refunded']);
+        $order->updateQuietly(['payment_status' => 'refunded', 'remaining_amount' => 0]);
+
+        try {
+            $whatsapp = new \App\Services\WhatsAppService;
+            $whatsapp->sendOrderStatus($order);
+        } catch (\Exception $e) {
+            \Log::warning('WhatsApp notification failed on cancel: ' . $e->getMessage());
+        }
+
+        try {
+            if ($order->customer?->email) {
+                $email = new \App\Services\EmailService;
+                $email->sendOrderStatus($order, $order->customer->email);
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Email notification failed on cancel: ' . $e->getMessage());
+        }
     }
 
     public function scopeCompleted($query)
@@ -185,5 +284,10 @@ class Order extends Model
     public function taxInvoices(): HasMany
     {
         return $this->hasMany(TaxInvoice::class);
+    }
+
+    public function giftCardUsages(): HasMany
+    {
+        return $this->hasMany(GiftCardUsage::class);
     }
 }

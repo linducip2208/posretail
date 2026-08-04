@@ -67,7 +67,6 @@ class LaporanNeraca extends Page
     /** Net Profit from all P&L accounts (revenue + cogs + expense) for current year up to asOfDate */
     public function getNetProfitYearProperty(): float
     {
-        $startOfYear = date('Y-m-d', strtotime($this->asOfDate . ' -1 year'));
         $startOfYear = date('Y-01-01', strtotime($this->asOfDate));
 
         $revenue = (float) DB::table('journal_entry_items')
@@ -77,6 +76,18 @@ class LaporanNeraca extends Page
             ->where('accounts.active', true)
             ->where('journal_entries.status', 'posted')
             ->whereBetween('journal_entries.journal_date', [$startOfYear, $this->asOfDate])
+            ->where(function ($q) {
+                $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                  ->orWhere(function ($inner) {
+                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                            ->whereNotExists(function ($exists) {
+                                $exists->select(DB::raw(1))
+                                    ->from('orders')
+                                    ->whereColumn('orders.id', 'journal_entries.reference_id')
+                                    ->where('orders.order_status', 'cancelled');
+                            });
+                  });
+            })
             ->when($this->outletId, fn ($q) => $this->applyOutletFilter($q))
             ->selectRaw('COALESCE(SUM(journal_entry_items.credit), 0) - COALESCE(SUM(journal_entry_items.debit), 0) as balance')
             ->value('balance');
@@ -88,6 +99,18 @@ class LaporanNeraca extends Page
             ->where('accounts.active', true)
             ->where('journal_entries.status', 'posted')
             ->whereBetween('journal_entries.journal_date', [$startOfYear, $this->asOfDate])
+            ->where(function ($q) {
+                $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                  ->orWhere(function ($inner) {
+                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                            ->whereNotExists(function ($exists) {
+                                $exists->select(DB::raw(1))
+                                    ->from('orders')
+                                    ->whereColumn('orders.id', 'journal_entries.reference_id')
+                                    ->where('orders.order_status', 'cancelled');
+                            });
+                  });
+            })
             ->when($this->outletId, fn ($q) => $this->applyOutletFilter($q))
             ->selectRaw('COALESCE(SUM(journal_entry_items.debit), 0) - COALESCE(SUM(journal_entry_items.credit), 0) as balance')
             ->value('balance');
@@ -99,6 +122,18 @@ class LaporanNeraca extends Page
             ->where('accounts.active', true)
             ->where('journal_entries.status', 'posted')
             ->whereBetween('journal_entries.journal_date', [$startOfYear, $this->asOfDate])
+            ->where(function ($q) {
+                $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                  ->orWhere(function ($inner) {
+                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                            ->whereNotExists(function ($exists) {
+                                $exists->select(DB::raw(1))
+                                    ->from('orders')
+                                    ->whereColumn('orders.id', 'journal_entries.reference_id')
+                                    ->where('orders.order_status', 'cancelled');
+                            });
+                  });
+            })
             ->when($this->outletId, fn ($q) => $this->applyOutletFilter($q))
             ->selectRaw('COALESCE(SUM(journal_entry_items.debit), 0) - COALESCE(SUM(journal_entry_items.credit), 0) as balance')
             ->value('balance');
@@ -198,6 +233,18 @@ class LaporanNeraca extends Page
             ->where('journal_entries.status', 'posted')
             ->where('accounts.active', true)
             ->whereIn('accounts.type', ['asset', 'liability', 'equity'])
+            ->where(function ($q) {
+                $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                  ->orWhere(function ($inner) {
+                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                            ->whereNotExists(function ($exists) {
+                                $exists->select(DB::raw(1))
+                                    ->from('orders')
+                                    ->whereColumn('orders.id', 'journal_entries.reference_id')
+                                    ->where('orders.order_status', 'cancelled');
+                            });
+                  });
+            })
             ->when($this->outletId, fn ($query) => $this->applyOutletFilter($query));
     }
 
@@ -205,7 +252,7 @@ class LaporanNeraca extends Page
     {
         $query->where(function ($q) {
             $q->where(function ($sub) {
-                $sub->where('journal_entries.reference_type', 'order')
+                $sub->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
                     ->whereIn('journal_entries.reference_id', function ($inner) {
                         $inner->select('id')->from('orders')->where('outlet_id', $this->outletId);
                     });

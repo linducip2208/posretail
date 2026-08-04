@@ -6,6 +6,7 @@ use App\Models\Order;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrderExporter extends Exporter
 {
@@ -37,6 +38,11 @@ class OrderExporter extends Exporter
             ExportColumn::make('order_status')
                 ->label('Status Order'),
         ];
+    }
+
+    protected function getQuery(): Builder
+    {
+        return parent::getQuery()->excludeCancelled();
     }
 
     public static function getCompletedNotificationBody(Export $export): string

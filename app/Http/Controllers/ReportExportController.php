@@ -223,6 +223,18 @@ class ReportExportController extends Controller
             ->where('journal_entries.status', 'posted')
             ->where('accounts.active', true)
             ->whereIn('accounts.type', ['revenue', 'cogs', 'expense'])
+            ->where(function ($q) {
+                $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                  ->orWhere(function ($inner) {
+                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                            ->whereNotExists(function ($exists) {
+                                $exists->select(DB::raw(1))
+                                    ->from('orders')
+                                    ->whereColumn('orders.id', 'journal_entries.reference_id')
+                                    ->where('orders.order_status', 'cancelled');
+                            });
+                  });
+            })
             ->when($outletId, fn ($q) => $this->applyJournalOutletFilter($q, (int) $outletId))
             ->selectRaw("
                 accounts.code,
@@ -286,6 +298,18 @@ class ReportExportController extends Controller
             ->where('journal_entries.status', 'posted')
             ->where('accounts.active', true)
             ->whereIn('accounts.type', ['asset', 'liability', 'equity'])
+            ->where(function ($q) {
+                $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                  ->orWhere(function ($inner) {
+                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                            ->whereNotExists(function ($exists) {
+                                $exists->select(DB::raw(1))
+                                    ->from('orders')
+                                    ->whereColumn('orders.id', 'journal_entries.reference_id')
+                                    ->where('orders.order_status', 'cancelled');
+                            });
+                  });
+            })
             ->when($outletId, fn ($q) => $this->applyJournalOutletFilter($q, (int) $outletId))
             ->selectRaw("
                 accounts.code,
@@ -344,7 +368,7 @@ class ReportExportController extends Controller
     {
         $query->where(function ($q) use ($outletId) {
             $q->where(function ($sub) use ($outletId) {
-                $sub->where('journal_entries.reference_type', 'order')
+                $sub->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
                     ->whereIn('journal_entries.reference_id', function ($inner) use ($outletId) {
                         $inner->select('id')->from('orders')->where('outlet_id', $outletId);
                     });
