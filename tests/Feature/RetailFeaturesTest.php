@@ -16,6 +16,7 @@ use App\Models\SerialNumber;
 use App\Models\Supplier;
 use App\Models\SupplierPayable;
 use App\Models\SupplierReturn;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Services\TaxInvoiceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -599,5 +600,28 @@ class RetailFeaturesTest extends TestCase
             'order_id' => $order->id,
             'customer_npwp' => '01.234.567.8-901.000',
         ]);
+    }
+
+    public function test_restaurant_mode_enabled_by_default(): void
+    {
+        $this->assertTrue(SystemSetting::restaurantEnabled());
+    }
+
+    public function test_restaurant_mode_disabled_hides_dine_in_order_type(): void
+    {
+        SystemSetting::setValue('order_types', json_encode([
+            ['value' => 'walk_in', 'label' => 'Walk-in'],
+            ['value' => 'dine_in', 'label' => 'Dine In'],
+            ['value' => 'takeaway', 'label' => 'Takeaway'],
+        ]));
+        SystemSetting::setValue('restaurant_enabled', '0');
+
+        $types = SystemSetting::getOrderTypes();
+        $values = array_column($types, 'value');
+
+        $this->assertNotContains('dine_in', $values);
+        $this->assertContains('walk_in', $values);
+        $this->assertContains('takeaway', $values);
+        $this->assertFalse(SystemSetting::restaurantEnabled());
     }
 }

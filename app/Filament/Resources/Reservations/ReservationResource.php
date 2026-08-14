@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Reservations;
 
+use App\Filament\Resources\Concerns\RestaurantFeature;
 use App\Filament\Resources\Reservations\Pages\CreateReservation;
 use App\Filament\Resources\Reservations\Pages\EditReservation;
 use App\Filament\Resources\Reservations\Pages\ListReservations;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 
 class ReservationResource extends Resource
 {
+    use RestaurantFeature;
+
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
     protected static ?int $navigationSort = 5;

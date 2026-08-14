@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\KitchenTickets;
 
+use App\Filament\Resources\Concerns\RestaurantFeature;
 use App\Filament\Resources\KitchenTickets\Pages\EditKitchenTicket;
 use App\Filament\Resources\KitchenTickets\Pages\ListKitchenTickets;
 use App\Filament\Resources\KitchenTickets\Schemas\KitchenTicketForm;
@@ -10,11 +11,13 @@ use App\Models\KitchenTicket;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables\Table;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
 
 class KitchenTicketResource extends Resource
 {
+    use RestaurantFeature;
+
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
     protected static ?int $navigationSort = 1;

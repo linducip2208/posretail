@@ -77,14 +77,17 @@ class SystemSetting extends Model
     {
         $raw = static::getValue('order_types', '');
         if (empty($raw)) {
-            return [['value' => 'walk_in', 'label' => 'Walk-in']];
-        }
-        $decoded = json_decode($raw, true);
-        if (! is_array($decoded) || empty($decoded)) {
-            return [['value' => 'walk_in', 'label' => 'Walk-in']];
+            $types = [['value' => 'walk_in', 'label' => 'Walk-in']];
+        } else {
+            $decoded = json_decode($raw, true);
+            $types = (is_array($decoded) && ! empty($decoded)) ? $decoded : [['value' => 'walk_in', 'label' => 'Walk-in']];
         }
 
-        return $decoded;
+        if (! static::restaurantEnabled()) {
+            $types = array_values(array_filter($types, fn ($t) => ($t['value'] ?? '') !== 'dine_in'));
+        }
+
+        return $types;
     }
 
     public static function getValidOrderTypeValues(): string
@@ -102,5 +105,10 @@ class SystemSetting extends Model
         $value = static::getValue('serial_tracking_default', 'none');
 
         return in_array($value, ['none', 'optional', 'required'], true) ? $value : 'none';
+    }
+
+    public static function restaurantEnabled(): bool
+    {
+        return static::getBool('restaurant_enabled', true);
     }
 }
