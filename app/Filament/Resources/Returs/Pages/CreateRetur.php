@@ -11,13 +11,8 @@ class CreateRetur extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $retur = $this->record;
-
-        foreach ($retur->returnItems as $item) {
-            $product = $item->product;
-            if ($product) {
-                $product->increment('current_stock', $item->quantity);
-            }
+        if ($this->record->status === 'completed') {
+            $this->record->applyReturn();
         }
     }
 }

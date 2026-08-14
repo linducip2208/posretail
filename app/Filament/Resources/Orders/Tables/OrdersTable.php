@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Services\TaxInvoiceService;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -104,6 +106,19 @@ class OrdersTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('generateTaxInvoice')
+                    ->label('Buat e-Faktur')
+                    ->icon('heroicon-o-document-text')
+                    ->color('success')
+                    ->visible(fn ($record) => $record->order_status === 'completed' && ! $record->taxInvoices()->exists())
+                    ->action(function ($record) {
+                        TaxInvoiceService::generateFromOrder($record);
+
+                        Notification::make()
+                            ->title('e-Faktur dibuat')
+                            ->success()
+                            ->send();
+                    }),
                 EditAction::make(),
             ])
             ->toolbarActions([

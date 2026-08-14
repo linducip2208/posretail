@@ -51,15 +51,21 @@ class SystemSetting extends Model
     public static function getLogoUrl(): ?string
     {
         $logo = static::getValue('app_logo');
-        if (!$logo) return null;
-        return asset('storage/' . $logo);
+        if (! $logo) {
+            return null;
+        }
+
+        return asset('storage/'.$logo);
     }
 
     public static function getLoginIllustrationUrl(): ?string
     {
         $illustration = static::getValue('login_illustration');
-        if (!$illustration) return null;
-        return asset('storage/' . $illustration);
+        if (! $illustration) {
+            return null;
+        }
+
+        return asset('storage/'.$illustration);
     }
 
     public static function getAppName(): string
@@ -74,9 +80,10 @@ class SystemSetting extends Model
             return [['value' => 'walk_in', 'label' => 'Walk-in']];
         }
         $decoded = json_decode($raw, true);
-        if (!is_array($decoded) || empty($decoded)) {
+        if (! is_array($decoded) || empty($decoded)) {
             return [['value' => 'walk_in', 'label' => 'Walk-in']];
         }
+
         return $decoded;
     }
 
@@ -89,5 +96,11 @@ class SystemSetting extends Model
     {
         return collect(static::getOrderTypes())->first()['value'] ?? 'walk_in';
     }
-}
 
+    public static function getSerialTrackingDefault(): string
+    {
+        $value = static::getValue('serial_tracking_default', 'none');
+
+        return in_array($value, ['none', 'optional', 'required'], true) ? $value : 'none';
+    }
+}

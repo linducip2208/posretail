@@ -10,6 +10,31 @@ class ReturnItem extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::saving(function (ReturnItem $item) {
+            $item->subtotal = (float) $item->unit_price * (int) $item->quantity;
+        });
+
+        static::saved(function (ReturnItem $item) {
+            static::recalculateParentTotal($item->return_id);
+        });
+
+        static::deleted(function (ReturnItem $item) {
+            static::recalculateParentTotal($item->return_id);
+        });
+    }
+
+    protected static function recalculateParentTotal(?int $returnId): void
+    {
+        if (! $returnId) {
+            return;
+        }
+
+        $total = static::where('return_id', $returnId)->sum('subtotal');
+        Retur::where('id', $returnId)->update(['total_amount' => $total]);
+    }
+
     protected $fillable = [
         'return_id', 'product_id', 'quantity', 'unit_price', 'subtotal',
     ];

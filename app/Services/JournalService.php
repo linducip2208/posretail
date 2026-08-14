@@ -8,6 +8,7 @@ use App\Models\JournalEntry;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PurchaseOrder;
+use App\Models\Retur;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -29,8 +30,9 @@ class JournalService
         $inventoryAccount = static::getAccount('1-1300', 'Persediaan');
         $discAccount = static::getAccount('4-1100', 'Diskon Penjualan');
 
-        if (!$revenueAccount) {
+        if (! $revenueAccount) {
             Log::warning('Journal: revenue account not found');
+
             return null;
         }
 
@@ -78,8 +80,9 @@ class JournalService
         $inventoryAccount = static::getAccount('1-1300', 'Persediaan');
         $discAccount = static::getAccount('4-1100', 'Diskon Penjualan');
 
-        if (!$revenueAccount) {
+        if (! $revenueAccount) {
             Log::warning('Journal reverse: revenue account not found');
+
             return null;
         }
 
@@ -124,8 +127,9 @@ class JournalService
         $cashAccount = static::getAccount('1-1000', 'Kas');
         $arAccount = static::getAccount('1-1100', 'Piutang Usaha');
 
-        if (!$cashAccount) {
+        if (! $cashAccount) {
             Log::warning('Journal: cash account not found');
+
             return null;
         }
 
@@ -148,8 +152,9 @@ class JournalService
         $cashAccount = static::getAccount('1-1000', 'Kas');
         $arAccount = static::getAccount('1-1100', 'Piutang Usaha');
 
-        if (!$cashAccount) {
+        if (! $cashAccount) {
             Log::warning('Journal reverse: cash account not found');
+
             return null;
         }
 
@@ -177,22 +182,63 @@ class JournalService
 
         $expenseCode = $categoryMap[$expense->category] ?? '5-8000';
         $expenseAccount = Account::where('code', $expenseCode)->first();
-        if (!$expenseAccount) {
+        if (! $expenseAccount) {
             $expenseAccount = static::getAccount('5-2000', 'Beban Operasional');
         }
         $cashAccount = static::getAccount('1-1000', 'Kas');
 
-        if (!$expenseAccount || !$cashAccount) {
+        if (! $expenseAccount || ! $cashAccount) {
             Log::warning('Journal: expense/cash account not found');
+
             return null;
         }
 
         $items = [
-            ['account_id' => $expenseAccount->id, 'debit' => $expense->amount, 'credit' => 0, 'description' => $expense->description ?? 'Beban ' . $expense->category],
+            ['account_id' => $expenseAccount->id, 'debit' => $expense->amount, 'credit' => 0, 'description' => $expense->description ?? 'Beban '.$expense->category],
             ['account_id' => $cashAccount->id, 'debit' => 0, 'credit' => $expense->amount, 'description' => 'Pembayaran beban'],
         ];
 
         return static::createJournal($expense->expense_date, $items, 'expense', $expense->id, "Beban: {$expense->description}");
+    }
+
+    /**
+     * Post journal saat retur penjualan (customer return) selesai.
+     * Reverse pendapatan & HPP sesuai nilai retur.
+     */
+    public static function postSalesReturn(Retur $retur): ?JournalEntry
+    {
+        $revenueAccount = static::getAccount('4-1000', 'Pendapatan Penjualan');
+        $cogsAccount = static::getAccount('5-1000', 'HPP');
+        $inventoryAccount = static::getAccount('1-1300', 'Persediaan');
+        $arAccount = static::getAccount('1-1100', 'Piutang Usaha');
+
+        if (! $revenueAccount) {
+            Log::warning('Journal: revenue account not found');
+
+            return null;
+        }
+
+        $totalRefund = $retur->total_amount;
+        $totalCOGS = 0;
+
+        foreach ($retur->returnItems as $item) {
+            $totalCOGS += ($item->product?->cost_price ?? 0) * $item->quantity;
+        }
+
+        $items = [
+            ['account_id' => $revenueAccount->id, 'debit' => $totalRefund, 'credit' => 0, 'description' => 'Retur penjualan'],
+        ];
+
+        if ($arAccount && $totalRefund > 0) {
+            $items[] = ['account_id' => $arAccount->id, 'debit' => 0, 'credit' => $totalRefund, 'description' => 'Pengembalian piutang / refund'];
+        }
+
+        if ($totalCOGS > 0 && $cogsAccount && $inventoryAccount) {
+            $items[] = ['account_id' => $cogsAccount->id, 'debit' => 0, 'credit' => $totalCOGS, 'description' => 'Pembatalan HPP retur'];
+            $items[] = ['account_id' => $inventoryAccount->id, 'debit' => $totalCOGS, 'credit' => 0, 'description' => 'Kembali persediaan retur'];
+        }
+
+        return static::createJournal(now(), $items, 'return', $retur->id, "Retur #{$retur->return_number}");
     }
 
     /**
@@ -204,8 +250,9 @@ class JournalService
         $inventoryAccount = static::getAccount('1-1300', 'Persediaan');
         $apAccount = static::getAccount('2-1000', 'Hutang Usaha');
 
-        if (!$inventoryAccount || !$apAccount) {
+        if (! $inventoryAccount || ! $apAccount) {
             Log::warning('Journal: inventory/ap account not found');
+
             return null;
         }
 
@@ -227,6 +274,7 @@ class JournalService
 
         if (abs($totalDebit - $totalCredit) > 0.01) {
             Log::warning("Journal unbalanced: debit={$totalDebit} credit={$totalCredit}");
+
             return null;
         }
 
@@ -238,7 +286,7 @@ class JournalService
 
         return DB::transaction(function () use ($date, $items, $refType, $refId, $desc, $seq) {
             $journal = JournalEntry::create([
-                'journal_number' => 'JRN-' . date('Ymd') . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT),
+                'journal_number' => 'JRN-'.date('Ymd').'-'.str_pad($seq, 4, '0', STR_PAD_LEFT),
                 'journal_date' => $date,
                 'reference_type' => $refType,
                 'reference_id' => $refId,
@@ -261,7 +309,7 @@ class JournalService
     protected static function getAccount(string $code, string $name): ?Account
     {
         $account = Account::where('code', $code)->first();
-        if (!$account) {
+        if (! $account) {
             $typeMap = [
                 '1-' => 'asset', '2-' => 'liability', '3-' => 'equity',
                 '4-' => 'revenue', '5-' => 'expense', '6-' => 'cogs',
@@ -278,6 +326,7 @@ class JournalService
                 'active' => true,
             ]);
         }
+
         return $account;
     }
 

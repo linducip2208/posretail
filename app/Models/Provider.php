@@ -30,6 +30,30 @@ class Provider extends Model
         return $this->hasMany(PaymentMethod::class);
     }
 
+    /**
+     * Baca preset template payment gateway dari storage/app/payment-presets/*.json.
+     * Hanya untuk autofill convenience — tidak pernah direference saat runtime.
+     */
+    public static function presets(): array
+    {
+        $path = storage_path('app/payment-presets');
+
+        if (! is_dir($path)) {
+            return [];
+        }
+
+        $presets = [];
+
+        foreach (glob($path.'/*.json') ?: [] as $file) {
+            $decoded = json_decode((string) file_get_contents($file), true);
+            if (is_array($decoded) && isset($decoded['name'])) {
+                $presets[basename($file, '.json')] = $decoded;
+            }
+        }
+
+        return $presets;
+    }
+
     public function decryptApiKey(): ?string
     {
         return $this->api_key_encrypted ? decrypt($this->api_key_encrypted) : null;

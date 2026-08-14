@@ -1,0 +1,13 @@
+{
+    "name": "Xendit",
+    "type": "payment",
+    "api_format": "rest-api",
+    "base_url": "https://api.xendit.co",
+    "sandbox_base_url": "https://api.xendit.co",
+    "field_labels": {
+        "api_key": "API Key (Secret)",
+        "api_secret": "",
+        "merchant_id": "Business ID"
+    },
+    "notes": "Mendukung QRIS dinamis, e-wallet, virtual account, dan kartu."
+}

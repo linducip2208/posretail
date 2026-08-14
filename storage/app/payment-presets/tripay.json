@@ -1,0 +1,13 @@
+{
+    "name": "Tripay",
+    "type": "payment",
+    "api_format": "qr-static",
+    "base_url": "https://tripay.co.id/api",
+    "sandbox_base_url": "https://tripay.co.id/api-sandbox",
+    "field_labels": {
+        "api_key": "API Key",
+        "api_secret": "Private Key",
+        "merchant_id": "Merchant Code"
+    },
+    "notes": "Mendukung QRIS, e-wallet, dan virtual account via satu API."
+}

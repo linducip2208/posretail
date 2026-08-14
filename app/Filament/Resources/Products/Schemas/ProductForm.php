@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Helpers\BarcodeHelper;
+use App\Models\SystemSetting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class ProductForm
 {
@@ -19,7 +22,7 @@ class ProductForm
                 TextInput::make('name')
                     ->required()
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug((string) $state))),
+                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug((string) $state))),
                 TextInput::make('slug')
                     ->helperText('Dikosongkan akan dibuat otomatis dari nama produk.'),
                 Textarea::make('description')
@@ -42,7 +45,7 @@ class ProductForm
                             ->icon('heroicon-m-arrow-path')
                             ->tooltip('Generate barcode otomatis')
                             ->action(function ($set) {
-                                $set('barcode', \App\Helpers\BarcodeHelper::generate());
+                                $set('barcode', BarcodeHelper::generate());
                             })
                     ),
                 TextInput::make('cost_price')
@@ -77,6 +80,22 @@ class ProductForm
                     ->image(),
                 Toggle::make('has_variants')
                     ->required(),
+                Select::make('serial_tracking')
+                    ->options([
+                        'none' => 'Tanpa Serial / IMEI',
+                        'optional' => 'Opsional (boleh input IMEI)',
+                        'required' => 'Wajib IMEI (HP / elektronik)',
+                    ])
+                    ->default(fn () => SystemSetting::getSerialTrackingDefault())
+                    ->required()
+                    ->label('Pelacakan Serial / IMEI'),
+                TextInput::make('warranty_months')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0)
+                    ->suffix('bulan')
+                    ->helperText('Masa garansi dalam bulan. 0 = tanpa garansi.')
+                    ->label('Masa Garansi'),
                 Toggle::make('active')
                     ->default(true)
                     ->required(),

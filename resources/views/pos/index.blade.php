@@ -134,6 +134,11 @@
 
             {{-- Cart Summary --}}
             <div id="cartSummary" class="border-t bg-gray-50 p-4 hidden" style="flex-shrink:0">
+                <div class="flex gap-2 mb-2">
+                    <input type="text" id="voucherInput" placeholder="Kode voucher" class="flex-1 border border-gray-200 rounded px-2 py-1.5 text-sm uppercase" onkeydown="if(event.key==='Enter'){event.preventDefault();applyVoucher();}">
+                    <button onclick="applyVoucher()" class="bg-gray-800 text-white px-3 py-1.5 rounded text-sm font-semibold hover:bg-gray-700">Pakai</button>
+                </div>
+                <div id="voucherStatus" class="hidden text-xs mb-2"></div>
                 <div class="space-y-1 text-sm">
                     <div class="flex justify-between"><span>Subtotal</span><span id="subtotal" class="font-mono font-semibold">Rp 0</span></div>
                     <div class="flex justify-between"><span>Diskon</span><span id="discount" class="font-mono text-red-600">Rp 0</span></div>
@@ -213,9 +218,26 @@
         </div>
     </div>
 
+    {{-- SERIAL / IMEI MODAL --}}
+    <div id="serialModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden modal-overlay" onclick="cancelSerials()">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-bold text-lg">Input IMEI / Serial</h3>
+                <button onclick="cancelSerials()" class="text-gray-500 hover:text-red-600 text-2xl">&times;</button>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Produk: <span id="serialProductName" class="font-semibold text-gray-900"></span></p>
+            <textarea id="serialInput" rows="5" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono" placeholder="Satu IMEI per baris.&#10;Contoh:&#10;356789012345678&#10;356789012345679"></textarea>
+            <p class="text-xs text-gray-400 mt-1 mb-4">Scan barcode IMEI langsung atau paste dari Excel.</p>
+            <div class="flex gap-2">
+                <button onclick="cancelSerials()" class="flex-1 border border-gray-300 py-2.5 rounded-lg font-semibold hover:bg-gray-50">Batal</button>
+                <button id="serialSkip" onclick="skipSerials()" class="border border-gray-300 py-2.5 px-3 rounded-lg font-semibold hover:bg-gray-50 text-gray-600" style="display:none">Lewati</button>
+                <button onclick="confirmSerials()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700">Simpan</button>
+            </div>
+        </div>
+    </div>
+
     {{-- RECEIPT PRINT IFRAME — menghindari popup blocker --}}
     <iframe id="printFrame" name="printFrame" style="display:none" title="Print Receipt"></iframe>
-
     <script>
         const API = '/api/pos';
         let cart = [];
@@ -224,6 +246,8 @@
         let scanning = false;
         let stream = null;
         let printerDevice = null;
+        let voucherDiscount = 0;
+        let voucherCode = '';
 
         const RECEIPT = {
             appName: @json($appName),
@@ -310,7 +334,7 @@
                     : 'product-card bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-indigo-300 hover:shadow-md relative';
                 const clickAttr = out
                     ? 'style="cursor:not-allowed" onclick="alert(\'Stok habis — tidak bisa ditambahkan\')"'
-                    : `onclick="addToCart(${p.id}, '${escapeHtml(p.name)}', ${p.selling_price})"`;
+                    : `onclick="addToCart(${p.id}, '${escapeHtml(p.name)}', ${p.selling_price}, '${p.serial_tracking || 'none'}')"`;
                 const badge = out ? '<div class="absolute top-1 right-1 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">HABIS</div>' : '';
                 return `
                 <div class="${cardClass}" ${clickAttr}>
@@ -352,7 +376,7 @@
                     return;
                 }
                 const product = await res.json();
-                addToCart(product.id, product.name, product.selling_price);
+                addToCart(product.id, product.name, product.selling_price, product.serial_tracking || 'none');
                 document.getElementById('searchInput').value = '';
             } catch (e) {
                 alert('Gagal mencari barcode');
@@ -403,14 +427,79 @@
         }
 
         // === CART ===
-        function addToCart(id, name, price) {
+        function addToCart(id, name, price, serialTracking) {
+            const tracking = serialTracking || 'none';
+            if (tracking === 'required') {
+                promptSerials(name, false).then(serials => {
+                    if (!serials) return;
+                    if (!serials.length) { alert('IMEI wajib diisi untuk produk ini.'); return; }
+                    addSerializedToCart(id, name, price, tracking, serials);
+                });
+                return;
+            }
+            if (tracking === 'optional') {
+                promptSerials(name, true).then(serials => {
+                    if (serials === null) return;
+                    addSerializedToCart(id, name, price, tracking, serials);
+                });
+                return;
+            }
+            const existing = cart.find(i => i.id === id);
+            if (existing) existing.qty++;
+            else cart.push({ id, name, price, qty: 1, discount: 0, serials: [], serialTracking: 'none' });
+            renderCart();
+        }
+
+        function addSerializedToCart(id, name, price, tracking, serials) {
             const existing = cart.find(i => i.id === id);
             if (existing) {
-                existing.qty++;
+                if (serials.length) {
+                    existing.qty += serials.length;
+                    existing.serials = existing.serials || [];
+                    existing.serials.push(...serials);
+                }
             } else {
-                cart.push({ id, name, price, qty: 1, discount: 0 });
+                cart.push({ id, name, price, qty: serials.length || 1, discount: 0, serials: serials, serialTracking: tracking });
             }
             renderCart();
+        }
+
+        function addImeiToItem(index) {
+            const item = cart[index];
+            promptSerials(item.name, false).then(serials => {
+                if (!serials || !serials.length) return;
+                if (serials.length !== item.qty) { alert('Jumlah IMEI harus sama dengan qty (' + item.qty + ').'); return; }
+                item.serials = serials;
+                renderCart();
+            });
+        }
+
+        function promptSerials(name, allowSkip) {
+            return new Promise((resolve) => {
+                document.getElementById('serialProductName').textContent = name;
+                document.getElementById('serialInput').value = '';
+                document.getElementById('serialSkip').style.display = allowSkip ? 'inline-block' : 'none';
+                document.getElementById('serialModal').classList.remove('hidden');
+                window._serialResolve = resolve;
+            });
+        }
+
+        function confirmSerials() {
+            const raw = document.getElementById('serialInput').value;
+            const serials = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+            if (!serials.length) { alert('Masukkan minimal 1 IMEI'); return; }
+            document.getElementById('serialModal').classList.add('hidden');
+            window._serialResolve(serials);
+        }
+
+        function cancelSerials() {
+            document.getElementById('serialModal').classList.add('hidden');
+            window._serialResolve(null);
+        }
+
+        function skipSerials() {
+            document.getElementById('serialModal').classList.add('hidden');
+            window._serialResolve([]);
         }
 
         function removeFromCart(index) {
@@ -419,6 +508,24 @@
         }
 
         function updateQty(index, delta) {
+            const item = cart[index];
+            const hasSerials = item.serialTracking === 'required' || (item.serials && item.serials.length > 0);
+            if (hasSerials) {
+                if (delta < 0) {
+                    item.serials.pop();
+                    item.qty = item.serials.length;
+                    if (item.qty <= 0) cart.splice(index, 1);
+                    renderCart();
+                } else {
+                    promptSerials(item.name, item.serialTracking !== 'required').then(serials => {
+                        if (!serials || !serials.length) return;
+                        item.serials.push(...serials);
+                        item.qty = item.serials.length;
+                        renderCart();
+                    });
+                }
+                return;
+            }
             cart[index].qty += delta;
             if (cart[index].qty <= 0) cart.splice(index, 1);
             renderCart();
@@ -428,6 +535,7 @@
             if (cart.length === 0) return;
             if (!confirm('Kosongkan keranjang?')) return;
             cart = [];
+            clearVoucher();
             renderCart();
         }
 
@@ -467,6 +575,11 @@
                         </div>
                         <span class="font-mono font-bold text-sm text-indigo-700">${formatRupiah(item.price * item.qty)}</span>
                     </div>
+                    ${(item.serials && item.serials.length)
+                        ? `<div class="mt-1 text-[10px] text-gray-500 font-mono truncate">IMEI: ${item.serials.map(s => escapeHtml(s)).join(', ')}</div>`
+                        : (item.serialTracking === 'optional'
+                            ? `<div class="mt-1"><button onclick="addImeiToItem(${i})" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">+ Tambah IMEI</button></div>`
+                            : '')}
                 </div>
             `).join('');
 
@@ -475,7 +588,7 @@
 
         function updateSummary() {
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            const discount = 0;
+            const discount = voucherDiscount;
             const useTax = document.getElementById('useTax').checked;
             const taxRate = parseFloat(document.getElementById('taxRateLabel').textContent);
             const tax = useTax ? (subtotal - discount) * taxRate / 100 : 0;
@@ -508,7 +621,50 @@
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const useTax = document.getElementById('useTax').checked;
             const taxRate = parseFloat(document.getElementById('taxRateLabel').textContent);
-            return useTax ? subtotal * (1 + taxRate / 100) : subtotal;
+            return useTax ? (subtotal - voucherDiscount) * (1 + taxRate / 100) : (subtotal - voucherDiscount);
+        }
+
+        async function applyVoucher() {
+            const code = document.getElementById('voucherInput').value.trim().toUpperCase();
+            const statusEl = document.getElementById('voucherStatus');
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+
+            if (!code) { alert('Masukkan kode voucher terlebih dahulu.'); return; }
+            if (subtotal <= 0) { alert('Keranjang masih kosong.'); return; }
+
+            try {
+                const res = await fetch('/api/pos/validate-voucher', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+                    body: JSON.stringify({ code: code, subtotal: subtotal }),
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    voucherDiscount = 0;
+                    voucherCode = '';
+                    statusEl.className = 'text-xs mb-2 text-red-600 font-semibold';
+                    statusEl.textContent = (data.message || 'Voucher tidak valid.');
+                    statusEl.classList.remove('hidden');
+                    updateSummary();
+                    return;
+                }
+                voucherDiscount = parseFloat(data.discount) || 0;
+                voucherCode = code;
+                statusEl.className = 'text-xs mb-2 text-green-600 font-semibold';
+                statusEl.textContent = 'Voucher ' + code + ' — diskon ' + formatRupiah(voucherDiscount);
+                statusEl.classList.remove('hidden');
+                updateSummary();
+            } catch (e) {
+                alert('Gagal memvalidasi voucher.');
+            }
+        }
+
+        function clearVoucher() {
+            voucherDiscount = 0;
+            voucherCode = '';
+            document.getElementById('voucherInput').value = '';
+            document.getElementById('voucherStatus').classList.add('hidden');
+            updateSummary();
         }
 
         // === PAYMENT ===
@@ -557,10 +713,11 @@
                 order_type: document.getElementById('orderType').value,
                 customer_id: parseInt(document.getElementById('customerSelect').value) || null,
                 table_id: null,
-                items: cart.map(i => ({ id: i.id, qty: i.qty, price: i.price })),
+                items: cart.map(i => ({ id: i.id, qty: i.qty, price: i.price, serial_numbers: i.serials || [] })),
                 payment_method_id: document.getElementById('paymentMethod').value,
                 paid_amount: paid,
                 use_tax: document.getElementById('useTax').checked,
+                voucher_code: voucherCode || null,
             };
 
             try {
@@ -594,6 +751,7 @@
                     }
                     const cartSnapshot = [...cart];
                     cart = [];
+                    clearVoucher();
                     renderCart();
 
                     printToIframe(cartSnapshot, orderNumber, paid, data.change || (paid - data.total));

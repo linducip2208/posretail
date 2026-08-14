@@ -1,0 +1,13 @@
+{
+    "name": "Midtrans",
+    "type": "payment",
+    "api_format": "rest-redirect",
+    "base_url": "https://app.midtrans.com/snap/v1",
+    "sandbox_base_url": "https://app.sandbox.midtrans.com/snap/v1",
+    "field_labels": {
+        "api_key": "Server Key",
+        "api_secret": "Client Key",
+        "merchant_id": "Merchant ID"
+    },
+    "notes": "Mendukung QRIS, GoPay, OVO, DANA, ShopeePay, kartu, dan transfer bank."
+}

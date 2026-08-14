@@ -22,15 +22,31 @@ class GiftCard extends Model
         return ['valid_from' => 'date', 'valid_until' => 'date'];
     }
 
-    public function customer(): BelongsTo { return $this->belongsTo(Customer::class); }
-    public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
-    public function usages(): HasMany { return $this->hasMany(GiftCardUsage::class); }
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function usages(): HasMany
+    {
+        return $this->hasMany(GiftCardUsage::class);
+    }
 
     public function isValid(): bool
     {
-        return $this->status === 'active'
+        $base = $this->status === 'active'
             && now()->between($this->valid_from, $this->valid_until)
-            && $this->used_count < $this->max_usage
-            && $this->remaining_balance > 0;
+            && $this->used_count < $this->max_usage;
+
+        if ($this->type === 'nominal') {
+            return $base && $this->remaining_balance > 0;
+        }
+
+        return $base;
     }
 }

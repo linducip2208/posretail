@@ -21,7 +21,29 @@ class TaxInvoice extends Model
         return ['invoice_date' => 'date'];
     }
 
-    public function order(): BelongsTo { return $this->belongsTo(Order::class); }
-    public function outlet(): BelongsTo { return $this->belongsTo(Outlet::class); }
-    public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function outlet(): BelongsTo
+    {
+        return $this->belongsTo(Outlet::class);
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public static function generateNumber(): string
+    {
+        $prefix = 'FP-'.now()->format('Ymd').'-';
+        $last = static::where('invoice_number', 'like', $prefix.'%')
+            ->orderBy('invoice_number', 'desc')
+            ->first();
+        $next = $last ? (int) substr($last->invoice_number, -4) + 1 : 1;
+
+        return $prefix.str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
 }

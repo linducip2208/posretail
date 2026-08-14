@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasOutletScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use App\Traits\HasOutletScope;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes, HasOutletScope;
+    use HasFactory, HasOutletScope, SoftDeletes;
 
     protected bool $outletNullable = true;
 
@@ -32,7 +32,7 @@ class Product extends Model
                 $last = static::withTrashed()->where('sku', 'like', $prefix.'%')
                     ->orderByRaw('LENGTH(sku) DESC, sku DESC')->first();
                 $num = $last ? (int) substr($last->sku, strlen($prefix)) + 1 : 1;
-                $product->sku = $prefix . str_pad($num, 6, '0', STR_PAD_LEFT);
+                $product->sku = $prefix.str_pad($num, 6, '0', STR_PAD_LEFT);
             }
 
             if (blank($product->barcode)) {
@@ -55,7 +55,7 @@ class Product extends Model
                 $changed[] = 'member_price';
             }
 
-            if (!empty($changed)) {
+            if (! empty($changed)) {
                 $original = $product->getOriginal();
                 PriceChange::create([
                     'product_id' => $product->id,
@@ -79,7 +79,8 @@ class Product extends Model
             $digits .= random_int(0, 9);
         }
         $checksum = static::ean13Checksum($digits);
-        return $digits . $checksum;
+
+        return $digits.$checksum;
     }
 
     private static function ean13Checksum(string $digits): int
@@ -88,6 +89,7 @@ class Product extends Model
         for ($i = 0; $i < 12; $i++) {
             $sum += (int) $digits[$i] * ($i % 2 === 0 ? 1 : 3);
         }
+
         return (10 - ($sum % 10)) % 10;
     }
 
@@ -116,14 +118,25 @@ class Product extends Model
         'selling_price', 'wholesale_price', 'member_price', 'currency',
         'bin_location_id',
         'min_stock', 'max_stock', 'current_stock', 'image',
-        'has_variants', 'active', 'expired_date',
+        'has_variants', 'serial_tracking', 'warranty_months', 'active', 'expired_date',
     ];
 
     protected function casts(): array
     {
         return [
             'expired_date' => 'date',
+            'warranty_months' => 'integer',
         ];
+    }
+
+    public function tracksSerial(): bool
+    {
+        return $this->serial_tracking !== 'none';
+    }
+
+    public function requiresSerial(): bool
+    {
+        return $this->serial_tracking === 'required';
     }
 
     public function category(): BelongsTo
@@ -179,5 +192,15 @@ class Product extends Model
     public function recipeItems(): HasMany
     {
         return $this->hasMany(RecipeItem::class);
+    }
+
+    public function serialNumbers(): HasMany
+    {
+        return $this->hasMany(SerialNumber::class);
+    }
+
+    public function supplierReturnItems(): HasMany
+    {
+        return $this->hasMany(SupplierReturnItem::class);
     }
 }

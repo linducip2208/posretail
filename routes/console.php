@@ -19,3 +19,4 @@ Schedule::command('pos:cloud-backup')->dailyAt('03:00');
 Schedule::command('seo:indexnow')->dailyAt('02:45')->withoutOverlapping();
 Schedule::command('seo:google-index')->dailyAt('03:00')->withoutOverlapping();
 Schedule::command('pos:birthday-rewards')->dailyAt('08:30');
+Schedule::command('pos:update-promos')->hourly();

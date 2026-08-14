@@ -2,17 +2,24 @@
 
 namespace App\Models;
 
+use App\Events\OrderCreated;
+use App\Services\EmailService;
+use App\Services\JournalService;
+use App\Services\ReferralService;
+use App\Services\WhatsAppService;
+use App\Traits\Auditable;
+use App\Traits\HasOutletScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\HasOutletScope;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
-    use HasFactory, SoftDeletes, HasOutletScope;
+    use Auditable, HasFactory, HasOutletScope, SoftDeletes;
 
     protected static function booted(): void
     {
@@ -30,16 +37,18 @@ class Order extends Model
         });
 
         static::created(function (Order $order) {
-            \App\Events\OrderCreated::dispatch($order);
+            OrderCreated::dispatch($order);
 
             if ($order->order_status === 'completed') {
-                \App\Services\JournalService::postOrderRevenue($order);
+                JournalService::postOrderRevenue($order);
+                ReferralService::awardIfEligible($order);
             }
         });
 
         static::updated(function (Order $order) {
             if ($order->wasChanged('order_status') && $order->order_status === 'completed') {
-                \App\Services\JournalService::postOrderRevenue($order);
+                JournalService::postOrderRevenue($order);
+                ReferralService::awardIfEligible($order);
             }
 
             if ($order->wasChanged('order_status') && $order->order_status === 'cancelled') {
@@ -54,11 +63,11 @@ class Order extends Model
 
         foreach ($order->orderItems as $item) {
             if ($item->product_variant_id) {
-                \App\Models\ProductVariant::find($item->product_variant_id)?->increment('current_stock', $item->quantity);
+                ProductVariant::find($item->product_variant_id)?->increment('current_stock', $item->quantity);
             }
-            \App\Models\Product::find($item->product_id)?->increment('current_stock', $item->quantity);
+            Product::find($item->product_id)?->increment('current_stock', $item->quantity);
 
-            \App\Models\StockMovement::create([
+            StockMovement::create([
                 'product_id' => $item->product_id,
                 'product_variant_id' => $item->product_variant_id ?? null,
                 'outlet_id' => $order->outlet_id,
@@ -66,7 +75,7 @@ class Order extends Model
                 'quantity' => $item->quantity,
                 'reference_type' => 'order_cancel',
                 'reference_id' => $order->id,
-                'notes' => 'Pembatalan order #' . $order->order_number,
+                'notes' => 'Pembatalan order #'.$order->order_number,
             ]);
         }
 
@@ -75,27 +84,27 @@ class Order extends Model
                 $point->customer->decrement('total_points', $point->points_earned);
             }
             $point->update([
-                'description' => ($point->description ?? '') . ' [DIBATALKAN — order #' . $order->order_number . ']',
+                'description' => ($point->description ?? '').' [DIBATALKAN — order #'.$order->order_number.']',
             ]);
         }
 
         foreach ($order->payments as $payment) {
             if (in_array($payment->status, ['success', 'confirmed', 'completed'])) {
-                \App\Services\JournalService::reversePaymentReceived($payment);
+                JournalService::reversePaymentReceived($payment);
                 $payment->update(['status' => 'refunded']);
 
-                $activeShift = \App\Models\Shift::where('outlet_id', $order->outlet_id)
+                $activeShift = Shift::where('outlet_id', $order->outlet_id)
                     ->where('status', 'open')
                     ->latest('started_at')
                     ->first();
 
-                \App\Models\CashDrawerTransaction::create([
+                CashDrawerTransaction::create([
                     'shift_id' => $activeShift?->id,
                     'order_id' => $order->id,
                     'type' => 'cash_out',
                     'amount' => $payment->amount,
                     'payment_method' => $payment->payment_method_id,
-                    'notes' => 'Refund pembatalan order #' . $order->order_number,
+                    'notes' => 'Refund pembatalan order #'.$order->order_number,
                 ]);
             }
         }
@@ -115,21 +124,21 @@ class Order extends Model
 
         $order->paymentProofs()->where('status', 'pending')->update([
             'status' => 'rejected',
-            'notes' => \Illuminate\Support\Facades\DB::raw("COALESCE(notes, '') || ' | Otomatis ditolak — order #{$order->order_number} dibatalkan'"),
+            'notes' => DB::raw("COALESCE(notes, '') || ' | Otomatis ditolak — order #{$order->order_number} dibatalkan'"),
         ]);
 
         if ($order->order_type === 'dine_in' && $order->table_id) {
-            \App\Models\TableResto::where('id', $order->table_id)->update(['status' => 'available']);
+            TableResto::where('id', $order->table_id)->update(['status' => 'available']);
         }
 
-        \App\Models\Delivery::where('order_id', $order->id)
+        Delivery::where('order_id', $order->id)
             ->whereIn('status', ['pending', 'packed', 'shipped'])
             ->update([
                 'status' => 'cancelled',
-                'delivery_notes' => \Illuminate\Support\Facades\DB::raw("COALESCE(delivery_notes, '') || ' | Otomatis dibatalkan — order #{$order->order_number} dicancel'"),
+                'delivery_notes' => DB::raw("COALESCE(delivery_notes, '') || ' | Otomatis dibatalkan — order #{$order->order_number} dicancel'"),
             ]);
 
-        \App\Models\MarketplaceOrder::where('order_id', $order->id)
+        MarketplaceOrder::where('order_id', $order->id)
             ->where('status', '!=', 'cancelled')
             ->update(['status' => 'cancelled']);
 
@@ -144,9 +153,9 @@ class Order extends Model
         }
 
         if ($order->deposit_amount > 0 && $order->customer_id) {
-            $newBalance = (\App\Models\Customer::find($order->customer_id)?->deposit_balance ?? 0) + $order->deposit_amount;
+            $newBalance = (Customer::find($order->customer_id)?->deposit_balance ?? 0) + $order->deposit_amount;
 
-            \App\Models\CustomerDeposit::create([
+            CustomerDeposit::create([
                 'customer_id' => $order->customer_id,
                 'outlet_id' => $order->outlet_id,
                 'user_id' => $order->user_id,
@@ -154,30 +163,30 @@ class Order extends Model
                 'amount' => $order->deposit_amount,
                 'balance_after' => $newBalance,
                 'reference' => 'order_cancel',
-                'notes' => 'Refund deposit — pembatalan order #' . $order->order_number,
+                'notes' => 'Refund deposit — pembatalan order #'.$order->order_number,
             ]);
 
-            \App\Models\Customer::where('id', $order->customer_id)->increment('deposit_balance', $order->deposit_amount);
+            Customer::where('id', $order->customer_id)->increment('deposit_balance', $order->deposit_amount);
         }
 
-        \App\Services\JournalService::reverseOrderRevenue($order);
+        JournalService::reverseOrderRevenue($order);
 
         $order->updateQuietly(['payment_status' => 'refunded', 'remaining_amount' => 0]);
 
         try {
-            $whatsapp = new \App\Services\WhatsAppService;
+            $whatsapp = new WhatsAppService;
             $whatsapp->sendOrderStatus($order);
         } catch (\Exception $e) {
-            \Log::warning('WhatsApp notification failed on cancel: ' . $e->getMessage());
+            \Log::warning('WhatsApp notification failed on cancel: '.$e->getMessage());
         }
 
         try {
             if ($order->customer?->email) {
-                $email = new \App\Services\EmailService;
+                $email = new EmailService;
                 $email->sendOrderStatus($order, $order->customer->email);
             }
         } catch (\Exception $e) {
-            \Log::warning('Email notification failed on cancel: ' . $e->getMessage());
+            \Log::warning('Email notification failed on cancel: '.$e->getMessage());
         }
     }
 

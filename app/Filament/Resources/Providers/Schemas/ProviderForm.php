@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources\Providers\Schemas;
 
-use Filament\Schemas\Components\Fieldset;
+use App\Models\Provider;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -15,6 +14,26 @@ class ProviderForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->schema([
+            Select::make('preset')
+                ->label('Preset (autofill)')
+                ->options(function () {
+                    return collect(Provider::presets())->mapWithKeys(fn ($p, $key) => [$key => $p['name']])->all();
+                })
+                ->helperText('Pilih preset untuk mengisi otomatis — masih bisa diedit setelahnya.')
+                ->live()
+                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                    $preset = Provider::presets()[$state] ?? null;
+                    if (! $preset) {
+                        return;
+                    }
+
+                    if (! $get('name')) {
+                        $set('name', $preset['name']);
+                    }
+                    $set('type', $preset['type'] ?? 'payment');
+                    $set('api_format', $preset['api_format'] ?? 'rest-redirect');
+                    $set('base_url', $preset['base_url'] ?? '');
+                }),
             TextInput::make('name')
                 ->label('Nama Provider')
                 ->required()

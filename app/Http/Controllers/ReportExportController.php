@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\StockMovement;
 use App\Services\ReportPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +67,7 @@ class ReportExportController extends Controller
         $endDate = $request->query('end_date', now()->format('Y-m-d'));
         $outletId = $request->query('outlet_id');
         $this->validateOutletAccess($outletId);
+
         return $this->pdfService->generateSalesReport($startDate, $endDate, $outletId ? (int) $outletId : null);
     }
 
@@ -77,6 +77,7 @@ class ReportExportController extends Controller
         $endDate = $request->query('end_date', now()->format('Y-m-d'));
         $outletId = $request->query('outlet_id');
         $this->validateOutletAccess($outletId);
+
         return $this->pdfService->generateFinancialReport($startDate, $endDate, $outletId ? (int) $outletId : null);
     }
 
@@ -84,15 +85,18 @@ class ReportExportController extends Controller
     {
         $outletId = $request->query('outlet_id');
         $this->validateOutletAccess($outletId);
+
         return $this->pdfService->generateStockReport($outletId ? (int) $outletId : null);
     }
 
     protected function validateOutletAccess(?string $outletId): void
     {
-        if (!$outletId) return;
+        if (! $outletId) {
+            return;
+        }
 
         $user = auth()->user();
-        if ($user && !in_array((int) $outletId, $user->getAccessibleOutletIds())) {
+        if ($user && ! in_array((int) $outletId, $user->getAccessibleOutletIds())) {
             abort(403, 'Anda tidak memiliki akses ke outlet ini.');
         }
     }
@@ -100,17 +104,17 @@ class ReportExportController extends Controller
     protected function exportSalesCsv(string $startDate, string $endDate, ?string $outletId): mixed
     {
         $orders = Order::with(['user', 'outlet', 'customer'])
-            ->whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
+            ->whereBetween('created_at', [$startDate, $endDate.' 23:59:59'])
             ->when($outletId, fn ($q) => $q->where('outlet_id', $outletId))
             ->where('order_status', 'completed')
             ->latest()
             ->get();
 
-        $filename = 'laporan-penjualan-' . $startDate . '-sd-' . $endDate . '.csv';
+        $filename = 'laporan-penjualan-'.$startDate.'-sd-'.$endDate.'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $handle = fopen('php://temp', 'r+');
@@ -147,17 +151,17 @@ class ReportExportController extends Controller
     protected function exportFinancialCsv(string $startDate, string $endDate, ?string $outletId): mixed
     {
         $orders = Order::with(['user', 'outlet', 'payments.paymentMethod'])
-            ->whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
+            ->whereBetween('created_at', [$startDate, $endDate.' 23:59:59'])
             ->when($outletId, fn ($q) => $q->where('outlet_id', $outletId))
             ->excludeCancelled()
             ->latest()
             ->get();
 
-        $filename = 'laporan-keuangan-' . $startDate . '-sd-' . $endDate . '.csv';
+        $filename = 'laporan-keuangan-'.$startDate.'-sd-'.$endDate.'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $handle = fopen('php://temp', 'r+');
@@ -169,7 +173,7 @@ class ReportExportController extends Controller
         ]);
 
         foreach ($orders as $order) {
-            $methods = $order->payments->map(fn ($p) => ($p->paymentMethod?->name ?? '-') . ' (' . number_format($p->amount, 0, ',', '.') . ')')->implode('; ');
+            $methods = $order->payments->map(fn ($p) => ($p->paymentMethod?->name ?? '-').' ('.number_format($p->amount, 0, ',', '.').')')->implode('; ');
             $totalPaid = $order->payments->where('status', 'confirmed')->sum('amount');
 
             fputcsv($handle, [
@@ -214,6 +218,103 @@ class ReportExportController extends Controller
         return $this->exportNeracaCsv($asOfDate, $outletId);
     }
 
+    public function cancelled(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+
+        $this->validateOutletAccess($outletId);
+
+        $orders = Order::with(['user', 'outlet', 'customer'])
+            ->whereBetween('created_at', [$startDate, $endDate.' 23:59:59'])
+            ->when($outletId, fn ($q) => $q->where('outlet_id', $outletId))
+            ->where('order_status', 'cancelled')
+            ->latest()
+            ->get();
+
+        $filename = 'laporan-pembatalan-'.$startDate.'-sd-'.$endDate.'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        fputcsv($handle, [
+            'No. Order', 'Tanggal', 'Outlet', 'Kasir', 'Pelanggan',
+            'Subtotal', 'Diskon', 'Pajak', 'Total', 'Status Bayar', 'Catatan',
+        ]);
+
+        foreach ($orders as $order) {
+            fputcsv($handle, [
+                $order->order_number,
+                $order->created_at->format('Y-m-d H:i'),
+                $order->outlet?->name,
+                $order->user?->name,
+                $order->customer?->name,
+                $order->subtotal,
+                $order->discount_amount,
+                $order->tax_amount,
+                $order->total_amount,
+                $order->payment_status,
+                $order->notes ?? $order->order_notes ?? '-',
+            ]);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, $headers);
+    }
+
+    public function receivables(Request $request): mixed
+    {
+        $outletId = $request->query('outlet_id');
+
+        $this->validateOutletAccess($outletId);
+
+        $orders = Order::with(['customer', 'outlet', 'user'])
+            ->where('order_status', '!=', 'cancelled')
+            ->where('remaining_amount', '>', 0)
+            ->when($outletId, fn ($q) => $q->where('outlet_id', $outletId))
+            ->latest()
+            ->get();
+
+        $filename = 'laporan-piutang-'.now()->format('Y-m-d').'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        fputcsv($handle, ['No. Order', 'Pelanggan', 'Outlet', 'Tanggal', 'Total', 'Sisa Piutang', 'Status Bayar']);
+
+        foreach ($orders as $order) {
+            fputcsv($handle, [
+                $order->order_number,
+                $order->customer?->name,
+                $order->outlet?->name,
+                $order->created_at->format('Y-m-d'),
+                $order->total_amount,
+                $order->remaining_amount,
+                $order->payment_status,
+            ]);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, $headers);
+    }
+
     protected function exportLabaRugiCsv(string $startDate, string $endDate, ?string $outletId): mixed
     {
         $items = DB::table('journal_entry_items')
@@ -225,39 +326,39 @@ class ReportExportController extends Controller
             ->whereIn('accounts.type', ['revenue', 'cogs', 'expense'])
             ->where(function ($q) {
                 $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
-                  ->orWhere(function ($inner) {
-                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                    ->orWhere(function ($inner) {
+                        $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
                             ->whereNotExists(function ($exists) {
                                 $exists->select(DB::raw(1))
                                     ->from('orders')
                                     ->whereColumn('orders.id', 'journal_entries.reference_id')
                                     ->where('orders.order_status', 'cancelled');
                             });
-                  });
+                    });
             })
             ->when($outletId, fn ($q) => $this->applyJournalOutletFilter($q, (int) $outletId))
-            ->selectRaw("
+            ->selectRaw('
                 accounts.code,
                 accounts.name,
                 accounts.type,
                 COALESCE(SUM(journal_entry_items.debit), 0) as total_debit,
                 COALESCE(SUM(journal_entry_items.credit), 0) as total_credit
-            ")
+            ')
             ->groupBy('accounts.id', 'accounts.code', 'accounts.name', 'accounts.type')
             ->orderBy('accounts.code')
             ->get();
 
-        $filename = 'laporan-laba-rugi-' . $startDate . '-sd-' . $endDate . '.csv';
+        $filename = 'laporan-laba-rugi-'.$startDate.'-sd-'.$endDate.'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $handle = fopen('php://temp', 'r+');
         fwrite($handle, "\xEF\xBB\xBF");
 
-        fputcsv($handle, ['LAPORAN LABA RUGI', $startDate . ' s/d ' . $endDate]);
+        fputcsv($handle, ['LAPORAN LABA RUGI', $startDate.' s/d '.$endDate]);
         fputcsv($handle, []);
         fputcsv($handle, ['Kode', 'Nama Akun', 'Tipe', 'Debit', 'Kredit', 'Saldo']);
 
@@ -300,39 +401,39 @@ class ReportExportController extends Controller
             ->whereIn('accounts.type', ['asset', 'liability', 'equity'])
             ->where(function ($q) {
                 $q->whereNotIn('journal_entries.reference_type', ['order', 'order_cancel'])
-                  ->orWhere(function ($inner) {
-                      $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
+                    ->orWhere(function ($inner) {
+                        $inner->whereIn('journal_entries.reference_type', ['order', 'order_cancel'])
                             ->whereNotExists(function ($exists) {
                                 $exists->select(DB::raw(1))
                                     ->from('orders')
                                     ->whereColumn('orders.id', 'journal_entries.reference_id')
                                     ->where('orders.order_status', 'cancelled');
                             });
-                  });
+                    });
             })
             ->when($outletId, fn ($q) => $this->applyJournalOutletFilter($q, (int) $outletId))
-            ->selectRaw("
+            ->selectRaw('
                 accounts.code,
                 accounts.name,
                 accounts.type,
                 COALESCE(SUM(journal_entry_items.debit), 0) as total_debit,
                 COALESCE(SUM(journal_entry_items.credit), 0) as total_credit
-            ")
+            ')
             ->groupBy('accounts.id', 'accounts.code', 'accounts.name', 'accounts.type')
             ->orderBy('accounts.code')
             ->get();
 
-        $filename = 'laporan-neraca-' . $asOfDate . '.csv';
+        $filename = 'laporan-neraca-'.$asOfDate.'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $handle = fopen('php://temp', 'r+');
         fwrite($handle, "\xEF\xBB\xBF");
 
-        fputcsv($handle, ['LAPORAN NERACA', 'Per ' . $asOfDate]);
+        fputcsv($handle, ['LAPORAN NERACA', 'Per '.$asOfDate]);
         fputcsv($handle, []);
         fputcsv($handle, ['Kode', 'Nama Akun', 'Tipe', 'Debit', 'Kredit', 'Saldo']);
 
@@ -396,11 +497,11 @@ class ReportExportController extends Controller
             ->orderBy('current_stock')
             ->get();
 
-        $filename = 'laporan-stok-' . now()->format('Y-m-d') . '.csv';
+        $filename = 'laporan-stok-'.now()->format('Y-m-d').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $handle = fopen('php://temp', 'r+');

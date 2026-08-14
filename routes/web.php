@@ -1,21 +1,27 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SitemapController;
-use App\Http\Controllers\DocsController;
-use App\Http\Controllers\PosController;
-use App\Http\Controllers\ReportExportController;
-use App\Http\Controllers\ProgrammaticSeoController;
-use App\Http\Controllers\Public\BlogController;
-use App\Http\Controllers\Portal\AuthController;
-use App\Http\Controllers\Portal\PortalController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BarcodeController;
+use App\Http\Controllers\DocsController;
+use App\Http\Controllers\Portal\AuthController;
+use App\Http\Controllers\Portal\PortalController;
+use App\Http\Controllers\PosController;
+use App\Http\Controllers\ProgrammaticSeoController;
+use App\Http\Controllers\Public\BlogController;
+use App\Http\Controllers\ReportExportController;
+use App\Http\Controllers\SitemapController;
+use App\Models\Outlet;
+use App\Models\SystemSetting;
+use App\Models\TableResto;
+use App\Models\TaxInvoice;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect('/admin');
     }
+
     return view('marketing');
 })->name('home');
 
@@ -27,18 +33,21 @@ Route::get('/pos', [PosController::class, 'index'])->name('pos')->middleware('au
 Route::get('/barcode/{code}', [BarcodeController::class, 'show'])->name('barcode.image');
 
 Route::get('/pos/display', function () {
-    $appName = \App\Models\SystemSetting::getAppName();
+    $appName = SystemSetting::getAppName();
+
     return view('pos.customer-display', compact('appName'));
 })->name('pos.display');
 
-Route::get('/menu/{outlet}', function (\App\Models\Outlet $outlet) {
-    $table = request('table') ? \App\Models\TableResto::find(request('table')) : null;
+Route::get('/menu/{outlet}', function (Outlet $outlet) {
+    $table = request('table') ? TableResto::find(request('table')) : null;
+
     return view('pos.digital-menu', compact('outlet', 'table'));
 })->name('menu.digital');
 
 Route::get('/api/pos/products', [PosController::class, 'products']);
 Route::get('/api/pos/barcode/{barcode}', [PosController::class, 'barcode']);
 Route::get('/api/pos/display', [PosController::class, 'display']);
+Route::post('/api/pos/validate-voucher', [PosController::class, 'validateVoucher'])->name('pos.validate-voucher')->middleware('auth');
 Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('auth');
 Route::get('/admin/orders/{id}/receipt', [PosController::class, 'receipt'])->name('orders.receipt')->middleware('auth');
 
@@ -56,6 +65,8 @@ Route::get('/export/laporan/keuangan/pdf', [ReportExportController::class, 'fina
 Route::get('/export/laporan/stok/pdf', [ReportExportController::class, 'stockPdf'])->name('export.stock.pdf')->middleware('auth');
 Route::get('/export/laporan/laba-rugi', [ReportExportController::class, 'labaRugi'])->name('export.laba-rugi')->middleware('auth');
 Route::get('/export/laporan/neraca', [ReportExportController::class, 'neraca'])->name('export.neraca')->middleware('auth');
+Route::get('/export/laporan/pembatalan', [ReportExportController::class, 'cancelled'])->name('export.cancelled')->middleware('auth');
+Route::get('/export/laporan/piutang', [ReportExportController::class, 'receivables'])->name('export.receivables')->middleware('auth');
 
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('guest:customer')->group(function () {
@@ -190,15 +201,16 @@ Route::get('/robots.txt', function () {
     $content .= "Disallow: /api\n";
     $content .= "Disallow: /__pair\n";
     $content .= "Disallow: /webhooks\n";
-    $content .= "Sitemap: " . rtrim(config('app.url'), '/') . "/sitemap.xml\n";
+    $content .= 'Sitemap: '.rtrim(config('app.url'), '/')."/sitemap.xml\n";
 
     return response($content, 200)
         ->header('Content-Type', 'text/plain; charset=utf-8');
 })->name('robots');
 
-Route::get('/tax-invoice/{taxInvoice}/pdf', function (\App\Models\TaxInvoice $taxInvoice) {
-    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.tax-invoice', compact('taxInvoice'));
-    return $pdf->download('faktur-pajak-' . $taxInvoice->invoice_number . '.pdf');
+Route::get('/tax-invoice/{taxInvoice}/pdf', function (TaxInvoice $taxInvoice) {
+    $pdf = Pdf::loadView('pdf.tax-invoice', compact('taxInvoice'));
+
+    return $pdf->download('faktur-pajak-'.$taxInvoice->invoice_number.'.pdf');
 })->name('tax-invoice.pdf')->middleware('auth');
 
 Route::redirect('/login', '/admin/login')->name('login');

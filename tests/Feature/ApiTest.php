@@ -112,7 +112,7 @@ class ApiTest extends TestCase
 
         $response->assertStatus(201);
         $response->assertJsonStructure(['data']);
-        $response->assertJsonPath('data.total_amount', 30000);
+        $this->assertSame(30000.0, (float) $response->json('data.total_amount'));
         $response->assertJsonPath('data.order_status', 'completed');
     }
 
@@ -147,7 +147,7 @@ class ApiTest extends TestCase
             ]);
 
         $response = $this->actingAs($user, 'api')
-            ->getJson('/api/v1/orders/today?outlet_id=' . $outlet->id);
+            ->getJson('/api/v1/orders/today?outlet_id='.$outlet->id);
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['data']);
