@@ -1,6 +1,8 @@
 @import '/vendor/filament/filament/resources/css/theme.css';
+@import '../../tabler/tokens.css';
 @source '../../../../app/Filament';
 @source '../../../../resources/views/filament';
+@source '../../../../resources/views/vendor';
 @source '../../../../vendor/filament/**/*.blade.php';
 
 .fi-login-demo-box {
@@ -22,21 +24,22 @@
 }
 
 :root {
-    --primary-50: 239, 246, 255;
-    --primary-100: 219, 234, 254;
-    --primary-200: 191, 219, 254;
-    --primary-300: 147, 197, 253;
-    --primary-400: 96, 165, 250;
-    --primary-500: 59, 130, 246;
-    --primary-600: 37, 99, 235;
-    --primary-700: 29, 78, 216;
-    --primary-800: 30, 64, 175;
-    --primary-900: 30, 58, 138;
-    --primary-950: 23, 37, 84;
+    /* Tabler: primer #206bc4 */
+    --primary-50: 239, 245, 252;
+    --primary-100: 219, 232, 247;
+    --primary-200: 186, 211, 239;
+    --primary-300: 137, 182, 228;
+    --primary-400: 84, 148, 213;
+    --primary-500: 32, 107, 196;
+    --primary-600: 27, 90, 165;
+    --primary-700: 24, 75, 138;
+    --primary-800: 24, 63, 113;
+    --primary-900: 22, 55, 95;
+    --primary-950: 15, 38, 68;
     --sidebar-bg: 255, 255, 255;
     --sidebar-fg: 15, 23, 42;
-    --card-radius: 14px;
-    --body-bg: 248, 250, 252;
+    --card-radius: 8px;
+    --body-bg: 245, 247, 251;
 }
 
 body {
@@ -53,7 +56,8 @@ body {
 }
 
 .fi-sidebar-header {
-    background: linear-gradient(135deg, rgb(var(--primary-500)), rgb(var(--primary-600))) !important;
+    background: rgb(var(--sidebar-bg));
+    border-bottom: 1px solid rgb(var(--gray-200));
     padding: 16px;
 }
 
@@ -65,15 +69,15 @@ body {
 }
 
 .fi-sidebar-item:hover {
-    transform: translateX(2px);
     background: rgb(var(--primary-50));
     color: rgb(var(--primary-700));
 }
 
 .fi-sidebar-item-active {
-    background: linear-gradient(90deg, rgb(var(--primary-500), 0.12) 0%, rgb(var(--primary-50)) 100%) !important;
+    background: rgb(var(--primary-50)) !important;
     box-shadow: inset 3px 0 0 rgb(var(--primary-500));
     color: rgb(var(--primary-700)) !important;
+    font-weight: 600;
 }
 
 .fi-sidebar-group-label {
@@ -100,13 +104,8 @@ body {
 
 .fi-section {
     border-radius: var(--card-radius);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 8px rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(var(--primary-100), 0.5);
-    transition: box-shadow 0.25s ease;
-}
-
-.fi-section:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 2px rgba(29, 39, 59, 0.06);
+    border: 1px solid rgb(var(--gray-200));
 }
 
 .dark .fi-section {
@@ -120,14 +119,8 @@ body {
 
 .fi-wi-stats-overview-stat {
     border-radius: var(--card-radius);
-    background: linear-gradient(135deg, rgba(var(--primary-50), 0.7), rgba(var(--primary-100), 0.3)) !important;
-    border: 1px solid rgba(var(--primary-200), 0.4);
-    transition: all 0.25s ease;
-}
-
-.fi-wi-stats-overview-stat:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(var(--primary-300), 0.18);
+    background: #fff !important;
+    border: 1px solid rgb(var(--gray-200));
 }
 
 .fi-wi-stats-overview-stat-value {
@@ -214,20 +207,17 @@ textarea.fi-textarea:focus {
 }
 
 .fi-btn.fi-color {
-    background: linear-gradient(135deg, rgb(var(--primary-500)), rgb(var(--primary-600))) !important;
-    box-shadow: 0 2px 8px rgba(var(--primary-500), 0.25) !important;
+    background: rgb(var(--primary-500)) !important;
+    box-shadow: none !important;
     border: none !important;
 }
 
 .fi-btn.fi-color:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 16px rgba(var(--primary-500), 0.35) !important;
-    background: linear-gradient(135deg, rgb(var(--primary-400)), rgb(var(--primary-500))) !important;
+    background: rgb(var(--primary-600)) !important;
 }
 
 .fi-btn.fi-color:active {
-    transform: translateY(0) !important;
-    box-shadow: 0 1px 3px rgba(var(--primary-500), 0.2) !important;
+    background: rgb(var(--primary-700)) !important;
 }
 
 ::-webkit-scrollbar {

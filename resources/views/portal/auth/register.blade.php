@@ -24,12 +24,12 @@
 
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
-            <a href="/" class="inline-block text-2xl font-bold text-indigo-600">POS Retail</a>
+            <a href="/" class="inline-block text-2xl font-bold text-[#206bc4]">POS Retail</a>
             <p class="text-sm text-gray-500 mt-2">Buat akun pelanggan baru</p>
         </div>
 
         @if ($errors->any())
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            <div class="mb-6 p-4 bg-[#d63939]/8 border border-red-200 rounded-xl text-sm text-[#b22b2b]">
                 @foreach ($errors->all() as $error)
                     <p>{{ $error }}</p>
                 @endforeach
@@ -49,7 +49,7 @@
                     placeholder="Nama Anda"
                     required
                     autofocus
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
                 >
             </div>
 
@@ -62,7 +62,7 @@
                     value="{{ old('email') }}"
                     placeholder="nama@email.com"
                     required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
                 >
             </div>
 
@@ -75,7 +75,7 @@
                     value="{{ old('phone') }}"
                     placeholder="081234567890"
                     required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
                 >
             </div>
 
@@ -87,7 +87,7 @@
                     id="password"
                     placeholder="Minimal 6 karakter"
                     required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
                 >
             </div>
 
@@ -99,13 +99,13 @@
                     id="password_confirmation"
                     placeholder="Ulangi kata sandi"
                     required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
                 >
             </div>
 
             <button
                 type="submit"
-                class="w-full py-2.5 px-4 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 active:scale-[0.98] transition shadow-sm"
+                class="w-full py-2.5 px-4 bg-[#206bc4] text-white text-sm font-semibold rounded-xl hover:bg-[#1a569d] active:scale-[0.98] transition shadow-sm"
             >
                 Daftar
             </button>
@@ -113,7 +113,7 @@
 
         <p class="mt-6 text-center text-sm text-gray-500">
             Sudah punya akun?
-            <a href="{{ route('portal.login') }}" class="text-indigo-600 font-medium hover:text-indigo-700">Masuk di sini</a>
+            <a href="{{ route('portal.login') }}" class="text-[#206bc4] font-medium hover:text-[#1a569d]">Masuk di sini</a>
         </p>
     </div>
 

@@ -33,7 +33,7 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
             <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-xl text-slate-900">
-                <span class="text-2xl">🏪</span> {{ config('app.name') }}
+                <span><x-ti name="building-store" class="w-6 h-6" /></span> {{ config('app.name') }}
             </a>
             <div class="flex items-center gap-4">
                 <a href="{{ route('home') }}" class="text-sm text-slate-600 hover:text-blue-600 transition">Beranda</a>

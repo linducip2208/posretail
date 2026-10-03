@@ -38,7 +38,7 @@
         <div class="bg-slate-800 rounded-2xl p-8 mb-6">
             <div class="text-center mb-6">
                 <div class="text-lg text-slate-400 mb-1">TOTAL BELANJA</div>
-                <div class="text-7xl font-extrabold text-emerald-400" id="totalDisplay">Rp 0</div>
+                <div class="text-7xl font-extrabold text-[#5fcf74]" id="totalDisplay">Rp 0</div>
             </div>
 
             <div class="grid grid-cols-2 gap-6 text-center">
@@ -48,7 +48,7 @@
                 </div>
                 <div class="bg-slate-700/50 rounded-xl p-5">
                     <div class="text-sm text-slate-400 mb-1">ANTRIAN</div>
-                    <div class="text-3xl font-bold text-amber-400" id="queueNumber">-</div>
+                    <div class="text-3xl font-bold text-[#fab005]" id="queueNumber">-</div>
                 </div>
             </div>
         </div>

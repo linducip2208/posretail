@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 class SupplierContractResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '🚚 Supplier';
+    protected static string|\UnitEnum|null $navigationGroup = 'Supplier';
 
     protected static ?int $navigationSort = 3;
 

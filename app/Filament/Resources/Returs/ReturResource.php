@@ -19,7 +19,7 @@ use Filament\Support\Icons\Heroicon;
 class ReturResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '💰 Penjualan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Penjualan';
 
     protected static ?int $navigationSort = 3;
 

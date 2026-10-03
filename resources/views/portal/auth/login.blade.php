@@ -24,12 +24,12 @@
 
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
-            <a href="/" class="inline-block text-2xl font-bold text-indigo-600">POS Retail</a>
+            <a href="/" class="inline-block text-2xl font-bold text-[#206bc4]">POS Retail</a>
             <p class="text-sm text-gray-500 mt-2">Masuk ke portal pelanggan</p>
         </div>
 
         @if ($errors->any())
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            <div class="mb-6 p-4 bg-[#d63939]/8 border border-red-200 rounded-xl text-sm text-[#b22b2b]">
                 @foreach ($errors->all() as $error)
                     <p>{{ $error }}</p>
                 @endforeach
@@ -49,7 +49,7 @@
                     placeholder="nama@email.com"
                     required
                     autofocus
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
                 >
             </div>
 
@@ -61,7 +61,7 @@
                     id="password"
                     placeholder="Masukkan kata sandi"
                     required
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
                 >
             </div>
 
@@ -70,14 +70,14 @@
                     type="checkbox"
                     name="remember"
                     id="remember"
-                    class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    class="w-4 h-4 text-[#206bc4] border-gray-300 rounded focus:ring-[#206bc4]"
                 >
                 <label for="remember" class="text-sm text-gray-600">Ingat saya</label>
             </div>
 
             <button
                 type="submit"
-                class="w-full py-2.5 px-4 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 active:scale-[0.98] transition shadow-sm"
+                class="w-full py-2.5 px-4 bg-[#206bc4] text-white text-sm font-semibold rounded-xl hover:bg-[#1a569d] active:scale-[0.98] transition shadow-sm"
             >
                 Masuk
             </button>
@@ -85,7 +85,7 @@
 
         <p class="mt-6 text-center text-sm text-gray-500">
             Belum punya akun?
-            <a href="{{ route('portal.register') }}" class="text-indigo-600 font-medium hover:text-indigo-700">Daftar di sini</a>
+            <a href="{{ route('portal.register') }}" class="text-[#206bc4] font-medium hover:text-[#1a569d]">Daftar di sini</a>
         </p>
     </div>
 

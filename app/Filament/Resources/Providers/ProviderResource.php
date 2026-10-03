@@ -19,7 +19,7 @@ use Filament\Support\Icons\Heroicon;
 class ProviderResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '🔗 Integrasi';
+    protected static string|\UnitEnum|null $navigationGroup = 'Integrasi';
 
     protected static ?int $navigationSort = 1;
 

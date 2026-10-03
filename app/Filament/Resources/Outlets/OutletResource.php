@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class OutletResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '🏪 Outlet';
+    protected static string|\UnitEnum|null $navigationGroup = 'Outlet';
 
     protected static ?int $navigationSort = 1;
 

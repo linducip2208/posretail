@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 class RawMaterialResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
+    protected static string|\UnitEnum|null $navigationGroup = 'Inventory';
 
     protected static ?int $navigationSort = 8;
 

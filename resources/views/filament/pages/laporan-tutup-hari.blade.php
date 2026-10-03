@@ -28,15 +28,15 @@
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Cash</div>
-            <div class="text-2xl font-extrabold text-emerald-600">Rp {{ number_format($this->summary['cash'], 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#2fb344]">Rp {{ number_format($this->summary['cash'], 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Non-Cash</div>
-            <div class="text-2xl font-extrabold text-indigo-600">Rp {{ number_format($this->summary['non_cash'], 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#206bc4]">Rp {{ number_format($this->summary['non_cash'], 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Biaya Hari Ini</div>
-            <div class="text-2xl font-extrabold text-rose-600">Rp {{ number_format($this->summary['expenses'], 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#d63939]">Rp {{ number_format($this->summary['expenses'], 0, ',', '.') }}</div>
         </div>
     </div>
 
@@ -83,11 +83,11 @@
                         <td class="py-3">{{ $shift->user?->name ?: '-' }}</td>
                         <td class="py-3 text-right">Rp {{ number_format($shift->starting_cash, 0, ',', '.') }}</td>
                         <td class="py-3 text-right">Rp {{ number_format($shift->ending_cash ?? 0, 0, ',', '.') }}</td>
-                        <td class="py-3 text-right {{ ($shift->difference ?? 0) >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">
+                        <td class="py-3 text-right {{ ($shift->difference ?? 0) >= 0 ? 'text-[#2fb344]' : 'text-[#d63939]' }}">
                             Rp {{ number_format($shift->difference ?? 0, 0, ',', '.') }}
                         </td>
                         <td class="py-3">
-                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $shift->status === 'closed' ? 'bg-gray-100 text-gray-600' : 'bg-emerald-100 text-emerald-700' }}">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $shift->status === 'closed' ? 'bg-gray-100 text-gray-600' : 'bg-[#2fb344]/15 text-[#268f36]' }}">
                                 {{ $shift->status === 'closed' ? 'Tutup' : 'Buka' }}
                             </span>
                         </td>
@@ -100,13 +100,13 @@
         </div>
     </div>
 
-    <div class="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl p-6 text-white">
+    <div class="bg-gradient-to-r from-[#2fb344] to-[#268f36] rounded-xl p-6 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-sm text-emerald-100 mb-1">Net Cash (Cash - Biaya)</div>
+                <div class="text-sm text-[#2fb344]/15 mb-1">Net Cash (Cash - Biaya)</div>
                 <div class="text-3xl font-extrabold">Rp {{ number_format($this->summary['net_cash'], 0, ',', '.') }}</div>
             </div>
-            <div class="text-right text-emerald-100 text-sm">
+            <div class="text-right text-[#2fb344]/15 text-sm">
                 @if($this->summary['net_cash'] >= 0)
                     Surplus Hari Ini
                 @else

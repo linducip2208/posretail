@@ -31,7 +31,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Komisi</div>
-            <div class="text-2xl font-extrabold text-emerald-600">Rp {{ number_format($this->totalKomisi, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#2fb344]">Rp {{ number_format($this->totalKomisi, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Transaksi</div>
@@ -39,7 +39,7 @@
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Rata-rata Komisi</div>
-            <div class="text-2xl font-extrabold text-indigo-600">Rp {{ number_format($this->rataKomisi, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#206bc4]">Rp {{ number_format($this->rataKomisi, 0, ',', '.') }}</div>
         </div>
     </div>
 
@@ -70,7 +70,7 @@
                         <td class="py-3 text-right">{{ number_format($row->total_orders) }}</td>
                         <td class="py-3 text-right">Rp {{ number_format($row->total_sales, 0, ',', '.') }}</td>
                         <td class="py-3 text-right">{{ $row->commission_percent }}%</td>
-                        <td class="py-3 text-right font-semibold text-emerald-600">Rp {{ number_format($row->total_commission, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right font-semibold text-[#2fb344]">Rp {{ number_format($row->total_commission, 0, ',', '.') }}</td>
                     </tr>
                     @empty
                     <tr><td colspan="6" class="py-10 text-center text-gray-400">Belum ada data komisi</td></tr>
@@ -110,7 +110,7 @@
                         <td class="py-3 text-xs text-gray-500">{{ $item->outlet_name ?: '-' }}</td>
                         <td class="py-3 text-right">Rp {{ number_format($item->total_amount, 0, ',', '.') }}</td>
                         <td class="py-3 text-right">{{ $item->commission_percent }}%</td>
-                        <td class="py-3 text-right font-semibold text-emerald-600">Rp {{ number_format($item->commission_amount, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right font-semibold text-[#2fb344]">Rp {{ number_format($item->commission_amount, 0, ',', '.') }}</td>
                         <td class="py-3 text-xs text-gray-500">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/y H:i') }}</td>
                     </tr>
                     @empty

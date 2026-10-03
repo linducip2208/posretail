@@ -18,14 +18,12 @@
 <div class="max-w-3xl mx-auto px-4 py-8">
 
     <a href="{{ route('portal.index') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6 transition">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 19.5 8.25 12l7.5-7.5" />
-        </svg>
+        <x-ti name="chevron-left" class="w-4 h-4" />
         Kembali ke Dashboard
     </a>
 
     @if (session('error'))
-        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+        <div class="mb-6 p-4 bg-[#d63939]/8 border border-red-200 rounded-xl text-sm text-[#b22b2b]">
             {{ session('error') }}
         </div>
     @endif
@@ -39,11 +37,11 @@
                 name="order_number"
                 value="{{ request('order_number') }}"
                 placeholder="Nomor pesanan (opsional)"
-                class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition"
             >
             <button
                 type="submit"
-                class="px-6 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 active:scale-[0.98] transition shadow-sm"
+                class="px-6 py-2.5 bg-[#206bc4] text-white text-sm font-semibold rounded-xl hover:bg-[#1a569d] active:scale-[0.98] transition shadow-sm"
             >
                 Cari
             </button>
@@ -53,16 +51,14 @@
     @if ($orders->isEmpty())
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
             <div class="inline-flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full mb-4">
-                <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                </svg>
+                <x-ti name="receipt" class="w-7 h-7 text-gray-400" />
             </div>
             <p class="text-sm text-gray-500">Tidak ada pesanan ditemukan.</p>
         </div>
     @else
         <div class="space-y-4">
             @foreach ($orders as $order)
-                <a href="{{ route('portal.order', $order->id) }}" class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:border-indigo-300 hover:shadow transition group">
+                <a href="{{ route('portal.order', $order->id) }}" class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:border-[#8fb6e4] hover:shadow transition group">
                     <div class="flex items-start justify-between mb-3">
                         <div>
                             <p class="text-sm font-semibold text-gray-900">{{ $order->order_number }}</p>
@@ -115,9 +111,7 @@
                         </div>
                         <div class="text-right">
                             <p class="text-lg font-bold text-gray-900">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
-                            <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-500 ml-auto mt-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
+                            <x-ti name="chevron-right" class="w-4 h-4 text-gray-300 group-hover:text-[#206bc4] ml-auto mt-0.5 transition" />
                         </div>
                     </div>
                 </a>

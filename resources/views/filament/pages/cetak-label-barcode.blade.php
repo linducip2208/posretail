@@ -10,7 +10,7 @@
             type="text"
             wire:model.live.debounce.300ms="search"
             placeholder="Cari nama produk, barcode, atau SKU..."
-            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none transition-shadow"
             autofocus
         >
         @if($search)
@@ -18,7 +18,7 @@
                 wire:click="$set('search', '')"
                 class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <x-ti name="x" class="w-5 h-5" />
             </button>
         @endif
     </div>
@@ -41,12 +41,12 @@
                             @endphp
                             <div
                                 wire:click="toggleProduct('{{ $productKey }}')"
-                                class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-blue-50/50 transition-colors {{ $isSelected ? 'bg-blue-50 border-l-4 border-l-blue-500' : '' }}"
+                                class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-[#206bc4] transition-colors {{ $isSelected ? 'bg-[#206bc4]/5 border-l-4 border-l-[#206bc4]' : '' }}"
                             >
                                 <div class="shrink-0">
                                     @if($isSelected)
-                                        <div class="w-5 h-5 rounded bg-blue-500 flex items-center justify-center">
-                                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                        <div class="w-5 h-5 rounded bg-[#206bc4] flex items-center justify-center">
+                                            <x-ti name="check" class="w-3 h-3 text-white" />
                                         </div>
                                     @else
                                         <div class="w-5 h-5 rounded border-2 border-gray-300"></div>
@@ -58,7 +58,7 @@
                                         @if($product->barcode)
                                             <span class="font-mono">{{ $product->barcode }}</span>
                                         @else
-                                            <span class="text-rose-500">Belum ada barcode</span>
+                                            <span class="text-[#d63939]">Belum ada barcode</span>
                                         @endif
                                         @if($product->sku)
                                             <span>| SKU: {{ $product->sku }}</span>
@@ -79,12 +79,12 @@
                                     @endphp
                                     <div
                                         wire:click="toggleProduct('{{ $variantKey }}')"
-                                        class="flex items-center gap-3 pl-10 pr-4 py-2 cursor-pointer hover:bg-blue-50/50 transition-colors {{ $isVariantSelected ? 'bg-blue-50 border-l-4 border-l-blue-500' : '' }}"
+                                        class="flex items-center gap-3 pl-10 pr-4 py-2 cursor-pointer hover:bg-[#206bc4] transition-colors {{ $isVariantSelected ? 'bg-[#206bc4]/5 border-l-4 border-l-[#206bc4]' : '' }}"
                                     >
                                         <div class="shrink-0">
                                             @if($isVariantSelected)
-                                                <div class="w-5 h-5 rounded bg-blue-500 flex items-center justify-center">
-                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                <div class="w-5 h-5 rounded bg-[#206bc4] flex items-center justify-center">
+                                                    <x-ti name="check" class="w-3 h-3 text-white" />
                                                 </div>
                                             @else
                                                 <div class="w-5 h-5 rounded border-2 border-gray-300"></div>
@@ -96,7 +96,7 @@
                                                 @if($variant->barcode)
                                                     <span class="font-mono">{{ $variant->barcode }}</span>
                                                 @else
-                                                    <span class="text-rose-500">Belum ada barcode</span>
+                                                    <span class="text-[#d63939]">Belum ada barcode</span>
                                                 @endif
                                                 @if($variant->sku)
                                                     <span>| SKU: {{ $variant->sku }}</span>
@@ -112,14 +112,14 @@
                         </div>
                     @empty
                         <div class="px-4 py-8 text-center text-gray-400">
-                            <svg class="w-10 h-10 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <x-ti name="search" class="w-10 h-10 mx-auto mb-2" />
                             <p class="text-sm">Produk tidak ditemukan</p>
                         </div>
                     @endforelse
                 </div>
             @elseif(!$search)
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center text-gray-400">
-                    <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                    <x-ti name="tag" class="w-12 h-12 mx-auto mb-3" />
                     <p class="text-sm">Ketik nama produk, barcode, atau SKU untuk mencari</p>
                 </div>
             @endif
@@ -135,7 +135,7 @@
                     @if(count($selectedProducts) > 0)
                         <button
                             wire:click="$set('selectedProducts', []); $set('quantities', [])"
-                            class="text-xs text-rose-600 hover:text-rose-800 font-medium"
+                            class="text-xs text-[#d63939] hover:text-[#8f1d1d] font-medium"
                         >
                             Hapus Semua
                         </button>
@@ -179,9 +179,9 @@
                                 </div>
                                 <button
                                     wire:click="removeProduct('{{ $key }}')"
-                                    class="shrink-0 text-gray-300 hover:text-rose-500 transition-colors"
+                                    class="shrink-0 text-gray-300 hover:text-[#d63939] transition-colors"
                                 >
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <x-ti name="x" class="w-4 h-4" />
                                 </button>
                             </div>
                             <div class="flex items-center gap-2 mt-2">
@@ -191,13 +191,13 @@
                                     wire:model.live="quantities.{{ $key }}"
                                     min="1"
                                     max="100"
-                                    class="w-16 border border-gray-300 rounded px-2 py-1 text-xs text-center focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    class="w-16 border border-gray-300 rounded px-2 py-1 text-xs text-center focus:ring-1 focus:ring-[#206bc4] focus:border-[#206bc4] outline-none"
                                 >
                             </div>
                         </div>
                     @empty
                         <div class="px-4 py-8 text-center text-gray-400">
-                            <svg class="w-10 h-10 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            <x-ti name="clipboard-list" class="w-10 h-10 mx-auto mb-2" />
                             <p class="text-sm">Pilih produk dari hasil pencarian</p>
                         </div>
                     @endforelse
@@ -207,9 +207,9 @@
                     <div class="px-4 py-3 border-t border-gray-100">
                         <button
                             onclick="printBarcodeLabels()"
-                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-[#206bc4] hover:bg-[#1a569d] rounded-xl transition-colors shadow-sm"
                         >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                            <x-ti name="printer" class="w-4 h-4" />
                             Cetak Label ({{ count($selectedProducts) }} produk)
                         </button>
                     </div>

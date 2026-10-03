@@ -1,0 +1,163 @@
+/**
+ * TABLER DESIGN TOKENS — POS Retail
+ * Satu-satunya source of truth warna, radius, shadow, dan tipografi.
+ * Dipakai oleh app.css (halaman publik/POS) dan theme Filament (admin).
+ * Jangan hardcode warna di file lain; pakai variabel atau kelas utilitas ini.
+ */
+:root {
+    /* --- Tabler palette --- */
+    --tb-primary: #206bc4;
+    --tb-primary-dark: #1a569d;
+    --tb-primary-darker: #15467f;
+    --tb-primary-tint: #e8eff9;
+    --tb-success: #2fb344;
+    --tb-success-dark: #268f36;
+    --tb-success-tint: #e6f5e9;
+    --tb-warning: #f59f00;
+    --tb-warning-dark: #c87f00;
+    --tb-warning-tint: #fef3d9;
+    --tb-danger: #d63939;
+    --tb-danger-dark: #b22b2b;
+    --tb-danger-tint: #fbe9e9;
+    --tb-info: #066fd1;
+    --tb-info-tint: #e0f0fc;
+    --tb-muted: #616876;
+    --tb-body: #1d273b;
+    --tb-border: #e6e8eb;
+    --tb-bg: #f5f7fb;
+    --tb-card: #ffffff;
+    /* --- radius & shadow --- */
+    --tb-radius-sm: 4px;
+    --tb-radius: 8px;
+    --tb-radius-lg: 12px;
+    --tb-shadow-sm: 0 1px 2px rgba(29, 39, 59, 0.06);
+    --tb-shadow: 0 1px 3px rgba(29, 39, 59, 0.08), 0 4px 12px rgba(29, 39, 59, 0.05);
+    --tb-shadow-lg: 0 8px 28px rgba(29, 39, 59, 0.12);
+    /* --- type --- */
+    --tb-font: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --tb-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ===== komponen Tabler generik (dipakai di luar Filament) ===== */
+.tb-card {
+    background: var(--tb-card);
+    border: 1px solid var(--tb-border);
+    border-radius: var(--tb-radius);
+    box-shadow: var(--tb-shadow-sm);
+}
+.tb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: var(--tb-radius);
+    padding: 0.625rem 1rem;
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+    min-height: 42px;
+}
+.tb-btn:active { transform: scale(0.98); }
+.tb-btn-primary { background: var(--tb-primary); color: #fff; }
+.tb-btn-primary:hover { background: var(--tb-primary-dark); }
+.tb-btn-outline { background: #fff; border-color: var(--tb-border); color: var(--tb-body); }
+.tb-btn-outline:hover { border-color: var(--tb-primary); color: var(--tb-primary); }
+.tb-btn-danger { background: var(--tb-danger); color: #fff; }
+.tb-btn-danger:hover { background: var(--tb-danger-dark); }
+.tb-btn-ghost { background: transparent; color: var(--tb-muted); }
+.tb-btn-ghost:hover { background: var(--tb-bg); color: var(--tb-body); }
+
+.tb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--tb-radius-sm);
+    line-height: 1.4;
+}
+.tb-badge-success { background: var(--tb-success-tint); color: var(--tb-success-dark); }
+.tb-badge-warning { background: var(--tb-warning-tint); color: var(--tb-warning-dark); }
+.tb-badge-danger { background: var(--tb-danger-tint); color: var(--tb-danger-dark); }
+.tb-badge-info { background: var(--tb-info-tint); color: var(--tb-info); }
+.tb-badge-muted { background: var(--tb-bg); color: var(--tb-muted); }
+
+.tb-input {
+    width: 100%;
+    border: 1px solid var(--tb-border);
+    border-radius: var(--tb-radius);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    background: #fff;
+    min-height: 42px;
+}
+.tb-input:focus {
+    outline: none;
+    border-color: var(--tb-primary);
+    box-shadow: 0 0 0 3px rgba(32, 107, 196, 0.12);
+}
+
+.tb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.tb-table thead th {
+    text-align: left;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--tb-muted);
+    font-weight: 700;
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--tb-border);
+    background: var(--tb-bg);
+    white-space: nowrap;
+}
+.tb-table tbody td { padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--tb-border); vertical-align: middle; }
+.tb-table tbody tr:last-child td { border-bottom: none; }
+.tb-table tbody tr:hover { background: rgba(32, 107, 196, 0.04); }
+.tb-money { font-family: var(--tb-font-mono); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ===== empty / loading / error states ===== */
+.tb-empty {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--tb-muted);
+}
+.tb-empty svg { margin: 0 auto 0.75rem; color: #c3cbd4; }
+.tb-empty-title { font-weight: 700; color: var(--tb-body); margin-bottom: 0.25rem; }
+.tb-empty-desc { font-size: 0.875rem; margin-bottom: 1rem; }
+.tb-skeleton {
+    border-radius: var(--tb-radius-sm);
+    background: linear-gradient(90deg, #e9edf1 25%, #f5f7fa 50%, #e9edf1 75%);
+    background-size: 200% 100%;
+    animation: tb-shimmer 1.2s ease-in-out infinite;
+}
+@keyframes tb-shimmer { to { background-position: -200% 0; } }
+.tb-error-box {
+    border: 1px solid var(--tb-danger);
+    background: var(--tb-danger-tint);
+    color: var(--tb-danger-dark);
+    border-radius: var(--tb-radius);
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+}
+
+/* ===== aksesibilitas: fokus & target sentuh ===== */
+.tb-btn:focus-visible, .tb-input:focus-visible, a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--tb-primary);
+    outline-offset: 2px;
+}
+@media (pointer: coarse) {
+    .tb-btn { min-height: 44px; }
+}
+
+/* ===== dark mode dasar (halaman non-Filament) ===== */
+.dark {
+    --tb-body: #e6e9ee;
+    --tb-muted: #9aa3b2;
+    --tb-border: #2b3648;
+    --tb-bg: #0f1722;
+    --tb-card: #16202e;
+}

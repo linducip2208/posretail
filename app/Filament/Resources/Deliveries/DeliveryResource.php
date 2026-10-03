@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 class DeliveryResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operasional';
 
     protected static ?int $navigationSort = 4;
 

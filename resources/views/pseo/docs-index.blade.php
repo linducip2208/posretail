@@ -36,7 +36,7 @@
 <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2.5">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
+            <x-ti name="building-store" class="w-6 h-6 text-[#2563eb]" />
             <span class="font-bold text-lg">POS Retail</span>
         </a>
         <div class="hidden md:flex items-center gap-6 text-sm font-medium">

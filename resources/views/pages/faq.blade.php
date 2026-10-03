@@ -13,7 +13,7 @@
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-xl text-slate-900"><span class="text-2xl">🏪</span> {{ config('app.name') }}</a>
+            <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-xl text-slate-900"><span><x-ti name="building-store" class="w-6 h-6" /></span> {{ config('app.name') }}</a>
             <div class="flex items-center gap-4">
                 <a href="{{ route('home') }}" class="text-sm text-slate-600 hover:text-blue-600 transition">Beranda</a>
                 <a href="{{ route('blog.index') }}" class="text-sm text-slate-600 hover:text-blue-600 transition">Blog</a>
@@ -48,7 +48,7 @@
                 <details class="group bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <summary class="flex items-center justify-between px-6 py-5 cursor-pointer hover:bg-slate-50 transition">
                         <span class="font-semibold text-slate-800">{{ $faq['q'] }}</span>
-                        <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <x-ti name="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" />
                     </summary>
                     <div class="px-6 pb-5 text-slate-600 leading-relaxed">{{ $faq['a'] }}</div>
                 </details>

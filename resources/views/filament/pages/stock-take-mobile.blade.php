@@ -5,7 +5,7 @@
         {{-- Header with outlet selector --}}
         <div class="flex items-center gap-3 mb-4">
             <div class="flex-1">
-                <select wire:model.change="outletId" class="w-full rounded-xl border-stone-300 text-sm py-3 px-4 bg-white shadow-sm">
+                <select wire:model.change="outletId" class="w-full rounded-xl border-slate-300 text-sm py-3 px-4 bg-white shadow-sm">
                     @foreach($this->outlets as $outlet)
                         <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
                     @endforeach
@@ -16,15 +16,13 @@
         {{-- Search bar --}}
         <div class="relative mb-4">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+                <x-ti name="search" class="h-5 w-5 text-slate-400" />
             </div>
             <input
                 type="text"
                 wire:model.live.debounce.300ms="search"
                 placeholder="Cari nama, SKU, atau scan barcode..."
-                class="w-full pl-10 pr-4 py-4 rounded-xl border-stone-300 text-base bg-white shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                class="w-full pl-10 pr-4 py-4 rounded-xl border-slate-300 text-base bg-white shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 autofocus
             >
         </div>
@@ -56,8 +54,8 @@
                      }">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-semibold text-stone-900 text-sm truncate">{{ $product->name }}</h3>
-                            <div class="flex items-center gap-2 mt-1 text-xs text-stone-500">
+                            <h3 class="font-semibold text-slate-900 text-sm truncate">{{ $product->name }}</h3>
+                            <div class="flex items-center gap-2 mt-1 text-xs text-slate-500">
                                 <span class="bg-stone-100 px-2 py-0.5 rounded-full">{{ $product->sku }}</span>
                                 @if($product->barcode)
                                     <span class="bg-stone-100 px-2 py-0.5 rounded-full">{{ $product->barcode }}</span>
@@ -70,7 +68,7 @@
 
                         {{-- System stock badge --}}
                         <div class="text-right ml-3 shrink-0">
-                            <div class="text-xs text-stone-400">Sistem</div>
+                            <div class="text-xs text-slate-400">Sistem</div>
                             <div class="text-lg font-bold text-stone-600">{{ $product->current_stock }}</div>
                         </div>
                     </div>
@@ -78,12 +76,12 @@
                     {{-- Actual qty input --}}
                     <div class="flex items-center gap-3">
                         <div class="flex-1">
-                            <label class="block text-xs font-medium text-stone-500 mb-1">Qty Aktual</label>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Qty Aktual</label>
                             <input
                                 type="number"
                                 x-model="actualQty"
                                 x-on:input="updateDiff()"
-                                class="w-full rounded-lg border-stone-300 text-lg py-3 px-4 bg-stone-50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                class="w-full rounded-lg border-slate-300 text-lg py-3 px-4 bg-slate-50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 placeholder="Masukkan jumlah..."
                                 inputmode="numeric"
                                 min="0"
@@ -92,12 +90,12 @@
 
                         {{-- Difference indicator --}}
                         <div class="text-right shrink-0" x-show="hasValue" x-cloak>
-                            <div class="text-xs font-medium mb-1" :class="difference === 0 ? 'text-stone-400' : 'text-stone-500'">Selisih</div>
+                            <div class="text-xs font-medium mb-1" :class="difference === 0 ? 'text-slate-400' : 'text-slate-500'">Selisih</div>
                             <div class="text-lg font-bold rounded-lg px-3 py-1"
                                  :class="{
-                                    'bg-green-50 text-green-700': difference > 0,
-                                    'bg-red-50 text-red-700': difference < 0,
-                                    'bg-stone-50 text-stone-500': difference === 0
+                                    'bg-[#2fb344]/8 text-[#268f36]': difference > 0,
+                                    'bg-[#d63939]/8 text-[#b22b2b]': difference < 0,
+                                    'bg-slate-50 text-slate-500': difference === 0
                                  }">
                                 <span x-show="difference > 0">+</span>
                                 <span x-text="difference"></span>
@@ -108,8 +106,8 @@
             @empty
                 <div class="text-center py-12">
                     <div class="text-4xl mb-3">📋</div>
-                    <p class="text-stone-500">Tidak ada produk ditemukan</p>
-                    <p class="text-stone-400 text-sm">Coba kata kunci lain atau pilih outlet berbeda</p>
+                    <p class="text-slate-500">Tidak ada produk ditemukan</p>
+                    <p class="text-slate-400 text-sm">Coba kata kunci lain atau pilih outlet berbeda</p>
                 </div>
             @endforelse
         </div>
@@ -119,7 +117,7 @@
         <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-stone-200 shadow-lg" style="z-index:50">
             <div class="flex items-center justify-between max-w-lg mx-auto">
                 <div>
-                    <span class="text-sm text-stone-500">{{ count($this->selectedProducts) }} produk dihitung</span>
+                    <span class="text-sm text-slate-500">{{ count($this->selectedProducts) }} produk dihitung</span>
                 </div>
                 <button
                     wire:click="completeStockTake"

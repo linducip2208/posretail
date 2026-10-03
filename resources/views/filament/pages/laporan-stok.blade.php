@@ -11,13 +11,13 @@
         </div>
         <div class="ml-auto flex gap-2">
             <a href="{{ route('export.stock', ['outlet_id' => $this->outletId, 'format' => 'csv']) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#2fb344] hover:bg-[#268f36] rounded-lg transition-colors shadow-sm">
+                <x-ti name="download" class="w-4 h-4" />
                 CSV
             </a>
             <a href="{{ route('export.stock', ['outlet_id' => $this->outletId, 'format' => 'pdf']) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#d63939] hover:bg-[#b22b2b] rounded-lg transition-colors shadow-sm">
+                <x-ti name="file-description" class="w-4 h-4" />
                 PDF
             </a>
         </div>
@@ -34,7 +34,7 @@
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Stok Menipis</div>
-            <div class="text-2xl font-extrabold {{ $this->lowStockCount > 0 ? 'text-rose-600' : 'text-gray-900' }}">{{ number_format($this->lowStockCount, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold {{ $this->lowStockCount > 0 ? 'text-[#d63939]' : 'text-gray-900' }}">{{ number_format($this->lowStockCount, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Kategori</div>
@@ -44,29 +44,29 @@
 
     @if($this->lowStockCount > 0)
     <div class="bg-white rounded-xl shadow-sm border border-rose-200 p-5 mb-6">
-        <h3 class="font-semibold text-rose-700 mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <h3 class="font-semibold text-[#b22b2b] mb-4 flex items-center gap-2">
+            <x-ti name="alert-triangle" class="w-5 h-5" />
             Peringatan — Produk Stok Menipis
         </h3>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="text-left border-b border-rose-100">
-                        <th class="pb-3 font-semibold text-rose-500 uppercase text-xs tracking-wider">Produk</th>
-                        <th class="pb-3 font-semibold text-rose-500 uppercase text-xs tracking-wider text-right">SKU</th>
-                        <th class="pb-3 font-semibold text-rose-500 uppercase text-xs tracking-wider text-right">Stok</th>
-                        <th class="pb-3 font-semibold text-rose-500 uppercase text-xs tracking-wider text-right">Min Stok</th>
-                        <th class="pb-3 font-semibold text-rose-500 uppercase text-xs tracking-wider text-right">Harga Beli</th>
+                    <tr class="text-left border-b border-[#d63939]/10">
+                        <th class="pb-3 font-semibold text-[#d63939] uppercase text-xs tracking-wider">Produk</th>
+                        <th class="pb-3 font-semibold text-[#d63939] uppercase text-xs tracking-wider text-right">SKU</th>
+                        <th class="pb-3 font-semibold text-[#d63939] uppercase text-xs tracking-wider text-right">Stok</th>
+                        <th class="pb-3 font-semibold text-[#d63939] uppercase text-xs tracking-wider text-right">Min Stok</th>
+                        <th class="pb-3 font-semibold text-[#d63939] uppercase text-xs tracking-wider text-right">Harga Beli</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($this->lowStockProducts as $product)
-                    <tr class="border-b border-rose-50">
-                        <td class="py-3 font-medium text-rose-800">{{ $product->name }}</td>
-                        <td class="py-3 text-right font-mono text-xs text-rose-600">{{ $product->sku }}</td>
-                        <td class="py-3 text-right font-bold text-rose-600">{{ number_format($product->current_stock) }}</td>
-                        <td class="py-3 text-right text-rose-500">{{ number_format($product->min_stock) }}</td>
-                        <td class="py-3 text-right text-rose-500">Rp {{ number_format($product->cost_price, 0, ',', '.') }}</td>
+                    <tr class="border-b border-[#d63939]/8">
+                        <td class="py-3 font-medium text-[#8f1d1d]">{{ $product->name }}</td>
+                        <td class="py-3 text-right font-mono text-xs text-[#d63939]">{{ $product->sku }}</td>
+                        <td class="py-3 text-right font-bold text-[#d63939]">{{ number_format($product->current_stock) }}</td>
+                        <td class="py-3 text-right text-[#d63939]">{{ number_format($product->min_stock) }}</td>
+                        <td class="py-3 text-right text-[#d63939]">Rp {{ number_format($product->cost_price, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -140,7 +140,7 @@
                             @endphp
                             <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-{{ $color }}-100 text-{{ $color }}-700">{{ $label }}</span>
                         </td>
-                        <td class="py-3 text-right font-medium {{ $movement->type === 'out' ? 'text-rose-600' : 'text-emerald-600' }}">
+                        <td class="py-3 text-right font-medium {{ $movement->type === 'out' ? 'text-[#d63939]' : 'text-[#2fb344]' }}">
                             {{ $movement->type === 'out' ? '-' : '+' }}{{ number_format($movement->quantity) }}
                         </td>
                         <td class="py-3 text-gray-500">{{ $movement->reference_type ? ucfirst($movement->reference_type) . ' #' . $movement->reference_id : '-' }}</td>

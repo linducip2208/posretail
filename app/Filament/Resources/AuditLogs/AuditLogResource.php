@@ -15,7 +15,7 @@ use Filament\Support\Icons\Heroicon;
 class AuditLogResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '⚙️ Pengaturan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan';
 
     protected static ?int $navigationSort = 3;
 

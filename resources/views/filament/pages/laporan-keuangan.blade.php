@@ -27,13 +27,13 @@
         </div>
         <div class="ml-auto flex gap-2">
             <a href="{{ route('export.financial', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId, 'format' => 'csv']) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#2fb344] hover:bg-[#268f36] rounded-lg transition-colors shadow-sm">
+                <x-ti name="download" class="w-4 h-4" />
                 CSV
             </a>
             <a href="{{ route('export.financial', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId, 'format' => 'pdf']) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#d63939] hover:bg-[#b22b2b] rounded-lg transition-colors shadow-sm">
+                <x-ti name="file-description" class="w-4 h-4" />
                 PDF
             </a>
         </div>
@@ -42,35 +42,35 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Pendapatan</div>
-            <div class="text-2xl font-extrabold text-emerald-600">Rp {{ number_format($this->totalRevenue, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#2fb344]">Rp {{ number_format($this->totalRevenue, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Pengeluaran</div>
-            <div class="text-2xl font-extrabold text-rose-600">Rp {{ number_format($this->totalExpense, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#d63939]">Rp {{ number_format($this->totalExpense, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Laba / Rugi</div>
-            <div class="text-2xl font-extrabold {{ $this->totalProfit >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">Rp {{ number_format(abs($this->totalProfit), 0, ',', '.') }}</div>
-            <div class="text-xs mt-1 {{ $this->totalProfit >= 0 ? 'text-emerald-500' : 'text-rose-500' }}">{{ $this->totalProfit >= 0 ? 'Laba' : 'Rugi' }}</div>
+            <div class="text-2xl font-extrabold {{ $this->totalProfit >= 0 ? 'text-[#2fb344]' : 'text-[#d63939]' }}">Rp {{ number_format(abs($this->totalProfit), 0, ',', '.') }}</div>
+            <div class="text-xs mt-1 {{ $this->totalProfit >= 0 ? 'text-[#2fb344]' : 'text-[#d63939]' }}">{{ $this->totalProfit >= 0 ? 'Laba' : 'Rugi' }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Piutang Belum Lunas</div>
-            <div class="text-2xl font-extrabold text-amber-600">Rp {{ number_format($this->unpaidSales, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#c87f00]">Rp {{ number_format($this->unpaidSales, 0, ',', '.') }}</div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Uang Masuk</div>
-            <div class="text-xl font-extrabold text-emerald-600">Rp {{ number_format($this->cashFlow['money_in'], 0, ',', '.') }}</div>
+            <div class="text-xl font-extrabold text-[#2fb344]">Rp {{ number_format($this->cashFlow['money_in'], 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Uang Keluar</div>
-            <div class="text-xl font-extrabold text-rose-600">Rp {{ number_format($this->cashFlow['money_out'], 0, ',', '.') }}</div>
+            <div class="text-xl font-extrabold text-[#d63939]">Rp {{ number_format($this->cashFlow['money_out'], 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Arus Kas Bersih</div>
-            <div class="text-xl font-extrabold {{ $this->cashFlow['net'] >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">Rp {{ number_format(abs($this->cashFlow['net']), 0, ',', '.') }}</div>
+            <div class="text-xl font-extrabold {{ $this->cashFlow['net'] >= 0 ? 'text-[#2fb344]' : 'text-[#d63939]' }}">Rp {{ number_format(abs($this->cashFlow['net']), 0, ',', '.') }}</div>
         </div>
     </div>
 
@@ -143,9 +143,9 @@
                         <td class="py-3 text-xs text-gray-500">{{ $payment->outlet_name ?: '-' }}</td>
                         <td class="py-3">
                             <span class="px-2 py-0.5 rounded-full text-xs font-semibold
-                                {{ $payment->method === 'Cash' || $payment->method === 'Tunai' ? 'bg-emerald-100 text-emerald-700' : '' }}
-                                {{ $payment->method === 'QRIS' ? 'bg-indigo-100 text-indigo-700' : '' }}
-                                {{ $payment->method === 'Transfer' || $payment->method === 'Debit' ? 'bg-amber-100 text-amber-700' : '' }}">
+                                {{ $payment->method === 'Cash' || $payment->method === 'Tunai' ? 'bg-[#2fb344]/15 text-[#268f36]' : '' }}
+                                {{ $payment->method === 'QRIS' ? 'bg-[#206bc4]/10 text-[#1a569d]' : '' }}
+                                {{ $payment->method === 'Transfer' || $payment->method === 'Debit' ? 'bg-[#f59f00]/15 text-[#c87f00]' : '' }}">
                                 {{ $payment->method }}
                             </span>
                         </td>
@@ -196,9 +196,9 @@
                             @php $pm = $order->payments->first()?->paymentMethod?->name; @endphp
                             @if($pm)
                             <span class="px-2 py-0.5 rounded-full text-xs font-semibold
-                                {{ $pm === 'Cash' || $pm === 'Tunai' ? 'bg-emerald-100 text-emerald-700' : '' }}
-                                {{ $pm === 'QRIS' ? 'bg-indigo-100 text-indigo-700' : '' }}
-                                {{ $pm === 'Transfer' || $pm === 'Debit' ? 'bg-amber-100 text-amber-700' : '' }}">
+                                {{ $pm === 'Cash' || $pm === 'Tunai' ? 'bg-[#2fb344]/15 text-[#268f36]' : '' }}
+                                {{ $pm === 'QRIS' ? 'bg-[#206bc4]/10 text-[#1a569d]' : '' }}
+                                {{ $pm === 'Transfer' || $pm === 'Debit' ? 'bg-[#f59f00]/15 text-[#c87f00]' : '' }}">
                                 {{ $pm }}
                             </span>
                             @else
@@ -207,9 +207,9 @@
                         </td>
                         <td class="py-3">
                             <span class="px-2 py-0.5 rounded-full text-xs font-semibold
-                                {{ $order->payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : '' }}
-                                {{ $order->payment_status === 'partial' ? 'bg-amber-100 text-amber-700' : '' }}
-                                {{ $order->payment_status === 'unpaid' ? 'bg-red-100 text-red-700' : '' }}">
+                                {{ $order->payment_status === 'paid' ? 'bg-[#2fb344]/15 text-[#268f36]' : '' }}
+                                {{ $order->payment_status === 'partial' ? 'bg-[#f59f00]/15 text-[#c87f00]' : '' }}
+                                {{ $order->payment_status === 'unpaid' ? 'bg-[#d63939]/10 text-[#b22b2b]' : '' }}">
                                 {{ $order->payment_status === 'paid' ? 'Lunas' : ($order->payment_status === 'partial' ? 'Sebagian' : 'Belum') }}
                             </span>
                         </td>

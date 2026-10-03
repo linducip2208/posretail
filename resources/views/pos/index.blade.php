@@ -46,55 +46,72 @@
     <input type="text" id="barcodeInput" autocomplete="off">
 
     {{-- TOP BAR --}}
-    <header class="bg-blue-600 text-white px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-4 shadow-lg z-10" style="flex-shrink:0">
-        <div class="font-extrabold text-lg tracking-tight">POS</div>
+    <header class="bg-white text-slate-700 px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-3 border-b border-slate-200 shadow-sm z-10" style="flex-shrink:0">
+        <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-[#206bc4] text-white flex items-center justify-center font-extrabold">P</span>
+            <div class="font-extrabold text-lg tracking-tight text-slate-800">POS</div>
+        </div>
         <div class="flex items-center gap-2 text-sm">
-            <select id="orderType" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
+            <select id="orderType" class="bg-slate-100 text-slate-700 rounded-lg px-2 py-1.5 text-sm border border-slate-200 outline-none focus:border-[#206bc4]">
                 @foreach($orderTypes as $type)
                 <option value="{{ $type['value'] }}">{{ $type['label'] }}</option>
                 @endforeach
             </select>
-            <select id="outletId" class="bg-indigo-600 text-white rounded px-2 py-1 text-sm border border-indigo-500">
+            <select id="outletId" class="bg-slate-100 text-slate-700 rounded-lg px-2 py-1.5 text-sm border border-slate-200 outline-none focus:border-[#206bc4]">
                 @forelse($outlets as $o)
                 <option value="{{ $o->id }}">{{ $o->name }}</option>
                 @empty
                 <option value="">-- Tidak ada outlet --</option>
                 @endforelse
             </select>
-            <span id="queueDisplay" class="bg-green-500 text-white px-2 py-0.5 rounded font-bold text-xs hidden">#001</span>
+            <span id="queueDisplay" class="bg-[#2fb344] text-white px-2 py-0.5 rounded-md font-bold text-xs hidden">#001</span>
         </div>
         <div class="flex-1"></div>
-        <span id="syncQueueBadge" class="bg-amber-500 text-white px-2 py-0.5 rounded-full text-xs font-bold mr-2 hidden" title="Transaksi offline pending sync">0</span>
-        <button onclick="window.open('/pos/display','_blank','width=1024,height=768')" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded text-sm flex items-center gap-1 mr-2" title="Customer Display">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"/></svg>
+        <span id="syncQueueBadge" class="bg-[#f59f00] text-white px-2 py-0.5 rounded-full text-xs font-bold mr-1 hidden" title="Transaksi offline pending sync">0</span>
+        <button onclick="window.open('/pos/display','_blank','width=1024,height=768')" aria-label="Buka customer display" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 mr-1 border border-slate-200 min-h-[40px]" title="Customer Display">
+            <x-ti name="device-desktop" class="w-4 h-4" />
             Display
         </button>
         @auth
-        <span class="text-xs text-indigo-200">{{ auth()->user()->name }}</span>
+        <span class="text-xs text-slate-500 flex items-center gap-1.5"><x-ti name="user" class="w-4 h-4" />{{ auth()->user()->name }}</span>
         @else
-        <a href="/admin/login" class="bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded text-sm font-bold">LOGIN DULU</a>
+        <a href="/admin/login" class="bg-[#d63939] hover:bg-[#c22f2f] text-white px-3 py-1.5 rounded-lg text-sm font-bold">LOGIN DULU</a>
         @endauth
-        <button onclick="toggleScanner()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded text-sm flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5Zm0 9.75c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5Zm9.75-9.75c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Zm0 9.75c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5Z"/></svg>
+        <button onclick="toggleScanner()" aria-label="Scan barcode kamera" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-slate-200 min-h-[40px]">
+            <x-ti name="barcode" class="w-4 h-4" />
             Scan
         </button>
-        <button onclick="connectPrinter()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded text-sm flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"/></svg>
+        <button onclick="connectPrinter()" aria-label="Hubungkan printer" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-slate-200 min-h-[40px]">
+            <x-ti name="printer" class="w-4 h-4" />
             Print
         </button>
-        <a href="/admin" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm">Admin</a>
+        <a href="/admin" class="bg-[#206bc4]/10 hover:bg-[#206bc4]/20 text-[#206bc4] px-3 py-1.5 rounded-lg text-sm font-semibold">Admin</a>
     </header>
 
     {{-- MAIN LAYOUT --}}
     <div id="mainLayout" style="display:flex;flex:1;min-height:0;overflow:hidden">
         <div id="productPanel" style="display:flex;flex-direction:column;flex:1;min-width:0;overflow:hidden">
-            {{-- Search --}}
-            <div class="p-3 bg-white border-b" style="flex-shrink:0">
+            {{-- Search + Category --}}
+            <div class="p-3 bg-white border-b border-slate-200" style="flex-shrink:0">
                 <div class="flex gap-2">
                     <div class="relative flex-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#9ca3af" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
-                        <input type="text" id="searchInput" placeholder="Cari produk atau scan barcode..." class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
+                        <x-ti name="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input type="text" id="searchInput" placeholder="Cari produk atau scan barcode... (F1)" aria-label="Cari produk" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#206bc4]/30 focus:border-[#206bc4] outline-none text-sm bg-white">
                     </div>
+                    <select id="categoryFilter" aria-label="Filter kategori" onchange="loadProducts(1)" class="border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-white text-slate-700 outline-none focus:border-[#206bc4] max-w-[10rem]">
+                        <option value="">Semua Kategori</option>
+                        @foreach($categories as $c)
+                        <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="hidden lg:flex items-center gap-3 mt-2 text-[11px] text-slate-400" aria-hidden="true">
+                    <span><kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono">F1</kbd> Cari</span>
+                    <span><kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono">F2</kbd> Bayar</span>
+                    <span><kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono">F3</kbd> Scan</span>
+                    <span><kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono">F4</kbd> Bersihkan</span>
+                    <span><kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono">F5</kbd> Hold</span>
+                    <span><kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono">Esc</kbd> Tutup</span>
                 </div>
             </div>
 
@@ -116,8 +133,8 @@
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-lg">Keranjang</h2>
                     <div class="flex items-center gap-2">
-                        <span id="cartCount" class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
-                        <button onclick="closeCart()" class="md:hidden text-gray-400 hover:text-red-600 text-2xl leading-none">&times;</button>
+                        <span id="cartCount" class="bg-[#206bc4]/10 text-[#206bc4] px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+                        <button onclick="closeCart()" class="md:hidden text-gray-400 hover:text-[#d63939] text-2xl leading-none">&times;</button>
                     </div>
                 </div>
                 <div id="cartCustomer" class="mt-2 text-xs text-gray-500">
@@ -141,37 +158,37 @@
                 <div id="voucherStatus" class="hidden text-xs mb-2"></div>
                 <div class="space-y-1 text-sm">
                     <div class="flex justify-between"><span>Subtotal</span><span id="subtotal" class="font-mono font-semibold">Rp 0</span></div>
-                    <div class="flex justify-between"><span>Diskon</span><span id="discount" class="font-mono text-red-600">Rp 0</span></div>
+                    <div class="flex justify-between"><span>Diskon</span><span id="discount" class="font-mono text-[#d63939]">Rp 0</span></div>
                     <div class="flex justify-between items-center">
                         <span class="flex items-center gap-2">
-                            <input type="checkbox" id="useTax" checked onchange="updateSummary()" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <input type="checkbox" id="useTax" checked onchange="updateSummary()" class="w-4 h-4 rounded border-gray-300 text-[#206bc4] focus:ring-[#206bc4]">
                             <span>Pajak (<span id="taxRateLabel">{{ $taxPercent }}</span>%)</span>
                         </span>
                         <span id="tax" class="font-mono">Rp 0</span>
                     </div>
-                    <div class="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total</span><span id="total" class="font-mono text-indigo-700">Rp 0</span></div>
+                    <div class="flex justify-between items-center font-bold text-lg border-t-2 border-[#206bc4] bg-[#206bc4]/5 -mx-4 px-4 pt-2 pb-1 mt-2"><span>TOTAL</span><span id="total" class="font-mono text-[#1a569d] text-xl">Rp 0</span></div>
                 </div>
                 <div class="flex gap-2 mt-3">
-                    <button onclick="showPayment()" id="payBtn" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">Bayar</button>
-                    <button onclick="holdCart()" class="bg-yellow-500 text-white px-4 py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors text-sm" title="Tahan Transaksi">Hold</button>
+                    <button onclick="showPayment()" id="payBtn" class="flex-1 bg-[#206bc4] text-white py-3 rounded-lg font-bold hover:bg-[#1a569d] active:scale-[0.98] transition-all shadow-sm">Bayar</button>
+                    <button onclick="holdCart()" class="bg-[#f59f00] text-white px-4 py-3 rounded-lg font-bold hover:bg-[#e89400] active:scale-[0.98] transition-all text-sm shadow-sm" title="Tahan Transaksi">Hold</button>
                 </div>
-                <button onclick="showHeldCarts()" id="heldBadge" class="w-full mt-1.5 text-xs text-blue-600 hover:text-blue-800 py-1 hidden">0 transaksi ditahan</button>
-                <button onclick="clearCart()" class="w-full mt-1.5 text-xs text-gray-500 hover:text-red-600 py-1">Kosongkan Keranjang</button>
+                <button onclick="showHeldCarts()" id="heldBadge" class="w-full mt-1.5 text-xs text-[#206bc4] hover:text-[#1a569d] py-1 hidden">0 transaksi ditahan</button>
+                <button onclick="clearCart()" class="w-full mt-1.5 text-xs text-gray-500 hover:text-[#d63939] py-1">Kosongkan Keranjang</button>
             </div>
         </div>
     </div>
 
     {{-- MOBILE CART FAB --}}
-    <button id="cartFab" onclick="openCart()" class="md:hidden fixed bottom-4 right-4 z-30 bg-blue-600 text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 font-bold hover:bg-blue-700 active:scale-95 transition">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
-        <span id="cartFabCount" class="bg-white text-blue-700 rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
+    <button id="cartFab" onclick="openCart()" class="md:hidden fixed bottom-4 right-4 z-30 bg-[#206bc4] text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 font-bold hover:bg-[#1a569d] active:scale-95 transition">
+        <x-ti name="shopping-cart" class="w-6 h-6" />
+        <span id="cartFabCount" class="bg-white text-[#1a569d] rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
         <span id="cartFabTotal" class="font-mono text-sm">Rp 0</span>
     </button>
     <div id="scannerOverlay" class="fixed inset-0 bg-black/70 z-50 flex flex-col items-center justify-center hidden">
         <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-lg">Scan Barcode</h3>
-                <button onclick="stopScanner()" class="text-gray-500 hover:text-red-600 text-2xl">&times;</button>
+                <button onclick="stopScanner()" class="text-gray-500 hover:text-[#d63939] text-2xl">&times;</button>
             </div>
             <div id="scannerView" class="bg-black rounded-xl overflow-hidden" style="height: 250px;">
                 <video id="scannerVideo" class="w-full h-full object-cover"></video>
@@ -185,7 +202,7 @@
     <div id="paymentModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden modal-overlay" onclick="hidePayment()">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4" onclick="event.stopPropagation()">
             <h3 class="font-bold text-xl mb-4">Pembayaran</h3>
-            <div id="paymentTotal" class="text-3xl font-extrabold text-indigo-700 mb-4 font-mono">Rp 0</div>
+            <div id="paymentTotal" class="text-3xl font-extrabold text-[#1a569d] mb-4 font-mono">Rp 0</div>
 
             <label class="block text-sm font-semibold text-gray-700 mb-1">Metode Bayar</label>
             <select id="paymentMethod" class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 text-sm">
@@ -196,11 +213,11 @@
 
             <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah Dibayar</label>
             <input type="number" id="paidAmount" class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-2 text-lg font-mono" placeholder="Rp 0" oninput="calculateChange()" onkeydown="if(event.key==='Enter')processPayment()" inputmode="numeric">
-            <div id="changeDisplay" class="text-sm font-semibold text-green-600 mb-4 hidden">Kembalian: <span id="changeAmount" class="font-mono">Rp 0</span></div>
+            <div id="changeDisplay" class="text-sm font-semibold text-[#2fb344] mb-4 hidden">Kembalian: <span id="changeAmount" class="font-mono">Rp 0</span></div>
 
             <div class="flex gap-2">
                 <button onclick="hidePayment()" class="flex-1 border border-gray-300 py-2.5 rounded-lg font-semibold hover:bg-gray-50">Batal</button>
-                <button onclick="processPayment()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700">Proses</button>
+                <button onclick="processPayment()" class="flex-1 bg-[#206bc4] text-white py-2.5 rounded-lg font-bold hover:bg-[#1a569d]">Proses</button>
             </div>
         </div>
     </div>
@@ -210,7 +227,7 @@
         <div class="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-xl">Transaksi Ditahan</h3>
-                <button onclick="hideHeldCarts()" class="text-gray-400 hover:text-red-600 text-2xl">&times;</button>
+                <button onclick="hideHeldCarts()" class="text-gray-400 hover:text-[#d63939] text-2xl">&times;</button>
             </div>
             <div id="heldList" class="space-y-2">
                 <div class="text-center text-gray-400 py-6">Tidak ada transaksi ditahan</div>
@@ -223,7 +240,7 @@
         <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between mb-2">
                 <h3 class="font-bold text-lg">Input IMEI / Serial</h3>
-                <button onclick="cancelSerials()" class="text-gray-500 hover:text-red-600 text-2xl">&times;</button>
+                <button onclick="cancelSerials()" class="text-gray-500 hover:text-[#d63939] text-2xl">&times;</button>
             </div>
             <p class="text-sm text-gray-600 mb-3">Produk: <span id="serialProductName" class="font-semibold text-gray-900"></span></p>
             <textarea id="serialInput" rows="5" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono" placeholder="Satu IMEI per baris.&#10;Contoh:&#10;356789012345678&#10;356789012345679"></textarea>
@@ -231,7 +248,7 @@
             <div class="flex gap-2">
                 <button onclick="cancelSerials()" class="flex-1 border border-gray-300 py-2.5 rounded-lg font-semibold hover:bg-gray-50">Batal</button>
                 <button id="serialSkip" onclick="skipSerials()" class="border border-gray-300 py-2.5 px-3 rounded-lg font-semibold hover:bg-gray-50 text-gray-600" style="display:none">Lewati</button>
-                <button onclick="confirmSerials()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700">Simpan</button>
+                <button onclick="confirmSerials()" class="flex-1 bg-[#206bc4] text-white py-2.5 rounded-lg font-bold hover:bg-[#1a569d]">Simpan</button>
             </div>
         </div>
     </div>
@@ -304,38 +321,46 @@
             const catId = document.getElementById('categoryFilter')?.value || '';
             const grid = document.getElementById('productGrid');
 
-            grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-20">Memuat...</div>';
+            grid.innerHTML = Array.from({length: 12}).map(() =>
+                '<div class="bg-white rounded-lg border border-slate-200 overflow-hidden animate-pulse"><div class="h-24 bg-slate-200"></div><div class="p-2 space-y-2"><div class="h-3 w-4/5 bg-slate-200 rounded"></div><div class="h-3 w-2/5 bg-slate-200 rounded"></div></div></div>'
+            ).join('');
 
             let url = `${API}/products?page=${page}&per_page=48`;
             if (search) url += `&search=${encodeURIComponent(search)}`;
             if (catId) url += `&category_id=${catId}`;
 
-            const res = await fetch(url);
-            const data = await res.json();
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
 
-            renderProducts(data.data);
-            renderPagination(data);
-            currentPage = page;
+                renderProducts(data.data);
+                renderPagination(data);
+                currentPage = page;
+            } catch (e) {
+                grid.innerHTML = '<div class="col-span-full text-center py-16 px-4"><div class="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5.5 12.5a10 10 0 0 1 13 0"/><path d="M9 16a5 5 0 0 1 6 0"/><path d="M12 19.5h.01"/></svg></div><div class="font-bold text-slate-700 mb-1">Gagal memuat produk</div><div class="text-sm text-slate-500 mb-4">Periksa koneksi lalu coba lagi.</div><button onclick="loadProducts(' + page + ')" class="bg-[#206bc4] hover:bg-[#1a569d] text-white font-semibold text-sm px-5 py-2.5 rounded-lg min-h-[42px]">Coba Lagi</button></div>';
+            }
         }
 
         function renderProducts(products) {
             const grid = document.getElementById('productGrid');
             if (!products || products.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-20">Produk tidak ditemukan</div>';
+                grid.innerHTML = '<div class="col-span-full text-center py-16 px-4"><div class="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6 -6"/></svg></div><div class="font-bold text-slate-700 mb-1">Produk tidak ditemukan</div><div class="text-sm text-slate-500">Coba kata kunci atau kategori lain.</div></div>';
                 return;
             }
 
             grid.innerHTML = products.map(p => {
                 const out = Number(p.current_stock) <= 0;
-                const stockClass = out ? 'text-red-600' : (p.current_stock > 10 ? 'text-green-600' : 'text-orange-500');
+                const stockClass = out ? 'text-[#d63939]' : (p.current_stock > 10 ? 'text-[#2fb344]' : 'text-[#fd7e14]');
                 const stockLabel = out ? 'Stok 0' : p.current_stock;
                 const cardClass = out
-                    ? 'bg-white rounded-xl border border-gray-200 overflow-hidden relative opacity-60 grayscale'
-                    : 'product-card bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-indigo-300 hover:shadow-md relative';
+                    ? 'bg-white rounded-lg border border-slate-200 overflow-hidden relative opacity-60 grayscale'
+                    : 'product-card bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-[#206bc4] hover:shadow-md relative';
                 const clickAttr = out
                     ? 'style="cursor:not-allowed" onclick="alert(\'Stok habis — tidak bisa ditambahkan\')"'
                     : `onclick="addToCart(${p.id}, '${escapeHtml(p.name)}', ${p.selling_price}, '${p.serial_tracking || 'none'}')"`;
-                const badge = out ? '<div class="absolute top-1 right-1 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">HABIS</div>' : '';
+                const badge = out ? '<div class="absolute top-1 right-1 bg-[#d63939] text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">HABIS</div>'
+                    : ((p.variants && p.variants.length > 0) ? '<div class="absolute top-1 right-1 bg-[#206bc4] text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">' + p.variants.length + ' VARIAN</div>' : '');
                 return `
                 <div class="${cardClass}" ${clickAttr}>
                     ${badge}
@@ -344,7 +369,7 @@
                     </div>
                     <div class="p-2">
                         <div class="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight">${escapeHtml(p.name)}</div>
-                        <div class="text-indigo-700 font-bold text-xs font-mono mt-1">${formatRupiah(p.selling_price)}</div>
+                        <div class="text-[#1a569d] font-bold text-xs font-mono mt-1">${formatRupiah(p.selling_price)}</div>
                         <div class="flex items-center justify-between mt-1">
                             <span class="text-[10px] text-gray-400 truncate max-w-[60px]">${p.sku || '-'}</span>
                             <span class="text-[10px] ${stockClass} font-semibold">${stockLabel}</span>
@@ -362,7 +387,7 @@
             }
             let html = '';
             for (let i = 1; i <= data.last_page; i++) {
-                html += `<button onclick="loadProducts(${i})" class="px-3 py-1 rounded text-sm ${i === currentPage ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}">${i}</button>`;
+                html += `<button onclick="loadProducts(${i})" class="px-3 py-1 rounded-md text-sm font-medium ${i === currentPage ? 'bg-[#206bc4] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${i}</button>`;
             }
             container.innerHTML = html;
         }
@@ -563,8 +588,8 @@
                             <div class="text-sm font-semibold text-gray-800 truncate">${escapeHtml(item.name)}</div>
                             <div class="text-xs text-gray-500 font-mono">${formatRupiah(item.price)}</div>
                         </div>
-                        <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600 ml-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                        <button onclick="removeFromCart(${i})" class="text-[#e57373] hover:text-[#d63939] ml-1">
+                            <x-ti name="x" class="w-4 h-4" />
                         </button>
                     </div>
                     <div class="flex items-center justify-between mt-2">
@@ -573,12 +598,12 @@
                             <span class="w-8 text-center font-mono text-sm">${item.qty}</span>
                             <button onclick="updateQty(${i}, 1)" class="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-sm font-bold">+</button>
                         </div>
-                        <span class="font-mono font-bold text-sm text-indigo-700">${formatRupiah(item.price * item.qty)}</span>
+                        <span class="font-mono font-bold text-sm text-[#1a569d]">${formatRupiah(item.price * item.qty)}</span>
                     </div>
                     ${(item.serials && item.serials.length)
                         ? `<div class="mt-1 text-[10px] text-gray-500 font-mono truncate">IMEI: ${item.serials.map(s => escapeHtml(s)).join(', ')}</div>`
                         : (item.serialTracking === 'optional'
-                            ? `<div class="mt-1"><button onclick="addImeiToItem(${i})" class="text-[10px] text-blue-600 hover:text-blue-800 font-semibold">+ Tambah IMEI</button></div>`
+                            ? `<div class="mt-1"><button onclick="addImeiToItem(${i})" class="text-[10px] text-[#206bc4] hover:text-[#1a569d] font-semibold">+ Tambah IMEI</button></div>`
                             : '')}
                 </div>
             `).join('');
@@ -642,7 +667,7 @@
                 if (!res.ok) {
                     voucherDiscount = 0;
                     voucherCode = '';
-                    statusEl.className = 'text-xs mb-2 text-red-600 font-semibold';
+                    statusEl.className = 'text-xs mb-2 text-[#d63939] font-semibold';
                     statusEl.textContent = (data.message || 'Voucher tidak valid.');
                     statusEl.classList.remove('hidden');
                     updateSummary();
@@ -650,7 +675,7 @@
                 }
                 voucherDiscount = parseFloat(data.discount) || 0;
                 voucherCode = code;
-                statusEl.className = 'text-xs mb-2 text-green-600 font-semibold';
+                statusEl.className = 'text-xs mb-2 text-[#2fb344] font-semibold';
                 statusEl.textContent = 'Voucher ' + code + ' — diskon ' + formatRupiah(voucherDiscount);
                 statusEl.classList.remove('hidden');
                 updateSummary();
@@ -693,7 +718,7 @@
             if (paid > 0) {
                 display.classList.remove('hidden');
                 document.getElementById('changeAmount').textContent = formatRupiah(change);
-                display.className = `text-sm font-semibold mb-4 ${change >= 0 ? 'text-green-600' : 'text-red-600'}`;
+                display.className = `text-sm font-semibold mb-4 ${change >= 0 ? 'text-[#2fb344]' : 'text-[#d63939]'}`;
             } else {
                 display.classList.add('hidden');
             }
@@ -903,10 +928,10 @@
                             <span class="text-xs text-gray-400">${h.time}</span>
                         </div>
                         <div class="text-sm text-gray-500 mb-2">${h.items.length} item &bull; ${h.items.map(i=>i.qty).reduce((a,b)=>a+b,0)} pcs</div>
-                        <div class="font-mono font-bold text-blue-600 mb-3">${formatRupiah(total)}</div>
+                        <div class="font-mono font-bold text-[#206bc4] mb-3">${formatRupiah(total)}</div>
                         <div class="flex gap-2">
-                            <button onclick="recallHeld(${h.id})" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-blue-700">Lanjutkan</button>
-                            <button onclick="removeHeld(${h.id})" class="border border-red-300 text-red-600 px-4 py-1.5 rounded-lg text-sm hover:bg-red-50">Hapus</button>
+                            <button onclick="recallHeld(${h.id})" class="bg-[#206bc4] text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-[#1a569d]">Lanjutkan</button>
+                            <button onclick="removeHeld(${h.id})" class="border border-[#e8a3a3] text-[#d63939] px-4 py-1.5 rounded-lg text-sm hover:bg-[#d63939]/8">Hapus</button>
                         </div>
                     </div>`;
                 }).join('');

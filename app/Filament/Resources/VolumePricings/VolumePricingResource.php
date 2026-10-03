@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 class VolumePricingResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
+    protected static string|\UnitEnum|null $navigationGroup = 'Inventory';
 
     protected static ?int $navigationSort = 12;
 

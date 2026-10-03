@@ -12,7 +12,7 @@ use UnitEnum;
 
 class BroadcastWa extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = '🎁 Promo';
+    protected static string|UnitEnum|null $navigationGroup = 'Promo';
 
     protected static ?int $navigationSort = 3;
 

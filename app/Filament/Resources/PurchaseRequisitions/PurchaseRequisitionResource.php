@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 class PurchaseRequisitionResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '🛒 Pembelian';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pembelian';
 
     protected static ?int $navigationSort = 4;
 

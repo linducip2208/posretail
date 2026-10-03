@@ -15,7 +15,7 @@ class PengaturanSistem extends Page
     use WithFileUploads;
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static string|UnitEnum|null $navigationGroup = '⚙️ Sistem';
+    protected static string|UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 1;
 

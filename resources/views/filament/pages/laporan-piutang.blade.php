@@ -11,8 +11,8 @@
         </div>
         <div class="ml-auto">
             <a href="{{ route('export.receivables', ['outlet_id' => $this->outletId]) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#2fb344] hover:bg-[#268f36] rounded-lg transition-colors shadow-sm">
+                <x-ti name="download" class="w-4 h-4" />
                 CSV
             </a>
         </div>
@@ -21,7 +21,7 @@
     <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Piutang</div>
-            <div class="text-2xl font-extrabold text-rose-600">Rp {{ number_format($this->totalReceivable, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#d63939]">Rp {{ number_format($this->totalReceivable, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">0–30 hari</div>
@@ -37,7 +37,7 @@
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">&gt;90 hari</div>
-            <div class="text-xl font-bold text-rose-600">Rp {{ number_format($this->agingOver90, 0, ',', '.') }}</div>
+            <div class="text-xl font-bold text-[#d63939]">Rp {{ number_format($this->agingOver90, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Jumlah Pelanggan</div>
@@ -70,9 +70,9 @@
                             <td class="px-4 py-3">{{ $order->outlet?->name ?? '-' }}</td>
                             <td class="px-4 py-3">{{ $order->created_at?->format('d/m/Y') }}</td>
                             <td class="px-4 py-3 text-right font-mono">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                            <td class="px-4 py-3 text-right font-mono font-bold text-rose-600">Rp {{ number_format($order->remaining_amount, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-right font-mono font-bold text-[#d63939]">Rp {{ number_format($order->remaining_amount, 0, ',', '.') }}</td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold {{ $order->payment_status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600' }}">
+                                <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold {{ $order->payment_status === 'partial' ? 'bg-[#f59f00]/15 text-[#c87f00]' : 'bg-gray-100 text-gray-600' }}">
                                     {{ $order->payment_status }}
                                 </span>
                             </td>

@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class OrderResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '💰 Penjualan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Penjualan';
 
     protected static ?int $navigationSort = 1;
 

@@ -11,7 +11,7 @@ use UnitEnum;
 
 class LaporanNeraca extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = '📈 Laporan';
+    protected static string|UnitEnum|null $navigationGroup = 'Laporan';
 
     protected static ?int $navigationSort = 8;
 

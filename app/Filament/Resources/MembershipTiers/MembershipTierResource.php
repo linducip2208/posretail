@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 class MembershipTierResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '👥 Customer';
+    protected static string|\UnitEnum|null $navigationGroup = 'Customer';
 
     protected static ?int $navigationSort = 3;
 

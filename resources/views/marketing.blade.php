@@ -235,7 +235,7 @@
                     <img src="{{ $logoUrl }}" alt="{{ $appName }}" class="h-8 w-auto">
                 @else
                     <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30 transition-transform group-hover:scale-110">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
+                        <x-ti name="building-store" class="w-6 h-6 text-[white]" />
                     </div>
                 @endif
                 <span class="font-bold text-lg tracking-tight">{{ $appName }}</span>
@@ -262,8 +262,11 @@
             <span class="text-indigo-200">POS Retail v1.0 — Sistem Kasir Modern</span>
         </div>
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-8">
-            {{ $heroHeadline }}<br>
-            <span class="gradient-text">untuk Toko Retail Anda</span>
+            {{ $heroHeadline }}
+            @unless (str_ends_with(trim($heroHeadline), 'untuk Toko Retail Anda'))
+                <br>
+                <span class="gradient-text">untuk Toko Retail Anda</span>
+            @endunless
         </h1>
         <p class="text-lg md:text-xl text-indigo-200 max-w-2xl mx-auto mb-12 leading-relaxed">
             {{ $heroSub }}
@@ -271,25 +274,25 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#fitur" class="px-8 py-3.5 btn-primary text-white rounded-xl font-bold text-lg inline-flex items-center gap-2 justify-center">
                 Jelajahi Fitur
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+                <x-ti name="arrow-right" class="w-5 h-5" />
             </a>
             <a href="#demo" class="px-8 py-3.5 btn-outline rounded-xl font-bold text-lg inline-flex items-center gap-2 justify-center">
                 Coba Akun Demo
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM6.75 9.25a.75.75 0 0 0 0 1.5h4.59l-2.1 1.95a.75.75 0 0 0 1.02 1.1l3.5-3.25a.75.75 0 0 0 0-1.1l-3.5-3.25a.75.75 0 1 0-1.02 1.1l2.1 1.95H6.75Z" clip-rule="evenodd"/></svg>
+                <x-ti name="arrow-right" class="w-5 h-5" />
             </a>
         </div>
         <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-5 max-w-4xl mx-auto">
             <div class="glass rounded-2xl p-5 backdrop-blur-xl">
-                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="7">0</span></div>
-                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Navigation Groups</div>
+                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="10">0</span>+</div>
+                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Outlet per Instalasi</div>
             </div>
             <div class="glass rounded-2xl p-5 backdrop-blur-xl">
-                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="20">0</span>+</div>
-                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Resource Modules</div>
+                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="10000">0</span>+</div>
+                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Produk Terkelola</div>
             </div>
             <div class="glass rounded-2xl p-5 backdrop-blur-xl">
-                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="24">0</span>+</div>
-                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Database Tables</div>
+                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="1000">0</span>+</div>
+                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Transaksi per Hari</div>
             </div>
             <div class="glass rounded-2xl p-5 backdrop-blur-xl">
                 <div class="text-3xl font-extrabold gradient-text">99.9<span class="text-lg">%</span></div>
@@ -306,28 +309,28 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
             <div class="group bg-white rounded-2xl p-6 text-center card-hover shadow-sm border border-gray-100">
                 <div class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.5" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z"/></svg>
+                    <x-ti name="building" class="w-7 h-7 text-[#4f46e5]" />
                 </div>
                 <h3 class="font-bold text-gray-900 text-base">Pemilik Toko</h3>
                 <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">Pantau semua outlet dalam satu dashboard. Laporan penjualan real-time.</p>
             </div>
             <div class="group bg-white rounded-2xl p-6 text-center card-hover shadow-sm border border-gray-100">
                 <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.5" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
+                    <x-ti name="shopping-bag" class="w-7 h-7 text-[#16a34a]" />
                 </div>
                 <h3 class="font-bold text-gray-900 text-base">Kasir</h3>
                 <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">Antarmuka POS cepat. Scan barcode, hitung kembalian otomatis.</p>
             </div>
             <div class="group bg-white rounded-2xl p-6 text-center card-hover shadow-sm border border-gray-100">
                 <div class="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/></svg>
+                    <x-ti name="archive" class="w-7 h-7 text-[#d97706]" />
                 </div>
                 <h3 class="font-bold text-gray-900 text-base">Admin Gudang</h3>
                 <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">Kelola stok multi-gudang, stock opname, transfer antar outlet.</p>
             </div>
             <div class="group bg-white rounded-2xl p-6 text-center card-hover shadow-sm border border-gray-100">
                 <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-violet-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg>
+                    <x-ti name="chart-bar" class="w-7 h-7 text-[#7c3aed]" />
                 </div>
                 <h3 class="font-bold text-gray-900 text-base">Manager</h3>
                 <p class="text-sm text-gray-500 mt-1.5 leading-relaxed">Analisis penjualan, top produk, laporan keuangan, approval workflow.</p>
@@ -361,7 +364,7 @@
                 <div class="relative">
                     <div class="flex items-center gap-3 mb-5">
                         <span class="w-10 h-10 bg-gradient-to-br from-red-100 to-red-200 rounded-xl flex items-center justify-center text-red-600 shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"/></svg>
+                            <x-ti name="circle-x" class="w-[18px] h-[18px]" />
                         </span>
                         <h3 class="font-bold text-red-800 text-xl">Sebelum POS Retail</h3>
                     </div>
@@ -379,7 +382,7 @@
                 <div class="relative">
                     <div class="flex items-center gap-3 mb-5">
                         <span class="w-10 h-10 bg-gradient-to-br from-green-100 to-emerald-200 rounded-xl flex items-center justify-center text-green-600 shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
+                            <x-ti name="check" class="w-[18px] h-[18px]" />
                         </span>
                         <h3 class="font-bold text-green-800 text-xl">Dengan POS Retail</h3>
                     </div>
@@ -417,17 +420,17 @@
             </div>
             <div class="md:w-1/2">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 rounded-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#4f46e5" width="14" height="14"><path fill-rule="evenodd" d="M2.106 6.447A2 2 0 0 0 1 8.237V16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.236a2 2 0 0 0-1.106-1.789l-7-3.5a2 2 0 0 0-1.788 0l-7 3.5Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="package" class="w-3.5 h-3.5 text-[#4f46e5]" />
                     <span class="text-xs font-bold uppercase tracking-widest text-indigo-600">Master Data</span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Kelola Semua Data Master</h3>
                 <p class="text-gray-600 mb-5 leading-relaxed text-base">Outlet, kategori, brand, produk dengan varian, pelanggan, supplier, dan metode pembayaran — semua terorganisir rapi dalam satu tempat.</p>
                 <ul class="space-y-3 text-sm text-gray-600">
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#4f46e5" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Multi-outlet — satu dashboard untuk semua cabang</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#4f46e5" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Produk dengan varian (warna, ukuran, rasa)</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#4f46e5" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Multi-harga: eceran, grosir, member</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#4f46e5" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Grup pelanggan dengan diskon otomatis</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#4f46e5" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> SKU dan barcode unik per produk</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#4f46e5]" /></span> Multi-outlet — satu dashboard untuk semua cabang</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#4f46e5]" /></span> Produk dengan varian (warna, ukuran, rasa)</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#4f46e5]" /></span> Multi-harga: eceran, grosir, member</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#4f46e5]" /></span> Grup pelanggan dengan diskon otomatis</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#4f46e5]" /></span> SKU dan barcode unik per produk</li>
                 </ul>
             </div>
         </div>
@@ -447,17 +450,17 @@
             </div>
             <div class="md:w-1/2">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#16a34a" width="14" height="14"><path fill-rule="evenodd" d="M1 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4Zm12 4a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="cash" class="w-3.5 h-3.5 text-[#16a34a]" />
                     <span class="text-xs font-bold uppercase tracking-widest text-green-700">Transaksi</span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">POS Cepat & Akurat</h3>
                 <p class="text-gray-600 mb-5 leading-relaxed text-base">Antarmuka kasir yang intuitif — scan barcode, tambah item, hitung subtotal, diskon, pajak, dan total otomatis. Pembayaran multi-metode, hitung kembalian instan.</p>
                 <ul class="space-y-3 text-sm text-gray-600">
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#16a34a" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Scan barcode untuk tambah item instan</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#16a34a" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Diskon per item dan diskon total</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#16a34a" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Multi-payment: Tunai, Debit, QRIS, Transfer</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#16a34a" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Status pesanan: Pending → Diproses → Selesai</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#16a34a" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Cetak struk termal langsung</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#16a34a]" /></span> Scan barcode untuk tambah item instan</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#16a34a]" /></span> Diskon per item dan diskon total</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#16a34a]" /></span> Multi-payment: Tunai, Debit, QRIS, Transfer</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#16a34a]" /></span> Status pesanan: Pending → Diproses → Selesai</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#16a34a]" /></span> Cetak struk termal langsung</li>
                 </ul>
             </div>
         </div>
@@ -477,16 +480,16 @@
             </div>
             <div class="md:w-1/2">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 rounded-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#d97706" width="14" height="14"><path fill-rule="evenodd" d="M10 2a6 6 0 0 0-6 6v3.586l-.707.707A1 1 0 0 0 4 14h12a1 1 0 0 0 .707-1.707L16 11.586V8a6 6 0 0 0-6-6ZM10 18a3 3 0 0 1-3-3h6a3 3 0 0 1-3 3Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="bell" class="w-3.5 h-3.5 text-[#d97706]" />
                     <span class="text-xs font-bold uppercase tracking-widest text-amber-700">Inventori</span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Kontrol Stok Real-Time</h3>
                 <p class="text-gray-600 mb-5 leading-relaxed text-base">Stok selalu akurat dengan stock opname berkala, mutasi tercatat, dan transfer antar outlet. Alert otomatis saat stok di bawah minimum.</p>
                 <ul class="space-y-3 text-sm text-gray-600">
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#d97706" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Stock opname dengan approval workflow</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#d97706" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Mutasi stok tercatat lengkap dengan audit trail</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#d97706" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Transfer stok antar outlet</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#d97706" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Alert stok minimum & overstock</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#d97706]" /></span> Stock opname dengan approval workflow</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#d97706]" /></span> Mutasi stok tercatat lengkap dengan audit trail</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#d97706]" /></span> Transfer stok antar outlet</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#d97706]" /></span> Alert stok minimum & overstock</li>
                 </ul>
             </div>
         </div>
@@ -506,15 +509,15 @@
             </div>
             <div class="md:w-1/2">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#7c3aed" width="14" height="14"><path d="M10.362 1.093a.75.75 0 0 0-.724 0L2.523 5.018 10 9.143l7.477-4.125-7.115-3.925ZM18 6.443l-7.25 4v8.25l6.862-3.786A.75.75 0 0 0 18 14.25V6.443ZM9.25 18.693v-8.25l-7.25-4v7.807a.75.75 0 0 0 .388.657l6.862 3.786Z"/></svg>
+                    <x-ti name="package" class="w-3.5 h-3.5 text-[#7c3aed]" />
                     <span class="text-xs font-bold uppercase tracking-widest text-purple-700">Pembelian</span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Purchase Order Terintegrasi</h3>
                 <p class="text-gray-600 mb-5 leading-relaxed text-base">Buat PO ke supplier, lacak status dari Draft → Dipesan → Diterima. Stok otomatis bertambah saat PO diterima. Riwayat pembelian per supplier lengkap.</p>
                 <ul class="space-y-3 text-sm text-gray-600">
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#7c3aed" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Workflow PO: Draft → Dipesan → Dikirim → Diterima</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#7c3aed" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Auto-update stok saat PO diterima</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#7c3aed" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Riwayat harga beli per produk & supplier</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#7c3aed]" /></span> Workflow PO: Draft → Dipesan → Dikirim → Diterima</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#7c3aed]" /></span> Auto-update stok saat PO diterima</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#7c3aed]" /></span> Riwayat harga beli per produk & supplier</li>
                 </ul>
             </div>
         </div>
@@ -534,16 +537,16 @@
             </div>
             <div class="md:w-1/2">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-rose-50 rounded-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#e11d48" width="14" height="14"><path d="m9.653 16.915-.005-.003-.019-.01a20.759 20.759 0 0 1-1.162-.682 22.045 22.045 0 0 1-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 0 1 8-2.828A4.5 4.5 0 0 1 18 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 0 1-3.744 2.582l-.019.01-.005.003h-.002a.75.75 0 0 1-.69.001l-.002-.001Z"/></svg>
+                    <x-ti name="heart-filled" class="w-3.5 h-3.5 text-[#e11d48]" />
                     <span class="text-xs font-bold uppercase tracking-widest text-rose-700">Loyalitas</span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Retensi Pelanggan Otomatis</h3>
                 <p class="text-gray-600 mb-5 leading-relaxed text-base">Setiap transaksi menghasilkan poin loyalitas. Pelanggan bisa menukar poin dengan reward. Grup pelanggan auto-upgrade berdasarkan total belanja.</p>
                 <ul class="space-y-3 text-sm text-gray-600">
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#e11d48" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Poin otomatis per transaksi</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#e11d48" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Katalog reward dengan harga poin</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#e11d48" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Auto-upgrade grup: Regular → Member → Reseller</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#e11d48" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Riwayat poin earned & redeemed</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#e11d48]" /></span> Poin otomatis per transaksi</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#e11d48]" /></span> Katalog reward dengan harga poin</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#e11d48]" /></span> Auto-upgrade grup: Regular → Member → Reseller</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#e11d48]" /></span> Riwayat poin earned & redeemed</li>
                 </ul>
             </div>
         </div>
@@ -563,16 +566,16 @@
             </div>
             <div class="md:w-1/2">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-sky-50 rounded-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#0284c7" width="14" height="14"><path fill-rule="evenodd" d="M18.685 2.063a.75.75 0 0 0-.931-.442L2.754 5.362a.75.75 0 0 0-.277 1.316L12.5 14v5.5a.75.75 0 0 0 1.372.434l3.56-5.562 3.318-10.604a.75.75 0 0 0-1.065-1.705Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="send" class="w-3.5 h-3.5 text-[#0284c7]" />
                     <span class="text-xs font-bold uppercase tracking-widest text-sky-700">Laporan</span>
                 </div>
                 <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Laporan & Analisis Lengkap</h3>
                 <p class="text-gray-600 mb-5 leading-relaxed text-base">Laporan penjualan, pembelian, inventori, dan loyalitas. Chart interaktif, summary cards, export PDF & Excel. Filter per outlet dan rentang tanggal.</p>
                 <ul class="space-y-3 text-sm text-gray-600">
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#0284c7" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Chart penjualan harian/mingguan/bulanan</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#0284c7" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Top produk by quantity & revenue</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#0284c7" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Laporan stok: menipis, overstock, akurasi opname</li>
-                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#0284c7" width="12" height="12"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Export PDF & Excel</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#0284c7]" /></span> Chart penjualan harian/mingguan/bulanan</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#0284c7]" /></span> Top produk by quantity & revenue</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#0284c7]" /></span> Laporan stok: menipis, overstock, akurasi opname</li>
+                    <li class="flex items-start gap-2.5"><span class="w-5 h-5 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><x-ti name="check" class="w-3 h-3 text-[#0284c7]" /></span> Export PDF & Excel</li>
                 </ul>
             </div>
         </div>
@@ -619,11 +622,11 @@
                 <div class="text-6xl text-indigo-100 absolute top-4 right-6 font-serif leading-none">&ldquo;</div>
                 <div class="relative">
                     <div class="flex items-center gap-1 mb-4 text-amber-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
                     </div>
                     <p class="text-gray-700 leading-relaxed mb-6 text-sm">Saya punya 4 outlet alat tulis. Dulu harus cek stok satu per satu lewat WhatsApp. Sekarang semua real-time di POS Retail. Laporan penjualan tinggal klik.</p>
                     <div class="flex items-center gap-3">
@@ -639,11 +642,11 @@
                 <div class="text-6xl text-indigo-100 absolute top-4 right-6 font-serif leading-none">&ldquo;</div>
                 <div class="relative">
                     <div class="flex items-center gap-1 mb-4 text-amber-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
                     </div>
                     <p class="text-gray-700 leading-relaxed mb-6 text-sm">Fitur loyalitas poin bikin pelanggan saya balik terus. Sejak pakai POS Retail, repeat customer naik 40%. Anak kasir juga happy, transaksi jadi cepet.</p>
                     <div class="flex items-center gap-3">
@@ -659,11 +662,11 @@
                 <div class="text-6xl text-indigo-100 absolute top-4 right-6 font-serif leading-none">&ldquo;</div>
                 <div class="relative">
                     <div class="flex items-center gap-1 mb-4 text-amber-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
+                        <x-ti name="star-filled" class="w-4 h-4" />
                     </div>
                     <p class="text-gray-700 leading-relaxed mb-6 text-sm">Fitur multi-outlet-nya juara. Saya bisa pantau 6 toko HP sekaligus dari rumah. Purchase order langsung terintegrasi stok. Gak ada lagi human error.</p>
                     <div class="flex items-center gap-3">
@@ -718,35 +721,35 @@
             <div class="border border-gray-200 rounded-2xl overflow-hidden card-hover">
                 <button class="faq-toggle w-full flex items-center justify-between p-6 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors" onclick="var a=this.nextElementSibling;var open=a.classList.contains('open');a.classList.toggle('open');a.style.maxHeight=open?'0px':a.scrollHeight+'px';this.querySelector('svg').style.transform=open?'rotate(0deg)':'rotate(180deg)'">
                     <span>Apa bedanya POS Retail dengan aplikasi kasir lainnya?</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20" class="transition-transform duration-300 flex-shrink-0"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="chevron-down" class="w-5 h-5 transition-transform duration-300 flex-shrink-0" />
                 </button>
                 <div class="faq-answer px-6"><p class="text-gray-600 text-sm pb-6 leading-relaxed">POS Retail adalah sistem yang dibangun khusus untuk toko retail Indonesia dengan fokus pada multi-outlet, inventori real-time, purchase order, dan program loyalitas. Berbeda dengan aplikasi kasir pada umumnya yang hanya mencatat transaksi, POS Retail mengelola seluruh aspek bisnis retail &mdash; dari data master, stok, pembelian ke supplier, hingga analisis penjualan dan laporan keuangan.</p></div>
             </div>
             <div class="border border-gray-200 rounded-2xl overflow-hidden card-hover">
                 <button class="faq-toggle w-full flex items-center justify-between p-6 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors" onclick="var a=this.nextElementSibling;var open=a.classList.contains('open');a.classList.toggle('open');a.style.maxHeight=open?'0px':a.scrollHeight+'px';this.querySelector('svg').style.transform=open?'rotate(0deg)':'rotate(180deg)'">
                     <span>Apakah POS Retail bisa digunakan untuk banyak outlet?</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20" class="transition-transform duration-300 flex-shrink-0"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="chevron-down" class="w-5 h-5 transition-transform duration-300 flex-shrink-0" />
                 </button>
                 <div class="faq-answer px-6"><p class="text-gray-600 text-sm pb-6 leading-relaxed">Ya, POS Retail dirancang untuk multi-outlet. Setiap outlet memiliki data stok, transaksi, dan laporan yang terpisah namun bisa dipantau dari satu dashboard pusat. Transfer stok antar outlet juga didukung. Paket Growth mendukung hingga 5 outlet, dan paket Enterprise unlimited.</p></div>
             </div>
             <div class="border border-gray-200 rounded-2xl overflow-hidden card-hover">
                 <button class="faq-toggle w-full flex items-center justify-between p-6 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors" onclick="var a=this.nextElementSibling;var open=a.classList.contains('open');a.classList.toggle('open');a.style.maxHeight=open?'0px':a.scrollHeight+'px';this.querySelector('svg').style.transform=open?'rotate(0deg)':'rotate(180deg)'">
                     <span>Metode pembayaran apa saja yang didukung?</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20" class="transition-transform duration-300 flex-shrink-0"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="chevron-down" class="w-5 h-5 transition-transform duration-300 flex-shrink-0" />
                 </button>
                 <div class="faq-answer px-6"><p class="text-gray-600 text-sm pb-6 leading-relaxed">POS Retail mendukung multi-pembayaran dalam satu transaksi: Tunai, Debit/Kartu, QR, dan Transfer Bank. Anda juga bisa menambah metode pembayaran kustom seperti voucher atau kredit toko. Sistem akan otomatis menghitung total, diskon, pajak, dan kembalian.</p></div>
             </div>
             <div class="border border-gray-200 rounded-2xl overflow-hidden card-hover">
                 <button class="faq-toggle w-full flex items-center justify-between p-6 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors" onclick="var a=this.nextElementSibling;var open=a.classList.contains('open');a.classList.toggle('open');a.style.maxHeight=open?'0px':a.scrollHeight+'px';this.querySelector('svg').style.transform=open?'rotate(0deg)':'rotate(180deg)'">
                     <span>Apakah data saya aman? Bagaimana backup datanya?</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20" class="transition-transform duration-300 flex-shrink-0"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="chevron-down" class="w-5 h-5 transition-transform duration-300 flex-shrink-0" />
                 </button>
                 <div class="faq-answer px-6"><p class="text-gray-600 text-sm pb-6 leading-relaxed">Keamanan data adalah prioritas kami. POS Retail menggunakan Laravel dengan enkripsi data, audit trail untuk setiap perubahan, dan role-based access control. Backup database bisa dijadwalkan harian otomatis. Untuk deployment on-premise, data 100% di server Anda sendiri.</p></div>
             </div>
             <div class="border border-gray-200 rounded-2xl overflow-hidden card-hover">
                 <button class="faq-toggle w-full flex items-center justify-between p-6 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors" onclick="var a=this.nextElementSibling;var open=a.classList.contains('open');a.classList.toggle('open');a.style.maxHeight=open?'0px':a.scrollHeight+'px';this.querySelector('svg').style.transform=open?'rotate(0deg)':'rotate(180deg)'">
                     <span>Apakah ada aplikasi mobile untuk kasir?</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20" class="transition-transform duration-300 flex-shrink-0"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+                    <x-ti name="chevron-down" class="w-5 h-5 transition-transform duration-300 flex-shrink-0" />
                 </button>
                 <div class="faq-answer px-6"><p class="text-gray-600 text-sm pb-6 leading-relaxed">Ya, POS Retail memiliki aplikasi mobile Android (APK) yang dibangun dengan Flutter. Aplikasi ini bisa digunakan untuk transaksi kasir mobile, scan barcode via kamera HP, cek stok cepat, dan approval purchase order. Cocok untuk outlet kecil yang tidak ingin investasi hardware PC.</p></div>
             </div>
@@ -762,21 +765,21 @@
     </div>
     <div class="max-w-4xl mx-auto px-4 relative text-center">
         <div class="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 text-sm mb-6 backdrop-blur border border-white/10">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+            <x-ti name="download" class="w-4 h-4" />
             Aplikasi Android Tersedia
         </div>
         <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Download Aplikasi Mobile</h2>
         <p class="text-gray-400 max-w-lg mx-auto mb-10 text-lg">Jalankan kasir dari smartphone Android. Scan barcode, transaksi cepat, cek stok &mdash; semua dari genggaman.</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a href="#" class="inline-flex items-center gap-3 bg-white text-gray-900 rounded-2xl px-8 py-4 font-semibold hover:bg-gray-100 transition-all shadow-xl shadow-indigo-900/30 group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.807 1.626a1 1 0 0 1 0 1.732l-2.807 1.626L15.206 12l2.492-2.492zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+                <x-ti name="brand-google-play" class="w-7 h-7" />
                 <div class="text-left">
                     <div class="text-xs text-gray-500">Download dari</div>
                     <div class="text-lg font-bold">Google Play Store</div>
                 </div>
             </a>
             <a href="#" class="inline-flex items-center gap-3 bg-gray-800 text-white rounded-2xl px-8 py-4 font-semibold hover:bg-gray-700 transition-all border border-gray-700 group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                <x-ti name="download" class="w-7 h-7" />
                 <div class="text-left">
                     <div class="text-xs text-gray-400">Download langsung</div>
                     <div class="text-lg font-bold">APK Android</div>
@@ -839,7 +842,7 @@
         <div class="text-center mt-10">
             <a href="/admin/login" class="inline-flex items-center gap-2 px-8 py-3.5 btn-primary text-white rounded-xl font-bold text-lg">
                 Login ke Admin Panel
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+                <x-ti name="arrow-right" class="w-5 h-5" />
             </a>
         </div>
     </div>
@@ -856,13 +859,13 @@
                 <p class="text-gray-500 text-sm mb-6">Untuk toko kecil dengan 1 outlet</p>
                 <div class="mb-6"><span class="text-4xl font-extrabold text-gray-900">Rp 0</span><span class="text-gray-500 text-sm">/bulan</span></div>
                 <ul class="space-y-3 text-sm text-gray-600 mb-8 flex-1">
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> 1 Outlet</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> 3 User</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> 500 Produk</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Transaksi Unlimited</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Laporan Dasar</li>
-                    <li class="flex items-start gap-2 text-gray-300"><span class="mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Loyalitas Poin</li>
-                    <li class="flex items-start gap-2 text-gray-300"><span class="mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Multi-outlet</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> 1 Outlet</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> 3 User</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> 500 Produk</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Transaksi Unlimited</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Laporan Dasar</li>
+                    <li class="flex items-start gap-2 text-gray-300"><span class="mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Loyalitas Poin</li>
+                    <li class="flex items-start gap-2 text-gray-300"><span class="mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Multi-outlet</li>
                 </ul>
                 <a href="/docs" class="block text-center px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:border-indigo-300 hover:text-indigo-600 transition-all">Mulai Gratis</a>
             </div>
@@ -871,13 +874,13 @@
                 <p class="text-gray-500 text-sm mb-6">Untuk toko berkembang dengan multi-outlet</p>
                 <div class="mb-6"><span class="text-4xl font-extrabold text-gray-900">Rp 299K</span><span class="text-gray-500 text-sm">/bulan</span></div>
                 <ul class="space-y-3 text-sm text-gray-600 mb-8 flex-1">
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> 5 Outlet</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> 10 User</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> 5.000 Produk</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Laporan & Chart Interaktif</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Loyalitas Poin</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Multi-outlet</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Export PDF & Excel</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> 5 Outlet</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> 10 User</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> 5.000 Produk</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Laporan & Chart Interaktif</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Loyalitas Poin</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Multi-outlet</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Export PDF & Excel</li>
                 </ul>
                 <a href="/docs" class="block text-center px-6 py-3 btn-primary text-white rounded-xl font-semibold">Coba 14 Hari Gratis</a>
             </div>
@@ -886,13 +889,13 @@
                 <p class="text-gray-500 text-sm mb-6">Untuk jaringan retail besar</p>
                 <div class="mb-6"><span class="text-4xl font-extrabold text-gray-900">Custom</span></div>
                 <ul class="space-y-3 text-sm text-gray-600 mb-8 flex-1">
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Outlet Unlimited</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> User Unlimited</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Semua Fitur Growth</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> API Access</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Whitelabel / Rebrand</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Priority Support</li>
-                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg></span> Custom Development</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Outlet Unlimited</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> User Unlimited</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Semua Fitur Growth</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> API Access</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Whitelabel / Rebrand</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Priority Support</li>
+                    <li class="flex items-start gap-2"><span class="text-green-500 mt-1 flex-shrink-0"><x-ti name="check" class="w-3.5 h-3.5" /></span> Custom Development</li>
                 </ul>
                 <a href="/docs" class="block text-center px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:border-indigo-300 hover:text-indigo-600 transition-all">Hubungi Kami</a>
             </div>
@@ -907,12 +910,12 @@
         <p class="text-indigo-200 text-lg mb-10 max-w-xl mx-auto">Dari catatan manual ke sistem POS modern. Mulai gratis, upgrade sesuai kebutuhan.</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="/docs" class="px-8 py-3.5 bg-white text-indigo-700 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-all shadow-xl shadow-indigo-900/30 inline-flex items-center gap-2 justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path d="M9 4.804A7.968 7.968 0 0 0 5.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0 1 5.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0 1 14.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0 0 14.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 1 1-2 0V4.804Z"/></svg>
+                <x-ti name="book" class="w-5 h-5" />
                 Lihat Dokumentasi
             </a>
             <a href="/admin/login" class="px-8 py-3.5 btn-outline rounded-xl font-bold text-lg inline-flex items-center gap-2 justify-center">
                 Coba Demo Live
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM6.75 9.25a.75.75 0 0 0 0 1.5h4.59l-2.1 1.95a.75.75 0 0 0 1.02 1.1l3.5-3.25a.75.75 0 0 0 0-1.1l-3.5-3.25a.75.75 0 1 0-1.02 1.1l2.1 1.95H6.75Z" clip-rule="evenodd"/></svg>
+                <x-ti name="arrow-right" class="w-5 h-5" />
             </a>
         </div>
     </div>
@@ -928,7 +931,7 @@
                         <img src="{{ $logoUrl }}" alt="{{ $appName }}" class="h-8 w-auto">
                     @else
                         <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
+                            <x-ti name="building-store" class="w-6 h-6 text-[white]" />
                         </div>
                     @endif
                     <span class="font-bold text-white text-lg">{{ $appName }}</span>
@@ -936,16 +939,16 @@
                 <p class="text-sm leading-relaxed">Sistem kasir modern untuk toko retail Indonesia. Dibangun dengan Laravel &amp; Filament.</p>
                 <div class="flex items-center gap-3 mt-4">
                     <a href="#" class="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-indigo-600 transition-colors" title="Facebook">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        <x-ti name="brand-facebook" class="w-[18px] h-[18px]" />
                     </a>
                     <a href="#" class="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-indigo-600 transition-colors" title="Instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 0 1 1.772 1.153 4.902 4.902 0 0 1 1.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 0 1-1.153 1.772 4.902 4.902 0 0 1-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 0 1-1.772-1.153 4.902 4.902 0 0 1-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 0 1 1.153-1.772A4.902 4.902 0 0 1 5.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 0 0-.748-1.15 3.098 3.098 0 0 0-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 1 1 0 10.27 5.135 5.135 0 0 1 0-10.27zm0 1.802a3.333 3.333 0 1 0 0 6.666 3.333 3.333 0 0 0 0-6.666zm5.338-3.205a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/></svg>
+                        <x-ti name="brand-instagram" class="w-[18px] h-[18px]" />
                     </a>
                     <a href="#" class="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-indigo-600 transition-colors" title="Twitter/X">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        <x-ti name="brand-x" class="w-[18px] h-[18px]" />
                     </a>
                     <a href="#" class="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-indigo-600 transition-colors" title="YouTube">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        <x-ti name="brand-youtube" class="w-[18px] h-[18px]" />
                     </a>
                 </div>
             </div>

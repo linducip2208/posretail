@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\GiftCard;
 use App\Models\Order;
 use App\Models\PaymentMethod;
@@ -31,8 +32,9 @@ class PosController extends Controller
         $receiptShowPhone = SystemSetting::getBool('receipt_show_phone', true);
         $receiptShowFooter = SystemSetting::getBool('receipt_show_footer', true);
         $orderTypes = SystemSetting::getOrderTypes();
+        $categories = Category::where('active', true)->orderBy('name')->get(['id', 'name']);
 
-        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent', 'appName', 'appLogo', 'receiptFooter', 'storeAddress', 'storePhone', 'receiptShowLogo', 'receiptShowName', 'receiptShowAddress', 'receiptShowPhone', 'receiptShowFooter', 'orderTypes'));
+        return view('pos.index', compact('outlets', 'paymentMethods', 'taxPercent', 'appName', 'appLogo', 'receiptFooter', 'storeAddress', 'storePhone', 'receiptShowLogo', 'receiptShowName', 'receiptShowAddress', 'receiptShowPhone', 'receiptShowFooter', 'orderTypes', 'categories'));
     }
 
     public function products(Request $request): JsonResponse

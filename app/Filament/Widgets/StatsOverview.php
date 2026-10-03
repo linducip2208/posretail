@@ -42,11 +42,31 @@ class StatsOverview extends BaseWidget
             ->whereColumn('current_stock', '<=', 'min_stock')
             ->count();
 
+        $outOfStock = Product::where('active', true)
+            ->where('current_stock', '<=', 0)
+            ->count();
+
+        $avgOrder = $todayOrders > 0 ? $todayRevenue / $todayOrders : 0;
+
+        $pendingPayments = Order::where('order_status', '!=', 'cancelled')
+            ->whereIn('payment_status', ['pending', 'partial'])
+            ->count();
+
         return [
             Stat::make('Pendapatan Hari Ini', 'Rp ' . number_format($todayRevenue, 0, ',', '.'))
                 ->description($todayOrders . ' transaksi')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),
+
+            Stat::make('Rata-rata Transaksi', 'Rp ' . number_format($avgOrder, 0, ',', '.'))
+                ->description('Hari ini')
+                ->descriptionIcon('heroicon-m-calculator')
+                ->color('primary'),
+
+            Stat::make('Pembayaran Pending', $pendingPayments)
+                ->description('Butuh tindak lanjut')
+                ->descriptionIcon('heroicon-m-clock')
+                ->color($pendingPayments > 0 ? 'warning' : 'success'),
 
             Stat::make('Total Produk', $totalProducts)
                 ->description($lowStock . ' stok rendah')
@@ -58,10 +78,10 @@ class StatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-users')
                 ->color('primary'),
 
-            Stat::make('Stok Rendah', $lowStock)
-                ->description('Butuh restock')
-                ->descriptionIcon('heroicon-m-archive-box')
-                ->color($lowStock > 0 ? 'danger' : 'success'),
+            Stat::make('Stok Habis', $outOfStock)
+                ->description('Butuh restock segera')
+                ->descriptionIcon('heroicon-m-x-circle')
+                ->color($outOfStock > 0 ? 'danger' : 'success'),
         ];
     }
 }

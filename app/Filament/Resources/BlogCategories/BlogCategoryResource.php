@@ -19,7 +19,7 @@ use Filament\Tables\Table;
 class BlogCategoryResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = '📰 Website';
+    protected static string|\UnitEnum|null $navigationGroup = 'Website';
 
     protected static ?int $navigationSort = 2;
 

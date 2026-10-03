@@ -27,33 +27,33 @@
         </div>
         <div class="ml-auto flex gap-2 flex-wrap">
             <a href="{{ route('export.sales', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId, 'format' => 'csv']) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#2fb344] hover:bg-[#268f36] rounded-lg transition-colors shadow-sm">
+                <x-ti name="download" class="w-4 h-4" />
                 CSV Order
             </a>
             <a href="{{ route('export.sales.items', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId, 'format' => 'csv']) }}"
                class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors shadow-sm" title="Download rincian produk terjual per tanggal">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <x-ti name="download" class="w-4 h-4" />
                 CSV Item
             </a>
             <a href="{{ route('export.sales', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId, 'format' => 'pdf']) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg transition-colors shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#d63939] hover:bg-[#b22b2b] rounded-lg transition-colors shadow-sm">
+                <x-ti name="file-description" class="w-4 h-4" />
                 PDF Order
             </a>
             <a href="{{ route('export.sales.items.pdf', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId]) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors shadow-sm" title="Download rincian produk terjual per tanggal (PDF)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#ea6a0a] hover:bg-orange-700 rounded-lg transition-colors shadow-sm" title="Download rincian produk terjual per tanggal (PDF)">
+                <x-ti name="file-description" class="w-4 h-4" />
                 PDF Item
             </a>
             <a href="{{ route('export.sales.items.xlsx', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId]) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm" title="Download rincian produk terjual per tanggal (Excel)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#206bc4] hover:bg-[#1a569d] rounded-lg transition-colors shadow-sm" title="Download rincian produk terjual per tanggal (Excel)">
+                <x-ti name="download" class="w-4 h-4" />
                 Excel Item
             </a>
             <a href="{{ route('export.sales.xlsx', ['start_date' => $this->startDate, 'end_date' => $this->endDate, 'outlet_id' => $this->outletId]) }}"
-               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm" title="Download rekap order (Excel)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+               class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#206bc4] hover:bg-[#1a569d] rounded-lg transition-colors shadow-sm" title="Download rekap order (Excel)">
+                <x-ti name="download" class="w-4 h-4" />
                 Excel Order
             </a>
         </div>
@@ -70,7 +70,7 @@
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Laba Kotor</div>
-            <div class="text-2xl font-extrabold text-emerald-600">Rp {{ number_format($this->totalProfit, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#2fb344]">Rp {{ number_format($this->totalProfit, 0, ',', '.') }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Rata-rata / Transaksi</div>
@@ -78,7 +78,7 @@
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Diskon</div>
-            <div class="text-2xl font-extrabold text-amber-600">Rp {{ number_format($this->totalDiscount, 0, ',', '.') }}</div>
+            <div class="text-2xl font-extrabold text-[#c87f00]">Rp {{ number_format($this->totalDiscount, 0, ',', '.') }}</div>
         </div>
     </div>
 
@@ -143,9 +143,9 @@
                         <td class="py-3 text-xs text-gray-500">{{ $p->outlet_name ?: '-' }}</td>
                         <td class="py-3">
                             <span class="px-2 py-0.5 rounded-full text-xs font-semibold
-                                {{ $p->method === 'Cash' || $p->method === 'Tunai' ? 'bg-emerald-100 text-emerald-700' : '' }}
-                                {{ $p->method === 'QRIS' ? 'bg-indigo-100 text-indigo-700' : '' }}
-                                {{ $p->method === 'Transfer' || $p->method === 'Debit' ? 'bg-amber-100 text-amber-700' : '' }}">
+                                {{ $p->method === 'Cash' || $p->method === 'Tunai' ? 'bg-[#2fb344]/15 text-[#268f36]' : '' }}
+                                {{ $p->method === 'QRIS' ? 'bg-[#206bc4]/10 text-[#1a569d]' : '' }}
+                                {{ $p->method === 'Transfer' || $p->method === 'Debit' ? 'bg-[#f59f00]/15 text-[#c87f00]' : '' }}">
                                 {{ $p->method }}
                             </span>
                         </td>
@@ -181,9 +181,9 @@
                         <td class="py-3 font-medium">{{ $product->name }}</td>
                         <td class="py-3 text-right">{{ number_format($product->total_qty) }}</td>
                         <td class="py-3 text-right">Rp {{ number_format($product->total_revenue, 0, ',', '.') }}</td>
-                        <td class="py-3 text-right font-medium {{ $product->profit >= 0 ? 'text-emerald-600' : 'text-red-600' }}">Rp {{ number_format($product->profit, 0, ',', '.') }}</td>
+                        <td class="py-3 text-right font-medium {{ $product->profit >= 0 ? 'text-[#2fb344]' : 'text-[#d63939]' }}">Rp {{ number_format($product->profit, 0, ',', '.') }}</td>
                         <td class="py-3 text-right">
-                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $product->margin_percent >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ $product->margin_percent >= 0 ? 'bg-[#2fb344]/15 text-[#268f36]' : 'bg-[#d63939]/10 text-[#b22b2b]' }}">
                                 {{ $product->margin_percent }}%
                             </span>
                         </td>

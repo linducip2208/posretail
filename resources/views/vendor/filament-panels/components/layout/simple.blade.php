@@ -20,7 +20,7 @@
             <div class="fi-login-left-panel">
                 <div class="fi-login-left-content">
                     <div class="fi-login-left-logo">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
+                        <x-ti name="building-store" class="w-9 h-9 text-white/90" />
                         <span>POS Retail</span>
                     </div>
                     <div class="fi-login-illustration">
@@ -70,7 +70,7 @@
             <div class="fi-login-right-panel">
                 <div class="fi-login-right-inner">
                     <div class="fi-login-right-header">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><path d="M3 9l1.5-5h15L21 9v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9h18"/><path d="M9 22V11h6v11"/></svg>
+                        <x-ti name="building-store" class="w-8 h-8 text-[#206bc4]" />
                         <span>Admin</span>
                     </div>
                     <div class="fi-login-form">
