@@ -101,7 +101,7 @@ class ConsignmentsTable
             ->recordActions([
                 Action::make('settle')
                     ->label('Settlement')
-                    ->icon('heroicon-o-banknotes')
+                    ->icon('tabler-cash')
                     ->color('success')
                     ->visible(fn (Consignment $record): bool => $record->status === 'active')
                     ->requiresConfirmation()
@@ -119,7 +119,7 @@ class ConsignmentsTable
 
                 Action::make('return')
                     ->label('Kembalikan')
-                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->icon('tabler-arrow-back-up')
                     ->color('gray')
                     ->visible(fn (Consignment $record): bool => $record->status === 'active')
                     ->requiresConfirmation()

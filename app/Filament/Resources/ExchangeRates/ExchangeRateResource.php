@@ -13,7 +13,6 @@ use App\Models\ExchangeRate;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ExchangeRateResource extends Resource
@@ -27,7 +26,7 @@ class ExchangeRateResource extends Resource
 
     protected static ?string $model = ExchangeRate::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-world';
 
     protected static ?string $recordTitleAttribute = 'currency';
 

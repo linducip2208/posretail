@@ -97,7 +97,7 @@ class MarketplaceOrdersTable
             ->recordActions([
                 Action::make('processOrder')
                     ->label('Proses ke Order')
-                    ->icon('heroicon-o-arrow-right-circle')
+                    ->icon('tabler-circle-arrow-right')
                     ->color('success')
                     ->visible(fn (MarketplaceOrder $record): bool => $record->status === 'new')
                     ->action(function (MarketplaceOrder $record) {

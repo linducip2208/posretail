@@ -24,7 +24,7 @@ class EditAsset extends EditRecord
     {
         return Action::make('dispose')
             ->label('Hapus Aset')
-            ->icon('heroicon-o-trash')
+            ->icon('tabler-trash')
             ->color('danger')
             ->visible(fn (): bool => $this->record->status === 'active')
             ->requiresConfirmation()

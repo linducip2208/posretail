@@ -13,19 +13,18 @@ use App\Models\CustomerGroup;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class CustomerGroupResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Customer';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pelanggan';
 
     protected static ?int $navigationSort = 2;
 
     protected static ?string $model = CustomerGroup::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'name';
 

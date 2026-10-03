@@ -16,7 +16,7 @@ class LaporanKomisi extends Page
 
     protected static ?int $navigationSort = 5;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-users';
 
     protected static ?string $title = 'Laporan Komisi';
 

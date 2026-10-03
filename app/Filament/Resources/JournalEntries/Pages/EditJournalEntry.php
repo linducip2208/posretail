@@ -17,7 +17,7 @@ class EditJournalEntry extends EditRecord
         return [
             Action::make('post')
                 ->label('Posting')
-                ->icon('heroicon-o-check-circle')
+                ->icon('tabler-circle-check')
                 ->color('success')
                 ->visible(fn (): bool => $this->getRecord()->status === 'draft')
                 ->requiresConfirmation()
@@ -38,7 +38,7 @@ class EditJournalEntry extends EditRecord
 
             Action::make('void')
                 ->label('Void')
-                ->icon('heroicon-o-x-circle')
+                ->icon('tabler-circle-x')
                 ->color('danger')
                 ->visible(fn (): bool => $this->getRecord()->status === 'posted')
                 ->requiresConfirmation()

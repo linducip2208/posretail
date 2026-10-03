@@ -19,7 +19,7 @@ class PendingApprovalsWidget extends BaseWidget
 
     protected static ?string $heading = 'Menunggu Approval';
 
-    protected ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '120s';
 
     public static function canView(): bool
     {
@@ -59,7 +59,7 @@ class PendingApprovalsWidget extends BaseWidget
             ->actions([
                 Action::make('approve')
                     ->label('Setujui')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon('tabler-circle-check')
                     ->color('success')
                     ->action(function (Order $record): void {
                         app(ApprovalService::class)->approve($record, auth()->id());
@@ -70,7 +70,7 @@ class PendingApprovalsWidget extends BaseWidget
 
                 Action::make('reject')
                     ->label('Tolak')
-                    ->icon('heroicon-o-x-circle')
+                    ->icon('tabler-circle-x')
                     ->color('danger')
                     ->form([
                         \Filament\Forms\Components\TextInput::make('reason')

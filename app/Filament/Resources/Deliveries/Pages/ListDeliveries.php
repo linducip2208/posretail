@@ -20,7 +20,7 @@ class ListDeliveries extends ListRecords
             ExportAction::make()
                 ->exporter(DeliveryExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

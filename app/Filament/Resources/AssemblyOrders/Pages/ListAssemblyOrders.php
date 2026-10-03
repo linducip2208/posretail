@@ -19,7 +19,7 @@ class ListAssemblyOrders extends ListRecords
             ExportAction::make()
                 ->exporter(AssemblyOrderExporter::class)
                 ->label('Export Produksi')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 }

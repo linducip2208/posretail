@@ -15,7 +15,7 @@ class LaporanNeraca extends Page
 
     protected static ?int $navigationSort = 8;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-scale';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-scale';
 
     protected static ?string $title = 'Laporan Neraca';
 

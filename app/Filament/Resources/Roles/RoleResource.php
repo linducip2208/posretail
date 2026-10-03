@@ -13,13 +13,12 @@ use App\Models\Role;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class RoleResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 1;
 
@@ -27,7 +26,7 @@ class RoleResource extends Resource
 
     protected static ?string $model = Role::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-shield-check';
 
     protected static ?string $recordTitleAttribute = 'name';
 

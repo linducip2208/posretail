@@ -18,7 +18,7 @@ class ListGiftCards extends ListRecords
             CreateAction::make(),
             Action::make('batchGenerate')
                 ->label('Generate Massal')
-                ->icon('heroicon-o-queue-list')
+                ->icon('tabler-list')
                 ->color('success')
                 ->form([
                     TextInput::make('count')

@@ -23,15 +23,15 @@ class ListProducts extends ListRecords
             ImportAction::make()
                 ->importer(ProductImporter::class)
                 ->label('Import Produk')
-                ->icon('heroicon-o-arrow-up-tray'),
+                ->icon('tabler-upload'),
             ExportAction::make()
                 ->exporter(ProductExporter::class)
                 ->label('Export Produk')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
             ExportAction::make()
                 ->exporter(StockExporter::class)
                 ->label('Export Stok')
-                ->icon('heroicon-o-table-cells'),
+                ->icon('tabler-table'),
         ];
     }
 

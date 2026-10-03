@@ -28,7 +28,7 @@ class EditAssemblyOrder extends EditRecord
     {
         return Action::make('startProduction')
             ->label('Mulai Produksi')
-            ->icon('heroicon-o-play')
+            ->icon('tabler-player-play')
             ->color('warning')
             ->visible(fn () => $this->record->status === 'draft')
             ->action(function () {
@@ -45,7 +45,7 @@ class EditAssemblyOrder extends EditRecord
     {
         return Action::make('complete')
             ->label('Selesaikan')
-            ->icon('heroicon-o-check-circle')
+            ->icon('tabler-circle-check')
             ->color('success')
             ->visible(fn () => in_array($this->record->status, ['draft', 'in_progress']))
             ->requiresConfirmation()
@@ -92,7 +92,7 @@ class EditAssemblyOrder extends EditRecord
     {
         return Action::make('cancel')
             ->label('Batalkan')
-            ->icon('heroicon-o-x-circle')
+            ->icon('tabler-circle-x')
             ->color('danger')
             ->visible(fn () => in_array($this->record->status, ['draft', 'in_progress']))
             ->requiresConfirmation()

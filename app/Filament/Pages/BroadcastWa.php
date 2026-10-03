@@ -16,7 +16,7 @@ class BroadcastWa extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-message-circle';
 
     protected static ?string $title = 'Broadcast WhatsApp';
 

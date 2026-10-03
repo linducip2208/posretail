@@ -24,7 +24,7 @@ class EditSupplierContract extends EditRecord
     {
         return Action::make('terminate')
             ->label('Hentikan Kontrak')
-            ->icon('heroicon-o-x-circle')
+            ->icon('tabler-circle-x')
             ->color('danger')
             ->visible(fn (): bool => $this->record->status === 'active')
             ->requiresConfirmation()

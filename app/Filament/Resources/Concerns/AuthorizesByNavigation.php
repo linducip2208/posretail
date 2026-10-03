@@ -46,32 +46,84 @@ trait AuthorizesByNavigation
 
     protected static function permissionGroup(): string
     {
-        $navigationGroup = (string) static::getNavigationGroup();
-        $groups = [
-            'Penjualan' => 'transaksi',
-            'Inventory' => 'inventori',
-            'Pembelian' => 'pembelian',
-            'Customer' => 'master-data',
-            'Supplier' => 'master-data',
-            'Outlet' => 'master-data',
-            'Keuangan' => 'finance',
-            'Akuntansi' => 'finance',
-            'Promo' => 'loyalitas',
-            'Laporan' => 'laporan',
-            'Pegawai' => 'sistem',
-            'Notifikasi' => 'sistem',
-            'Integrasi' => 'integrasi',
-            'Pengaturan' => 'sistem',
-            'Sistem' => 'sistem',
-            'Website' => 'marketing',
+        // Pemetaan permission per resource (berbasis class, bukan label grup),
+        // agar regrouping tampilan sidebar tidak mengubah hak akses.
+        $map = [
+            // Penjualan
+            'OrderResource' => 'transaksi',
+            'HeldCartResource' => 'transaksi',
+            'ReturResource' => 'transaksi',
+            'MarketplaceOrderResource' => 'transaksi',
+            'CashDrawerTransactionResource' => 'transaksi',
+            // Operasional
+            'DeliveryResource' => 'operasional',
+            'ShiftResource' => 'finance',
+            // Inventory
+            'AssemblyOrderResource' => 'inventori',
+            'BinLocationResource' => 'inventori',
+            'BrandResource' => 'inventori',
+            'CategoryResource' => 'inventori',
+            'PriceChangeResource' => 'inventori',
+            'ProductResource' => 'inventori',
+            'RawMaterialResource' => 'inventori',
+            'SerialNumberResource' => 'inventori',
+            'StockMovementResource' => 'inventori',
+            'StockOpnameResource' => 'inventori',
+            'StockTransferResource' => 'inventori',
+            'UnitResource' => 'inventori',
+            'UnitConversionResource' => 'inventori',
+            'VolumePricingResource' => 'inventori',
+            'WriteOffResource' => 'inventori',
+            // Pembelian
+            'ConsignmentResource' => 'pembelian',
+            'PurchaseOrderResource' => 'pembelian',
+            'PurchaseRequisitionResource' => 'pembelian',
+            'SupplierPayableResource' => 'pembelian',
+            'SupplierReturnResource' => 'pembelian',
+            'SupplierResource' => 'master-data',
+            'SupplierContractResource' => 'master-data',
+            'SupplierRatingResource' => 'master-data',
+            // Pelanggan
+            'CustomerResource' => 'master-data',
+            'CustomerGroupResource' => 'master-data',
+            'CustomerDepositResource' => 'master-data',
+            'LoyaltyPointResource' => 'master-data',
+            'LoyaltyRewardResource' => 'master-data',
+            'MembershipTierResource' => 'master-data',
+            // Promo
+            'BundleResource' => 'loyalitas',
+            'DiscountTemplateResource' => 'loyalitas',
+            'GiftCardResource' => 'loyalitas',
+            // Laporan
+            'SalesTargetResource' => 'laporan',
+            // Keuangan & Akuntansi
+            'BankStatementResource' => 'finance',
+            'BudgetResource' => 'finance',
+            'CompanyAssetResource' => 'finance',
+            'ExchangeRateResource' => 'finance',
+            'ExpenseResource' => 'finance',
+            'InstallmentResource' => 'finance',
+            'PaymentMethodResource' => 'finance',
+            'TaxInvoiceResource' => 'finance',
+            'AccountResource' => 'finance',
+            'JournalEntryResource' => 'finance',
+            // Sistem
+            'AttendanceResource' => 'sistem',
+            'RosterResource' => 'sistem',
+            'UserResource' => 'sistem',
+            'AuditLogResource' => 'sistem',
+            'PermissionResource' => 'sistem',
+            'RoleResource' => 'sistem',
+            'NotificationPreferenceResource' => 'sistem',
+            'OutletResource' => 'master-data',
+            'ProviderResource' => 'integrasi',
+            // Website
+            'BlogCategoryResource' => 'marketing',
+            'BlogPostResource' => 'marketing',
         ];
 
-        foreach ($groups as $label => $permissionGroup) {
-            if (str_contains($navigationGroup, $label)) {
-                return $permissionGroup;
-            }
-        }
+        $class = (new \ReflectionClass(static::class))->getShortName();
 
-        return 'sistem';
+        return $map[$class] ?? 'sistem';
     }
 }

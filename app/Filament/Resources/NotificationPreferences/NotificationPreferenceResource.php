@@ -11,15 +11,14 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Support\Icons\Heroicon;
 
 class NotificationPreferenceResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Notifikasi';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
     protected static ?int $navigationSort = 2;
     protected static ?string $model = NotificationPreference::class;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBellSlash;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-bell';
     protected static ?string $navigationLabel = 'Preferensi Notifikasi';
     protected static ?string $label = 'Preferensi Notifikasi';
 

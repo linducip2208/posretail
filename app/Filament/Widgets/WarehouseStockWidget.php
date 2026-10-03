@@ -15,7 +15,7 @@ class WarehouseStockWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '120s';
 
     public static function canView(): bool
     {

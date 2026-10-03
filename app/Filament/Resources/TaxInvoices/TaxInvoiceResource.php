@@ -13,7 +13,6 @@ use App\Models\TaxInvoice;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class TaxInvoiceResource extends Resource
@@ -27,7 +26,7 @@ class TaxInvoiceResource extends Resource
 
     protected static ?string $model = TaxInvoice::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCurrencyDollar;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-receipt';
 
     protected static ?string $recordTitleAttribute = 'invoice_number';
 

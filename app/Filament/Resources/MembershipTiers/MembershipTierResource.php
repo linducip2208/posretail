@@ -13,13 +13,12 @@ use App\Models\MembershipTier;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class MembershipTierResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Customer';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pelanggan';
 
     protected static ?int $navigationSort = 3;
 
@@ -27,7 +26,7 @@ class MembershipTierResource extends Resource
 
     protected static ?string $model = MembershipTier::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrophy;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-trophy';
 
     protected static ?string $recordTitleAttribute = 'name';
 

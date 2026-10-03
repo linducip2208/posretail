@@ -20,7 +20,7 @@ class ListWriteOffs extends ListRecords
             ExportAction::make()
                 ->exporter(WriteOffExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

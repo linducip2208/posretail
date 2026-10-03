@@ -18,7 +18,7 @@ class EditOrder extends EditRecord
         return [
             Action::make('printReceipt')
                 ->label('Cetak Struk')
-                ->icon('heroicon-o-printer')
+                ->icon('tabler-printer')
                 ->color('gray')
                 ->url(fn ($record) => route('orders.receipt', $record))
                 ->openUrlInNewTab(),

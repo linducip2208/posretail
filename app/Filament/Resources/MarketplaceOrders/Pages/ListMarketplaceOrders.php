@@ -18,7 +18,7 @@ class ListMarketplaceOrders extends ListRecords
             ExportAction::make()
                 ->exporter(MarketplaceOrderExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

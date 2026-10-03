@@ -14,7 +14,7 @@ class LaporanPembatalan extends Page
 
     protected static ?int $navigationSort = 9;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-x-circle';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-circle-x';
 
     protected static ?string $title = 'Laporan Pembatalan';
 

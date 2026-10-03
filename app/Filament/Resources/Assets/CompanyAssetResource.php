@@ -13,7 +13,6 @@ use App\Models\CompanyAsset;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class CompanyAssetResource extends Resource
@@ -25,7 +24,7 @@ class CompanyAssetResource extends Resource
 
     protected static ?string $model = CompanyAsset::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedComputerDesktop;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-device-desktop';
 
     protected static ?string $recordTitleAttribute = 'name';
 

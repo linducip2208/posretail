@@ -13,7 +13,6 @@ use App\Models\AssemblyOrder;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -26,7 +25,7 @@ class AssemblyOrderResource extends Resource
 
     protected static ?string $model = AssemblyOrder::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-tool';
 
     protected static ?string $navigationLabel = 'Produksi';
 

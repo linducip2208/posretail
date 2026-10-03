@@ -74,27 +74,27 @@ class KpiDashboardWidget extends BaseWidget
         return [
             Stat::make('GMROI', $gmroi . '%')
                 ->description('Gross Margin Return on Inventory')
-                ->descriptionIcon('heroicon-m-chart-bar')
+                ->descriptionIcon('tabler-chart-bar')
                 ->color($gmroi >= 200 ? 'success' : ($gmroi >= 100 ? 'warning' : 'danger')),
 
             Stat::make('Stock Turnover', $turnover . 'x')
                 ->description('Perputaran stok 3 bulan')
-                ->descriptionIcon('heroicon-m-arrows-right-left')
+                ->descriptionIcon('tabler-arrows-exchange')
                 ->color($turnover >= 4 ? 'success' : ($turnover >= 2 ? 'warning' : 'danger')),
 
             Stat::make('Sell-Through', $sellThrough . '%')
                 ->description('Dari total stok tersedia')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->descriptionIcon('tabler-trending-up')
                 ->color($sellThrough >= 60 ? 'success' : ($sellThrough >= 30 ? 'warning' : 'danger')),
 
             Stat::make('Avg Basket', 'Rp ' . number_format($avgBasket, 0, ',', '.'))
                 ->description('Rata-rata per transaksi')
-                ->descriptionIcon('heroicon-m-shopping-bag')
+                ->descriptionIcon('tabler-shopping-bag')
                 ->color('primary'),
 
             Stat::make('Overdue AR', 'Rp ' . number_format($overdueAR, 0, ',', '.'))
                 ->description('Hutang supplier jatuh tempo')
-                ->descriptionIcon('heroicon-m-exclamation-circle')
+                ->descriptionIcon('tabler-alert-circle')
                 ->color($overdueAR > 0 ? 'danger' : 'success'),
         ];
     }

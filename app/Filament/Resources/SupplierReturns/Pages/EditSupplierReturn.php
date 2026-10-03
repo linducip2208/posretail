@@ -17,7 +17,7 @@ class EditSupplierReturn extends EditRecord
         return [
             Action::make('receive')
                 ->label('Terima Retur')
-                ->icon('heroicon-o-check-circle')
+                ->icon('tabler-circle-check')
                 ->color('success')
                 ->requiresConfirmation()
                 ->visible(fn (): bool => in_array($this->record->status, ['draft', 'submitted']))

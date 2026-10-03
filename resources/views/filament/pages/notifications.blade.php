@@ -9,7 +9,7 @@
         @if($this->unreadCount > 0)
         <button wire:click="markAllRead" wire:loading.attr="disabled"
             class="inline-flex items-center gap-2 px-4 py-2 bg-[#206bc4] hover:bg-[#206bc4] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50">
-            <x-filament::icon icon="heroicon-o-check-badge" class="w-4 h-4" />
+            <x-filament::icon icon="tabler-circle-check" class="w-4 h-4" />
             Tandai Semua Dibaca
         </button>
         @endif
@@ -19,13 +19,13 @@
         @forelse($this->notifications as $notification)
         @php
             $icon = match(true) {
-                str_contains($notification->type, 'Order') => 'heroicon-o-shopping-bag',
-                str_contains($notification->type, 'Stock') => 'heroicon-o-archive-box',
-                str_contains($notification->type, 'Purchase') => 'heroicon-o-truck',
-                str_contains($notification->type, 'Payment') => 'heroicon-o-credit-card',
-                str_contains($notification->type, 'Customer') => 'heroicon-o-user-group',
-                str_contains($notification->type, 'Product') => 'heroicon-o-tag',
-                default => 'heroicon-o-bell-alert',
+                str_contains($notification->type, 'Order') => 'tabler-shopping-bag',
+                str_contains($notification->type, 'Stock') => 'tabler-archive',
+                str_contains($notification->type, 'Purchase') => 'tabler-truck',
+                str_contains($notification->type, 'Payment') => 'tabler-credit-card',
+                str_contains($notification->type, 'Customer') => 'tabler-users',
+                str_contains($notification->type, 'Product') => 'tabler-tag',
+                default => 'tabler-bell',
             };
         @endphp
         <div @class([
@@ -75,7 +75,7 @@
         </div>
         @empty
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-12 text-center">
-            <x-filament::icon icon="heroicon-o-bell-slash" class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+            <x-filament::icon icon="tabler-bell" class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
             <p class="text-gray-500 dark:text-gray-400 font-medium">Belum ada notifikasi</p>
             <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Notifikasi akan muncul di sini saat ada aktivitas baru</p>
         </div>

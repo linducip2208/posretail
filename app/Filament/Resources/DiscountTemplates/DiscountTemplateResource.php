@@ -13,7 +13,6 @@ use App\Models\DiscountTemplate;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class DiscountTemplateResource extends Resource
@@ -25,7 +24,7 @@ class DiscountTemplateResource extends Resource
 
     protected static ?string $model = DiscountTemplate::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-ticket';
 
     protected static ?string $recordTitleAttribute = 'name';
 

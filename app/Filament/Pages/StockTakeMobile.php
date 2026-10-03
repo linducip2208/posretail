@@ -19,7 +19,7 @@ class StockTakeMobile extends Page
 
     protected static ?int $navigationSort = 17;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-device-phone-mobile';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-device-mobile';
 
     protected static ?string $title = 'Stock Take (Mobile)';
 

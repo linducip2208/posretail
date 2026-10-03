@@ -13,7 +13,6 @@ use App\Models\RawMaterial;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class RawMaterialResource extends Resource
@@ -25,7 +24,7 @@ class RawMaterialResource extends Resource
 
     protected static ?string $model = RawMaterial::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-flask';
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -52,6 +52,7 @@ class TablerIcons
             'package' => '<path d="M12 3l8 4.5v9l-8 4.5l-8 -4.5v-9z"/><path d="M12 12l8 -4.5"/><path d="M12 12v9"/><path d="M12 12l-8 -4.5"/>',
             'chart-bar' => '<path d="M3 3v18h18"/><path d="M7 17v-6"/><path d="M12 17v-2"/><path d="M17 17v-8"/>',
             'trending-up' => '<path d="M3 17l6 -6l4 4l8 -8"/><path d="M14 7h7v7"/>',
+            'trending-down' => '<path d="M3 7l6 6l4 -4l8 8"/><path d="M14 17h7v-7"/>',
             'truck' => '<circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17h-2v-11a1 1 0 0 1 1 -1h9v12"/><path d="M9 17h6"/><path d="M15 17v-8h4l4 4v4"/>',
             'gift' => '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0 -5c.8 0 1.9 .5 2.5 2c.6 -1.5 1.7 -2 2.5 -2a2.5 2.5 0 0 1 0 5"/>',
             'tag' => '<circle cx="7.5" cy="7.5" r=".8" fill="currentColor"/><path d="M3 3h7l11 11l-7 7l-11 -11z"/>',
@@ -171,6 +172,51 @@ class TablerIcons
             'palette' => '<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10.5" r="1" fill="currentColor"/><circle cx="12" cy="7.5" r="1" fill="currentColor"/><circle cx="15.5" cy="10.5" r="1" fill="currentColor"/><path d="M12 21a9 9 0 0 1 -9 -9a9 9 0 0 1 9 -9h1a3 3 0 0 1 0 6h-2a2 2 0 0 0 0 4h4a4 4 0 0 1 0 8h-3z"/>',
             'ruler-measure' => '<path d="M3 17l14 -14l4 4l-14 14z"/><path d="M8.5 14.5l1.5 1.5"/><path d="M11.5 11.5l1.5 1.5"/><path d="M14.5 8.5l1.5 1.5"/>',
             'section-sign' => '<path d="M8 4v16"/><path d="M16 4v16"/><path d="M8 8h8"/><path d="M8 16h8"/>',
+            'chevrons-up-down' => '<path d="M7 15l-4 -4l4 -4"/><path d="M7 9v12"/><path d="M17 9l4 4l-4 4"/><path d="M17 15v-12"/>',
+            'chevrons-left' => '<path d="M11 7l-5 5l5 5"/><path d="M17 7l-5 5l5 5"/>',
+            'chevrons-right' => '<path d="M7 7l5 5l-5 5"/><path d="M13 7l5 5l-5 5"/>',
+            'ban' => '<circle cx="12" cy="12" r="9"/><path d="M5.5 5.5l13 13"/>',
+            'hand-stop' => '<path d="M8 13v-7a1.5 1.5 0 0 1 3 0v6v-5a1.5 1.5 0 0 1 3 0v6v-5a1.5 1.5 0 0 1 3 0v7a7 7 0 0 1 -7 7h-1a7 7 0 0 1 -6 -3.3l-2.4 -4.2a1.6 1.6 0 0 1 2.8 -1.6z"/>',
+            'lifebuoy' => '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5"/><path d="M12 16v5"/><path d="M3 12h5"/><path d="M16 12h5"/>',
+            'hash' => '<path d="M9 3l-2 18"/><path d="M15 3l-2 18"/><path d="M4 8h17"/><path d="M3 16h17"/>',
+            'at-sign' => '<circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0 -4 8"/>',
+            'rss' => '<path d="M5 19h.01"/><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 5a13 13 0 0 1 13 13"/>',
+            'cpu' => '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4"/><path d="M9 2v3"/><path d="M15 2v3"/><path d="M9 19v3"/><path d="M15 19v3"/><path d="M2 9h3"/><path d="M2 15h3"/><path d="M19 9h3"/><path d="M19 15h3"/>',
+            'thumb-up' => '<path d="M7 11v9"/><path d="M7 11l4 -7c1 0 2 1 2 3l-.5 3h6a2 2 0 0 1 2 2.5l-1.5 6a2 2 0 0 1 -2 1.5h-8a2 2 0 0 1 -2 -2z"/>',
+            'thumb-down' => '<path d="M7 13v-9"/><path d="M7 13l4 7c1 0 2 -1 2 -3l.5 -3h6a2 2 0 0 0 2 -2.5l-1.5 -6a2 2 0 0 0 -2 -1.5h-8a2 2 0 0 0 -2 2z"/>',
+            'mood-smile' => '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2s4 -2 4 -2"/><path d="M9 9h.01"/><path d="M15 9h.01"/>',
+            'mood-sad' => '<circle cx="12" cy="12" r="9"/><path d="M8 16s1.5 -2 4 -2s4 2 4 2"/><path d="M9 9h.01"/><path d="M15 9h.01"/>',
+            'share' => '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6 -3.6"/><path d="M8.2 13.2l7.6 3.6"/>',
+            'file-plus' => '<path d="M14 2h-7a2 2 0 0 0 -2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-11z"/><path d="M14 2v6h6"/><path d="M12 11v6"/><path d="M9 14h6"/>',
+            'file-check' => '<path d="M14 2h-7a2 2 0 0 0 -2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-11z"/><path d="M14 2v6h6"/><path d="M9 15l2 2l4 -4"/>',
+            'arrows-exchange' => '<path d="M7 4l-4 4l4 4"/><path d="M3 8h14"/><path d="M17 20l4 -4l-4 -4"/><path d="M21 16h-14"/>',
+            'alert-circle' => '<circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+            'arrow-back-up' => '<path d="M9 14l-4 -4l4 -4"/><path d="M5 10h11a4 4 0 0 1 0 8h-3"/>',
+            'tool' => '<path d="M14.7 6.3a4.5 4.5 0 0 0 -6 6l-5.7 5.7a2 2 0 0 0 2.8 2.8l5.7 -5.7a4.5 4.5 0 0 0 6 -6l-3 3l-2.5 -.5l-.5 -2.5z"/>',
+            'circle-arrow-right' => '<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/><path d="M12 8l4 4l-4 4"/>',
+            'shield' => '<path d="M12 3l7 4v5c0 4.5 -3 7.5 -7 9c-4 -1.5 -7 -4.5 -7 -9v-5z"/>',
+            'link' => '<path d="M10 14a5 5 0 0 0 7 0l3 -3a5 5 0 0 0 -7 -7l-1.5 1.5"/><path d="M14 10a5 5 0 0 0 -7 0l-3 3a5 5 0 0 0 7 7l1.5 -1.5"/>',
+            'sliders' => '<path d="M4 8h8"/><path d="M16 8h4"/><circle cx="14" cy="8" r="2"/><path d="M4 16h4"/><path d="M12 16h8"/><circle cx="10" cy="16" r="2"/>',
+            'eye-off' => '<path d="M3 3l18 18"/><path d="M10.6 5.1a9.8 9.8 0 0 1 4.4 .9"/><path d="M20.9 11.5a16 16 0 0 1 -3.4 3.9"/><path d="M8 8.5a4 4 0 0 0 5.5 5.5"/><path d="M2 12s3.5 -7 10 -7c2 0 3.7 .6 5.2 1.4"/>',
+            'player-pause' => '<path d="M9 4v16"/><path d="M15 4v16"/>',
+            'dots' => '<circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none"/>',
+            'sparkles' => '<path d="M12 3l1.9 5.1l5.1 1.9l-5.1 1.9l-1.9 5.1l-1.9 -5.1l-5.1 -1.9l5.1 -1.9z"/><path d="M19 3v3"/><path d="M20.5 4.5h-3"/>',
+            'video' => '<rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10l7 -4v12l-7 -4"/>',
+            'newspaper' => '<path d="M4 5h13v14h-13z"/><path d="M4 5a2 2 0 0 1 2 -2h11v16h-11a2 2 0 0 0 -2 2z"/><path d="M8 9h7"/><path d="M8 13h5"/>',
+            'cloud' => '<path d="M6 19a4 4 0 1 1 .4 -7.97a5.5 5.5 0 0 1 10.9 1.1a3.5 3.5 0 0 1 -.1 6.87h-11.2z"/>',
+            'rocket' => '<path d="M5 15c-1.5 1.5 -2 5 -2 5s3.5 -.5 5 -2"/><path d="M9 15l-1 -1l7 -7l1 1z"/><path d="M14 4c3 2 5 5 5 9l-3 3c-4 0 -7 -2 -9 -5l3 -3c1 -1.5 2.5 -3 4 -4z"/>',
+            'grip-vertical' => '<circle cx="9" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="19" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="19" r="1" fill="currentColor" stroke="none"/>',
+            'link-off' => '<path d="M9 15l-2.5 2.5a5 5 0 0 1 -7 -7l3 -3"/><path d="M15 9l2.5 -2.5a5 5 0 0 1 7 7l-3 3"/><path d="M3 3l18 18"/>',
+            'rotate-clockwise' => '<path d="M20 12a8 8 0 1 1 -2.3 -5.6"/><path d="M20 3v4h-4"/>',
+            'rotate-counter-clockwise' => '<path d="M4 12a8 8 0 1 1 2.3 5.6"/><path d="M4 21v-4h4"/>',
+            'zoom-in' => '<circle cx="10" cy="10" r="7"/><path d="M21 21l-6 -6"/><path d="M10 7v6"/><path d="M7 10h6"/>',
+            'zoom-out' => '<circle cx="10" cy="10" r="7"/><path d="M21 21l-6 -6"/><path d="M7 10h6"/>',
+            'move' => '<path d="M12 2v20"/><path d="M8 6l4 -4l4 4"/><path d="M8 18l4 4l4 -4"/><path d="M2 12h20"/><path d="M6 8l-4 4l4 4"/><path d="M18 8l4 4l-4 4"/>',
+            'crop' => '<path d="M6 2v14"/><path d="M18 22v-14"/><path d="M2 6h14"/><path d="M22 18h-14"/>',
+            'folder' => '<path d="M3 7a2 2 0 0 1 2 -2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"/>',
+            'trophy' => '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1 -10 0z"/><path d="M7 6h-3a1 1 0 0 0 -1 1a3 3 0 0 0 3 3h1"/><path d="M17 6h3a1 1 0 0 1 1 1a3 3 0 0 1 -3 3h-1"/>',
+            'flask' => '<path d="M9 3h6"/><path d="M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8 -3l-5 -9v-6"/><path d="M7 15h10"/>',
+            'circle-pause' => '<circle cx="12" cy="12" r="9"/><path d="M10 9v6"/><path d="M14 9v6"/>',
         ];
     }
 
@@ -179,11 +225,154 @@ class TablerIcons
         return array_key_exists($name, static::paths());
     }
 
+    /**
+     * Peta nama heroicon-* (o/m/s) ke nama ikon Tabler lokal.
+     * Dipakai override generate_icon_html agar seluruh Filament ikut Tabler.
+     */
+    public static function heroiconMap(): array
+    {
+        return [
+            'x-mark' => 'x', 'check-circle' => 'circle-check', 'x-circle' => 'circle-x',
+            'information-circle' => 'info-circle', 'exclamation-triangle' => 'alert-triangle',
+            'exclamation-circle' => 'alert-circle', 'question-mark-circle' => 'help',
+            'magnifying-glass' => 'search', 'magnifying-glass-circle' => 'search',
+            'squares-2x2' => 'layout-grid', 'squares-plus' => 'plus',
+            'shopping-bag' => 'shopping-bag', 'shopping-cart' => 'shopping-cart',
+            'banknotes' => 'cash', 'archive-box' => 'archive', 'archive-box-arrow-down' => 'download',
+            'archive-box-x-mark' => 'x', 'presentation-chart-line' => 'presentation-analytics',
+            'presentation-chart-bar' => 'chart-bar', 'chart-bar' => 'chart-bar', 'chart-pie' => 'chart-bar',
+            'arrow-down-tray' => 'download', 'arrow-up-tray' => 'upload',
+            'arrow-path' => 'refresh', 'arrow-path-rounded-square' => 'refresh',
+            'arrow-right-circle' => 'circle-arrow-right', 'arrow-top-right-on-square' => 'arrow-up-right',
+            'arrow-uturn-left' => 'arrow-back-up', 'arrow-uturn-right' => 'arrow-back-up',
+            'arrow-left-end-on-rectangle' => 'logout', 'arrow-left-on-rectangle' => 'logout',
+            'arrow-right-end-on-rectangle' => 'login', 'arrow-right-on-rectangle' => 'login',
+            'arrow-left-start-on-rectangle' => 'logout', 'arrow-right-start-on-rectangle' => 'login',
+            'arrows-right-left' => 'arrows-exchange', 'arrows-up-down' => 'arrows-exchange',
+            'arrows-pointing-in' => 'minus', 'arrows-pointing-out' => 'external-link',
+            'paper-airplane' => 'send', 'document-text' => 'file-description',
+            'document-plus' => 'file-plus', 'document-check' => 'file-check',
+            'document-duplicate' => 'copy', 'document-magnifying-glass' => 'file-description',
+            'clipboard-document-list' => 'clipboard-list', 'clipboard-document-check' => 'clipboard-check',
+            'clipboard-document' => 'clipboard-list',
+            'table-cells' => 'table', 'queue-list' => 'list', 'list-bullet' => 'list',
+            'printer' => 'printer', 'trash' => 'trash', 'tag' => 'tag', 'ticket' => 'ticket',
+            'scale' => 'scale', 'bell-alert' => 'bell', 'bell-slash' => 'bell', 'bell-snooze' => 'bell',
+            'chat-bubble-left-right' => 'message-circle', 'chat-bubble-left' => 'message-circle',
+            'chat-bubble-oval-left' => 'message-circle',
+            'user-group' => 'users', 'user-plus' => 'user-plus', 'user-minus' => 'user',
+            'user-circle' => 'user', 'identification' => 'id',
+            'currency-dollar' => 'currency-dollar', 'currency-pound' => 'currency-dollar',
+            'cog-6-tooth' => 'settings', 'cog-8-tooth' => 'settings', 'cog' => 'settings',
+            'wrench-screwdriver' => 'tool', 'wrench' => 'wrench',
+            'adjustments-horizontal' => 'sliders', 'adjustments-vertical' => 'sliders',
+            'funnel' => 'filter', 'bars-3' => 'menu', 'bars-3-bottom-left' => 'menu',
+            'bars-arrow-down' => 'filter', 'bars-arrow-up' => 'filter',
+            'view-columns' => 'layout-grid',
+            'rectangle-stack' => 'layers', 'square-3-stack-3d' => 'layers',
+            'circle-stack' => 'database', 'server-stack' => 'server', 'server' => 'server',
+            'cloud-arrow-up' => 'cloud-upload', 'cloud-arrow-down' => 'download', 'cloud' => 'cloud',
+            'lock-closed' => 'lock', 'lock-open' => 'lock',
+            'eye-slash' => 'eye-off',
+            'calendar-days' => 'calendar',
+            'globe-alt' => 'world', 'globe-asia-australia' => 'world',
+            'map-pin' => 'map-pin', 'map' => 'map-pin',
+            'truck' => 'truck', 'home' => 'home', 'home-modern' => 'building-store',
+            'building-office' => 'building', 'building-office-2' => 'building',
+            'building-storefront' => 'building-store', 'building-library' => 'building-bank',
+            'sparkles' => 'sparkles', 'academic-cap' => 'briefcase',
+            'briefcase' => 'briefcase', 'calculator' => 'calculator',
+            'receipt-percent' => 'receipt', 'receipt-refund' => 'receipt',
+            'photo' => 'photo', 'film' => 'video', 'play' => 'player-play', 'pause' => 'player-pause',
+            'pause-circle' => 'circle-pause', 'computer-desktop' => 'device-desktop',
+            'folder' => 'folder', 'folder-open' => 'folder', 'trophy' => 'trophy', 'flask' => 'flask',
+            'cube' => 'package', 'document-currency-dollar' => 'receipt',
+            'calendar-date-range' => 'calendar', 'server-stack' => 'server',
+            'clipboard-document' => 'clipboard-list', 'numbered-list' => 'list',
+            'chart-pie' => 'chart-bar', 'bell-slash' => 'bell', 'gift-top' => 'gift',
+            'arrow-trending-up' => 'trending-up', 'arrow-trending-down' => 'trending-down',
+            'beaker' => 'flask',
+            'building-office-2' => 'building',
+            'stop' => 'minus', 'forward' => 'arrow-right', 'backward' => 'arrow-left',
+            'musical-note' => 'music', 'video-camera' => 'video',
+            'microphone' => 'microphone', 'phone' => 'phone', 'phone-arrow-down-left' => 'phone',
+            'phone-arrow-up-right' => 'phone-call',
+            'envelope' => 'mail', 'envelope-open' => 'mail', 'inbox' => 'inbox',
+            'inbox-arrow-down' => 'download', 'inbox-stack' => 'inbox',
+            'newspaper' => 'newspaper', 'book-open' => 'book', 'bookmark' => 'bookmark',
+            'bookmark-square' => 'bookmark', 'link' => 'link',
+            'qr-code' => 'qrcode', 'barcode' => 'barcode', 'wifi' => 'wifi', 'signal' => 'wifi',
+            'computer-desktop' => 'device-desktop', 'device-phone-mobile' => 'device-mobile',
+            'device-tablet' => 'device-mobile', 'tv' => 'device-desktop',
+            'key' => 'key', 'shield-check' => 'shield-check', 'shield-exclamation' => 'shield',
+            'finger-print' => 'fingerprint',
+            'minus' => 'minus', 'plus' => 'plus', 'check' => 'check', 'x' => 'x',
+            'ellipsis-vertical' => 'dots-vertical', 'ellipsis-horizontal' => 'dots',
+            'chevron-up-down' => 'chevrons-up-down', 'chevrons-up-down' => 'chevrons-up-down',
+            'magnifying-glass-plus' => 'zoom', 'magnifying-glass-minus' => 'zoom',
+            'eye-dropper' => 'eye', 'cursor-arrow-rays' => 'arrow-up-right',
+            'cursor-arrow-ripple' => 'arrow-up-right',
+            'swatch' => 'palette', 'paint-brush' => 'brush',
+            'eye' => 'eye', 'calendar' => 'calendar', 'clock' => 'clock',
+            'bolt' => 'bolt', 'bolt-slash' => 'bolt',
+            'minus-circle' => 'minus', 'plus-circle' => 'plus',
+            'no-symbol' => 'ban', 'hand-raised' => 'hand-stop',
+            'lifebuoy' => 'lifebuoy', 'flag' => 'flag', 'gift-top' => 'gift', 'gift' => 'gift',
+            'heart' => 'heart', 'star' => 'star',
+            'share' => 'share', 'paper-clip' => 'paperclip', 'hashtag' => 'hash',
+            'at-symbol' => 'at-sign', 'rss' => 'rss', 'code-bracket' => 'code',
+            'code-bracket-square' => 'code', 'command-line' => 'terminal',
+            'cpu-chip' => 'cpu', 'rocket-launch' => 'rocket',
+            'language' => 'language', 'face-smile' => 'mood-smile', 'face-frown' => 'mood-sad',
+            'hand-thumb-up' => 'thumb-up', 'hand-thumb-down' => 'thumb-down',
+            'currency-yen' => 'currency-dollar', 'currency-euro' => 'currency-dollar',
+            'wallet' => 'wallet', 'credit-card' => 'credit-card',
+        ];
+    }
+
     public static function svg(string $name, string $class = 'w-5 h-5'): string
     {
         $inner = static::paths()[$name] ?? static::paths()['help'];
         $cls = htmlspecialchars($class, ENT_QUOTES, 'UTF-8');
 
         return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="'.$cls.'" aria-hidden="true">'.$inner.'</svg>';
+    }
+
+    /**
+     * Render ikon Tabler untuk nama heroicon-* (dipakai override Filament).
+     * Kembalikan null bila tidak ada padanan agar fallback heroicon tetap jalan.
+     */
+    public static function filamentSvg(string $heroicon, mixed $attributes = null): ?string
+    {
+        if (! preg_match('/^heroicon-[oms]-(.+)$/', $heroicon, $m)) {
+            return null;
+        }
+
+        $key = $m[1];
+        $map = static::heroiconMap();
+        $name = $map[$key] ?? (static::has($key) ? $key : null);
+
+        if ($name === null || ! static::has($name)) {
+            return null;
+        }
+
+        $cls = 'fi-icon';
+        $extra = '';
+        if ($attributes !== null && method_exists($attributes, 'get')) {
+            $existing = (string) ($attributes->get('class', ''));
+            if ($existing !== '') {
+                $cls .= ' '.$existing;
+            }
+            foreach ($attributes->except('class')->getAttributes() as $k => $v) {
+                if ($v === false || $v === null) {
+                    continue;
+                }
+                $extra .= ' '.htmlspecialchars($k, ENT_QUOTES, 'UTF-8').'="'.htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8').'"';
+            }
+        }
+        $cls = htmlspecialchars($cls, ENT_QUOTES, 'UTF-8');
+        $inner = static::paths()[$name];
+
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="'.$cls.'" aria-hidden="true"'.$extra.'>'.$inner.'</svg>';
     }
 }

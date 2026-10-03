@@ -13,7 +13,6 @@ use App\Models\StockOpname;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class StockOpnameResource extends Resource
@@ -25,7 +24,7 @@ class StockOpnameResource extends Resource
 
     protected static ?string $model = StockOpname::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-clipboard-check';
 
     protected static ?string $recordTitleAttribute = 'opname_number';
 

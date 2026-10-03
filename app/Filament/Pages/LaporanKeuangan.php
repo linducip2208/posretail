@@ -19,7 +19,7 @@ class LaporanKeuangan extends Page
 
     protected static ?int $navigationSort = 2;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-currency-dollar';
 
     protected static ?string $title = 'Laporan Keuangan';
 

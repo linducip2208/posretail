@@ -21,11 +21,11 @@ class ListBankStatements extends ListRecords
             ImportAction::make()
                 ->importer(BankStatementImporter::class)
                 ->label('Import CSV')
-                ->icon('heroicon-o-arrow-up-tray'),
+                ->icon('tabler-upload'),
             ExportAction::make()
                 ->exporter(BankStatementExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

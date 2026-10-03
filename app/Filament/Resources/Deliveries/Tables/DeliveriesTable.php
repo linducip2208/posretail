@@ -92,7 +92,7 @@ class DeliveriesTable
             ->recordActions([
                 Action::make('pack')
                     ->label('Kemas')
-                    ->icon('heroicon-o-archive-box')
+                    ->icon('tabler-archive')
                     ->color('info')
                     ->visible(fn (Delivery $record): bool => $record->status === 'pending')
                     ->action(function (Delivery $record) {
@@ -105,7 +105,7 @@ class DeliveriesTable
 
                 Action::make('ship')
                     ->label('Kirim')
-                    ->icon('heroicon-o-paper-airplane')
+                    ->icon('tabler-send')
                     ->color('warning')
                     ->visible(fn (Delivery $record): bool => $record->status === 'packed')
                     ->action(function (Delivery $record) {
@@ -118,7 +118,7 @@ class DeliveriesTable
 
                 Action::make('deliver')
                     ->label('Terkirim')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon('tabler-circle-check')
                     ->color('success')
                     ->visible(fn (Delivery $record): bool => $record->status === 'shipped')
                     ->action(function (Delivery $record) {
@@ -131,7 +131,7 @@ class DeliveriesTable
 
                 Action::make('cancel')
                     ->label('Batalkan')
-                    ->icon('heroicon-o-x-circle')
+                    ->icon('tabler-circle-x')
                     ->color('danger')
                     ->visible(fn (Delivery $record): bool => !in_array($record->status, ['delivered', 'cancelled']))
                     ->requiresConfirmation()

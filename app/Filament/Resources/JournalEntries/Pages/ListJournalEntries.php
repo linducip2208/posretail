@@ -20,7 +20,7 @@ class ListJournalEntries extends ListRecords
             ExportAction::make()
                 ->exporter(JournalEntryExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

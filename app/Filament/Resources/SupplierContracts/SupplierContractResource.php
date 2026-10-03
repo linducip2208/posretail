@@ -13,19 +13,18 @@ use App\Models\SupplierContract;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class SupplierContractResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Supplier';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pembelian';
 
     protected static ?int $navigationSort = 3;
 
     protected static ?string $model = SupplierContract::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-file-check';
 
     protected static ?string $recordTitleAttribute = 'contract_number';
 

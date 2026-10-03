@@ -14,18 +14,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use BackedEnum;
-use Filament\Support\Icons\Heroicon;
 
 class ProviderResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Integrasi';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 1;
 
     protected static ?string $model = Provider::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedServerStack;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-server';
 
     protected static ?string $label = 'Payment Gateway';
 

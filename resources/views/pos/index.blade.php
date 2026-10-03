@@ -90,6 +90,17 @@
 
     {{-- MAIN LAYOUT --}}
     <div id="mainLayout" style="display:flex;flex:1;min-height:0;overflow:hidden">
+        {{-- CATEGORY RAIL (LEFT) --}}
+        <aside id="categoryRail" class="hidden md:flex flex-col bg-white border-r border-slate-200 py-2 px-2 gap-1 overflow-y-auto" style="flex-shrink:0;width:11rem" aria-label="Kategori produk">
+            <button onclick="filterCategory('')" data-cat="" class="cat-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-left bg-[#e7f1fb] text-[#206bc4]">
+                <x-ti name="layout-grid" class="w-4 h-4 shrink-0" />Semua
+            </button>
+            @foreach($categories as $c)
+            <button onclick="filterCategory('{{ $c->id }}')" data-cat="{{ $c->id }}" class="cat-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-medium text-left text-slate-600 hover:bg-slate-100">
+                <x-ti name="tag" class="w-4 h-4 shrink-0 text-slate-400" />{{ $c->name }}
+            </button>
+            @endforeach
+        </aside>
         <div id="productPanel" style="display:flex;flex-direction:column;flex:1;min-width:0;overflow:hidden">
             {{-- Search + Category --}}
             <div class="p-3 bg-white border-b border-slate-200" style="flex-shrink:0">
@@ -98,7 +109,7 @@
                         <x-ti name="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input type="text" id="searchInput" placeholder="Cari produk atau scan barcode... (F1)" aria-label="Cari produk" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#206bc4]/30 focus:border-[#206bc4] outline-none text-sm bg-white">
                     </div>
-                    <select id="categoryFilter" aria-label="Filter kategori" onchange="loadProducts(1)" class="border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-white text-slate-700 outline-none focus:border-[#206bc4] max-w-[10rem]">
+                    <select id="categoryFilter" aria-label="Filter kategori" onchange="syncCategoryRail(this.value);loadProducts(1)" class="md:hidden border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-white text-slate-700 outline-none focus:border-[#206bc4] max-w-[10rem]">
                         <option value="">Semua Kategori</option>
                         @foreach($categories as $c)
                         <option value="{{ $c->id }}">{{ $c->name }}</option>
@@ -316,6 +327,22 @@
         });
 
         // === LOAD PRODUCTS ===
+        function setCategoryRailActive(id) {
+            document.querySelectorAll('#categoryRail .cat-btn').forEach(b => {
+                const on = (b.dataset.cat || '') === String(id || '');
+                b.className = 'cat-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] text-left min-h-[42px] ' +
+                    (on ? 'font-semibold bg-[#e7f1fb] text-[#206bc4]' : 'font-medium text-slate-600 hover:bg-slate-100');
+            });
+        }
+        function filterCategory(id) {
+            const sel = document.getElementById('categoryFilter');
+            if (sel) sel.value = id || '';
+            setCategoryRailActive(id);
+            loadProducts(1);
+        }
+        function syncCategoryRail(id) {
+            setCategoryRailActive(id);
+        }
         async function loadProducts(page = 1) {
             const search = document.getElementById('searchInput').value;
             const catId = document.getElementById('categoryFilter')?.value || '';

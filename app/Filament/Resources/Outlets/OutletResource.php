@@ -13,7 +13,6 @@ use App\Models\Outlet;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -21,13 +20,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class OutletResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Outlet';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 1;
 
     protected static ?string $model = Outlet::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingStorefront;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-building-store';
 
     protected static ?string $recordTitleAttribute = 'name';
 

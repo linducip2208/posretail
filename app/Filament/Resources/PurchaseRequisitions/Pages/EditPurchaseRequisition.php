@@ -23,7 +23,7 @@ class EditPurchaseRequisition extends EditRecord
         if ($record->status === 'draft') {
             $actions[] = Action::make('submit')
                 ->label('Ajukan')
-                ->icon('heroicon-o-paper-airplane')
+                ->icon('tabler-send')
                 ->color('warning')
                 ->action(function () use ($record) {
                     $record->update([
@@ -41,7 +41,7 @@ class EditPurchaseRequisition extends EditRecord
         if ($record->status === 'submitted') {
             $actions[] = Action::make('approve')
                 ->label('Setujui')
-                ->icon('heroicon-o-check-circle')
+                ->icon('tabler-circle-check')
                 ->color('success')
                 ->action(function () use ($record) {
                     $record->update([
@@ -58,7 +58,7 @@ class EditPurchaseRequisition extends EditRecord
 
             $actions[] = Action::make('reject')
                 ->label('Tolak')
-                ->icon('heroicon-o-x-circle')
+                ->icon('tabler-circle-x')
                 ->color('danger')
                 ->requiresConfirmation()
                 ->modalHeading('Tolak Permintaan Pembelian')
@@ -84,7 +84,7 @@ class EditPurchaseRequisition extends EditRecord
         if ($record->status === 'approved') {
             $actions[] = Action::make('createPO')
                 ->label('Buat PO')
-                ->icon('heroicon-o-document-plus')
+                ->icon('tabler-file-plus')
                 ->color('info')
                 ->requiresConfirmation()
                 ->modalHeading('Buat Purchase Order')

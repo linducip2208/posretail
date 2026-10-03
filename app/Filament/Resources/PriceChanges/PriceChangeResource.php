@@ -9,7 +9,6 @@ use App\Filament\Resources\PriceChanges\Tables\PriceChangesTable;
 use App\Models\PriceChange;
 use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PriceChangeResource extends Resource
@@ -21,7 +20,7 @@ class PriceChangeResource extends Resource
 
     protected static ?string $model = PriceChange::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowTrendingUp;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-trending-up';
 
     protected static ?string $navigationLabel = 'Riwayat Harga';
 

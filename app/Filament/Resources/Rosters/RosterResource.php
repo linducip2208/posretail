@@ -13,20 +13,19 @@ use App\Models\Roster;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
 class RosterResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Pegawai';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 3;
 
     protected static ?string $model = Roster::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-list';
 
     protected static ?string $navigationLabel = 'Jadwal Shift';
 

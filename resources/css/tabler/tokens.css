@@ -5,27 +5,39 @@
  * Jangan hardcode warna di file lain; pakai variabel atau kelas utilitas ini.
  */
 :root {
-    /* --- Tabler palette --- */
+    /* --- Tabler palette (speklock) --- */
     --tb-primary: #206bc4;
     --tb-primary-dark: #1a569d;
     --tb-primary-darker: #15467f;
-    --tb-primary-tint: #e8eff9;
+    --tb-primary-tint: #e7f1fb;
     --tb-success: #2fb344;
     --tb-success-dark: #268f36;
-    --tb-success-tint: #e6f5e9;
+    --tb-success-tint: #eaf7ed;
     --tb-warning: #f59f00;
     --tb-warning-dark: #c87f00;
-    --tb-warning-tint: #fef3d9;
+    --tb-warning-tint: #fff4db;
     --tb-danger: #d63939;
     --tb-danger-dark: #b22b2b;
-    --tb-danger-tint: #fbe9e9;
-    --tb-info: #066fd1;
+    --tb-danger-tint: #fcebea;
+    --tb-info: #4299e1;
     --tb-info-tint: #e0f0fc;
-    --tb-muted: #616876;
-    --tb-body: #1d273b;
-    --tb-border: #e6e8eb;
+    --tb-muted: #667382;
+    --tb-body: #182433;
+    --tb-border: #dfe3e8;
     --tb-bg: #f5f7fb;
     --tb-card: #ffffff;
+    /* --- alias nama spek --- */
+    --ui-bg: var(--tb-bg);
+    --ui-surface: var(--tb-card);
+    --ui-surface-hover: #f5f9fd;
+    --ui-border: var(--tb-border);
+    --ui-text: var(--tb-body);
+    --ui-text-muted: var(--tb-muted);
+    --ui-primary: var(--tb-primary);
+    --ui-success: var(--tb-success);
+    --ui-warning: var(--tb-warning);
+    --ui-danger: var(--tb-danger);
+    --ui-info: var(--tb-info);
     /* --- radius & shadow --- */
     --tb-radius-sm: 4px;
     --tb-radius: 8px;

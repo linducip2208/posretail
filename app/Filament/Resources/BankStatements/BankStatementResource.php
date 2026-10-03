@@ -9,7 +9,6 @@ use App\Filament\Resources\BankStatements\Tables\BankStatementsTable;
 use App\Models\BankStatement;
 use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -22,7 +21,7 @@ class BankStatementResource extends Resource
 
     protected static ?string $model = BankStatement::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-cash';
 
     protected static ?string $navigationLabel = 'Rekonsiliasi Bank';
 

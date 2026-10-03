@@ -62,6 +62,7 @@ class SupplierScoreSummaryWidget extends BaseWidget
                     ->formatStateUsing(fn (float $state): string => self::renderStars($state) . ' (' . $state . ')'),
             ])
             ->heading('Ringkasan Skor Supplier')
+            ->defaultSort('avg_overall', 'desc')
             ->emptyStateHeading('Belum ada rating')
             ->emptyStateDescription('Rating supplier akan muncul setelah ada penilaian.');
     }
@@ -70,15 +71,15 @@ class SupplierScoreSummaryWidget extends BaseWidget
     {
         $rounded = (int) round($score);
         $color = match (true) {
-            $score >= 4 => '#16a34a',
-            $score >= 3 => '#ca8a04',
-            default => '#dc2626',
+            $score >= 4 => 'text-[#2fb344]',
+            $score >= 3 => 'text-[#f59f00]',
+            default => 'text-[#d63939]',
         };
         $out = '';
         for ($i = 1; $i <= 5; $i++) {
             $out .= $i <= $rounded
-                ? '<span style="color: ' . $color . '">★</span>'
-                : '<span style="color: #d1d5db">★</span>';
+                ? \App\Support\TablerIcons::svg('star-filled', 'inline h-4 w-4 ' . $color)
+                : \App\Support\TablerIcons::svg('star', 'inline h-4 w-4 text-slate-300');
         }
         return $out;
     }

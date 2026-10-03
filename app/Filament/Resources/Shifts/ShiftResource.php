@@ -13,19 +13,18 @@ use App\Models\Shift;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ShiftResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Keuangan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Operasional';
 
     protected static ?int $navigationSort = 3;
 
     protected static ?string $model = Shift::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDateRange;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-calendar';
 
     protected static ?string $navigationLabel = 'Shift Kasir';
 

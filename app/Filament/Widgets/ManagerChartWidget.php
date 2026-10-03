@@ -13,7 +13,7 @@ class ManagerChartWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '300s';
 
     protected ?string $heading = 'Pendapatan 30 Hari Terakhir';
 
@@ -32,13 +32,13 @@ class ManagerChartWidget extends ChartWidget
             ->get();
 
         return [
-            'datasets' => [
+                'datasets' => [
                 [
                     'label' => 'Pendapatan',
                     'data' => $revenue->pluck('total')->toArray(),
                     'fill' => 'start',
-                    'backgroundColor' => 'rgba(79, 70, 229, 0.1)',
-                    'borderColor' => '#4f46e5',
+                    'backgroundColor' => 'rgba(32, 107, 196, 0.10)',
+                    'borderColor' => '#206bc4',
                     'tension' => 0.3,
                 ],
             ],

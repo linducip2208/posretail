@@ -15,7 +15,7 @@ class ExpiringProductsWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $pollingInterval = '60s';
+    protected ?string $pollingInterval = '300s';
 
     protected static function isVisibleToRole(?string $role): bool
     {

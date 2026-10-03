@@ -20,7 +20,7 @@ class MarketplaceOrderResource extends Resource
 
     protected static ?string $model = MarketplaceOrder::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-shopping-bag';
 
     protected static ?string $navigationLabel = 'Pesanan Marketplace';
 

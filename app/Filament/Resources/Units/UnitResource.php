@@ -13,7 +13,6 @@ use App\Models\Unit;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class UnitResource extends Resource
@@ -25,7 +24,7 @@ class UnitResource extends Resource
 
     protected static ?string $model = Unit::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-scale';
 
     protected static ?string $recordTitleAttribute = 'name';
 

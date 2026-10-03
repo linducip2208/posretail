@@ -21,7 +21,7 @@ class EditBudget extends EditRecord
         return [
             Action::make('refreshActuals')
                 ->label('Segarkan Data Aktual')
-                ->icon('heroicon-o-arrow-path')
+                ->icon('tabler-refresh')
                 ->color('warning')
                 ->action(function () {
                     $record = $this->getRecord();

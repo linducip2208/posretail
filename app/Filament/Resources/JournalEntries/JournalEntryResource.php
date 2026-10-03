@@ -13,7 +13,6 @@ use App\Models\JournalEntry;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class JournalEntryResource extends Resource
@@ -25,7 +24,7 @@ class JournalEntryResource extends Resource
 
     protected static ?string $model = JournalEntry::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-file-description';
 
     protected static ?string $recordTitleAttribute = 'journal_number';
 

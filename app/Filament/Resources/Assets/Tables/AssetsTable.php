@@ -127,7 +127,7 @@ class AssetsTable
             ->recordActions([
                 Action::make('dispose')
                     ->label('Hapus Aset')
-                    ->icon('heroicon-o-trash')
+                    ->icon('tabler-trash')
                     ->color('danger')
                     ->visible(fn (CompanyAsset $record): bool => $record->status === 'active')
                     ->requiresConfirmation()
@@ -143,7 +143,7 @@ class AssetsTable
 
                 Action::make('recordMaintenance')
                     ->label('Catat Perbaikan')
-                    ->icon('heroicon-o-wrench-screwdriver')
+                    ->icon('tabler-tool')
                     ->color('warning')
                     ->visible(fn (CompanyAsset $record): bool => in_array($record->status, ['active', 'maintenance']))
                     ->url(fn (CompanyAsset $record): string => CompanyAssetResource::getUrl('edit', ['record' => $record->id])),

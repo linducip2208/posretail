@@ -13,7 +13,6 @@ use App\Models\Consignment;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ConsignmentResource extends Resource
@@ -25,7 +24,7 @@ class ConsignmentResource extends Resource
 
     protected static ?string $model = Consignment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBoxArrowDown;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-download';
 
     protected static ?string $navigationLabel = 'Konsinyasi';
 

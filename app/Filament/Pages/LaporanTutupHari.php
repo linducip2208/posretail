@@ -19,7 +19,7 @@ class LaporanTutupHari extends Page
 
     protected static ?int $navigationSort = 4;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-check';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-file-check';
 
     protected static ?string $title = 'Tutup Hari';
 

@@ -85,7 +85,7 @@ class SupplierContractsTable
             ->recordActions([
                 Action::make('terminate')
                     ->label('Hentikan Kontrak')
-                    ->icon('heroicon-o-x-circle')
+                    ->icon('tabler-circle-x')
                     ->color('danger')
                     ->visible(fn (SupplierContract $record): bool => $record->status === 'active')
                     ->requiresConfirmation()

@@ -13,19 +13,18 @@ use App\Models\Permission;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PermissionResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 2;
 
     protected static ?string $model = Permission::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-key';
 
     protected static ?string $recordTitleAttribute = 'name';
 

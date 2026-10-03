@@ -42,7 +42,7 @@ class ProductForm
                     ->unique('products', 'barcode', ignoreRecord: true)
                     ->suffixAction(
                         Action::make('generateBarcode')
-                            ->icon('heroicon-m-arrow-path')
+                            ->icon('tabler-refresh')
                             ->tooltip('Generate barcode otomatis')
                             ->action(function ($set) {
                                 $set('barcode', BarcodeHelper::generate());

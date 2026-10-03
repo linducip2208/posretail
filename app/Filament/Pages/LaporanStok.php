@@ -17,7 +17,7 @@ class LaporanStok extends Page
 
     protected static ?int $navigationSort = 3;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-archive-box';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-archive';
 
     protected static ?string $title = 'Laporan Stok';
 

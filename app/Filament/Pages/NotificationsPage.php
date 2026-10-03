@@ -8,11 +8,11 @@ use UnitEnum;
 
 class NotificationsPage extends Page
 {
-    protected static string|UnitEnum|null $navigationGroup = 'Notifikasi';
+    protected static string|UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 1;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-bell-alert';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-bell';
 
     protected static ?string $title = 'Notifikasi';
 

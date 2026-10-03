@@ -13,19 +13,18 @@ use App\Models\SupplierRating;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class SupplierRatingResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Supplier';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pembelian';
 
     protected static ?int $navigationSort = 2;
 
     protected static ?string $model = SupplierRating::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-heart';
 
     protected static ?string $recordTitleAttribute = 'supplier.name';
 

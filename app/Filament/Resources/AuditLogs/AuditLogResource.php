@@ -10,18 +10,17 @@ use App\Models\AuditLog;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
-use Filament\Support\Icons\Heroicon;
 
 class AuditLogResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 3;
 
     protected static ?string $model = AuditLog::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-clipboard-list';
 
     protected static ?string $navigationLabel = 'Audit Log';
 

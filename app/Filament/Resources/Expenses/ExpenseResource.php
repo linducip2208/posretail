@@ -13,7 +13,6 @@ use App\Models\Expense;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ExpenseResource extends Resource
@@ -25,7 +24,7 @@ class ExpenseResource extends Resource
 
     protected static ?string $model = Expense::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-currency-dollar';
 
     protected static ?string $recordTitleAttribute = 'description';
 

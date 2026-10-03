@@ -13,7 +13,7 @@ use UnitEnum;
 class PengaturanSistem extends Page
 {
     use WithFileUploads;
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-settings';
 
     protected static string|UnitEnum|null $navigationGroup = 'Sistem';
 

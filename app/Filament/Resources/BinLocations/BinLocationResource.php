@@ -13,7 +13,6 @@ use App\Models\BinLocation;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class BinLocationResource extends Resource
@@ -25,7 +24,7 @@ class BinLocationResource extends Resource
 
     protected static ?string $model = BinLocation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMapPin;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-map-pin';
 
     protected static ?string $recordTitleAttribute = 'code';
 

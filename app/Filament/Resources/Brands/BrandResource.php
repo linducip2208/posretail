@@ -13,7 +13,6 @@ use App\Models\Brand;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class BrandResource extends Resource
@@ -25,7 +24,7 @@ class BrandResource extends Resource
 
     protected static ?string $model = Brand::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookmark;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-bookmark';
 
     protected static ?string $recordTitleAttribute = 'name';
 

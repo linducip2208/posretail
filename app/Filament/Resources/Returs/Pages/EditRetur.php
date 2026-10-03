@@ -17,7 +17,7 @@ class EditRetur extends EditRecord
         return [
             Action::make('complete')
                 ->label('Selesaikan Retur')
-                ->icon('heroicon-o-check-circle')
+                ->icon('tabler-circle-check')
                 ->color('success')
                 ->requiresConfirmation()
                 ->visible(fn (): bool => in_array($this->record->status, ['pending', 'approved'], true))

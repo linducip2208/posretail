@@ -22,7 +22,7 @@ class ListSerialNumbers extends ListRecords
             CreateAction::make(),
             Action::make('importImei')
                 ->label('Import Massal IMEI')
-                ->icon('heroicon-o-clipboard-document-list')
+                ->icon('tabler-clipboard-list')
                 ->color('success')
                 ->form([
                     Select::make('product_id')

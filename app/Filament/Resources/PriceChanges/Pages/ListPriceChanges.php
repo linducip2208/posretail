@@ -18,7 +18,7 @@ class ListPriceChanges extends ListRecords
             ExportAction::make()
                 ->exporter(PriceChangeExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

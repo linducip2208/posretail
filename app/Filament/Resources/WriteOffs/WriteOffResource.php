@@ -12,7 +12,6 @@ use App\Models\WriteOff;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class WriteOffResource extends Resource
@@ -24,7 +23,7 @@ class WriteOffResource extends Resource
 
     protected static ?string $model = WriteOff::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTrash;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-trash';
 
     protected static ?string $navigationLabel = 'Write-Off Barang';
 

@@ -13,7 +13,6 @@ use App\Models\StockTransfer;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -26,7 +25,7 @@ class StockTransferResource extends Resource
 
     protected static ?string $model = StockTransfer::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowPath;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-refresh';
 
     protected static ?string $recordTitleAttribute = 'transfer_number';
 

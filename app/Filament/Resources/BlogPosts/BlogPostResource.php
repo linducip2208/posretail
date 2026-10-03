@@ -13,7 +13,6 @@ use App\Models\BlogPost;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class BlogPostResource extends Resource
@@ -25,7 +24,7 @@ class BlogPostResource extends Resource
 
     protected static ?string $model = BlogPost::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-newspaper';
 
     protected static ?string $recordTitleAttribute = 'title';
 

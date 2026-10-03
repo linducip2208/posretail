@@ -14,7 +14,7 @@ class CetakLabelBarcode extends Page
 
     protected static ?int $navigationSort = 15;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-tag';
 
     protected static ?string $title = 'Cetak Label Barcode';
 

@@ -14,7 +14,7 @@ class LaporanPiutang extends Page
 
     protected static ?int $navigationSort = 10;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-cash';
 
     protected static ?string $title = 'Laporan Piutang';
 

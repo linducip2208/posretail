@@ -63,7 +63,7 @@ class RfmAnalysisWidget extends BaseWidget
                         return $rfm->firstWhere('id', $record->id)?->segment ?? '-';
                     })
                     ->badge()
-                    ->color(fn (string $s): string => match ($s) {
+                    ->color(fn (string $state): string => match ($state) {
                         'VIP' => 'success', 'Regular' => 'primary',
                         'At-Risk' => 'warning', default => 'gray',
                     }),

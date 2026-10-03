@@ -13,7 +13,6 @@ use App\Models\Budget;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class BudgetResource extends Resource
@@ -25,7 +24,7 @@ class BudgetResource extends Resource
 
     protected static ?string $model = Budget::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-calculator';
 
     protected static ?string $recordTitleAttribute = 'id';
 

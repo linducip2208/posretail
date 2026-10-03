@@ -13,7 +13,6 @@ use App\Models\BlogCategory;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class BlogCategoryResource extends Resource
@@ -25,7 +24,7 @@ class BlogCategoryResource extends Resource
 
     protected static ?string $model = BlogCategory::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-tag';
 
     protected static ?string $recordTitleAttribute = 'name';
 

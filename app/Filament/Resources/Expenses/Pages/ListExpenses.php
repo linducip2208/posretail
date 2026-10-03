@@ -20,7 +20,7 @@ class ListExpenses extends ListRecords
             ExportAction::make()
                 ->exporter(ExpenseExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

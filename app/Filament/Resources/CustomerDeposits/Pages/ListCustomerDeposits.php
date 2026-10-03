@@ -20,7 +20,7 @@ class ListCustomerDeposits extends ListRecords
             ExportAction::make()
                 ->exporter(CustomerDepositExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

@@ -47,17 +47,11 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Operasional')->collapsed(true),
                 NavigationGroup::make('Inventory')->collapsed(false),
                 NavigationGroup::make('Pembelian')->collapsed(true),
-                NavigationGroup::make('Customer')->collapsed(true),
-                NavigationGroup::make('Supplier')->collapsed(true),
-                NavigationGroup::make('Outlet')->collapsed(true),
-                NavigationGroup::make('Keuangan')->collapsed(true),
-                NavigationGroup::make('Akuntansi')->collapsed(true),
+                NavigationGroup::make('Pelanggan')->collapsed(true),
                 NavigationGroup::make('Promo')->collapsed(true),
                 NavigationGroup::make('Laporan')->collapsed(false),
-                NavigationGroup::make('Pegawai')->collapsed(true),
-                NavigationGroup::make('Notifikasi')->collapsed(true),
-                NavigationGroup::make('Integrasi')->collapsed(true),
-                NavigationGroup::make('Pengaturan')->collapsed(true),
+                NavigationGroup::make('Keuangan')->collapsed(true),
+                NavigationGroup::make('Akuntansi')->collapsed(true),
                 NavigationGroup::make('Sistem')->collapsed(true),
                 NavigationGroup::make('Website')->collapsed(true),
             ])
@@ -84,7 +78,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigationItems([
                 NavigationItem::make('POS Kasir')
                     ->url('/pos')
-                    ->icon('heroicon-o-shopping-cart')
+                    ->icon('tabler-shopping-cart')
                     ->openUrlInNewTab()
                     ->sort(100)
                     ->visible(fn (): bool => auth()->check() && auth()->user()?->hasPermission('pos-access')),

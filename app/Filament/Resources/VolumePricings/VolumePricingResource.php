@@ -13,13 +13,12 @@ use App\Models\VolumePricing;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class VolumePricingResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Inventory';
+    protected static string|\UnitEnum|null $navigationGroup = 'Promo';
 
     protected static ?int $navigationSort = 12;
 
@@ -27,7 +26,7 @@ class VolumePricingResource extends Resource
 
     protected static ?string $model = VolumePricing::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartLine;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-presentation-analytics';
 
     protected static ?string $recordTitleAttribute = 'id';
 

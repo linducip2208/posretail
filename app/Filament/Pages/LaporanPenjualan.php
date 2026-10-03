@@ -15,7 +15,7 @@ class LaporanPenjualan extends Page
 
     protected static ?int $navigationSort = 1;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-chart-bar';
 
     protected static ?string $title = 'Laporan Penjualan';
 

@@ -19,7 +19,7 @@ class ListAssets extends ListRecords
             ExportAction::make()
                 ->exporter(AssetExporter::class)
                 ->label('Ekspor')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 }

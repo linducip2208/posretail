@@ -74,7 +74,7 @@ class TaxInvoicesTable
             ->recordActions([
                 Action::make('issue')
                     ->label('Terbitkan')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon('tabler-circle-check')
                     ->color('success')
                     ->visible(fn ($record) => $record->status === 'draft')
                     ->action(function ($record) {
@@ -82,7 +82,7 @@ class TaxInvoicesTable
                     }),
                 Action::make('pdf')
                     ->label('PDF')
-                    ->icon('heroicon-o-document-text')
+                    ->icon('tabler-file-description')
                     ->color('gray')
                     ->url(fn ($record) => route('tax-invoice.pdf', $record))
                     ->openUrlInNewTab(),

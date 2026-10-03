@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \App\Support\TablerFilamentIcons::boot();
+
         $this->app->booted(function () {
             try {
                 $timezone = \App\Models\SystemSetting::getValue('timezone', 'Asia/Jakarta');

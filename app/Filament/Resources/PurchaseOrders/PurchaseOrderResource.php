@@ -13,7 +13,6 @@ use App\Models\PurchaseOrder;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class PurchaseOrderResource extends Resource
@@ -25,7 +24,7 @@ class PurchaseOrderResource extends Resource
 
     protected static ?string $model = PurchaseOrder::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentDuplicate;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-copy';
 
     protected static ?string $recordTitleAttribute = 'po_number';
 

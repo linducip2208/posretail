@@ -13,7 +13,6 @@ use App\Models\HeldCart;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class HeldCartResource extends Resource
@@ -27,7 +26,7 @@ class HeldCartResource extends Resource
 
     protected static ?string $model = HeldCart::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPauseCircle;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-circle-pause';
 
     protected static ?string $recordTitleAttribute = 'label';
 

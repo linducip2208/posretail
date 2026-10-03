@@ -32,7 +32,7 @@ class ProductVariantsRelationManager extends RelationManager
                     ->unique('product_variants', 'barcode', ignoreRecord: true)
                     ->suffixAction(
                         Action::make('generateVariantBarcode')
-                            ->icon('heroicon-m-arrow-path')
+                            ->icon('tabler-refresh')
                             ->tooltip('Generate barcode otomatis')
                             ->action(function ($set) {
                                 $set('barcode', \App\Helpers\BarcodeHelper::generate());

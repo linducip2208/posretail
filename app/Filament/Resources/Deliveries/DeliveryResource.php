@@ -13,7 +13,6 @@ use App\Models\Delivery;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class DeliveryResource extends Resource
@@ -25,7 +24,7 @@ class DeliveryResource extends Resource
 
     protected static ?string $model = Delivery::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-truck';
 
     protected static ?string $navigationLabel = 'Pengiriman';
 

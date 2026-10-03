@@ -20,7 +20,7 @@ class ListPurchaseOrders extends ListRecords
             ExportAction::make()
                 ->exporter(PurchaseOrderExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

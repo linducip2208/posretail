@@ -13,13 +13,12 @@ use App\Models\LoyaltyPoint;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class LoyaltyPointResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Customer';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pelanggan';
 
     protected static ?int $navigationSort = 4;
 
@@ -29,7 +28,7 @@ class LoyaltyPointResource extends Resource
 
     protected static ?string $model = LoyaltyPoint::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-star';
 
     protected static ?string $recordTitleAttribute = 'id';
 

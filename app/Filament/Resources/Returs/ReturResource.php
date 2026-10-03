@@ -14,7 +14,6 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Filament\Support\Icons\Heroicon;
 
 class ReturResource extends Resource
 {
@@ -25,7 +24,7 @@ class ReturResource extends Resource
 
     protected static ?string $model = Retur::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUturnLeft;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-arrow-back-up';
 
     protected static ?string $navigationLabel = 'Retur Penjualan';
 

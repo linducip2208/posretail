@@ -102,7 +102,7 @@ class GiftCardsTable
                     DeleteBulkAction::make(),
                     BulkAction::make('expireCards')
                         ->label('Tandai Kadaluarsa')
-                        ->icon('heroicon-o-clock')
+                        ->icon('tabler-clock')
                         ->color('danger')
                         ->requiresConfirmation()
                         ->deselectRecordsAfterCompletion()

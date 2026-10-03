@@ -13,7 +13,6 @@ use App\Models\Account;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class AccountResource extends Resource
@@ -25,7 +24,7 @@ class AccountResource extends Resource
 
     protected static ?string $model = Account::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-book';
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -14,7 +14,7 @@ class RecentOrders extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '60s';
 
     public function table(Table $table): Table
     {

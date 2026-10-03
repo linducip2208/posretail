@@ -13,7 +13,6 @@ use App\Models\SupplierReturn;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class SupplierReturnResource extends Resource
@@ -25,7 +24,7 @@ class SupplierReturnResource extends Resource
 
     protected static ?string $model = SupplierReturn::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowDownTray;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-download';
 
     protected static ?string $navigationLabel = 'Retur Supplier';
 

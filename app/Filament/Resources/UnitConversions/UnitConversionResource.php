@@ -13,7 +13,6 @@ use App\Models\UnitConversion;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class UnitConversionResource extends Resource
@@ -25,7 +24,7 @@ class UnitConversionResource extends Resource
 
     protected static ?string $model = UnitConversion::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsUpDown;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-arrows-exchange';
 
     protected static ?string $navigationLabel = 'Konversi Satuan';
 

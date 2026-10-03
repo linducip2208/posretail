@@ -9,7 +9,6 @@ use App\Models\CashDrawerTransaction;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -24,7 +23,7 @@ class CashDrawerTransactionResource extends Resource
 
     protected static ?string $model = CashDrawerTransaction::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptPercent;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-receipt';
 
     protected static ?string $navigationLabel = 'Riwayat Transaksi';
 

@@ -20,7 +20,7 @@ class ListBundles extends ListRecords
             ExportAction::make()
                 ->exporter(BundleExporter::class)
                 ->label('Export')
-                ->icon('heroicon-o-arrow-down-tray'),
+                ->icon('tabler-download'),
         ];
     }
 

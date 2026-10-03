@@ -75,7 +75,7 @@ class SupplierReturnsTable
             ->recordActions([
                 Action::make('receive')
                     ->label('Terima Retur')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon('tabler-circle-check')
                     ->color('success')
                     ->requiresConfirmation()
                     ->visible(fn (SupplierReturn $record): bool => in_array($record->status, ['draft', 'submitted']))

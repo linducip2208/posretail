@@ -13,7 +13,6 @@ use App\Models\SupplierPayable;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class SupplierPayableResource extends Resource
@@ -27,7 +26,7 @@ class SupplierPayableResource extends Resource
 
     protected static ?string $model = SupplierPayable::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartPie;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-chart-bar';
 
     protected static ?string $recordTitleAttribute = 'invoice_number';
 

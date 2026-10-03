@@ -16,7 +16,7 @@ class StatsOverview extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '60s';
 
     public static function canView(): bool
     {
@@ -31,6 +31,14 @@ class StatsOverview extends BaseWidget
             ->sum('total_amount');
 
         $todayOrders = Order::whereDate('created_at', today())
+            ->where('order_status', 'completed')
+            ->count();
+
+        $yesterdayRevenue = Order::whereDate('created_at', today()->subDay())
+            ->where('order_status', 'completed')
+            ->sum('total_amount');
+
+        $yesterdayOrders = Order::whereDate('created_at', today()->subDay())
             ->where('order_status', 'completed')
             ->count();
 
@@ -54,34 +62,51 @@ class StatsOverview extends BaseWidget
 
         return [
             Stat::make('Pendapatan Hari Ini', 'Rp ' . number_format($todayRevenue, 0, ',', '.'))
-                ->description($todayOrders . ' transaksi')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->description(self::trendDesc($todayRevenue, $yesterdayRevenue, 'dari kemarin'))
+                ->descriptionIcon('tabler-trending-up')
                 ->color('success'),
+
+            Stat::make('Transaksi Hari Ini', $todayOrders . ' transaksi')
+                ->description(self::trendDesc($todayOrders, $yesterdayOrders, 'dari kemarin'))
+                ->descriptionIcon('tabler-shopping-cart')
+                ->color('primary'),
 
             Stat::make('Rata-rata Transaksi', 'Rp ' . number_format($avgOrder, 0, ',', '.'))
                 ->description('Hari ini')
-                ->descriptionIcon('heroicon-m-calculator')
+                ->descriptionIcon('tabler-calculator')
                 ->color('primary'),
 
             Stat::make('Pembayaran Pending', $pendingPayments)
                 ->description('Butuh tindak lanjut')
-                ->descriptionIcon('heroicon-m-clock')
+                ->descriptionIcon('tabler-clock')
                 ->color($pendingPayments > 0 ? 'warning' : 'success'),
 
             Stat::make('Total Produk', $totalProducts)
                 ->description($lowStock . ' stok rendah')
-                ->descriptionIcon('heroicon-m-exclamation-triangle')
+                ->descriptionIcon('tabler-alert-triangle')
                 ->color($lowStock > 0 ? 'warning' : 'success'),
 
             Stat::make('Total Pelanggan', $totalCustomers)
                 ->description('Pelanggan aktif')
-                ->descriptionIcon('heroicon-m-users')
+                ->descriptionIcon('tabler-users')
                 ->color('primary'),
 
             Stat::make('Stok Habis', $outOfStock)
                 ->description('Butuh restock segera')
-                ->descriptionIcon('heroicon-m-x-circle')
+                ->descriptionIcon('tabler-circle-x')
                 ->color($outOfStock > 0 ? 'danger' : 'success'),
         ];
+    }
+
+    protected static function trendDesc(float $today, float $yesterday, string $suffix): string
+    {
+        if ($yesterday <= 0) {
+            return $today > 0 ? 'Hari pertama bertransaksi' : 'Belum ada data ' . $suffix;
+        }
+
+        $pct = (($today - $yesterday) / $yesterday) * 100;
+        $arrow = $pct >= 0 ? '↑' : '↓';
+
+        return sprintf('%s %.1f%% %s', $arrow, abs($pct), $suffix);
     }
 }

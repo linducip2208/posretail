@@ -13,7 +13,6 @@ use App\Models\StockMovement;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class StockMovementResource extends Resource
@@ -25,7 +24,7 @@ class StockMovementResource extends Resource
 
     protected static ?string $model = StockMovement::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsRightLeft;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-arrows-exchange';
 
     protected static ?string $recordTitleAttribute = 'reference_type';
 

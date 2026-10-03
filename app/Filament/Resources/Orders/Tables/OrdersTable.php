@@ -107,7 +107,7 @@ class OrdersTable
             ->recordActions([
                 Action::make('generateTaxInvoice')
                     ->label('Buat e-Faktur')
-                    ->icon('heroicon-o-document-text')
+                    ->icon('tabler-file-description')
                     ->color('success')
                     ->visible(fn ($record) => $record->order_status === 'completed' && ! $record->taxInvoices()->exists())
                     ->action(function ($record) {

@@ -17,7 +17,7 @@ class SalesTargetProgressWidget extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected ?string $pollingInterval = '60s';
+    protected ?string $pollingInterval = '300s';
 
     public static function canView(): bool
     {

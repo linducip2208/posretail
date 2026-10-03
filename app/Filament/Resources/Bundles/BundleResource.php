@@ -13,7 +13,6 @@ use App\Models\Bundle;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class BundleResource extends Resource
@@ -25,7 +24,7 @@ class BundleResource extends Resource
 
     protected static ?string $model = Bundle::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGift;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-gift';
 
     protected static ?string $navigationLabel = 'Bundle';
 

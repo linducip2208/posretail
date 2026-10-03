@@ -13,19 +13,18 @@ use App\Models\CustomerDeposit;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class CustomerDepositResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Customer';
+    protected static string|\UnitEnum|null $navigationGroup = 'Keuangan';
 
     protected static ?int $navigationSort = 6;
 
     protected static ?string $model = CustomerDeposit::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWallet;
+    protected static string|BackedEnum|null $navigationIcon = 'tabler-wallet';
 
     protected static ?string $navigationLabel = 'Deposit Pelanggan';
 
