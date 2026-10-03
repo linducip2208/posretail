@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Consignments;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Consignments\Pages\CreateConsignment;
 use App\Filament\Resources\Consignments\Pages\EditConsignment;
 use App\Filament\Resources\Consignments\Pages\ListConsignments;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class ConsignmentResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🛒 Pembelian';
 
     protected static ?int $navigationSort = 3;

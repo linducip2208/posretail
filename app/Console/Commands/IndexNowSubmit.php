@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Services\Seo\IndexNowService;
+use App\Services\PseoService;
+use App\Models\BlogPost;
 use Illuminate\Console\Command;
 
 class IndexNowSubmit extends Command
@@ -23,9 +25,11 @@ class IndexNowSubmit extends Command
 
         if ($this->option('new')) {
             $this->info('Scanning URLs for new IndexNow submission...');
-            $sitemapController = new \App\Http\Controllers\SitemapController;
-            $this->info('Using sitemap to collect URLs...');
-            $result = $service->submitNewOnly([]);
+            $pages = app(PseoService::class)->getAllPages();
+            $urls = array_map(fn (array $page) => url($page['url']), $pages);
+            $urls = array_merge($urls, BlogPost::published()->pluck('slug')->map(fn ($slug) => url('/blog/'.$slug))->all());
+            $this->info('Using generated sitemap pages...');
+            $result = $service->submitNewOnly($urls);
             $this->info("New URLs submitted: {$result['submitted']}");
             return 0;
         }

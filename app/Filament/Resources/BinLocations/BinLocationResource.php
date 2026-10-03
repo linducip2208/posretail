@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BinLocations;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\BinLocations\Pages\CreateBinLocation;
 use App\Filament\Resources\BinLocations\Pages\EditBinLocation;
 use App\Filament\Resources\BinLocations\Pages\ListBinLocations;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class BinLocationResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 16;

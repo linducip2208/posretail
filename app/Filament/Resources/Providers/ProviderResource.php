@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Providers;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Providers\Pages\CreateProvider;
 use App\Filament\Resources\Providers\Pages\EditProvider;
 use App\Filament\Resources\Providers\Pages\ListProviders;
@@ -16,6 +18,7 @@ use Filament\Support\Icons\Heroicon;
 
 class ProviderResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🔗 Integrasi';
 
     protected static ?int $navigationSort = 1;

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\UnitConversions;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\UnitConversions\Pages\CreateUnitConversion;
 use App\Filament\Resources\UnitConversions\Pages\EditUnitConversion;
 use App\Filament\Resources\UnitConversions\Pages\ListUnitConversions;
@@ -16,13 +18,14 @@ use Filament\Tables\Table;
 
 class UnitConversionResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 10;
 
     protected static ?string $model = UnitConversion::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsRightLeft;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsUpDown;
 
     protected static ?string $navigationLabel = 'Konversi Satuan';
 

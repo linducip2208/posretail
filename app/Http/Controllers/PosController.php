@@ -3,20 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\GiftCard;
-use App\Models\GiftCardUsage;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\SerialNumber;
-use App\Models\StockMovement;
 use App\Models\SystemSetting;
+use App\Services\CheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class PosController extends Controller
@@ -98,49 +92,73 @@ class PosController extends Controller
         return response()->json($product);
     }
 
-    public function receipt(int $id): View
+    public function receipt(Request $request, int $id): View
     {
-        $order = Order::with(['items.product', 'payments', 'customer', 'outlet', 'user'])
+        $order = Order::with(['orderItems.product', 'orderItems.productVariant', 'payments.paymentMethod', 'customer', 'outlet', 'user', 'table'])
             ->findOrFail($id);
+
+        // Batasi: kasir hanya struk outletnya
+        $user = auth()->user();
+        if ($user && ! in_array($order->outlet_id, $user->getAccessibleOutletIds())) {
+            abort(403, 'Tidak ada akses ke struk ini.');
+        }
+
+        preg_match('/\[promo:(.*?)\]/', (string) $order->notes, $m);
 
         $orderData = [
             'order_number' => $order->order_number,
+            'queue_number' => $order->queue_number,
             'created_at' => $order->created_at,
             'subtotal' => $order->subtotal,
             'discount_amount' => $order->discount_amount,
+            'promo_name' => $m[1] ?? null,
             'tax_amount' => $order->tax_amount,
             'total_amount' => $order->total_amount,
+            'remaining_amount' => $order->remaining_amount,
             'customer' => $order->customer ? ['name' => $order->customer->name] : null,
-            'items' => $order->items->map(fn ($i) => [
+            'table_name' => $order->table?->name,
+            'items' => $order->orderItems->map(fn ($i) => [
                 'product' => ['name' => $i->product?->name],
+                'variant' => $i->productVariant?->name,
                 'quantity' => $i->quantity,
                 'unit_price' => $i->unit_price,
                 'subtotal' => $i->subtotal,
             ])->toArray(),
-            'payments' => $order->payments->map(fn ($p) => ['amount' => $p->amount])->toArray(),
+            'payments' => $order->payments->map(fn ($p) => [
+                'amount' => $p->amount,
+                'method' => $p->paymentMethod?->name ?? 'Bayar',
+            ])->toArray(),
         ];
 
         $cashier = $order->user?->name ?? '-';
         $outlet = $order->outlet?->name ?? 'Outlet';
 
-        return view('prints.receipt', ['order' => $orderData, 'cashier' => $cashier, 'outlet' => $outlet]);
+        return view('prints.receipt', [
+            'order' => $orderData,
+            'cashier' => $cashier,
+            'outlet' => $outlet,
+            'size' => in_array($request->query('size'), ['58', '80']) ? $request->query('size') : '80',
+            'isReprint' => $request->boolean('reprint') || $request->query('reprint') === '1',
+        ]);
     }
 
-    public function checkout(Request $request): JsonResponse
+    public function checkout(Request $request, CheckoutService $checkout): JsonResponse
     {
         $validTypes = SystemSetting::getValidOrderTypeValues();
         $request->validate([
-            'items' => 'required|array|min:1',
+            'items' => 'required|array|min:1|max:200',
             'items.*.id' => 'required|exists:products,id',
             'items.*.variant_id' => 'nullable|exists:product_variants,id',
-            'items.*.qty' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric|min:0',
+            'items.*.qty' => 'required|integer|min:1|max:1000',
+            // price dari client diabaikan — harga server yang dipakai
+            'items.*.price' => 'nullable|numeric|min:0',
+            'items.*.serial_numbers' => 'nullable|array',
             'outlet_id' => 'required|integer|exists:outlets,id',
             'order_type' => 'nullable|in:'.$validTypes,
             'customer_id' => 'nullable|integer|exists:customers,id',
             'table_id' => 'nullable|integer|exists:tables,id',
             'payment_method_id' => 'required|integer|exists:payment_methods,id',
-            'paid_amount' => 'required|numeric|min:0',
+            'paid_amount' => 'required|numeric|min:0|max:1000000000',
             'use_tax' => 'nullable|boolean',
             'voucher_code' => 'nullable|string|max:100',
         ]);
@@ -150,142 +168,30 @@ class PosController extends Controller
             return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
         }
 
-        $this->validateSerialNumbers($request->items);
+        $items = collect($request->items)->map(fn ($i) => [
+            'product_id' => (int) $i['id'],
+            'product_variant_id' => $i['variant_id'] ?? null,
+            'quantity' => (int) $i['qty'],
+            'discount_percent' => 0,
+            'serial_numbers' => $i['serial_numbers'] ?? [],
+        ])->toArray();
 
-        $order = DB::transaction(function () use ($request) {
-            $subtotal = 0;
-            $taxPercent = 0;
-            if ($request->boolean('use_tax', true)) {
-                $taxPercent = (float) (SystemSetting::getValue('tax_percent', '0'));
-            }
-            $items = [];
-
-            foreach ($request->items as $item) {
-                $lineSubtotal = $item['price'] * $item['qty'];
-                $subtotal += $lineSubtotal;
-                $items[] = $item;
-            }
-
-            $taxAmount = $subtotal * $taxPercent / 100;
-            $totalAmount = $subtotal + $taxAmount;
-            $paidAmount = $request->paid_amount;
-            $deposit = $request->deposit_amount ?? 0;
-
-            $discountAmount = 0;
-            $voucher = null;
-            if ($request->filled('voucher_code')) {
-                $voucher = $this->resolveVoucher((string) $request->voucher_code, $subtotal);
-                $discountAmount = $voucher['discount'];
-                $voucher = $voucher['giftCard'];
-            }
-
-            $taxAmount = max(0, $subtotal - $discountAmount) * $taxPercent / 100;
-            $totalAmount = $subtotal - $discountAmount + $taxAmount;
-
-            $todayCount = Order::where('outlet_id', $request->outlet_id)
-                ->whereDate('created_at', today())
-                ->excludeCancelled()
-                ->count();
-            $queueNumber = str_pad($todayCount + 1, 3, '0', STR_PAD_LEFT);
-
-            $order = Order::create([
-                'order_number' => 'ORD-'.date('Ymd').'-'.strtoupper(substr(uniqid(), -6)),
-                'customer_id' => is_numeric($request->customer_id) ? (int) $request->customer_id : null,
-                'outlet_id' => (int) $request->outlet_id,
-                'user_id' => auth()->id(),
-                'table_id' => $request->table_id ? (int) $request->table_id : null,
-                'order_type' => $request->order_type ?? SystemSetting::getDefaultOrderType(),
-                'queue_number' => $queueNumber,
-                'subtotal' => $subtotal,
-                'discount_amount' => $discountAmount,
-                'tax_amount' => $taxAmount,
-                'total_amount' => $totalAmount,
-                'deposit_amount' => $deposit,
-                'remaining_amount' => max(0, $totalAmount - $paidAmount - $deposit),
-                'is_installment' => $request->is_installment ?? false,
-                'installment_period' => $request->installment_period,
-                'installment_count' => $request->installment_count ?? 1,
-                'payment_status' => $paidAmount >= $totalAmount ? 'paid' : 'partial',
-                'order_status' => 'completed',
-                'order_notes' => $request->order_notes,
-                'notes' => $request->notes,
-            ]);
-
-            foreach ($items as $item) {
-                $product = Product::find($item['id']);
-
-                $orderItem = OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item['id'],
-                    'product_variant_id' => $item['variant_id'] ?? null,
-                    'quantity' => $item['qty'],
-                    'unit_price' => $item['price'],
-                    'discount_percent' => 0,
-                    'discount_amount' => 0,
-                    'subtotal' => $item['price'] * $item['qty'],
-                    'serial_number' => implode(',', $item['serial_numbers'] ?? []),
-                ]);
-
-                $warrantyMonths = (int) ($product->warranty_months ?? 0);
-
-                foreach ($item['serial_numbers'] ?? [] as $sn) {
-                    SerialNumber::where('product_id', $item['id'])
-                        ->where('serial_number', $sn)
-                        ->where('status', 'in_stock')
-                        ->update([
-                            'status' => 'sold',
-                            'order_item_id' => $orderItem->id,
-                            'outlet_id' => $request->outlet_id,
-                            'warranty_expires_at' => $warrantyMonths > 0
-                                ? now()->addMonths($warrantyMonths)->toDateString()
-                                : null,
-                        ]);
-                }
-
-                if (isset($item['variant_id'])) {
-                    ProductVariant::find($item['variant_id'])?->decrement('current_stock', $item['qty']);
-                }
-
-                $product->decrement('current_stock', $item['qty']);
-
-                StockMovement::create([
-                    'product_id' => $item['id'],
-                    'product_variant_id' => $item['variant_id'] ?? null,
-                    'outlet_id' => $request->outlet_id,
-                    'type' => 'out',
-                    'quantity' => $item['qty'],
-                    'reference_type' => 'order',
-                    'reference_id' => $order->id,
-                    'notes' => 'Penjualan #'.$order->order_number,
-                ]);
-            }
-
-            if ($voucher) {
-                GiftCardUsage::create([
-                    'gift_card_id' => $voucher->id,
-                    'order_id' => $order->id,
-                    'amount_used' => $discountAmount,
-                ]);
-
-                if ($voucher->type === 'nominal') {
-                    $voucher->decrement('remaining_balance', $discountAmount);
-                }
-                $voucher->increment('used_count');
-                if ($voucher->used_count >= $voucher->max_usage) {
-                    $voucher->update(['status' => 'used']);
-                }
-            }
-
-            Payment::create([
-                'order_id' => $order->id,
-                'payment_method_id' => (int) $request->payment_method_id,
-                'amount' => $paidAmount,
-                'status' => 'success',
-                'paid_at' => now(),
-            ]);
-
-            return $order;
-        });
+        $order = $checkout->checkout([
+            'outlet_id' => (int) $request->outlet_id,
+            'items' => $items,
+            'payments' => [['payment_method_id' => (int) $request->payment_method_id, 'amount' => (float) $request->paid_amount]],
+            'customer_id' => is_numeric($request->customer_id) ? (int) $request->customer_id : null,
+            'table_id' => $request->table_id ? (int) $request->table_id : null,
+            'order_type' => $request->order_type,
+            'order_notes' => $request->order_notes,
+            'notes' => $request->notes,
+            'voucher_code' => $request->voucher_code,
+            'use_tax' => $request->boolean('use_tax', true),
+            'deposit_amount' => (float) ($request->deposit_amount ?? 0),
+            'is_installment' => (bool) ($request->is_installment ?? false),
+            'installment_period' => $request->installment_period,
+            'installment_count' => (int) ($request->installment_count ?? 1),
+        ], (int) auth()->id());
 
         return response()->json([
             'success' => true,
@@ -304,87 +210,31 @@ class PosController extends Controller
             'subtotal' => 'required|numeric|min:0',
         ]);
 
-        $resolved = $this->resolveVoucher((string) $request->code, (float) $request->subtotal);
+        $giftCard = GiftCard::where('code', trim((string) $request->code))->first();
+        if (! $giftCard || ! $giftCard->isValid()) {
+            return response()->json(['valid' => false, 'message' => 'Voucher tidak valid/kadaluarsa.'], 422);
+        }
+
+        $subtotal = (float) $request->subtotal;
+        if ($subtotal < (float) $giftCard->min_purchase) {
+            return response()->json(['valid' => false, 'message' => 'Minimal pembelian belum terpenuhi.'], 422);
+        }
+
+        $discount = $giftCard->type === 'discount_percent'
+            ? round($subtotal * (float) $giftCard->value / 100, 2)
+            : min((float) $giftCard->remaining_balance, $subtotal);
 
         return response()->json([
             'valid' => true,
-            'code' => $resolved['giftCard']->code,
-            'type' => $resolved['giftCard']->type,
-            'discount' => $resolved['discount'],
-        ]);
-    }
-
-    protected function validateSerialNumbers(array $items): void
-    {
-        foreach ($items as $item) {
-            $product = Product::find($item['id']);
-            $tracking = $product?->serial_tracking ?? 'none';
-
-            if ($tracking === 'none') {
-                continue;
-            }
-
-            $serials = $item['serial_numbers'] ?? [];
-            $qty = (int) $item['qty'];
-
-            if ($tracking === 'required' && count($serials) !== $qty) {
-                throw ValidationException::withMessages([
-                    'items' => "IMEI wajib diisi lengkap untuk \"{$product->name}\" (jumlah {$qty}).",
-                ]);
-            }
-
-            if ($tracking === 'optional' && count($serials) > 0 && count($serials) !== $qty) {
-                throw ValidationException::withMessages([
-                    'items' => "Jumlah IMEI untuk \"{$product->name}\" harus sama dengan jumlah barang ({$qty}).",
-                ]);
-            }
-
-            foreach ($serials as $sn) {
-                $exists = SerialNumber::where('product_id', $item['id'])
-                    ->where('serial_number', $sn)
-                    ->where('status', 'in_stock')
-                    ->exists();
-
-                if (! $exists) {
-                    throw ValidationException::withMessages([
-                        'items' => "IMEI \"{$sn}\" tidak ditemukan atau sudah terjual.",
-                    ]);
-                }
-            }
-        }
-    }
-
-    protected function resolveVoucher(string $code, float $subtotal): array
-    {
-        $giftCard = GiftCard::where('code', trim($code))->first();
-
-        if (! $giftCard || ! $giftCard->isValid()) {
-            throw ValidationException::withMessages([
-                'voucher_code' => 'Voucher tidak valid atau sudah kadaluarsa.',
-            ]);
-        }
-
-        if ($subtotal < (float) $giftCard->min_purchase) {
-            throw ValidationException::withMessages([
-                'voucher_code' => 'Minimal pembelian Rp '.number_format((float) $giftCard->min_purchase, 0, ',', '.').' untuk menggunakan voucher ini.',
-            ]);
-        }
-
-        if ($giftCard->type === 'discount_percent') {
-            $discount = round($subtotal * (float) $giftCard->value / 100, 2);
-        } else {
-            $discount = min((float) $giftCard->remaining_balance, $subtotal);
-        }
-
-        return [
-            'giftCard' => $giftCard,
+            'code' => $giftCard->code,
+            'type' => $giftCard->type,
             'discount' => $discount,
-        ];
+        ]);
     }
 
     public function display(Request $request): JsonResponse
     {
-        $latest = Order::with(['items.product', 'outlet'])
+        $latest = Order::with(['orderItems.product', 'orderItems.productVariant', 'outlet'])
             ->excludeCancelled()
             ->whereDate('created_at', today())
             ->when($request->outlet_id, fn ($q) => $q->where('outlet_id', $request->outlet_id))
@@ -400,7 +250,7 @@ class PosController extends Controller
             'queue_number' => $latest->queue_number,
             'total' => $latest->total_amount,
             'outlet_name' => $latest->outlet?->name,
-            'items' => $latest->items->map(fn ($i) => [
+            'items' => $latest->orderItems->map(fn ($i) => [
                 'name' => $i->product?->name ?? '-',
                 'variant' => $i->productVariant?->name,
                 'qty' => $i->quantity,

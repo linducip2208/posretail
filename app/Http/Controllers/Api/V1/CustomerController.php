@@ -11,8 +11,12 @@ class CustomerController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Customer::with('customerGroup')
-            ->where('active', true);
+        $user = $request->user();
+        $query = Customer::with('customerGroup')->where('active', true);
+
+        if (! $user->hasPermission('*')) {
+            $query->whereHas('orders', fn ($q) => $q->whereIn('outlet_id', $user->getAccessibleOutletIds()));
+        }
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -38,6 +42,11 @@ class CustomerController extends Controller
 
     public function show(Customer $customer): JsonResponse
     {
+        $user = request()->user();
+        if (! $user->hasPermission('*') && ! $customer->orders()->whereIn('outlet_id', $user->getAccessibleOutletIds())->exists()) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke customer ini.'], 403);
+        }
+
         $customer->load('customerGroup');
 
         return response()->json(['data' => $customer]);

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\SupplierContracts;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\SupplierContracts\Pages\CreateSupplierContract;
 use App\Filament\Resources\SupplierContracts\Pages\EditSupplierContract;
 use App\Filament\Resources\SupplierContracts\Pages\ListSupplierContracts;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class SupplierContractResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🚚 Supplier';
 
     protected static ?int $navigationSort = 3;

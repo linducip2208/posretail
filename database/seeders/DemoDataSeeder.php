@@ -250,7 +250,7 @@ class DemoDataSeeder extends Seeder
     private function seedProviders(Carbon $now): void
     {
         DB::table('providers')->insert([
-            ['name' => 'Midtrans Demo', 'type' => 'payment', 'api_format' => 'rest-redirect', 'base_url' => 'https://api.sandbox.midtrans.com/v2', 'api_key_encrypted' => null, 'api_secret_encrypted' => null, 'merchant_id' => 'G123456789', 'client_id' => null, 'extra_headers' => null, 'extra_config' => json_encode(['snap_js_url' => 'https://app.sandbox.midtrans.com/snap/snap.js']), 'is_active' => true, 'is_default' => true, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Demo Redirect Provider', 'type' => 'payment', 'api_format' => 'rest-redirect', 'base_url' => 'https://gateway.example.invalid/v1', 'api_key_encrypted' => null, 'api_secret_encrypted' => null, 'merchant_id' => null, 'client_id' => null, 'extra_headers' => null, 'extra_config' => null, 'is_active' => false, 'is_default' => false, 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'WhatsApp Gateway Demo', 'type' => 'notification', 'api_format' => 'rest-api', 'base_url' => 'https://api.whatsapp.com', 'api_key_encrypted' => null, 'api_secret_encrypted' => null, 'merchant_id' => null, 'client_id' => null, 'extra_headers' => null, 'extra_config' => null, 'is_active' => false, 'is_default' => false, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
@@ -297,7 +297,7 @@ class DemoDataSeeder extends Seeder
             'Solusi Kasir Modern untuk Toko Retail Anda',
             'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.',
             '6281296052010', 'Rp 4.999.000',
-            "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support",
+            "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis berbasis format API\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support",
         ];
         foreach ($keys as $i => $key) {
             $settings[] = ['key' => $key, 'value' => $values[$i], 'outlet_id' => null, 'created_at' => $now, 'updated_at' => $now];
@@ -1816,7 +1816,7 @@ class DemoDataSeeder extends Seeder
                 'category_id' => 4, 'author_id' => 3, 'title' => 'Integrasi Payment Gateway: Kenapa Toko Modern Wajib Punya',
                 'slug' => 'integrasi-payment-gateway',
                 'excerpt' => 'QRIS, GoPay, OVO, kartu kredit - pelanggan sekarang ingin bayar dengan cara mereka. Pelajari cara integrasi payment gateway di toko retail.',
-                'content' => '<p>2026: lebih dari 70% transaksi ritel di Indonesia melibatkan pembayaran non-tunai. Toko yang hanya terima cash akan kehilangan pelanggan.</p><h3>Kenapa Harus Multi-Payment?</h3><ol><li>Pelanggan tidak bawa uang tunai cukup</li><li>Transaksi lebih cepat (tap/scan vs hitung uang)</li><li>Mengurangi risiko uang palsu</li><li>Otomatis tercatat - tidak ada selisih kas</li><li>Data pembayaran untuk analisis customer behavior</li></ol><h3>POS Retail: Dynamic Provider System</h3><p>POS Retail tidak mengunci Anda ke satu payment gateway. Sistem provider dinamis memungkinkan Anda menambahkan Midtrans, Xendit, Duitku, atau gateway lain via admin panel. Tambah API key, pilih environment (sandbox/production), dan langsung bisa dipakai. Bahkan bisa multiple provider sekaligus - customer tinggal pilih metode bayar favoritnya.</p>',
+                'content' => '<p>Transaksi ritel modern membutuhkan lebih dari satu metode pembayaran. Toko yang fleksibel menerima pembayaran digital dapat melayani lebih banyak kebutuhan pelanggan.</p><h3>Kenapa Harus Multi-Payment?</h3><ol><li>Pelanggan tidak selalu membawa uang tunai</li><li>Transaksi lebih cepat</li><li>Mengurangi risiko uang palsu</li><li>Otomatis tercatat</li><li>Data pembayaran siap dianalisis</li></ol><h3>POS Retail: Dynamic Provider System</h3><p>POS Retail tidak mengunci Anda ke satu payment gateway. Sistem provider dinamis memungkinkan Anda menambahkan provider sendiri melalui admin panel berdasarkan format API yang didukung. Isi endpoint, credential, header, dan konfigurasi sesuai dokumentasi provider Anda. Beberapa provider dapat digunakan sekaligus tanpa mengubah source code aplikasi.</p>',
                 'is_published' => true, 'published_at' => $now->copy()->subDays(5), 'meta_title' => 'Integrasi Payment Gateway Retail - POS Retail', 'meta_description' => 'Kenapa toko modern wajib punya payment gateway: QRIS, e-wallet, kartu kredit. Integrasi mudah di POS Retail.',
                 'created_at' => $now, 'updated_at' => $now,
             ],

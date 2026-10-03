@@ -2,9 +2,9 @@
 
 **Sistem Point of Sale untuk Toko Ritel** — aplikasi kasir + admin panel terintegrasi untuk mengelola toko ritel modern.
 
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel)
+![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20?logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?logo=php)
-![Filament](https://img.shields.io/badge/Filament-3.x-FF6900)
+![Filament](https://img.shields.io/badge/Filament-5.x-FF6900)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.x-06B6D4?logo=tailwindcss)
 ![Flutter](https://img.shields.io/badge/Flutter-Android-02569B?logo=flutter)
@@ -30,8 +30,8 @@ POS Retail adalah sistem manajemen toko ritel lengkap yang mencakup:
 
 | Layer | Teknologi |
 |-------|-----------|
-| Backend | Laravel 12, PHP 8.3+ |
-| Admin Panel | Filament 3, Livewire |
+| Backend | Laravel 13, PHP 8.3+ |
+| Admin Panel | Filament 5, Livewire |
 | Frontend | TailwindCSS 4, Vite 8 |
 | Database | MySQL 8 / MariaDB 10.11+ |
 | Cache & Queue | Redis (opsional) |

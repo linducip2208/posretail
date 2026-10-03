@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Brands;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Brands\Pages\CreateBrand;
 use App\Filament\Resources\Brands\Pages\EditBrand;
 use App\Filament\Resources\Brands\Pages\ListBrands;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class BrandResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 3;

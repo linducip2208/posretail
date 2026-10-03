@@ -124,7 +124,7 @@
                 @foreach($phase['steps'] as $step)
                 <div class="flex items-start gap-3 text-gray-700 text-sm">
                     <span class="step-num">{{ $loop->iteration }}</span>
-                    <span class="pt-0.5">{!! $step !!}</span>
+                    <span class="pt-0.5">{{ $step }}</span>
                 </div>
                 @endforeach
             </div>

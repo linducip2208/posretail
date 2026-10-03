@@ -35,7 +35,7 @@
         $faqs = [
             ['q' => 'Apa itu POS Retail?', 'a' => 'POS Retail adalah aplikasi Point of Sale lengkap untuk bisnis retail di Indonesia. Mencakup manajemen produk, inventori, transaksi penjualan, pembelian, laporan keuangan, dan program loyalitas pelanggan.'],
             ['q' => 'Apakah bisa multi-outlet?', 'a' => 'Ya, POS Retail mendukung multi-outlet (cabang). Setiap outlet bisa punya stok, karyawan, dan transaksi terpisah namun tetap terintegrasi dalam satu dashboard.'],
-            ['q' => 'Payment gateway apa yang didukung?', 'a' => 'POS Retail mendukung berbagai payment gateway via sistem provider dinamis. Anda bisa menambahkan provider sendiri seperti Midtrans, Xendit, Duitku, dan lainnya melalui admin panel.'],
+            ['q' => 'Payment gateway apa yang didukung?', 'a' => 'POS Retail mendukung provider payment berbasis format REST Redirect, REST API, dan QR. Tambahkan nama, endpoint, credential, dan header sendiri melalui admin panel.'],
             ['q' => 'Apakah ada fitur loyalitas pelanggan?', 'a' => 'Ya, POS Retail memiliki fitur loyalty points dan membership tier. Pelanggan otomatis mendapat poin setiap transaksi dan bisa naik tier untuk mendapatkan benefit lebih.'],
             ['q' => 'Bagaimana dengan laporan keuangan?', 'a' => 'Tersedia 3 laporan utama: Laporan Penjualan (revenue, top produk), Laporan Keuangan (P&L, cash flow), dan Laporan Stok (nilai inventori, low stock alert). Semua bisa diexport ke PDF.'],
             ['q' => 'Apakah ada API untuk integrasi?', 'a' => 'Ya, tersedia REST API v1 untuk integrasi dengan aplikasi mobile atau third-party. Meliputi produk, kategori, pesanan, pelanggan, dan payment gateway.'],

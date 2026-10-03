@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Outlet;
+use App\Models\Order;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\User;
@@ -31,8 +32,14 @@ class ApiTest extends TestCase
     public function test_authenticated_products_endpoint_returns_data_array(): void
     {
         $user = User::factory()->create(['role' => 'kasir']);
+        $outlet = Outlet::factory()->create(['active' => true]);
+        $user->outlets()->attach($outlet);
 
-        Product::factory()->create(['active' => true, 'name' => 'Test Product']);
+        Product::factory()->create([
+            'active' => true,
+            'name' => 'Test Product',
+            'outlet_id' => $outlet->id,
+        ]);
 
         $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/products');
@@ -82,6 +89,7 @@ class ApiTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'kasir']);
         $outlet = Outlet::factory()->create(['active' => true]);
+        $user->outlets()->attach($outlet);
         $product = Product::factory()->create([
             'active' => true,
             'selling_price' => 15000,
@@ -120,6 +128,7 @@ class ApiTest extends TestCase
     {
         $user = User::factory()->create(['role' => 'kasir']);
         $outlet = Outlet::factory()->create(['active' => true]);
+        $user->outlets()->attach($outlet);
         $product = Product::factory()->create([
             'active' => true,
             'selling_price' => 10000,
@@ -164,5 +173,18 @@ class ApiTest extends TestCase
 
         $response = $this->getJson('/api/v1/user');
         $response->assertStatus(401);
+    }
+
+    public function test_order_detail_cannot_cross_outlet_boundary(): void
+    {
+        $user = User::factory()->create(['role' => 'kasir']);
+        $allowedOutlet = Outlet::factory()->create();
+        $privateOutlet = Outlet::factory()->create();
+        $user->outlets()->attach($allowedOutlet);
+        $order = Order::factory()->create(['outlet_id' => $privateOutlet->id]);
+
+        $this->actingAs($user, 'api')
+            ->getJson('/api/v1/orders/'.$order->id)
+            ->assertNotFound();
     }
 }

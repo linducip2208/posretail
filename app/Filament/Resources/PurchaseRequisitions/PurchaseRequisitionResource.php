@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PurchaseRequisitions;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\PurchaseRequisitions\Pages\CreatePurchaseRequisition;
 use App\Filament\Resources\PurchaseRequisitions\Pages\EditPurchaseRequisition;
 use App\Filament\Resources\PurchaseRequisitions\Pages\ListPurchaseRequisitions;
@@ -16,13 +18,14 @@ use Filament\Tables\Table;
 
 class PurchaseRequisitionResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🛒 Pembelian';
 
     protected static ?int $navigationSort = 4;
 
     protected static ?string $model = PurchaseRequisition::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocument;
 
     protected static ?string $recordTitleAttribute = 'pr_number';
 

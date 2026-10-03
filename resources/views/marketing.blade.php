@@ -339,7 +339,6 @@
                 <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 rounded-full text-sm font-semibold border border-blue-200"><span class="w-2 h-2 bg-blue-500 rounded-full"></span> GoPay</span>
                 <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 rounded-full text-sm font-semibold border border-purple-200"><span class="w-2 h-2 bg-purple-500 rounded-full"></span> OVO</span>
                 <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-200"><span class="w-2 h-2 bg-emerald-500 rounded-full"></span> QRIS</span>
-                <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 rounded-full text-sm font-semibold border border-orange-200"><span class="w-2 h-2 bg-orange-500 rounded-full"></span> Midtrans</span>
                 <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 rounded-full text-sm font-semibold border border-gray-200"><span class="w-2 h-2 bg-gray-500 rounded-full"></span> Transfer Bank</span>
                 <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-green-50 to-green-100 text-green-700 rounded-full text-sm font-semibold border border-green-200"><span class="w-2 h-2 bg-green-500 rounded-full"></span> Tunai</span>
             </div>
@@ -443,7 +442,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/orders/create</div>
                     </div>
-                    <img src="/marketing/screens/order-create.png" alt="Point of Sale POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Point of Sale</div>'">
+                    <img src="/marketing/screens/pos-web.png" alt="Point of Sale POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Point of Sale</div>'">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -735,7 +734,7 @@
                     <span>Metode pembayaran apa saja yang didukung?</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20" class="transition-transform duration-300 flex-shrink-0"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
                 </button>
-                <div class="faq-answer px-6"><p class="text-gray-600 text-sm pb-6 leading-relaxed">POS Retail mendukung multi-pembayaran dalam satu transaksi: Tunai, Debit/Kartu, QRIS (via Midtrans), GoPay, OVO, dan Transfer Bank. Anda juga bisa menambah metode pembayaran kustom seperti voucher atau kredit toko. Sistem akan otomatis menghitung total, diskon, pajak, dan kembalian.</p></div>
+                <div class="faq-answer px-6"><p class="text-gray-600 text-sm pb-6 leading-relaxed">POS Retail mendukung multi-pembayaran dalam satu transaksi: Tunai, Debit/Kartu, QR, dan Transfer Bank. Anda juga bisa menambah metode pembayaran kustom seperti voucher atau kredit toko. Sistem akan otomatis menghitung total, diskon, pajak, dan kembalian.</p></div>
             </div>
             <div class="border border-gray-200 rounded-2xl overflow-hidden card-hover">
                 <button class="faq-toggle w-full flex items-center justify-between p-6 text-left font-semibold text-gray-900 hover:bg-gray-50 transition-colors" onclick="var a=this.nextElementSibling;var open=a.classList.contains('open');a.classList.toggle('open');a.style.maxHeight=open?'0px':a.scrollHeight+'px';this.querySelector('svg').style.transform=open?'rotate(0deg)':'rotate(180deg)'">

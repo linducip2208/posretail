@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Customers;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Customers\Pages\CreateCustomer;
 use App\Filament\Resources\Customers\Pages\EditCustomer;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class CustomerResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '👥 Customer';
 
     protected static ?int $navigationSort = 1;

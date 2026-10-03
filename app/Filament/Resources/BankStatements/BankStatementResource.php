@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BankStatements;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\BankStatements\Pages\ListBankStatements;
 use App\Filament\Resources\BankStatements\Tables\BankStatementsTable;
 use App\Models\BankStatement;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BankStatementResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 5;

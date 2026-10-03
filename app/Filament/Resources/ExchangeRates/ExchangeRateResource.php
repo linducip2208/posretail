@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\ExchangeRates;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\ExchangeRates\Pages\CreateExchangeRate;
 use App\Filament\Resources\ExchangeRates\Pages\EditExchangeRate;
 use App\Filament\Resources\ExchangeRates\Pages\ListExchangeRates;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class ExchangeRateResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 7;
@@ -24,7 +27,7 @@ class ExchangeRateResource extends Resource
 
     protected static ?string $model = ExchangeRate::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowPath;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
 
     protected static ?string $recordTitleAttribute = 'currency';
 

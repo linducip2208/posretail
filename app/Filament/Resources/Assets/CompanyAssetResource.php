@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Assets;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Assets\Pages\CreateAsset;
 use App\Filament\Resources\Assets\Pages\EditAsset;
 use App\Filament\Resources\Assets\Pages\ListAssets;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class CompanyAssetResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 9;

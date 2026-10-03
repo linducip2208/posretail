@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\StockOpnames;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\StockOpnames\Pages\CreateStockOpname;
 use App\Filament\Resources\StockOpnames\Pages\EditStockOpname;
 use App\Filament\Resources\StockOpnames\Pages\ListStockOpnames;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class StockOpnameResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 5;

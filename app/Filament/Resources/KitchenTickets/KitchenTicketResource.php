@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\KitchenTickets;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Concerns\RestaurantFeature;
 use App\Filament\Resources\KitchenTickets\Pages\EditKitchenTicket;
 use App\Filament\Resources\KitchenTickets\Pages\ListKitchenTickets;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class KitchenTicketResource extends Resource
 {
+    use AuthorizesByNavigation;
     use RestaurantFeature;
 
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';

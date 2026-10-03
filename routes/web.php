@@ -16,6 +16,7 @@ use App\Models\TableResto;
 use App\Models\TaxInvoice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -47,6 +48,8 @@ Route::get('/menu/{outlet}', function (Outlet $outlet) {
 Route::get('/api/pos/products', [PosController::class, 'products']);
 Route::get('/api/pos/barcode/{barcode}', [PosController::class, 'barcode']);
 Route::get('/api/pos/display', [PosController::class, 'display']);
+Route::post('/menu/{outlet}/order', [\App\Http\Controllers\SelfOrderController::class, 'store'])
+    ->name('menu.order')->middleware('throttle:30,1');
 Route::post('/api/pos/validate-voucher', [PosController::class, 'validateVoucher'])->name('pos.validate-voucher')->middleware('auth');
 Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('auth');
 Route::get('/admin/orders/{id}/receipt', [PosController::class, 'receipt'])->name('orders.receipt')->middleware('auth');
@@ -58,6 +61,10 @@ Route::get('/sitemap-pseo-{chunk}.xml', [SitemapController::class, 'pseoSitemap'
 Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html');
 
 Route::get('/export/laporan/penjualan', [ReportExportController::class, 'sales'])->name('export.sales')->middleware('auth');
+Route::get('/export/laporan/penjualan-item', [ReportExportController::class, 'salesItems'])->name('export.sales.items')->middleware('auth');
+Route::get('/export/laporan/penjualan-item/pdf', [ReportExportController::class, 'salesItemsPdf'])->name('export.sales.items.pdf')->middleware('auth');
+Route::get('/export/laporan/penjualan/xlsx', [ReportExportController::class, 'salesXlsx'])->name('export.sales.xlsx')->middleware('auth');
+Route::get('/export/laporan/penjualan-item/xlsx', [ReportExportController::class, 'salesItemsXlsx'])->name('export.sales.items.xlsx')->middleware('auth');
 Route::get('/export/laporan/keuangan', [ReportExportController::class, 'financial'])->name('export.financial')->middleware('auth');
 Route::get('/export/laporan/stok', [ReportExportController::class, 'stock'])->name('export.stock')->middleware('auth');
 Route::get('/export/laporan/penjualan/pdf', [ReportExportController::class, 'salesPdf'])->name('export.sales.pdf')->middleware('auth');
@@ -201,7 +208,7 @@ Route::get('/robots.txt', function () {
     $content .= "Disallow: /api\n";
     $content .= "Disallow: /__pair\n";
     $content .= "Disallow: /webhooks\n";
-    $content .= 'Sitemap: '.rtrim(config('app.url'), '/')."/sitemap.xml\n";
+    $content .= "Sitemap: /sitemap.xml\n";
 
     return response($content, 200)
         ->header('Content-Type', 'text/plain; charset=utf-8');
@@ -213,6 +220,25 @@ Route::get('/tax-invoice/{taxInvoice}/pdf', function (TaxInvoice $taxInvoice) {
     return $pdf->download('faktur-pajak-'.$taxInvoice->invoice_number.'.pdf');
 })->name('tax-invoice.pdf')->middleware('auth');
 
-Route::redirect('/login', '/admin/login')->name('login');
+Route::get('/login', function () {
+    return auth()->check() ? redirect('/admin') : view('auth.login');
+})->name('login');
+
+Route::post('/login', function (\Illuminate\Http\Request $request) {
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required', 'string'],
+    ]);
+
+    if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        return back()->withErrors(['email' => 'Kredensial tidak valid.'])->withInput($request->only('email'));
+    }
+
+    $request->session()->regenerate();
+    return redirect()->intended('/admin');
+});
+
+Route::redirect('/register', '/admin/login')->name('register');
+Route::redirect('/forgot-password', '/admin/login')->name('password.request');
 
 require base_path('routes/pair-routes.php');

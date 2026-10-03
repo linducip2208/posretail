@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Rosters;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Rosters\Pages\CreateRoster;
 use App\Filament\Resources\Rosters\Pages\EditRoster;
 use App\Filament\Resources\Rosters\Pages\ListRosters;
@@ -17,13 +19,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RosterResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '👨‍💼 Pegawai';
 
     protected static ?int $navigationSort = 3;
 
     protected static ?string $model = Roster::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
 
     protected static ?string $navigationLabel = 'Jadwal Shift';
 

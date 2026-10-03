@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PriceChanges;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\PriceChanges\Pages\ListPriceChanges;
 use App\Filament\Resources\PriceChanges\Tables\PriceChangesTable;
 use App\Models\PriceChange;
@@ -12,6 +14,7 @@ use Filament\Tables\Table;
 
 class PriceChangeResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 14;

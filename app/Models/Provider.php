@@ -13,6 +13,7 @@ class Provider extends Model
     protected $fillable = [
         'name', 'type', 'api_format', 'base_url',
         'api_key_encrypted', 'api_secret_encrypted',
+        'webhook_secret_encrypted',
         'merchant_id', 'client_id',
         'extra_headers', 'extra_config',
         'is_active', 'is_default',
@@ -62,5 +63,10 @@ class Provider extends Model
     public function decryptApiSecret(): ?string
     {
         return $this->api_secret_encrypted ? decrypt($this->api_secret_encrypted) : null;
+    }
+
+    public function decryptWebhookSecret(): ?string
+    {
+        return $this->webhook_secret_encrypted ? decrypt($this->webhook_secret_encrypted) : null;
     }
 }

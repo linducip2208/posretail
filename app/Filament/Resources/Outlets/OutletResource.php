@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Outlets;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Outlets\Pages\CreateOutlet;
 use App\Filament\Resources\Outlets\Pages\EditOutlet;
 use App\Filament\Resources\Outlets\Pages\ListOutlets;
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OutletResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🏪 Outlet';
 
     protected static ?int $navigationSort = 1;

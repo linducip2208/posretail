@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\TableRestos;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Concerns\RestaurantFeature;
 use App\Filament\Resources\TableRestos\Pages\CreateTableResto;
 use App\Filament\Resources\TableRestos\Pages\EditTableResto;
@@ -17,6 +19,7 @@ use Filament\Tables\Table;
 
 class TableRestoResource extends Resource
 {
+    use AuthorizesByNavigation;
     use RestaurantFeature;
 
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';

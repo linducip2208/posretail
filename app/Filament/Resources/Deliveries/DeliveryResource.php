@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Deliveries;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Deliveries\Pages\CreateDelivery;
 use App\Filament\Resources\Deliveries\Pages\EditDelivery;
 use App\Filament\Resources\Deliveries\Pages\ListDeliveries;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class DeliveryResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
 
     protected static ?int $navigationSort = 4;

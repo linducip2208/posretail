@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MembershipTiers;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\MembershipTiers\Pages\CreateMembershipTier;
 use App\Filament\Resources\MembershipTiers\Pages\EditMembershipTier;
 use App\Filament\Resources\MembershipTiers\Pages\ListMembershipTiers;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class MembershipTierResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '👥 Customer';
 
     protected static ?int $navigationSort = 3;

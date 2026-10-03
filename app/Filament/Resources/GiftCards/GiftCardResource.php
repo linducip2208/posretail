@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\GiftCards;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\GiftCards\Pages\CreateGiftCard;
 use App\Filament\Resources\GiftCards\Pages\EditGiftCard;
 use App\Filament\Resources\GiftCards\Pages\ListGiftCards;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class GiftCardResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🎁 Promo';
 
     protected static ?int $navigationSort = 2;

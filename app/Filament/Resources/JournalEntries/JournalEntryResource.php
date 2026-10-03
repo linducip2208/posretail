@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\JournalEntries;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\JournalEntries\Pages\CreateJournalEntry;
 use App\Filament\Resources\JournalEntries\Pages\EditJournalEntry;
 use App\Filament\Resources\JournalEntries\Pages\ListJournalEntries;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class JournalEntryResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📒 Akuntansi';
 
     protected static ?int $navigationSort = 2;

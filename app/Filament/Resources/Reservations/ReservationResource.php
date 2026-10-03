@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Reservations;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Concerns\RestaurantFeature;
 use App\Filament\Resources\Reservations\Pages\CreateReservation;
 use App\Filament\Resources\Reservations\Pages\EditReservation;
@@ -17,6 +19,7 @@ use Filament\Tables\Table;
 
 class ReservationResource extends Resource
 {
+    use AuthorizesByNavigation;
     use RestaurantFeature;
 
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';
@@ -25,7 +28,7 @@ class ReservationResource extends Resource
 
     protected static ?string $model = Reservation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendar;
 
     protected static ?string $navigationLabel = 'Reservasi Meja';
 

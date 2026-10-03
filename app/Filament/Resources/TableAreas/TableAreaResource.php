@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\TableAreas;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Concerns\RestaurantFeature;
 use App\Filament\Resources\TableAreas\Pages\CreateTableArea;
 use App\Filament\Resources\TableAreas\Pages\EditTableArea;
@@ -17,6 +19,7 @@ use Filament\Tables\Table;
 
 class TableAreaResource extends Resource
 {
+    use AuthorizesByNavigation;
     use RestaurantFeature;
 
     protected static string|\UnitEnum|null $navigationGroup = '🔄 Operasional';

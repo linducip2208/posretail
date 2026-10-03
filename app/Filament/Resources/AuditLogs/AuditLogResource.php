@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\AuditLogs;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\AuditLogs\Pages\ListAuditLogs;
 use App\Filament\Resources\AuditLogs\Tables\AuditLogsTable;
 use App\Models\AuditLog;
@@ -12,6 +14,7 @@ use Filament\Support\Icons\Heroicon;
 
 class AuditLogResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '⚙️ Pengaturan';
 
     protected static ?int $navigationSort = 3;

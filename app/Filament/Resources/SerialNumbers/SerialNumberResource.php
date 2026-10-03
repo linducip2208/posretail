@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\SerialNumbers;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\SerialNumbers\Pages\CreateSerialNumber;
 use App\Filament\Resources\SerialNumbers\Pages\EditSerialNumber;
 use App\Filament\Resources\SerialNumbers\Pages\ListSerialNumbers;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class SerialNumberResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 12;

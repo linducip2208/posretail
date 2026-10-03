@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
 
@@ -32,6 +33,35 @@ class ReportPdfService
             ->setPaper('a4', 'landscape');
 
         return $pdf->download('laporan-penjualan-' . $startDate . '-sd-' . $endDate . '.pdf');
+    }
+
+    public function generateSalesItemsReport(string $startDate, string $endDate, ?int $outletId = null): Response
+    {
+        $items = OrderItem::with(['order.user', 'order.outlet', 'product', 'productVariant'])
+            ->whereHas('order', function ($q) use ($startDate, $endDate, $outletId) {
+                $q->whereBetween('created_at', [$startDate, $endDate.' 23:59:59'])
+                    ->when($outletId, fn ($qq) => $qq->where('outlet_id', $outletId))
+                    ->where('order_status', 'completed');
+            })
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->orderBy('orders.created_at')
+            ->orderBy('orders.order_number')
+            ->select('order_items.*')
+            ->get();
+
+        $totalQty = $items->sum('quantity');
+        $totalRevenue = $items->sum('subtotal');
+        $totalDiscount = $items->sum('discount_amount');
+
+        $data = compact(
+            'items', 'totalQty', 'totalRevenue', 'totalDiscount',
+            'startDate', 'endDate'
+        );
+
+        $pdf = Pdf::loadView('pdf.laporan-penjualan-item', $data)
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-penjualan-item-' . $startDate . '-sd-' . $endDate . '.pdf');
     }
 
     public function generateFinancialReport(string $startDate, string $endDate, ?int $outletId = null): Response

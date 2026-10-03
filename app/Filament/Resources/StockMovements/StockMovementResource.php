@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\StockMovements;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\StockMovements\Pages\CreateStockMovement;
 use App\Filament\Resources\StockMovements\Pages\EditStockMovement;
 use App\Filament\Resources\StockMovements\Pages\ListStockMovements;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class StockMovementResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 6;

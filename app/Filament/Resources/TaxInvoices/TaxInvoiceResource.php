@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\TaxInvoices;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\TaxInvoices\Pages\CreateTaxInvoice;
 use App\Filament\Resources\TaxInvoices\Pages\EditTaxInvoice;
 use App\Filament\Resources\TaxInvoices\Pages\ListTaxInvoices;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class TaxInvoiceResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 6;

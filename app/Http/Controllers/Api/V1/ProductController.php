@@ -11,11 +11,17 @@ class ProductController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'search' => 'nullable|string|max:100',
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'per_page' => 'nullable|integer|min:1|max:100',
+        ]);
+
         $query = Product::with(['category', 'unit', 'variants'])
             ->where('active', true);
 
-        if ($request->has('search')) {
-            $search = $request->search;
+        if ($request->filled('search')) {
+            $search = substr($request->search, 0, 100);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('sku', 'like', "%{$search}%")
@@ -27,7 +33,7 @@ class ProductController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
-        $products = $query->paginate($request->per_page ?? 50);
+        $products = $query->paginate(min(100, max(1, (int) ($request->per_page ?? 50))));
 
         return response()->json([
             'data' => $products->items(),
@@ -48,7 +54,7 @@ class ProductController extends Controller
 
     public function byBarcode(Request $request): JsonResponse
     {
-        $request->validate(['barcode' => 'required|string']);
+        $request->validate(['barcode' => 'required|string|max:100']);
 
         $product = Product::with(['category', 'unit', 'variants'])
             ->where('barcode', $request->barcode)

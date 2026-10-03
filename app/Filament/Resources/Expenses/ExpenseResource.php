@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Expenses;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Expenses\Pages\CreateExpense;
 use App\Filament\Resources\Expenses\Pages\EditExpense;
 use App\Filament\Resources\Expenses\Pages\ListExpenses;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class ExpenseResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 4;

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MarketplaceOrders;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\MarketplaceOrders\Pages\ListMarketplaceOrders;
 use App\Filament\Resources\MarketplaceOrders\Tables\MarketplaceOrdersTable;
 use App\Models\MarketplaceOrder;
@@ -11,6 +13,7 @@ use Filament\Tables\Table;
 
 class MarketplaceOrderResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💰 Penjualan';
 
     protected static ?int $navigationSort = 5;

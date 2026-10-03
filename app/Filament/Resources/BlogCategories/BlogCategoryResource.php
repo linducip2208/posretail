@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BlogCategories;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\BlogCategories\Pages\CreateBlogCategory;
 use App\Filament\Resources\BlogCategories\Pages\EditBlogCategory;
 use App\Filament\Resources\BlogCategories\Pages\ListBlogCategories;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class BlogCategoryResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📰 Website';
 
     protected static ?int $navigationSort = 2;

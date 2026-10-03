@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Auditable;
 use App\Traits\HasOutletScope;
 
 class StockMovement extends Model
 {
-    use HasFactory, HasOutletScope;
+    use Auditable, HasFactory, HasOutletScope, SoftDeletes;
 
     protected $fillable = [
         'product_id', 'product_variant_id', 'outlet_id',

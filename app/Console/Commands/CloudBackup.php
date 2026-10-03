@@ -16,6 +16,12 @@ class CloudBackup extends Command
     {
         $disk = $this->option('disk');
 
+        // Guard: jangan gagal tiap malam jika S3 belum dikonfigurasi (kasus umum toko tunggal)
+        if ($disk === 's3' && (! config('filesystems.disks.s3.key') || ! config('filesystems.disks.s3.bucket'))) {
+            $this->warn("Disk 's3' belum dikonfigurasi (AWS_* kosong) — backup lokal 'pos:backup-database' tetap jalan. Lewati cloud backup.");
+            return self::SUCCESS;
+        }
+
         try {
             Storage::disk($disk)->response();
         } catch (\Exception $e) {

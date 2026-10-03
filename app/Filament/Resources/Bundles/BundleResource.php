@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Bundles;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Bundles\Pages\CreateBundle;
 use App\Filament\Resources\Bundles\Pages\EditBundle;
 use App\Filament\Resources\Bundles\Pages\ListBundles;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class BundleResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🎁 Promo';
 
     protected static ?int $navigationSort = 10;

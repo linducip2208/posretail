@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\VolumePricings;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\VolumePricings\Pages\CreateVolumePricing;
 use App\Filament\Resources\VolumePricings\Pages\EditVolumePricing;
 use App\Filament\Resources\VolumePricings\Pages\ListVolumePricings;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class VolumePricingResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 12;

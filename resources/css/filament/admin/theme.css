@@ -3,6 +3,24 @@
 @source '../../../../resources/views/filament';
 @source '../../../../vendor/filament/**/*.blade.php';
 
+.fi-login-demo-box {
+    margin-top: 1.25rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgb(var(--gray-200));
+    border-radius: 0.75rem;
+    background: rgb(var(--gray-50));
+    color: rgb(var(--gray-600));
+    font: 0.72rem/1.6 'JetBrains Mono', monospace;
+}
+
+.fi-login-demo-box strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: rgb(var(--gray-800));
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+}
+
 :root {
     --primary-50: 239, 246, 255;
     --primary-100: 219, 234, 254;

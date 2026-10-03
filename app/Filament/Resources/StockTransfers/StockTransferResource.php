@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\StockTransfers;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\StockTransfers\Pages\CreateStockTransfer;
 use App\Filament\Resources\StockTransfers\Pages\EditStockTransfer;
 use App\Filament\Resources\StockTransfers\Pages\ListStockTransfers;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class StockTransferResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 7;

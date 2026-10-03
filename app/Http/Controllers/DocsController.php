@@ -211,7 +211,7 @@ class DocsController extends Controller
                 'title' => 'Integrasi & POS Web',
                 'icon' => 'M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M12 7.5h.008v.008H12V7.5Zm-3 0h.008v.008H9V7.5Zm6 0h.008v.008H15V7.5Z',
                 'steps' => [
-                    'Konfigurasi <strong>Payment Gateway</strong> di menu Providers — Midtrans, Xendit, dll.',
+                    'Konfigurasi <strong>Payment Gateway</strong> di menu Providers menggunakan format API yang sesuai dengan provider Anda.',
                     'Aktifkan <strong>QRIS</strong> untuk pembayaran digital.',
                     'Gunakan <strong>POS Web</strong> di <code>/pos</code> — antarmuka kasir cepat via browser dengan layout 80/20 (produk/kranjang).',
                     'Produk grid bisa di-<strong>scroll vertikal</strong> — lihat semua 1000+ produk tanpa pindah halaman.',
@@ -242,7 +242,7 @@ class DocsController extends Controller
                         'title' => 'Point of Sale',
                         'desc' => 'Antarmuka kasir kiosk single-viewport: 80% produk yang bisa discroll vertikal, 20% keranjang dengan subtotal tetap. Scan barcode USB/kamera.',
                         'bullets' => ['Layout kiosk 80/20 — produk scroll vertikal', 'Scan barcode USB atau kamera', 'Barcode & SKU auto-generate', '48 produk per halaman', 'Kalkulasi otomatis: subtotal → pajak → total', 'Multi-metode pembayaran', 'Cetak struk thermal'],
-                        'screenshot' => 'order-create',
+                        'screenshot' => 'pos-web',
                     ],
                     [
                         'title' => 'Hold / Suspend',
@@ -276,7 +276,7 @@ class DocsController extends Controller
                             'Cetak struk termal via Bluetooth / browser',
                             'Tipe order dynamic via System Settings',
                         ],
-                        'screenshot' => 'order-create',
+                        'screenshot' => 'pos-web',
                     ],
                     [
                         'title' => 'Manajemen Pesanan',

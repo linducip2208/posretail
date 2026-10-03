@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Returs;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Returs\Pages\CreateRetur;
 use App\Filament\Resources\Returs\Pages\EditRetur;
 use App\Filament\Resources\Returs\Pages\ListReturs;
@@ -16,6 +18,7 @@ use Filament\Support\Icons\Heroicon;
 
 class ReturResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💰 Penjualan';
 
     protected static ?int $navigationSort = 3;

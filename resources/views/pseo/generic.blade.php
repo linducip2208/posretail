@@ -91,7 +91,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $heading }}</h2>
 
                 <div class="prose max-w-none text-gray-700 leading-relaxed space-y-4 text-[15px]">
-                    {!! $content !!}
+                    {!! strip_tags($content, '<p><br><b><strong><i><em><u><ul><ol><li><h1><h2><h3><a><table><thead><tbody><tr><th><td><pre><code><hr>') !!}
                 </div>
             </article>
         </div>

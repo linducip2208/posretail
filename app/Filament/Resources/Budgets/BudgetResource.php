@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Budgets;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Budgets\Pages\CreateBudget;
 use App\Filament\Resources\Budgets\Pages\EditBudget;
 use App\Filament\Resources\Budgets\Pages\ListBudgets;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class BudgetResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 8;

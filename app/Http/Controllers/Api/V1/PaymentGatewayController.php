@@ -22,6 +22,10 @@ class PaymentGatewayController extends Controller
             return response()->json(['message' => 'Provider not found'], 404);
         }
 
+        if (! (new PaymentGatewayService($provider))->verifyWebhookSignature($request)) {
+            return response()->json(['message' => 'Invalid webhook signature'], 401);
+        }
+
         $service = new PaymentGatewayService($provider);
         $result = $service->processWebhook($request->all());
 
@@ -83,12 +87,6 @@ class PaymentGatewayController extends Controller
 
     public function presets(): JsonResponse
     {
-        $path = storage_path('app/payment-presets.json');
-
-        if (! file_exists($path)) {
-            return response()->json([]);
-        }
-
-        return response()->json(json_decode(file_get_contents($path), true));
+        return response()->json(Provider::presets());
     }
 }

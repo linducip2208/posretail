@@ -3,7 +3,7 @@
     $brandName = \App\Models\SystemSetting::getAppName();
     $waNumber = \App\Models\SystemSetting::getValue('whatsapp_number', '6281296052010');
     $posPrice = \App\Models\SystemSetting::getValue('pos_price', 'Rp 4.999.000');
-    $posFeaturesRaw = \App\Models\SystemSetting::getValue('pos_features', "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support");
+    $posFeaturesRaw = \App\Models\SystemSetting::getValue('pos_features', "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources, 3 dashboard report pages\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis berbasis format API\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support");
     $posFeatures = array_filter(array_map('trim', explode("\n", $posFeaturesRaw)));
     $waMessage = urlencode("Halo, saya tertarik beli source code {$brandName}");
     $waLink = "https://wa.me/{$waNumber}?text={$waMessage}";

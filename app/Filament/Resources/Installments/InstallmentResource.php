@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Installments;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Installments\Pages\CreateInstallment;
 use App\Filament\Resources\Installments\Pages\EditInstallment;
 use App\Filament\Resources\Installments\Pages\ListInstallments;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class InstallmentResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 2;

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\SalesTargets;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\SalesTargets\Pages\CreateSalesTarget;
 use App\Filament\Resources\SalesTargets\Pages\EditSalesTarget;
 use App\Filament\Resources\SalesTargets\Pages\ListSalesTargets;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class SalesTargetResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📈 Laporan';
 
     protected static ?int $navigationSort = 6;

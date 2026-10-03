@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Roles;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Roles\Pages\CreateRole;
 use App\Filament\Resources\Roles\Pages\EditRole;
 use App\Filament\Resources\Roles\Pages\ListRoles;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class RoleResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '⚙️ Pengaturan';
 
     protected static ?int $navigationSort = 1;

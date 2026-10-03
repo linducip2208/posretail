@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\AssemblyOrders;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\AssemblyOrders\Pages\CreateAssemblyOrder;
 use App\Filament\Resources\AssemblyOrders\Pages\EditAssemblyOrder;
 use App\Filament\Resources\AssemblyOrders\Pages\ListAssemblyOrders;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AssemblyOrderResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 11;

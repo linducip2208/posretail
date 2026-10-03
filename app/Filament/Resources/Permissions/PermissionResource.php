@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Permissions;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Permissions\Pages\CreatePermission;
 use App\Filament\Resources\Permissions\Pages\EditPermission;
 use App\Filament\Resources\Permissions\Pages\ListPermissions;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class PermissionResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '⚙️ Pengaturan';
 
     protected static ?int $navigationSort = 2;

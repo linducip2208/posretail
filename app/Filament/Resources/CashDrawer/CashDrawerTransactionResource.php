@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\CashDrawer;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\CashDrawer\Pages\ListCashDrawerTransactions;
 use App\Models\CashDrawerTransaction;
 use BackedEnum;
@@ -15,13 +17,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CashDrawerTransactionResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💰 Penjualan';
 
     protected static ?int $navigationSort = 4;
 
     protected static ?string $model = CashDrawerTransaction::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptPercent;
 
     protected static ?string $navigationLabel = 'Riwayat Transaksi';
 

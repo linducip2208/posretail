@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\Provider;
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -94,14 +95,12 @@ class PaymentGatewayService
                 'success' => true,
                 'redirect_url' => $response->json('redirect_url'),
                 'token' => $response->json('token'),
-                'raw' => $response->json(),
             ];
         }
 
         return [
             'success' => false,
             'message' => $response->json('error_messages.0') ?? 'Payment gateway error',
-            'raw' => $response->json(),
         ];
     }
 
@@ -129,14 +128,12 @@ class PaymentGatewayService
                 'success' => true,
                 'redirect_url' => $response->json('invoice_url'),
                 'invoice_id' => $response->json('id'),
-                'raw' => $response->json(),
             ];
         }
 
         return [
             'success' => false,
             'message' => $response->json('message') ?? 'Payment gateway error',
-            'raw' => $response->json(),
         ];
     }
 
@@ -157,14 +154,12 @@ class PaymentGatewayService
                 'success' => true,
                 'qr_code' => $response->json('qr_code'),
                 'qr_string' => $response->json('qr_string'),
-                'raw' => $response->json(),
             ];
         }
 
         return [
             'success' => false,
             'message' => $response->json('message') ?? 'QR generation failed',
-            'raw' => $response->json(),
         ];
     }
 
@@ -178,7 +173,6 @@ class PaymentGatewayService
         return [
             'success' => $response->successful(),
             'status' => $response->json('transaction_status') ?? $response->json('status'),
-            'raw' => $response->json(),
         ];
     }
 
@@ -186,7 +180,7 @@ class PaymentGatewayService
     {
         Log::info('Payment webhook received', [
             'provider' => $this->provider->name,
-            'payload' => $payload,
+            'fields' => array_keys($payload),
         ]);
 
         $orderNumber = $this->extractOrderNumber($payload);
@@ -253,9 +247,26 @@ class PaymentGatewayService
             'provider' => $this->provider->name,
             'format' => $this->provider->api_format,
             'status' => $response->status(),
-            'payload' => $payload,
-            'response' => $response->json(),
+            'payload_fields' => $payload ? array_keys($payload) : [],
+            'response_status' => $response->status(),
         ]);
+    }
+
+    public function verifyWebhookSignature(Request $request): bool
+    {
+        $secret = $this->provider->decryptWebhookSecret();
+        if (! $secret) {
+            return app()->environment('local', 'testing') && (bool) config('license.dev_bypass');
+        }
+
+        $header = (string) ($this->provider->extra_config['webhook_signature_header'] ?? 'X-Signature');
+        $received = (string) $request->header($header);
+        if ($received === '') {
+            return false;
+        }
+
+        $expected = hash_hmac('sha256', $request->getContent(), $secret);
+        return hash_equals($expected, trim(str_ireplace('sha256=', '', $received)));
     }
 
     public static function forPaymentMethod(int $paymentMethodId): ?self

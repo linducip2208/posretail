@@ -16,7 +16,7 @@ class DiscountTemplate extends Model
     protected $fillable = [
         'name', 'type', 'value', 'min_purchase',
         'buy_quantity', 'get_quantity', 'start_date', 'end_date', 'active',
-        'outlet_id',
+        'outlet_id', 'happy_start', 'happy_end', 'days', 'product_id',
     ];
 
     protected function casts(): array
@@ -24,6 +24,8 @@ class DiscountTemplate extends Model
         return [
             'start_date' => 'date',
             'end_date' => 'date',
+            'value' => 'decimal:2',
+            'min_purchase' => 'decimal:2',
         ];
     }
 

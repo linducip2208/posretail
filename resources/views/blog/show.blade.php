@@ -76,7 +76,7 @@
                 @endif
                 <article class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 lg:p-12">
                     <div class="prose max-w-none text-slate-700 leading-relaxed text-[15px]">
-                        {!! $post->content !!}
+                        {!! strip_tags($post->content, '<p><br><b><strong><i><em><u><ul><ol><li><h1><h2><h3><h4><blockquote><a><img><table><thead><tbody><tr><th><td><pre><code><hr>') !!}
                     </div>
                 </article>
 

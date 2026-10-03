@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\DiscountTemplates;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\DiscountTemplates\Pages\CreateDiscountTemplate;
 use App\Filament\Resources\DiscountTemplates\Pages\EditDiscountTemplate;
 use App\Filament\Resources\DiscountTemplates\Pages\ListDiscountTemplates;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class DiscountTemplateResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🎁 Promo';
 
     protected static ?int $navigationSort = 1;

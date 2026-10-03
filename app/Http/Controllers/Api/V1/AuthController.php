@@ -28,7 +28,8 @@ class AuthController extends Controller
         }
 
         $deviceName = $request->device_name ?? 'Flutter App';
-        $token = $user->createToken($deviceName, [$user->role ?? 'kasir'])->plainTextToken;
+        // Ability standar 'pos-access' + role (kompatibel token lama yang hanya berisi role)
+        $token = $user->createToken($deviceName, ['pos-access', $user->role ?? 'kasir'])->plainTextToken;
 
         return response()->json([
             'token' => $token,

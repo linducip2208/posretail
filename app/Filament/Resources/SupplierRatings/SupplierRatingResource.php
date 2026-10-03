@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\SupplierRatings;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\SupplierRatings\Pages\CreateSupplierRating;
 use App\Filament\Resources\SupplierRatings\Pages\EditSupplierRating;
 use App\Filament\Resources\SupplierRatings\Pages\ListSupplierRatings;
@@ -16,13 +18,14 @@ use Filament\Tables\Table;
 
 class SupplierRatingResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🚚 Supplier';
 
     protected static ?int $navigationSort = 2;
 
     protected static ?string $model = SupplierRating::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedStar;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 
     protected static ?string $recordTitleAttribute = 'supplier.name';
 

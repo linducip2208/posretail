@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\RawMaterials;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\RawMaterials\Pages\CreateRawMaterial;
 use App\Filament\Resources\RawMaterials\Pages\EditRawMaterial;
 use App\Filament\Resources\RawMaterials\Pages\ListRawMaterials;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class RawMaterialResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 8;

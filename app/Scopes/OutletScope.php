@@ -25,7 +25,12 @@ class OutletScope implements Scope
         }
 
         $outletIds = $user->getAccessibleOutletIds();
+        if ($user->hasPermission('*')) {
+            return;
+        }
+
         if (empty($outletIds)) {
+            $builder->whereRaw('1 = 0');
             return;
         }
 

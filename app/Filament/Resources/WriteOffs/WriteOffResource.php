@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\WriteOffs;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\WriteOffs\Pages\CreateWriteOff;
 use App\Filament\Resources\WriteOffs\Pages\ListWriteOffs;
 use App\Filament\Resources\WriteOffs\Schemas\WriteOffForm;
@@ -15,6 +17,7 @@ use Filament\Tables\Table;
 
 class WriteOffResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📦 Inventory';
 
     protected static ?int $navigationSort = 13;

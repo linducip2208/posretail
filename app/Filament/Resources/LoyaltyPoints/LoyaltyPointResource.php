@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\LoyaltyPoints;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\LoyaltyPoints\Pages\CreateLoyaltyPoint;
 use App\Filament\Resources\LoyaltyPoints\Pages\EditLoyaltyPoint;
 use App\Filament\Resources\LoyaltyPoints\Pages\ListLoyaltyPoints;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class LoyaltyPointResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '👥 Customer';
 
     protected static ?int $navigationSort = 4;

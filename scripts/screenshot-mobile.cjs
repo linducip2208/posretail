@@ -36,7 +36,7 @@ async function screenshot() {
   const page = await context.newPage();
 
   console.log('Logging in to admin...');
-  await page.goto(`${BASE_URL}/admin/login`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/admin/login`, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
   await page.waitForSelector('input[type="email"]', { timeout: 15000 });
   await page.locator('input[type="email"]').first().click();
@@ -52,6 +52,7 @@ async function screenshot() {
   console.log(`Logged in. Capturing ${PAGES.length} mobile screenshots...\n`);
 
   let idx = 0;
+  let failures = 0;
   for (const { name, url, label } of PAGES) {
     idx++;
     const fullUrl = `${BASE_URL}${url}`;
@@ -65,12 +66,14 @@ async function screenshot() {
       await page.screenshot({ path: filePath, fullPage: true });
       console.log(`    Saved: ${name}.png`);
     } catch (err) {
+      failures++;
       console.error(`    ERROR: ${err.message}`);
     }
   }
 
   await browser.close();
-  console.log(`\nDone. Mobile screenshots captured to ${SCREENSHOT_DIR}`);
+  console.log(`\nDone. ${PAGES.length - failures}/${PAGES.length} mobile screenshots captured to ${SCREENSHOT_DIR}`);
+  if (failures > 0) process.exitCode = 1;
 }
 
 screenshot().catch((err) => {

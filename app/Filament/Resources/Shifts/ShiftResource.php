@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Shifts;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Shifts\Pages\CreateShift;
 use App\Filament\Resources\Shifts\Pages\EditShift;
 use App\Filament\Resources\Shifts\Pages\ListShifts;
@@ -16,13 +18,14 @@ use Filament\Tables\Table;
 
 class ShiftResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💳 Keuangan';
 
     protected static ?int $navigationSort = 3;
 
     protected static ?string $model = Shift::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDateRange;
 
     protected static ?string $navigationLabel = 'Shift Kasir';
 

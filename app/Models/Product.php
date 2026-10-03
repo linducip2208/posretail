@@ -126,6 +126,15 @@ class Product extends Model
         return [
             'expired_date' => 'date',
             'warranty_months' => 'integer',
+            'cost_price' => 'decimal:2',
+            'selling_price' => 'decimal:2',
+            'wholesale_price' => 'decimal:2',
+            'member_price' => 'decimal:2',
+            'current_stock' => 'integer',
+            'min_stock' => 'integer',
+            'max_stock' => 'integer',
+            'active' => 'boolean',
+            'has_variants' => 'boolean',
         ];
     }
 

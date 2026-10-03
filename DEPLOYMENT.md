@@ -6,7 +6,7 @@ Panduan deployment production untuk POS Retail (Laravel backend + Flutter kasir 
 
 ## Prasyarat Server
 
-- PHP 8.2+
+- PHP 8.3+
 - MySQL 8.0+ / MariaDB 10.6+
 - Composer 2.x
 - Node.js 18+ (untuk build asset)
@@ -84,7 +84,7 @@ Seeder akan membuat:
 ```bash
 php artisan storage:link
 chmod -R 775 storage bootstrap/cache
-chown -R bang1436:bang1436 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
 ```
 
 ---
@@ -115,7 +115,7 @@ server {
     error_page 404 /index.php;
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
         fastcgi_buffers 16 16k;
@@ -180,7 +180,7 @@ autostart=true
 autorestart=true
 stopasgroup=true
 killasgroup=true
-user=bang1436
+user=www-data
 numprocs=2
 redirect_stderr=true
 stdout_logfile=/var/www/pos-retail/storage/logs/worker.log
@@ -195,7 +195,7 @@ process_name=%(program_name)s
 command=php /var/www/pos-retail/artisan schedule:work
 autostart=true
 autorestart=true
-user=bang1436
+user=www-data
 redirect_stderr=true
 stdout_logfile=/var/www/pos-retail/storage/logs/scheduler.log
 ```
@@ -249,7 +249,7 @@ flutter pub get
 
 ### Konfigurasi base URL API
 
-Edit `D:\project flutter\pos-retail\lib\config\api_config.dart` (atau file config API) — pastikan `baseUrl` mengarah ke server production:
+Edit `D:\\projekflutter\\pos_kasir\lib\config\api_config.dart` (atau file config API) — pastikan `baseUrl` mengarah ke server production:
 
 ```dart
 static const String baseUrl = 'https://posretail.test/api/v1';

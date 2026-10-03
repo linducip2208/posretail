@@ -16,6 +16,19 @@ class BlogPost extends Model
         'published_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        // Sanitasi konten saat simpan: buang <script>, event handler, javascript: URL
+        static::saving(function (BlogPost $post) {
+            if (is_string($post->content)) {
+                $clean = preg_replace('#<script.*?>.*?</script>#is', '', $post->content);
+                $clean = preg_replace('/\s+on\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $clean ?? '');
+                $clean = preg_replace('/(href|src)\s*=\s*(["\']?)\s*javascript:[^"\']*\2/i', '$1=$2#$2', $clean ?? '');
+                $post->content = strip_tags($clean ?? '', '<p><br><b><strong><i><em><u><ul><ol><li><h1><h2><h3><h4><blockquote><a><img><table><thead><tbody><tr><th><td><pre><code><hr>');
+            }
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(BlogCategory::class, 'category_id');

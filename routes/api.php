@@ -33,8 +33,22 @@ Route::prefix('v1')->group(function () {
         Route::get('/orders/today', [OrderController::class, 'today']);
         Route::get('/orders/{order}', [OrderController::class, 'show']);
         Route::post('/orders', [OrderController::class, 'store']);
+        Route::post('/orders/sync-batch', [OrderController::class, 'syncBatch']);
+        Route::post('/orders/{order}/split', [OrderController::class, 'split']);
+        Route::patch('/orders/{order}/table', [OrderController::class, 'moveTable']);
 
         Route::get('/tables', [TableController::class, 'index']);
+        Route::post('/tables/merge', [TableController::class, 'merge']);
+
+        // POS P2: refund, shift, deposit, KDS
+        Route::post('/orders/{order}/refund', [\App\Http\Controllers\Api\V1\PosExtraController::class, 'refund']);
+        Route::post('/shifts/open', [\App\Http\Controllers\Api\V1\PosExtraController::class, 'openShift']);
+        Route::post('/shifts/{shift}/close', [\App\Http\Controllers\Api\V1\PosExtraController::class, 'closeShift']);
+        Route::post('/customers/{customer}/deposits', [\App\Http\Controllers\Api\V1\PosExtraController::class, 'deposit']);
+        Route::get('/kitchen/tickets', [\App\Http\Controllers\Api\V1\PosExtraController::class, 'kitchenIndex']);
+        Route::patch('/kitchen/tickets/{ticket}', [\App\Http\Controllers\Api\V1\PosExtraController::class, 'kitchenStatus']);
+
+        Route::get('/inventory/forecast', [\App\Http\Controllers\Api\V1\InventoryController::class, 'forecast']);
 
         // Payment Gateway
         Route::post('/payment/create', [PaymentGatewayController::class, 'createTransaction']);

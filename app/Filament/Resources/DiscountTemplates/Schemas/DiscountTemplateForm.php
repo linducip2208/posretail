@@ -21,6 +21,7 @@ class DiscountTemplateForm
                         'percent' => 'Percent',
                         'fixed' => 'Fixed',
                         'buy_x_get_y' => 'Buy X Get Y',
+                        'happy_hour' => 'Happy Hour (%)',
                     ])
                     ->required()
                     ->live(),
@@ -41,6 +42,16 @@ class DiscountTemplateForm
                     ->visible(fn ($get) => $get('type') === 'buy_x_get_y'),
                 DatePicker::make('start_date'),
                 DatePicker::make('end_date'),
+                \Filament\Forms\Components\TimePicker::make('happy_start')
+                    ->label('Jam mulai')
+                    ->visible(fn ($get) => $get('type') === 'happy_hour'),
+                \Filament\Forms\Components\TimePicker::make('happy_end')
+                    ->label('Jam selesai')
+                    ->visible(fn ($get) => $get('type') === 'happy_hour'),
+                TextInput::make('days')
+                    ->label('Hari (1=Senin..7=Minggu, koma)')
+                    ->placeholder('1,2,3,4,5')
+                    ->visible(fn ($get) => $get('type') === 'happy_hour'),
                 Toggle::make('active')
                     ->default(true),
             ]);

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\HeldCarts;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\HeldCarts\Pages\CreateHeldCart;
 use App\Filament\Resources\HeldCarts\Pages\EditHeldCart;
 use App\Filament\Resources\HeldCarts\Pages\ListHeldCarts;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class HeldCartResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '💰 Penjualan';
 
     protected static ?int $navigationSort = 2;

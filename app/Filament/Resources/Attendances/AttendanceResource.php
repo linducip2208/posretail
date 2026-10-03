@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Attendances;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Attendances\Pages\CreateAttendance;
 use App\Filament\Resources\Attendances\Pages\EditAttendance;
 use App\Filament\Resources\Attendances\Pages\ListAttendances;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class AttendanceResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '👨‍💼 Pegawai';
 
     protected static ?int $navigationSort = 2;

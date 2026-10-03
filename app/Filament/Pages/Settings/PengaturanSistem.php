@@ -55,7 +55,7 @@ class PengaturanSistem extends Page
         $this->hero_headline = SystemSetting::getValue('hero_headline', 'Solusi Kasir Modern untuk Toko Retail Anda');
         $this->hero_subheadline = SystemSetting::getValue('hero_subheadline', 'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan.');
         $this->pos_price = SystemSetting::getValue('pos_price', 'Rp 4.999.000');
-        $this->pos_features = SystemSetting::getValue('pos_features', "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis (Midtrans, Xendit, dll)\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support");
+        $this->pos_features = SystemSetting::getValue('pos_features', "Full source code — Laravel + Filament + TailwindCSS\n30+ admin resources\nPOS Kasir, Inventori, Pembelian, Loyalitas lengkap\nPayment gateway dinamis berbasis format API\nCustomer portal, API v1, PSEO directory built-in\nMulti-outlet + Blog + IndexNow SEO\n52 tabel DB, approval workflow\nLifetime update + 6 bulan support");
         $this->outlet_id = SystemSetting::getValue('outlet_id', '1');
         $this->currentLogo = SystemSetting::getLogoUrl();
         $this->store_address = SystemSetting::getValue('store_address', '');

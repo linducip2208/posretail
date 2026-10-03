@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\LoyaltyRewards;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\LoyaltyRewards\Pages\CreateLoyaltyReward;
 use App\Filament\Resources\LoyaltyRewards\Pages\EditLoyaltyReward;
 use App\Filament\Resources\LoyaltyRewards\Pages\ListLoyaltyRewards;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class LoyaltyRewardResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '👥 Customer';
 
     protected static ?int $navigationSort = 5;
@@ -24,7 +27,7 @@ class LoyaltyRewardResource extends Resource
 
     protected static ?string $model = LoyaltyReward::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGift;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
 
     protected static ?string $recordTitleAttribute = 'name';
 

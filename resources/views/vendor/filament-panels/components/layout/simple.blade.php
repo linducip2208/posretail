@@ -76,6 +76,14 @@
                     <div class="fi-login-form">
                         {{ $slot }}
                     </div>
+                    <div class="fi-login-demo-box">
+                        <strong>Demo Login</strong>
+                        <div>Owner: owner@pos-retail.test / password</div>
+                        <div>Manager: manager@pos-retail.test / password</div>
+                        <div>Admin: admin@pos-retail.test / password</div>
+                        <div>Kasir: kasir@pos-retail.test / password</div>
+                        <div>Gudang: gudang@pos-retail.test / password</div>
+                    </div>
                 </div>
             </div>
         </div>

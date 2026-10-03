@@ -51,8 +51,8 @@ class ProviderForm
             Select::make('api_format')
                 ->label('Format API')
                 ->options([
-                    'rest-redirect' => 'REST Redirect (Midtrans-style)',
-                    'rest-api' => 'REST API (Xendit-style)',
+                    'rest-redirect' => 'REST Redirect',
+                    'rest-api' => 'REST API',
                     'qr-static' => 'QR Static',
                 ])
                 ->default('rest-redirect')
@@ -69,6 +69,12 @@ class ProviderForm
                 ->label('API Secret / Client Key')
                 ->password()
                 ->revealable(),
+            TextInput::make('webhook_secret')
+                ->label('Webhook Secret')
+                ->password()
+                ->revealable()
+                ->dehydrated(fn ($state): bool => filled($state))
+                ->helperText('Opsional. Signature HMAC-SHA256 diverifikasi sebelum status pembayaran diproses.'),
             TextInput::make('merchant_id')
                 ->label('Merchant ID / Client ID'),
             TextInput::make('client_id')

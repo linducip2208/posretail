@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Accounts;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\Accounts\Pages\CreateAccount;
 use App\Filament\Resources\Accounts\Pages\EditAccount;
 use App\Filament\Resources\Accounts\Pages\ListAccounts;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class AccountResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📒 Akuntansi';
 
     protected static ?int $navigationSort = 1;

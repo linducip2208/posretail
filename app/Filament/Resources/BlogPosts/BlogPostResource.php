@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BlogPosts;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\BlogPosts\Pages\CreateBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class BlogPostResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '📰 Website';
 
     protected static ?int $navigationSort = 1;

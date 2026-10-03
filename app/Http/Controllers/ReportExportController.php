@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Services\ReportPdfService;
+use App\Services\SimpleXlsxService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -26,6 +28,10 @@ class ReportExportController extends Controller
 
         if ($format === 'pdf') {
             return $this->pdfService->generateSalesReport($startDate, $endDate, $outletId ? (int) $outletId : null);
+        }
+
+        if ($format === 'xlsx') {
+            return $this->exportSalesXlsx($startDate, $endDate, $outletId);
         }
 
         return $this->exportSalesCsv($startDate, $endDate, $outletId);
@@ -69,6 +75,56 @@ class ReportExportController extends Controller
         $this->validateOutletAccess($outletId);
 
         return $this->pdfService->generateSalesReport($startDate, $endDate, $outletId ? (int) $outletId : null);
+    }
+
+    public function salesItems(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+        $format = $request->query('format', 'csv');
+
+        $this->validateOutletAccess($outletId);
+
+        if ($format === 'pdf') {
+            return $this->pdfService->generateSalesItemsReport($startDate, $endDate, $outletId ? (int) $outletId : null);
+        }
+
+        if ($format === 'xlsx') {
+            return $this->exportSalesItemsXlsx($startDate, $endDate, $outletId);
+        }
+
+        return $this->exportSalesItemsCsv($startDate, $endDate, $outletId);
+    }
+
+    public function salesXlsx(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+        $this->validateOutletAccess($outletId);
+
+        return $this->exportSalesXlsx($startDate, $endDate, $outletId);
+    }
+
+    public function salesItemsXlsx(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+        $this->validateOutletAccess($outletId);
+
+        return $this->exportSalesItemsXlsx($startDate, $endDate, $outletId);
+    }
+
+    public function salesItemsPdf(Request $request): mixed
+    {
+        $startDate = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $request->query('outlet_id');
+        $this->validateOutletAccess($outletId);
+
+        return $this->pdfService->generateSalesItemsReport($startDate, $endDate, $outletId ? (int) $outletId : null);
     }
 
     public function financialPdf(Request $request): mixed
@@ -146,6 +202,138 @@ class ReportExportController extends Controller
         fclose($handle);
 
         return response($content, 200, $headers);
+    }
+
+    protected function exportSalesItemsCsv(string $startDate, string $endDate, ?string $outletId): mixed
+    {
+        $items = OrderItem::with(['order.user', 'order.outlet', 'product', 'productVariant'])
+            ->whereHas('order', function ($q) use ($startDate, $endDate, $outletId) {
+                $q->whereBetween('created_at', [$startDate, $endDate.' 23:59:59'])
+                    ->when($outletId, fn ($qq) => $qq->where('outlet_id', $outletId))
+                    ->where('order_status', 'completed');
+            })
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->orderBy('orders.created_at')
+            ->orderBy('orders.order_number')
+            ->select('order_items.*')
+            ->get();
+
+        $filename = 'laporan-penjualan-item-'.$startDate.'-sd-'.$endDate.'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+
+        fputcsv($handle, [
+            'Tanggal', 'No. Order', 'Outlet', 'Kasir',
+            'SKU', 'Nama Produk', 'Varian', 'Qty',
+            'Harga Satuan', 'Diskon', 'Subtotal',
+        ]);
+
+        foreach ($items as $item) {
+            $order = $item->order;
+            fputcsv($handle, [
+                $order?->created_at?->format('Y-m-d H:i') ?? '-',
+                $order?->order_number ?? '-',
+                $order?->outlet?->name ?? '-',
+                $order?->user?->name ?? '-',
+                $item->product?->sku ?? $item->productVariant?->sku ?? '-',
+                $item->product?->name ?? '(produk dihapus #'.$item->product_id.')',
+                $item->productVariant?->name ?? '-',
+                $item->quantity,
+                $item->unit_price,
+                $item->discount_amount,
+                $item->subtotal,
+            ]);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, $headers);
+    }
+
+    protected function exportSalesXlsx(string $startDate, string $endDate, ?string $outletId): mixed
+    {
+        $orders = Order::with(['user', 'outlet', 'customer'])
+            ->whereBetween('created_at', [$startDate, $endDate.' 23:59:59'])
+            ->when($outletId, fn ($q) => $q->where('outlet_id', $outletId))
+            ->where('order_status', 'completed')
+            ->latest()
+            ->get();
+
+        $headers = [
+            'No. Order', 'Tanggal', 'Outlet', 'Kasir', 'Pelanggan',
+            'Subtotal', 'Diskon', 'Pajak', 'Total', 'Status Bayar', 'Status Order',
+        ];
+
+        $rows = $orders->map(fn ($order) => [
+            $order->order_number,
+            $order->created_at->format('Y-m-d H:i'),
+            $order->outlet?->name,
+            $order->user?->name,
+            $order->customer?->name,
+            (float) $order->subtotal,
+            (float) $order->discount_amount,
+            (float) $order->tax_amount,
+            (float) $order->total_amount,
+            $order->payment_status,
+            $order->order_status,
+        ])->toArray();
+
+        return SimpleXlsxService::download(
+            'laporan-penjualan-'.$startDate.'-sd-'.$endDate.'.xlsx',
+            $headers,
+            $rows,
+            ['F', 'G', 'H', 'I']
+        );
+    }
+
+    protected function exportSalesItemsXlsx(string $startDate, string $endDate, ?string $outletId): mixed
+    {
+        $items = OrderItem::with(['order.user', 'order.outlet', 'product', 'productVariant'])
+            ->whereHas('order', function ($q) use ($startDate, $endDate, $outletId) {
+                $q->whereBetween('created_at', [$startDate, $endDate.' 23:59:59'])
+                    ->when($outletId, fn ($qq) => $qq->where('outlet_id', $outletId))
+                    ->where('order_status', 'completed');
+            })
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->orderBy('orders.created_at')
+            ->orderBy('orders.order_number')
+            ->select('order_items.*')
+            ->get();
+
+        $headers = [
+            'Tanggal', 'No. Order', 'Outlet', 'Kasir',
+            'SKU', 'Nama Produk', 'Varian', 'Qty',
+            'Harga Satuan', 'Diskon', 'Subtotal',
+        ];
+
+        $rows = $items->map(fn ($item) => [
+            $item->order?->created_at?->format('Y-m-d H:i') ?? '-',
+            $item->order?->order_number ?? '-',
+            $item->order?->outlet?->name ?? '-',
+            $item->order?->user?->name ?? '-',
+            $item->product?->sku ?? $item->productVariant?->sku ?? '-',
+            $item->product?->name ?? '(produk dihapus #'.$item->product_id.')',
+            $item->productVariant?->name ?? '-',
+            (int) $item->quantity,
+            (float) $item->unit_price,
+            (float) $item->discount_amount,
+            (float) $item->subtotal,
+        ])->toArray();
+
+        return SimpleXlsxService::download(
+            'laporan-penjualan-item-'.$startDate.'-sd-'.$endDate.'.xlsx',
+            $headers,
+            $rows,
+            ['H', 'I', 'J', 'K']
+        );
     }
 
     protected function exportFinancialCsv(string $startDate, string $endDate, ?string $outletId): mixed

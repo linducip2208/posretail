@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\CustomerDeposits;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\CustomerDeposits\Pages\CreateCustomerDeposit;
 use App\Filament\Resources\CustomerDeposits\Pages\EditCustomerDeposit;
 use App\Filament\Resources\CustomerDeposits\Pages\ListCustomerDeposits;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class CustomerDepositResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '👥 Customer';
 
     protected static ?int $navigationSort = 6;

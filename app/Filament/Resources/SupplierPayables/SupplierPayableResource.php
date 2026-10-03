@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\SupplierPayables;
 
+use App\Filament\Resources\Concerns\AuthorizesByNavigation;
+
 use App\Filament\Resources\SupplierPayables\Pages\CreateSupplierPayable;
 use App\Filament\Resources\SupplierPayables\Pages\EditSupplierPayable;
 use App\Filament\Resources\SupplierPayables\Pages\ListSupplierPayables;
@@ -16,6 +18,7 @@ use Filament\Tables\Table;
 
 class SupplierPayableResource extends Resource
 {
+    use AuthorizesByNavigation;
     protected static string|\UnitEnum|null $navigationGroup = '🛒 Pembelian';
 
     protected static ?int $navigationSort = 2;
@@ -24,7 +27,7 @@ class SupplierPayableResource extends Resource
 
     protected static ?string $model = SupplierPayable::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartPie;
 
     protected static ?string $recordTitleAttribute = 'invoice_number';
 

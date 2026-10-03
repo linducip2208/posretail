@@ -121,7 +121,7 @@ async function screenshot() {
   const page = await context.newPage();
 
   console.log('Logging in to admin...');
-  await page.goto(`${BASE_URL}/admin/login`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE_URL}/admin/login`, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
   await page.waitForSelector('input[type="email"]', { timeout: 15000 });
   await page.locator('input[type="email"]').first().click();
@@ -137,13 +137,14 @@ async function screenshot() {
   console.log(`Logged in. Capturing ${PAGES.length} screenshots...\n`);
 
   let idx = 0;
+  let failures = 0;
   for (const { name, url, label } of PAGES) {
     idx++;
     const fullUrl = `${BASE_URL}${url}`;
     console.log(`  [${idx}/${PAGES.length}] ${label} → ${fullUrl}`);
 
     try {
-      await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 20000 });
+      await page.goto(fullUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
       await page.waitForTimeout(3000);
 
       const content = await page.content();
@@ -168,19 +169,21 @@ async function screenshot() {
 </body>
 </html>`;
 
-      await page.setContent(htmlWithChrome, { waitUntil: 'networkidle' });
+      await page.setContent(htmlWithChrome, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(500);
 
       const filePath = path.join(SCREENSHOT_DIR, `${name}.png`);
       await page.screenshot({ path: filePath, fullPage: true });
       console.log(`    Saved: ${name}.png`);
     } catch (err) {
+      failures++;
       console.error(`    ERROR: ${err.message}`);
     }
   }
 
   await browser.close();
-  console.log(`\nDone. ${PAGES.length} screenshots captured to ${SCREENSHOT_DIR}`);
+  console.log(`\nDone. ${PAGES.length - failures}/${PAGES.length} screenshots captured to ${SCREENSHOT_DIR}`);
+  if (failures > 0) process.exitCode = 1;
 }
 
 screenshot().catch((err) => {
