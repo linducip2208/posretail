@@ -25,6 +25,7 @@ class OrderFactory extends Factory
             'total_amount' => $sub,
             'payment_status' => 'paid',
             'order_status' => 'completed',
+            'order_type' => 'walk_in',
         ];
     }
 }

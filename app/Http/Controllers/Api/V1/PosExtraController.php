@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\CashDrawerTransaction;
 use App\Models\Customer;
 use App\Models\CustomerDeposit;
-use App\Models\KitchenTicket;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Retur;
@@ -18,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Fitur POS P2: refund parsial, shift open/close, deposit, KDS.
+ * Fitur POS P2: refund parsial, shift open/close, deposit.
  */
 class PosExtraController extends Controller
 {
@@ -173,29 +172,5 @@ class PosExtraController extends Controller
         ]);
 
         return response()->json(['data' => $log], 201);
-    }
-
-    /** KDS: daftar tiket dapur aktif. */
-    public function kitchenIndex(Request $request): JsonResponse
-    {
-        $tickets = KitchenTicket::with('order')
-            ->whereIn('status', ['pending', 'cooking'])
-            ->when($request->outlet_id, fn ($q) => $q->where('outlet_id', $request->outlet_id))
-            ->oldest()->limit(50)->get();
-
-        return response()->json(['data' => $tickets]);
-    }
-
-    /** KDS: update status tiket. */
-    public function kitchenStatus(Request $request, KitchenTicket $ticket): JsonResponse
-    {
-        $request->validate(['status' => 'required|in:pending,cooking,ready,served,cancelled']);
-        $ticket->update([
-            'status' => $request->status,
-            'completed_at' => in_array($request->status, ['served', 'cancelled']) ? now() : $ticket->completed_at,
-            'printed_at' => $ticket->printed_at ?? now(),
-        ]);
-
-        return response()->json(['data' => $ticket->fresh()]);
     }
 }

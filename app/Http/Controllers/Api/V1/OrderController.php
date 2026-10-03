@@ -48,7 +48,6 @@ class OrderController extends Controller
             'customer_id' => 'nullable|exists:customers,id',
             'outlet_id' => 'required|exists:outlets,id',
             'order_type' => 'nullable|in:' . SystemSetting::getValidOrderTypeValues(),
-            'table_id' => 'nullable|exists:tables,id',
             'employee_id' => 'nullable|exists:users,id',
             'deposit_amount' => 'nullable|numeric|min:0|max:1000000000',
             'voucher_code' => 'nullable|string|max:100',
@@ -80,7 +79,6 @@ class OrderController extends Controller
             'items' => $items,
             'payments' => $request->payments,
             'customer_id' => $request->customer_id,
-            'table_id' => $request->table_id,
             'employee_id' => $request->employee_id,
             'order_type' => $request->order_type,
             'order_notes' => $request->order_notes,
@@ -148,7 +146,6 @@ class OrderController extends Controller
             'orders.*.payments.*.payment_method_id' => 'required|exists:payment_methods,id',
             'orders.*.payments.*.amount' => 'required|numeric|min:0|max:1000000000',
             'orders.*.customer_id' => 'nullable|exists:customers,id',
-            'orders.*.table_id' => 'nullable|exists:tables,id',
         ]);
 
         $results = [];
@@ -171,7 +168,6 @@ class OrderController extends Controller
                     'items' => $items,
                     'payments' => $entry['payments'],
                     'customer_id' => $entry['customer_id'] ?? null,
-                    'table_id' => $entry['table_id'] ?? null,
                     'order_type' => $entry['order_type'] ?? SystemSetting::getDefaultOrderType(),
                     'notes' => '[offline:'.$entry['client_uuid'].'] '.($entry['notes'] ?? ''),
                     'use_tax' => false,
@@ -206,15 +202,6 @@ class OrderController extends Controller
         $child->load(['orderItems.product', 'payments']);
 
         return response()->json(['data' => $this->formatOrder($child)], 201);
-    }
-
-    /** Pindah meja. */
-    public function moveTable(Request $request, Order $order): JsonResponse
-    {
-        $request->validate(['table_id' => 'nullable|exists:tables,id']);
-        $order->update(['table_id' => $request->table_id]);
-
-        return response()->json(['data' => $this->formatOrder($order->fresh())]);
     }
 
     private function formatOrder(Order $order): array

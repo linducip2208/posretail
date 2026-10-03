@@ -41,9 +41,8 @@ class DemoDataSeeder extends Seeder
             'cash_drawer_transactions', 'shifts', 'held_carts',
             'payable_payments', 'supplier_payables',
             'return_items', 'returns',
-            'kitchen_tickets', 'installments',
+            'installments',
             'recipe_items', 'raw_materials', 'discount_templates',
-            'tables', 'table_areas',
             'attendances',
             'stock_opname_items', 'stock_opnames',
             'stock_transfer_items', 'stock_transfers',
@@ -96,8 +95,6 @@ class DemoDataSeeder extends Seeder
         $this->seedSupplierPayables($now);
         $this->seedShifts($now);
         $this->seedHeldCarts($now);
-        $this->seedTableAreas($now);
-        $this->seedTables($now);
         $this->seedRawMaterials($now);
         $this->seedRecipeItems($now);
         $this->seedDiscountTemplates($now);
@@ -963,11 +960,13 @@ class DemoDataSeeder extends Seeder
 
             $orderNumber = 'INV-' . date('Ymd', $orderDate->timestamp) . '-' . str_pad((string) $orderId, 5, '0', STR_PAD_LEFT);
 
+            $orderTypes = ['walk_in', 'walk_in', 'walk_in', 'member', 'takeaway', 'delivery', 'online'];
             $orders[] = [
                 'order_number' => $orderNumber,
                 'customer_id' => $customerId,
                 'outlet_id' => $outletId,
                 'user_id' => $userId,
+                'order_type' => $orderTypes[array_rand($orderTypes)],
                 'subtotal' => $itemsSubtotal,
                 'discount_amount' => $discountAmount,
                 'tax_amount' => $taxAmount,
@@ -1596,38 +1595,6 @@ class DemoDataSeeder extends Seeder
         }
 
         DB::table('held_carts')->insert($heldCarts);
-    }
-
-    // ================================================================
-    // TABLE AREAS
-    // ================================================================
-    private function seedTableAreas(Carbon $now): void
-    {
-        $areas = [
-            ['outlet_id' => 1, 'name' => 'Indoor', 'description' => 'Area dalam ruangan ber-AC', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'name' => 'Outdoor', 'description' => 'Area luar ruangan', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'name' => 'VIP', 'description' => 'Ruang VIP khusus', 'sort_order' => 3, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 2, 'name' => 'Lantai 1', 'description' => 'Area lantai dasar', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-        ];
-        DB::table('table_areas')->insert($areas);
-    }
-
-    // ================================================================
-    // TABLES
-    // ================================================================
-    private function seedTables(Carbon $now): void
-    {
-        $tables = [
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 1', 'code' => 'T01', 'capacity' => 4, 'status' => 'available', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 2', 'code' => 'T02', 'capacity' => 4, 'status' => 'available', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 3', 'code' => 'T03', 'capacity' => 2, 'status' => 'available', 'sort_order' => 3, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 1, 'name' => 'Meja 4', 'code' => 'T04', 'capacity' => 6, 'status' => 'occupied', 'sort_order' => 4, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 2, 'name' => 'Meja Outdoor 1', 'code' => 'T05', 'capacity' => 4, 'status' => 'available', 'sort_order' => 5, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 1, 'table_area_id' => 3, 'name' => 'VIP 1', 'code' => 'T06', 'capacity' => 8, 'status' => 'reserved', 'sort_order' => 6, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 2, 'table_area_id' => 4, 'name' => 'Meja A1', 'code' => 'T07', 'capacity' => 4, 'status' => 'available', 'sort_order' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['outlet_id' => 2, 'table_area_id' => 4, 'name' => 'Meja A2', 'code' => 'T08', 'capacity' => 4, 'status' => 'available', 'sort_order' => 2, 'created_at' => $now, 'updated_at' => $now],
-        ];
-        DB::table('tables')->insert($tables);
     }
 
     // ================================================================

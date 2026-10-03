@@ -169,15 +169,11 @@ class DocsController extends Controller
             ],
             [
                 'phase' => 9,
-                'title' => 'Pengaturan Meja & Tipe Order',
+                'title' => 'Tipe Order & Nomor Antrian',
                 'icon' => 'M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5',
                 'steps' => [
-                    'Tambah <strong>Area Meja</strong> — Indoor, Outdoor, VIP, Lantai 1, dll.',
-                    'Tambah <strong>Meja</strong> — nama, kode, kapasitas, area, status (tersedia/terpakai/reserved).',
-                    'Saat transaksi Dine In, pilih meja yang digunakan pelanggan.',
-                    'Status meja otomatis berubah saat dipakai dan selesai.',
-                    'Gunakan <strong>Tipe Order</strong> — Dine In, Takeaway, Delivery — sesuai kebutuhan.',
-                    '<strong>Nomor Antrian</strong> otomatis untuk Takeaway dan Dine In.',
+                    'Gunakan <strong>Tipe Order</strong> — Walk-in, Member, Takeaway, Delivery, Online — sesuai kebutuhan.',
+                    '<strong>Nomor Antrian</strong> otomatis untuk setiap transaksi.',
                 ],
             ],
             [

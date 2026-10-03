@@ -27,7 +27,7 @@ class ApiDocsController extends BaseController
             'Customers' => $routes->filter(fn ($r) => str_contains($r['uri'], '/customers')),
             'Orders' => $routes->filter(fn ($r) => str_contains($r['uri'], '/orders')),
             'Payments' => $routes->filter(fn ($r) => str_contains($r['uri'], '/payment')),
-            'Tables' => $routes->filter(fn ($r) => str_contains($r['uri'], '/tables')),
+            'Shifts' => $routes->filter(fn ($r) => str_contains($r['uri'], '/shifts')),
             'Webhooks' => $routes->filter(fn ($r) => str_contains($r['uri'], '/webhooks')),
             'POS Internal' => $routes->filter(fn ($r) => str_contains($r['uri'], '/api/pos')),
         ];

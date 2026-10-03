@@ -10,9 +10,7 @@ use App\Http\Controllers\ProgrammaticSeoController;
 use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\ReportExportController;
 use App\Http\Controllers\SitemapController;
-use App\Models\Outlet;
 use App\Models\SystemSetting;
-use App\Models\TableResto;
 use App\Models\TaxInvoice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
@@ -39,17 +37,9 @@ Route::get('/pos/display', function () {
     return view('pos.customer-display', compact('appName'));
 })->name('pos.display');
 
-Route::get('/menu/{outlet}', function (Outlet $outlet) {
-    $table = request('table') ? TableResto::find(request('table')) : null;
-
-    return view('pos.digital-menu', compact('outlet', 'table'));
-})->name('menu.digital');
-
 Route::get('/api/pos/products', [PosController::class, 'products']);
 Route::get('/api/pos/barcode/{barcode}', [PosController::class, 'barcode']);
 Route::get('/api/pos/display', [PosController::class, 'display']);
-Route::post('/menu/{outlet}/order', [\App\Http\Controllers\SelfOrderController::class, 'store'])
-    ->name('menu.order')->middleware('throttle:30,1');
 Route::post('/api/pos/validate-voucher', [PosController::class, 'validateVoucher'])->name('pos.validate-voucher')->middleware('auth');
 Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('auth');
 Route::get('/admin/orders/{id}/receipt', [PosController::class, 'receipt'])->name('orders.receipt')->middleware('auth');

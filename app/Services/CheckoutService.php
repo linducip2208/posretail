@@ -24,7 +24,7 @@ class CheckoutService
      *   'outlet_id' => int (required),
      *   'items' => [['product_id'=>int,'product_variant_id'=>?int,'quantity'=>int,'discount_percent'=>float]],
      *   'payments' => [['payment_method_id'=>int,'amount'=>float]],
-     *   'customer_id'=>?int,'table_id'=>?int,'employee_id'=>?int,
+     *   'customer_id'=>?int,'employee_id'=>?int,
      *   'order_type'=>?string,'order_notes'=>?string,'notes'=>?string,
      *   'voucher_code'=>?string,'use_tax'=>bool,'deposit_amount'=>float,
      *   'is_installment'=>bool,'installment_period'=>?string,'installment_count'=>int,
@@ -41,7 +41,7 @@ class CheckoutService
             if (empty($payload['items']) || ! is_array($payload['items'])) {
                 throw ValidationException::withMessages(['items' => 'Keranjang masih kosong.']);
             }
-            // payments boleh kosong → order pending (QR self-order). Jika diisi harus array.
+            // payments boleh kosong → order pending. Jika diisi harus array.
             $paymentsInput = $payload['payments'] ?? [];
             if (! is_array($paymentsInput)) {
                 throw ValidationException::withMessages(['payments' => 'Pembayaran tidak valid.']);
@@ -179,7 +179,6 @@ class CheckoutService
                 'outlet_id' => $outletId,
                 'user_id' => $userId,
                 'employee_id' => $payload['employee_id'] ?? null,
-                'table_id' => $payload['table_id'] ?? null,
                 'order_type' => $payload['order_type'] ?? SystemSetting::getDefaultOrderType(),
                 'queue_number' => $queueNumber,
                 'subtotal' => $subtotal,
@@ -277,22 +276,6 @@ class CheckoutService
                 ]);
             }
 
-            // 8. Kitchen ticket otomatis untuk dine_in / QR self-order
-            $orderType = $order->order_type ?? '';
-            if (in_array($orderType, ['dine_in', 'self_order', 'takeaway'], true)) {
-                \App\Models\KitchenTicket::create([
-                    'order_id' => $order->id,
-                    'outlet_id' => $outletId,
-                    'ticket_number' => 'KDS-'.date('Ymd').'-'.str_pad((string) $order->id, 5, '0', STR_PAD_LEFT),
-                    'status' => 'pending',
-                    'items' => array_map(fn ($l) => [
-                        'product_id' => $l['product_id'],
-                        'quantity' => $l['quantity'],
-                    ], $lines),
-                    'notes' => $order->order_notes,
-                ]);
-            }
-
             return $order->fresh();
         });
     }
@@ -334,7 +317,6 @@ class CheckoutService
                 'customer_id' => $order->customer_id,
                 'outlet_id' => $order->outlet_id,
                 'user_id' => $userId,
-                'table_id' => $order->table_id,
                 'order_type' => $order->order_type,
                 'queue_number' => $order->queue_number.'-S',
                 'subtotal' => $newSubtotal,

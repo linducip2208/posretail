@@ -62,15 +62,14 @@ class ApiTest extends TestCase
         $response->assertJsonStructure(['data']);
     }
 
-    public function test_tables_endpoint_returns_data(): void
+    public function test_restaurant_tables_endpoint_is_gone(): void
     {
         $user = User::factory()->create(['role' => 'kasir']);
 
         $response = $this->actingAs($user, 'api')
             ->getJson('/api/v1/tables');
 
-        $response->assertStatus(200);
-        $response->assertJsonStructure(['data']);
+        $response->assertStatus(404);
     }
 
     public function test_user_endpoint_returns_logged_in_user_info(): void
@@ -166,9 +165,6 @@ class ApiTest extends TestCase
     public function test_unauthenticated_access_returns_401(): void
     {
         $response = $this->getJson('/api/v1/products');
-        $response->assertStatus(401);
-
-        $response = $this->getJson('/api/v1/tables');
         $response->assertStatus(401);
 
         $response = $this->getJson('/api/v1/user');

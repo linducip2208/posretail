@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\DiscountTemplate;
-use App\Models\KitchenTicket;
 use App\Models\Order;
 use App\Models\Outlet;
 use App\Models\PaymentMethod;
@@ -13,6 +12,7 @@ use App\Services\CheckoutService;
 use App\Services\PromoService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class PosP3Test extends TestCase
@@ -68,7 +68,7 @@ class PosP3Test extends TestCase
         $this->assertEquals(0, (float) $svc->bestDiscount($outlet->id, 20000, $lines, $out)['discount']);
     }
 
-    public function test_checkout_auto_applies_promo_and_creates_kds(): void
+    public function test_checkout_auto_applies_promo_without_kitchen_ticket(): void
     {
         ['outlet' => $outlet, 'user' => $user, 'pm' => $pm, 'product' => $p] = $this->ctx();
         DiscountTemplate::create([
@@ -80,26 +80,31 @@ class PosP3Test extends TestCase
             'outlet_id' => $outlet->id,
             'items' => [['product_id' => $p->id, 'quantity' => 1]],
             'payments' => [['payment_method_id' => $pm->id, 'amount' => 20000]],
-            'order_type' => 'dine_in',
+            'order_type' => 'walk_in',
             'use_tax' => false,
         ], $user->id);
 
         $this->assertEquals(2000, (float) $order->discount_amount);
         $this->assertEquals(18000, (float) $order->total_amount);
         $this->assertStringContainsString('promo', (string) $order->notes);
-        $this->assertDatabaseHas('kitchen_tickets', ['order_id' => $order->id, 'status' => 'pending']);
+        // Ritel murni: tidak ada lagi tabel kitchen_tickets.
+        $this->assertFalse(Schema::hasTable('kitchen_tickets'));
     }
 
-    public function test_qr_self_order_creates_pending_order(): void
+    public function test_restaurant_routes_are_gone(): void
     {
         ['outlet' => $outlet, 'product' => $p] = $this->ctx();
 
+        // QR self-order restoran sudah dihapus → 404.
         $res = $this->postJson("/menu/{$outlet->id}/order", [
             'items' => [['product_id' => $p->id, 'quantity' => 2]],
         ]);
-        $res->assertCreated();
-        $this->assertDatabaseHas('orders', ['outlet_id' => $outlet->id, 'payment_status' => 'pending', 'order_status' => 'pending']);
-        $this->assertDatabaseHas('kitchen_tickets', ['outlet_id' => $outlet->id]);
+        $res->assertNotFound();
+
+        // Tabel restoran sudah tidak ada di database.
+        $this->assertFalse(Schema::hasTable('tables'));
+        $this->assertFalse(Schema::hasTable('table_areas'));
+        $this->assertFalse(Schema::hasTable('reservations'));
     }
 
     public function test_forecast_api_returns_data(): void

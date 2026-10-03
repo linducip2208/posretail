@@ -94,7 +94,7 @@ class PosController extends Controller
 
     public function receipt(Request $request, int $id): View
     {
-        $order = Order::with(['orderItems.product', 'orderItems.productVariant', 'payments.paymentMethod', 'customer', 'outlet', 'user', 'table'])
+        $order = Order::with(['orderItems.product', 'orderItems.productVariant', 'payments.paymentMethod', 'customer', 'outlet', 'user'])
             ->findOrFail($id);
 
         // Batasi: kasir hanya struk outletnya
@@ -116,7 +116,6 @@ class PosController extends Controller
             'total_amount' => $order->total_amount,
             'remaining_amount' => $order->remaining_amount,
             'customer' => $order->customer ? ['name' => $order->customer->name] : null,
-            'table_name' => $order->table?->name,
             'items' => $order->orderItems->map(fn ($i) => [
                 'product' => ['name' => $i->product?->name],
                 'variant' => $i->productVariant?->name,
@@ -156,7 +155,6 @@ class PosController extends Controller
             'outlet_id' => 'required|integer|exists:outlets,id',
             'order_type' => 'nullable|in:'.$validTypes,
             'customer_id' => 'nullable|integer|exists:customers,id',
-            'table_id' => 'nullable|integer|exists:tables,id',
             'payment_method_id' => 'required|integer|exists:payment_methods,id',
             'paid_amount' => 'required|numeric|min:0|max:1000000000',
             'use_tax' => 'nullable|boolean',
@@ -181,7 +179,6 @@ class PosController extends Controller
             'items' => $items,
             'payments' => [['payment_method_id' => (int) $request->payment_method_id, 'amount' => (float) $request->paid_amount]],
             'customer_id' => is_numeric($request->customer_id) ? (int) $request->customer_id : null,
-            'table_id' => $request->table_id ? (int) $request->table_id : null,
             'order_type' => $request->order_type,
             'order_notes' => $request->order_notes,
             'notes' => $request->notes,

@@ -712,7 +712,6 @@
                 outlet_id: outletId,
                 order_type: document.getElementById('orderType').value,
                 customer_id: parseInt(document.getElementById('customerSelect').value) || null,
-                table_id: null,
                 items: cart.map(i => ({ id: i.id, qty: i.qty, price: i.price, serial_numbers: i.serials || [] })),
                 payment_method_id: document.getElementById('paymentMethod').value,
                 paid_amount: paid,

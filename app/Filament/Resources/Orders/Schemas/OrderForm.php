@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
-use App\Models\TableResto;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -19,23 +18,18 @@ class OrderForm
                     ->required(),
                 Select::make('order_type')
                     ->options([
-                        'dine_in' => 'Dine In',
+                        'walk_in' => 'Walk-in',
+                        'member' => 'Member',
                         'takeaway' => 'Takeaway',
                         'delivery' => 'Delivery',
+                        'online' => 'Online',
                     ])
-                    ->default('dine_in')
+                    ->default('walk_in')
                     ->required(),
                 TextInput::make('queue_number')
                     ->label('Nomor Antrian')
                     ->disabled()
                     ->helperText('Auto-generated saat checkout'),
-                Select::make('table_id')
-                    ->label('Meja')
-                    ->options(fn ($get) => TableResto::where('status', 'available')
-                        ->when($get('outlet_id'), fn ($q, $oid) => $q->where('outlet_id', $oid))
-                        ->pluck('name', 'id'))
-                    ->searchable()
-                    ->visible(fn ($get) => $get('order_type') === 'dine_in'),
                 Select::make('customer_id')
                     ->relationship('customer', 'name')
                     ->searchable(),
@@ -48,7 +42,7 @@ class OrderForm
                     ->required(),
                 Select::make('employee_id')
                     ->relationship('employee', 'name')
-                    ->label('Pegawai (Waiter)')
+                    ->label('Pegawai (Sales)')
                     ->searchable(),
                 TextInput::make('subtotal')
                     ->required()

@@ -20,15 +20,12 @@ const PAGES = [
   { name: 'customers', url: '/admin/customers', label: 'Pelanggan' },
   { name: 'customer-groups', url: '/admin/customer-groups', label: 'Grup Pelanggan' },
   { name: 'suppliers', url: '/admin/suppliers', label: 'Supplier' },
-  { name: 'table-restos', url: '/admin/table-restos', label: 'Meja Resto' },
-  { name: 'table-areas', url: '/admin/table-areas', label: 'Area Meja' },
   { name: 'payment-methods', url: '/admin/payment-methods', label: 'Metode Pembayaran' },
   { name: 'raw-materials', url: '/admin/raw-materials', label: 'Bahan Baku' },
 
   // Transaksi (4)
   { name: 'orders', url: '/admin/orders', label: 'Pesanan' },
   { name: 'returs', url: '/admin/returs', label: 'Retur' },
-  { name: 'kitchen-tickets', url: '/admin/kitchen-tickets', label: 'Tiket Dapur' },
   { name: 'shifts', url: '/admin/shifts', label: 'Shift Kasir' },
 
   // Pembelian (3)

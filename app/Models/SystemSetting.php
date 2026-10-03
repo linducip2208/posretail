@@ -83,10 +83,6 @@ class SystemSetting extends Model
             $types = (is_array($decoded) && ! empty($decoded)) ? $decoded : [['value' => 'walk_in', 'label' => 'Walk-in']];
         }
 
-        if (! static::restaurantEnabled()) {
-            $types = array_values(array_filter($types, fn ($t) => ($t['value'] ?? '') !== 'dine_in'));
-        }
-
         return $types;
     }
 
@@ -105,10 +101,5 @@ class SystemSetting extends Model
         $value = static::getValue('serial_tracking_default', 'none');
 
         return in_array($value, ['none', 'optional', 'required'], true) ? $value : 'none';
-    }
-
-    public static function restaurantEnabled(): bool
-    {
-        return static::getBool('restaurant_enabled', true);
     }
 }

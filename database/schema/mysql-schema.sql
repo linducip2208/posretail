@@ -525,29 +525,6 @@ CREATE TABLE `journal_entry_items` (
   CONSTRAINT `journal_entry_items_journal_entry_id_foreign` FOREIGN KEY (`journal_entry_id`) REFERENCES `journal_entries` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `kitchen_tickets`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `kitchen_tickets` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `order_id` bigint unsigned NOT NULL,
-  `outlet_id` bigint unsigned NOT NULL,
-  `ticket_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending' COMMENT 'pending, preparing, ready, served',
-  `items` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'JSON array of items for kitchen',
-  `notes` text COLLATE utf8mb4_unicode_ci,
-  `printed_at` timestamp NULL DEFAULT NULL,
-  `completed_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `kitchen_tickets_ticket_number_unique` (`ticket_number`),
-  KEY `kitchen_tickets_order_id_foreign` (`order_id`),
-  KEY `kitchen_tickets_outlet_id_foreign` (`outlet_id`),
-  CONSTRAINT `kitchen_tickets_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `kitchen_tickets_outlet_id_foreign` FOREIGN KEY (`outlet_id`) REFERENCES `outlets` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `loyalty_points`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -684,7 +661,6 @@ CREATE TABLE `orders` (
   `order_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `customer_id` bigint unsigned DEFAULT NULL,
   `outlet_id` bigint unsigned NOT NULL,
-  `table_id` bigint unsigned DEFAULT NULL,
   `user_id` bigint unsigned NOT NULL,
   `employee_id` bigint unsigned DEFAULT NULL,
   `subtotal` decimal(15,2) NOT NULL DEFAULT '0.00',
@@ -699,7 +675,7 @@ CREATE TABLE `orders` (
   `installment_count` int NOT NULL DEFAULT '1',
   `payment_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `order_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'completed',
-  `order_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'dine_in' COMMENT 'dine_in, takeaway, delivery',
+  `order_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'walk_in' COMMENT 'walk_in, member, takeaway, delivery, online',
   `queue_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `notes` text COLLATE utf8mb4_unicode_ci,
   `order_notes` text COLLATE utf8mb4_unicode_ci,
@@ -712,11 +688,9 @@ CREATE TABLE `orders` (
   KEY `orders_outlet_id_foreign` (`outlet_id`),
   KEY `orders_user_id_foreign` (`user_id`),
   KEY `orders_employee_id_foreign` (`employee_id`),
-  KEY `orders_table_id_foreign` (`table_id`),
   CONSTRAINT `orders_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE SET NULL,
   CONSTRAINT `orders_employee_id_foreign` FOREIGN KEY (`employee_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `orders_outlet_id_foreign` FOREIGN KEY (`outlet_id`) REFERENCES `outlets` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `orders_table_id_foreign` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL,
   CONSTRAINT `orders_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1333,47 +1307,6 @@ CREATE TABLE `system_settings` (
   UNIQUE KEY `system_settings_key_outlet_id_unique` (`key`,`outlet_id`),
   KEY `system_settings_outlet_id_foreign` (`outlet_id`),
   CONSTRAINT `system_settings_outlet_id_foreign` FOREIGN KEY (`outlet_id`) REFERENCES `outlets` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `table_areas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `table_areas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `outlet_id` bigint unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sort_order` int NOT NULL DEFAULT '0',
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `table_areas_outlet_id_foreign` (`outlet_id`),
-  CONSTRAINT `table_areas_outlet_id_foreign` FOREIGN KEY (`outlet_id`) REFERENCES `outlets` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `tables`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tables` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `outlet_id` bigint unsigned NOT NULL,
-  `table_area_id` bigint unsigned DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `capacity` int NOT NULL DEFAULT '4',
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'available' COMMENT 'available, occupied, reserved, maintenance',
-  `sort_order` int NOT NULL DEFAULT '0',
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `tables_code_unique` (`code`),
-  KEY `tables_outlet_id_foreign` (`outlet_id`),
-  KEY `tables_table_area_id_foreign` (`table_area_id`),
-  CONSTRAINT `tables_outlet_id_foreign` FOREIGN KEY (`outlet_id`) REFERENCES `outlets` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `tables_table_area_id_foreign` FOREIGN KEY (`table_area_id`) REFERENCES `table_areas` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `unit_conversions`;

@@ -41,7 +41,7 @@
 ### Jenis Toko yang Didukung
 - Fashion & butik (pakaian, aksesori, sepatu)
 - Elektronik & gadget (HP, laptop, aksesori)
-- F&B / kuliner (restoran, kafe, bakery)
+- F&B ritel (toko bakery, toko kue, toko minuman kemasan)
 - Minimarket & sembako
 - Toko obat & apotek
 - Toko bangunan & material

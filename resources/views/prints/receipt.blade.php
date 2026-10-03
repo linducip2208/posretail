@@ -100,9 +100,6 @@
     @if(!empty($order['customer']))
     <div>Cust: {{ $order['customer']['name'] ?? '-' }}</div>
     @endif
-    @if(!empty($order['table_name']))
-    <div>Meja: {{ $order['table_name'] }}</div>
-    @endif
     <hr>
 
     <table>

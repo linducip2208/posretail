@@ -31,9 +31,6 @@ class OrdersTable
                 TextColumn::make('queue_number')
                     ->label('Antrian')
                     ->sortable(),
-                TextColumn::make('table.name')
-                    ->label('Meja')
-                    ->sortable(),
                 TextColumn::make('customer.name')
                     ->searchable()
                     ->sortable(),
@@ -45,7 +42,7 @@ class OrdersTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('employee.name')
-                    ->label('Waiter')
+                    ->label('Pegawai')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('subtotal')
@@ -97,9 +94,11 @@ class OrdersTable
                     ->label('Outlet'),
                 SelectFilter::make('order_type')
                     ->options([
-                        'dine_in' => 'Dine In',
+                        'walk_in' => 'Walk-in',
+                        'member' => 'Member',
                         'takeaway' => 'Takeaway',
                         'delivery' => 'Delivery',
+                        'online' => 'Online',
                     ]),
                 SelectFilter::make('order_status'),
                 SelectFilter::make('payment_status'),

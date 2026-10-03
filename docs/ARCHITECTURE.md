@@ -2260,7 +2260,7 @@ User login → getAccessibleOutletIds()
   → OutletScope filter: WHERE outlet_id IN (...) [OR outlet_id IS NULL jika nullable]
 ```
 
-**Model yang di-scope:** Product (nullable), Category (nullable), DiscountTemplate (nullable), Order, PurchaseOrder, StockMovement, StockOpname, Shift, Attendance, HeldCart, KitchenTicket, Retur, RawMaterial, TableArea, TableResto.
+**Model yang di-scope:** Product (nullable), Category (nullable), DiscountTemplate (nullable), Order, PurchaseOrder, StockMovement, StockOpname, Shift, Attendance, HeldCart, Retur, RawMaterial.
 
 **StockTransfer** menggunakan `HasMultiOutletScope` untuk filter `from_outlet_id` / `to_outlet_id` via `MultiOutletScope`.
 
@@ -2355,7 +2355,7 @@ Struktur menu dirombak dari 11 group ke 14 group fokus retail:
 | ⚙️ Pengaturan | Role & Permission, Audit Log |
 | 📰 Website | Blog Post, Blog Category |
 
-Resource restoran (KitchenTicket, TableResto, TableArea) disembunyikan dari navigasi.
+Navigasi admin hanya berisi modul ritel (master data, transaksi, pembelian, inventori, loyalitas, laporan, sistem).
 
 ### Multi-Outlet Fixes
 

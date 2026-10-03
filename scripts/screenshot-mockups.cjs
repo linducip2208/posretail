@@ -16,7 +16,6 @@ const pages = [
   { file: 'laporan-penjualan.html', name: 'laporan-penjualan' },
   { file: 'discount-templates.html', name: 'discount-templates' },
   { file: 'attendances.html', name: 'attendances' },
-  { file: 'table-restos.html', name: 'table-restos' },
   { file: 'raw-materials.html', name: 'raw-materials' },
 ];
 
@@ -93,10 +92,10 @@ const MOCKUPS = {
   ], 'Master Data'),
 
   'orders.html': MOCKUP_HTML('Pesanan', '🛒', [
-    { No: 'ORD-20260531-A3F2B', Tipe: '<span class="badge bg-blue-100 text-blue-700">Dine In</span>', Customer: 'Budi Santoso', Total: 'Rp 156.500', Status: '<span class="badge bg-green-100 text-green-700">Selesai</span>' },
+    { No: 'ORD-20260531-A3F2B', Tipe: '<span class="badge bg-blue-100 text-blue-700">Walk-in</span>', Customer: 'Budi Santoso', Total: 'Rp 156.500', Status: '<span class="badge bg-green-100 text-green-700">Selesai</span>' },
     { No: 'ORD-20260531-B7E1A', Tipe: '<span class="badge bg-purple-100 text-purple-700">Takeaway</span>', Customer: 'Walk-in', Total: 'Rp 42.000', Status: '<span class="badge bg-green-100 text-green-700">Selesai</span>' },
     { No: 'ORD-20260531-C9D4F', Tipe: '<span class="badge bg-orange-100 text-orange-700">Delivery</span>', Customer: 'Sari Anggraini', Total: 'Rp 285.000', Status: '<span class="badge bg-yellow-100 text-yellow-700">Diproses</span>' },
-    { No: 'ORD-20260530-D2E8K', Tipe: '<span class="badge bg-blue-100 text-blue-700">Dine In</span>', Customer: 'Rizky Hermawan', Total: 'Rp 89.500', Status: '<span class="badge bg-green-100 text-green-700">Selesai</span>' },
+    { No: 'ORD-20260530-D2E8K', Tipe: '<span class="badge bg-blue-100 text-blue-700">Member</span>', Customer: 'Rizky Hermawan', Total: 'Rp 89.500', Status: '<span class="badge bg-green-100 text-green-700">Selesai</span>' },
     { No: 'ORD-20260530-E5F1M', Tipe: '<span class="badge bg-purple-100 text-purple-700">Takeaway</span>', Customer: 'Walk-in', Total: 'Rp 234.000', Status: '<span class="badge bg-red-100 text-red-700">Dibatalkan</span>' },
   ], 'Transaksi'),
 
@@ -144,12 +143,6 @@ const MOCKUPS = {
     { Tanggal: '31 Mei 2026', Nama: 'Kasir 1', Masuk: '08:15', Keluar: '17:30', Status: '<span class="badge bg-yellow-100 text-yellow-700">Terlambat</span>' },
     { Tanggal: '30 Mei 2026', Nama: 'Admin Gudang', Masuk: '07:45', Keluar: '16:45', Status: '<span class="badge bg-green-100 text-green-700">Hadir</span>' },
   ], 'Sistem'),
-
-  'table-restos.html': MOCKUP_HTML('Meja', '🪑', [
-    { Nama: 'Meja 1', Kode: 'T01', Area: 'Indoor', Kapasitas: '4', Status: '<span class="badge bg-green-100 text-green-700">Tersedia</span>' },
-    { Nama: 'Meja 4', Kode: 'T04', Area: 'Indoor', Kapasitas: '6', Status: '<span class="badge bg-red-100 text-red-700">Terpakai</span>' },
-    { Nama: 'VIP 1', Kode: 'T06', Area: 'VIP', Kapasitas: '8', Status: '<span class="badge bg-yellow-100 text-yellow-700">Reserved</span>' },
-  ], 'Master Data'),
 
   'raw-materials.html': MOCKUP_HTML('Bahan Baku', '🧂', [
     { Nama: 'Tepung Terigu', Kode: 'RM001', Unit: 'Kg', 'Harga/Unit': 'Rp 12.000', Stok: '50' },

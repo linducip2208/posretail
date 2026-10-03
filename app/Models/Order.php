@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
@@ -59,7 +58,7 @@ class Order extends Model
 
     protected static function reverseOrderCancel(Order $order): void
     {
-        $order->loadMissing('orderItems.product', 'orderItems.productVariant', 'payments', 'kitchenTicket', 'installments.schedules', 'taxInvoices', 'table', 'giftCardUsages.giftCard', 'loyaltyPoints.customer', 'paymentProofs');
+        $order->loadMissing('orderItems.product', 'orderItems.productVariant', 'payments', 'installments.schedules', 'taxInvoices', 'giftCardUsages.giftCard', 'loyaltyPoints.customer', 'paymentProofs');
 
         foreach ($order->orderItems as $item) {
             if ($item->product_variant_id) {
@@ -109,10 +108,6 @@ class Order extends Model
             }
         }
 
-        if ($order->kitchenTicket) {
-            $order->kitchenTicket->update(['status' => 'cancelled']);
-        }
-
         foreach ($order->installments as $installment) {
             $installment->update(['status' => 'cancelled']);
             $installment->schedules()->update(['status' => 'cancelled']);
@@ -126,10 +121,6 @@ class Order extends Model
             'status' => 'rejected',
             'notes' => DB::raw("COALESCE(notes, '') || ' | Otomatis ditolak — order #{$order->order_number} dibatalkan'"),
         ]);
-
-        if ($order->order_type === 'dine_in' && $order->table_id) {
-            TableResto::where('id', $order->table_id)->update(['status' => 'available']);
-        }
 
         Delivery::where('order_id', $order->id)
             ->whereIn('status', ['pending', 'packed', 'shipped'])
@@ -211,7 +202,7 @@ class Order extends Model
         'commission_amount', 'currency', 'exchange_rate', 'payment_status', 'order_status', 'notes',
         'order_type', 'queue_number', 'deposit_amount', 'remaining_amount',
         'is_installment', 'installment_period', 'installment_count',
-        'employee_id', 'order_notes', 'table_id',
+        'employee_id', 'order_notes',
     ];
 
     protected function casts(): array
@@ -220,7 +211,6 @@ class Order extends Model
             'customer_id' => 'integer',
             'outlet_id' => 'integer',
             'user_id' => 'integer',
-            'table_id' => 'integer',
             'employee_id' => 'integer',
             'is_installment' => 'boolean',
             'installment_count' => 'integer',
@@ -265,11 +255,6 @@ class Order extends Model
         return $this->hasMany(LoyaltyPoint::class);
     }
 
-    public function table(): BelongsTo
-    {
-        return $this->belongsTo(TableResto::class, 'table_id');
-    }
-
     public function employee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'employee_id');
@@ -278,11 +263,6 @@ class Order extends Model
     public function installments(): HasMany
     {
         return $this->hasMany(Installment::class);
-    }
-
-    public function kitchenTicket(): HasOne
-    {
-        return $this->hasOne(KitchenTicket::class);
     }
 
     public function paymentProofs(): HasMany
