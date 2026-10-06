@@ -69,9 +69,14 @@ class CheckoutService
                 }
 
                 /** @var Product $product */
-                $product = Product::where('id', $productId)->lockForUpdate()->first();
+                // Produk harus milik outlet ini atau produk pusat (outlet_id null).
+                $product = Product::where('id', $productId)
+                    ->where(function ($q) use ($outletId) {
+                        $q->whereNull('outlet_id')->orWhere('outlet_id', $outletId);
+                    })
+                    ->lockForUpdate()->first();
                 if (! $product || ! $product->active) {
-                    throw ValidationException::withMessages(["items.$idx.product_id" => 'Produk tidak tersedia.']);
+                    throw ValidationException::withMessages(["items.$idx.product_id" => 'Produk tidak tersedia di outlet ini.']);
                 }
 
                 $variant = null;
@@ -175,6 +180,7 @@ class CheckoutService
 
             $order = Order::create([
                 'order_number' => $orderNumber,
+                'client_uuid' => $payload['client_uuid'] ?? null,
                 'customer_id' => $payload['customer_id'] ?? null,
                 'outlet_id' => $outletId,
                 'user_id' => $userId,

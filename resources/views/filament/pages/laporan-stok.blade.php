@@ -156,7 +156,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="{{ asset('vendor/chart.js/chart.umd.min.js') }}"></script>
 <script>
 (function() {
     const doughnutEl = document.getElementById('categoryDoughnutChart');
@@ -209,3 +209,4 @@
     });
 })();
 </script>
+

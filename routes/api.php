@@ -15,6 +15,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:api', 'throttle:120,1'])->group(function () {
         Route::get('/user', [AuthController::class, 'user']);
+        Route::get('/outlets', [AuthController::class, 'outlets']);
         Route::post('/logout', [AuthController::class, 'logout']);
 
         Route::get('/categories', [CategoryController::class, 'index']);

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'marketplace' => [
+        // Token shared-secret untuk webhook marketplace (header X-Webhook-Token).
+        // Kosong = tidak ditegakkan (kompatibel integrasi lama).
+        'webhook_token' => env('MARKETPLACE_WEBHOOK_TOKEN', ''),
+    ],
+
 ];

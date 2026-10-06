@@ -33,24 +33,32 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $token,
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
-            ],
+            'user' => self::userPayload($user),
         ]);
     }
 
     public function user(Request $request): JsonResponse
     {
-        $user = $request->user();
-        return response()->json([
+        return response()->json(self::userPayload($request->user()));
+    }
+
+    /** Daftar outlet aktif yang boleh diakses user (sumber untuk seleksi outlet kasir). */
+    public function outlets(Request $request): JsonResponse
+    {
+        $outlets = $request->user()->accessibleOutlets()->get(['id', 'name', 'code']);
+
+        return response()->json(['data' => $outlets]);
+    }
+
+    protected static function userPayload(User $user): array
+    {
+        return [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,
-        ]);
+            'outlets' => $user->accessibleOutlets()->get(['id', 'name', 'code'])->toArray(),
+        ];
     }
 
     public function logout(Request $request): JsonResponse

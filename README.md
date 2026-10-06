@@ -22,7 +22,10 @@ POS Retail adalah sistem manajemen toko ritel lengkap yang mencakup:
 - **CRM & Loyalty** — poin, membership tier, reward otomatis
 - **Supplier & Purchasing** — purchase order, penerimaan barang, hutang supplier
 
-> **Kasir App (Flutter):** source code aplikasi kasir Android berada di project terpisah `D:\projekflutter\pos_kasir`, terhubung ke backend ini lewat **API v1** (`/api/v1`). Lihat `README.md` di project tersebut untuk setup.
+> **Kasir App (Flutter):** source code aplikasi kasir Android berada di repo terpisah
+> [`posretailflutter`](https://github.com/linducip2208/posretailflutter),
+> terhubung ke backend ini lewat **API v1** (`/api/v1`).
+> Kontrak endpoint didokumentasikan di [`docs/API.md`](docs/API.md).
 
 ---
 

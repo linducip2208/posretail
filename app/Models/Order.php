@@ -197,7 +197,7 @@ class Order extends Model
     }
 
     protected $fillable = [
-        'order_number', 'customer_id', 'outlet_id', 'user_id',
+        'order_number', 'client_uuid', 'customer_id', 'outlet_id', 'user_id',
         'subtotal', 'discount_amount', 'tax_amount', 'total_amount',
         'commission_amount', 'currency', 'exchange_rate', 'payment_status', 'order_status', 'notes',
         'order_type', 'queue_number', 'deposit_amount', 'remaining_amount',

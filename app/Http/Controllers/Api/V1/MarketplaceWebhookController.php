@@ -15,6 +15,13 @@ class MarketplaceWebhookController extends Controller
             return response()->json(['message' => 'Platform tidak didukung'], 400);
         }
 
+        // Token opsional: hanya ditegakkan jika MARKETPLACE_WEBHOOK_TOKEN di-set.
+        // Kompatibel mundur — integrasi lama tanpa token tetap jalan bila env kosong.
+        $expected = (string) config('services.marketplace.webhook_token', '');
+        if ($expected !== '' && ! hash_equals($expected, (string) $request->header('X-Webhook-Token', ''))) {
+            return response()->json(['message' => 'Webhook tidak sah.'], 401);
+        }
+
         $mapping = $this->getMapping($platform);
 
         $order = MarketplaceOrder::create([

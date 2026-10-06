@@ -8,6 +8,7 @@ use App\Services\CheckoutService;
 use App\Models\SystemSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
@@ -183,12 +184,20 @@ class OrderController extends Controller
             'orders.*.customer_id' => 'nullable|exists:customers,id',
         ]);
 
+        $user = $request->user();
+        $outletIds = $user->getAccessibleOutletIds();
         $results = [];
         foreach ($request->orders as $entry) {
-            // Idempotency: jika notes sudah berisi uuid yang sama, skip
-            $existing = Order::where('notes', 'like', '%'.str_replace(['%', '_'], '', $entry['client_uuid']).'%')->first();
+            $uuid = (string) $entry['client_uuid'];
+            // Idempotency: lookup persis via kolom unique (bukan LIKE ke notes).
+            $existing = Order::where('client_uuid', $uuid)->first();
             if ($existing) {
-                $results[] = ['client_uuid' => $entry['client_uuid'], 'status' => 'duplicate', 'order_number' => $existing->order_number, 'id' => $existing->id];
+                $results[] = ['client_uuid' => $uuid, 'status' => 'duplicate', 'order_number' => $existing->order_number, 'id' => $existing->id];
+                continue;
+            }
+            // Outlet check per order (batch tetap jalan untuk order lain).
+            if (! $user->hasPermission('*') && ! in_array((int) $entry['outlet_id'], $outletIds, true)) {
+                $results[] = ['client_uuid' => $uuid, 'status' => 'failed', 'message' => 'Tidak ada akses ke outlet ini.'];
                 continue;
             }
             try {
@@ -199,17 +208,33 @@ class OrderController extends Controller
                     'discount_percent' => (float) ($i['discount_percent'] ?? 0),
                 ])->toArray();
                 $order = $checkout->checkout([
+                    'client_uuid' => $uuid,
                     'outlet_id' => (int) $entry['outlet_id'],
                     'items' => $items,
                     'payments' => $entry['payments'],
                     'customer_id' => $entry['customer_id'] ?? null,
                     'order_type' => $entry['order_type'] ?? SystemSetting::getDefaultOrderType(),
-                    'notes' => '[offline:'.$entry['client_uuid'].'] '.($entry['notes'] ?? ''),
+                    'notes' => $entry['notes'] ?? null,
                     'use_tax' => false,
-                ], (int) $request->user()->id);
-                $results[] = ['client_uuid' => $entry['client_uuid'], 'status' => 'created', 'order_number' => $order->order_number, 'id' => $order->id];
+                ], (int) $user->id);
+                $results[] = ['client_uuid' => $uuid, 'status' => 'created', 'order_number' => $order->order_number, 'id' => $order->id];
+            } catch (ValidationException $e) {
+                // Race: order dengan uuid sama terbuat bersamaan → kembalikan yang existing.
+                $dup = Order::where('client_uuid', $uuid)->first();
+                if ($dup) {
+                    $results[] = ['client_uuid' => $uuid, 'status' => 'duplicate', 'order_number' => $dup->order_number, 'id' => $dup->id];
+                } else {
+                    $results[] = ['client_uuid' => $uuid, 'status' => 'failed', 'message' => $e->getMessage()];
+                }
             } catch (\Throwable $e) {
-                $results[] = ['client_uuid' => $entry['client_uuid'], 'status' => 'failed', 'message' => $e->getMessage()];
+                $dup = $e instanceof \Illuminate\Database\QueryException && str_contains($e->getMessage(), 'client_uuid')
+                    ? Order::where('client_uuid', $uuid)->first()
+                    : null;
+                if ($dup) {
+                    $results[] = ['client_uuid' => $uuid, 'status' => 'duplicate', 'order_number' => $dup->order_number, 'id' => $dup->id];
+                } else {
+                    $results[] = ['client_uuid' => $uuid, 'status' => 'failed', 'message' => $e->getMessage()];
+                }
             }
         }
 

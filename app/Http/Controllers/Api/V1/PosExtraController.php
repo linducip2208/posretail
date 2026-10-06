@@ -95,6 +95,11 @@ class PosExtraController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
+        $user = $request->user();
+        if (! $user->hasPermission('*') && ! in_array((int) $request->outlet_id, $user->getAccessibleOutletIds(), true)) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
+
         $exists = Shift::where('outlet_id', $request->outlet_id)->where('status', 'open')->exists();
         if ($exists) {
             return response()->json(['message' => 'Masih ada shift terbuka di outlet ini.'], 422);
@@ -116,6 +121,11 @@ class PosExtraController extends Controller
     public function closeShift(Request $request, Shift $shift): JsonResponse
     {
         $request->validate(['ending_cash' => 'required|numeric|min:0|max:1000000000']);
+
+        $user = $request->user();
+        if (! $user->hasPermission('*') && ! in_array((int) $shift->outlet_id, $user->getAccessibleOutletIds(), true)) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
 
         if ($shift->status !== 'open') {
             return response()->json(['message' => 'Shift sudah ditutup.'], 422);
@@ -147,6 +157,11 @@ class PosExtraController extends Controller
             'amount' => 'required|numeric|min:1|max:1000000000',
             'notes' => 'nullable|string|max:1000',
         ]);
+
+        $user = $request->user();
+        if (! $user->hasPermission('*') && ! in_array((int) $request->outlet_id, $user->getAccessibleOutletIds(), true)) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
 
         $amount = (float) $request->amount;
         if ($request->type === 'topup') {
