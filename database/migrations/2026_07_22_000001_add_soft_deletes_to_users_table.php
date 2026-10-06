@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Guard: DB dev lama terbuat di luar migrasi — idempoten.
+        if (Schema::hasColumn('users', 'deleted_at')) {
+            return;
+        }
         Schema::table('users', function (Blueprint $table) {
             $table->softDeletes();
         });
@@ -15,6 +19,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasColumn('users', 'deleted_at')) {
+            return;
+        }
         Schema::table('users', function (Blueprint $table) {
             $table->dropSoftDeletes();
         });

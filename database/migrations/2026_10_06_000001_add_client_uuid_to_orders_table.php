@@ -13,17 +13,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table): void {
-            $table->string('client_uuid', 100)->nullable()->after('order_number');
-            $table->unique('client_uuid', 'orders_client_uuid_unique');
-        });
+        // Guard: idempoten untuk DB yang terbuat di luar migrasi.
+        if (! Schema::hasColumn('orders', 'client_uuid')) {
+            Schema::table('orders', function (Blueprint $table): void {
+                $table->string('client_uuid', 100)->nullable()->after('order_number');
+            });
+        }
+        try {
+            Schema::table('orders', function (Blueprint $table): void {
+                $table->unique('client_uuid', 'orders_client_uuid_unique');
+            });
+        } catch (\Throwable $e) {
+            // Index sudah ada — lanjut.
+        }
     }
 
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table): void {
-            $table->dropUnique('orders_client_uuid_unique');
-            $table->dropColumn('client_uuid');
-        });
+        try {
+            Schema::table('orders', function (Blueprint $table): void {
+                $table->dropUnique('orders_client_uuid_unique');
+            });
+        } catch (\Throwable $e) {
+        }
+        if (Schema::hasColumn('orders', 'client_uuid')) {
+            Schema::table('orders', function (Blueprint $table): void {
+                $table->dropColumn('client_uuid');
+            });
+        }
     }
 };
