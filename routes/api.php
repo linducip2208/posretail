@@ -30,6 +30,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/customers', [CustomerController::class, 'store']);
 
         Route::get('/orders/today', [OrderController::class, 'today']);
+        Route::get('/orders/history', [OrderController::class, 'history']);
         Route::get('/orders/{order}', [OrderController::class, 'show']);
         Route::post('/orders', [OrderController::class, 'store']);
         Route::post('/orders/sync-batch', [OrderController::class, 'syncBatch']);

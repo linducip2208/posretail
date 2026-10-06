@@ -113,6 +113,41 @@ class OrderController extends Controller
         return response()->json(['data' => $query->get()->map(fn ($o) => $this->formatOrder($o))]);
     }
 
+    /**
+     * Riwayat order per periode untuk layar Laporan Flutter.
+     * GET /api/v1/orders/history?start_date=Y-m-d&end_date=Y-m-d&outlet_id=
+     */
+    public function history(Request $request): JsonResponse
+    {
+        $request->validate([
+            'start_date' => 'nullable|date_format:Y-m-d',
+            'end_date' => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
+            'outlet_id' => 'nullable|exists:outlets,id',
+        ]);
+
+        $start = $request->start_date ?? now()->subDays(6)->format('Y-m-d');
+        $end = $request->end_date ?? now()->format('Y-m-d');
+
+        if (now()->parse($start)->diffInDays(now()->parse($end)) > 93) {
+            return response()->json(['message' => 'Rentang tanggal maksimal 93 hari.'], 422);
+        }
+
+        $outletIds = $request->user()->getAccessibleOutletIds();
+        $query = Order::with(['orderItems.product', 'payments', 'user', 'customer', 'outlet'])
+            ->excludeCancelled()
+            ->whereBetween('created_at', [$start, $end.' 23:59:59'])
+            ->latest()
+            ->limit(500);
+
+        if ($request->outlet_id && ($request->user()->hasPermission('*') || in_array((int) $request->outlet_id, $outletIds, true))) {
+            $query->where('outlet_id', $request->outlet_id);
+        } elseif (! $request->user()->hasPermission('*')) {
+            $query->whereIn('outlet_id', $outletIds);
+        }
+
+        return response()->json(['data' => $query->get()->map(fn ($o) => $this->formatOrder($o))]);
+    }
+
     public function show(Order $order): JsonResponse
     {
         $user = request()->user();
