@@ -40,8 +40,19 @@ class PosExtraController extends Controller
         }
 
         $retur = DB::transaction(function () use ($request, $order, $user) {
-            $order->loadMissing('orderItems');
+            // Kunci item order agar dua refund bersamaan tidak over-refund.
+            $order->loadMissing(['orderItems' => fn ($q) => $q->lockForUpdate()]);
             $map = $order->orderItems->keyBy('id');
+
+            // Validasi kumulatif di dalam transaksi terkunci.
+            Retur::assertCumulativeQty($order, collect($request->items)->map(function ($row) use ($map) {
+                $item = $map->get($row['order_item_id']);
+
+                return [
+                    'product_id' => $item ? (int) $item->product_id : 0,
+                    'quantity' => (int) $row['quantity'],
+                ];
+            })->toArray());
 
             $r = Retur::create([
                 'order_id' => $order->id,
@@ -133,8 +144,12 @@ class PosExtraController extends Controller
 
         $cashIn = (float) $shift->cashDrawerTransactions()->where('type', 'cash_in')->sum('amount');
         $cashOut = (float) $shift->cashDrawerTransactions()->where('type', 'cash_out')->sum('amount');
+        // Kas fisik laci = pembayaran via metode offline/tunai saja.
+        // QRIS/transfer (online) tidak masuk laci sehingga dikecualikan.
         $orderCash = (float) Payment::whereHas('order', fn ($q) => $q->where('outlet_id', $shift->outlet_id)
-            ->whereBetween('created_at', [$shift->started_at, now()]))->sum('amount');
+            ->whereBetween('created_at', [$shift->started_at, now()]))
+            ->whereHas('paymentMethod', fn ($q) => $q->where('type', 'offline'))
+            ->sum('amount');
         $expected = (float) $shift->starting_cash + $cashIn + $orderCash - $cashOut;
 
         $shift->update([

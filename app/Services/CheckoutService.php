@@ -12,6 +12,7 @@ use App\Models\ProductVariant;
 use App\Models\SerialNumber;
 use App\Models\StockMovement;
 use App\Models\SystemSetting;
+use App\Scopes\OutletScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -70,7 +71,11 @@ class CheckoutService
 
                 /** @var Product $product */
                 // Produk harus milik outlet ini atau produk pusat (outlet_id null).
-                $product = Product::where('id', $productId)
+                // Global OutletScope dilepas: service memvalidasi outlet secara
+                // eksplisit per payload dan tidak boleh tergantung sisa auth
+                // ambient (guard cache / Octane / queue) yang bisa salah filter.
+                $product = Product::withoutGlobalScope(OutletScope::class)
+                    ->where('id', $productId)
                     ->where(function ($q) use ($outletId) {
                         $q->whereNull('outlet_id')->orWhere('outlet_id', $outletId);
                     })
@@ -81,7 +86,8 @@ class CheckoutService
 
                 $variant = null;
                 if ($variantId) {
-                    $variant = ProductVariant::where('id', $variantId)
+                    $variant = ProductVariant::withoutGlobalScope(OutletScope::class)
+                        ->where('id', $variantId)
                         ->where('product_id', $productId)
                         ->lockForUpdate()->first();
                     if (! $variant) {
@@ -168,8 +174,10 @@ class CheckoutService
             $deposit = (float) ($payload['deposit_amount'] ?? 0);
             $isPending = $payments->isEmpty() && $deposit <= 0; // QR self-order tanpa bayar
 
-            // 3. Nomor antrian aman dalam transaksi (lock baris hari ini)
-            $todayCount = Order::where('outlet_id', $outletId)
+            // 3. Nomor antrian aman dalam transaksi (lock baris hari ini).
+            // Scope global dilepas: filter outlet eksplisit di bawah.
+            $todayCount = Order::withoutGlobalScope(OutletScope::class)
+                ->where('outlet_id', $outletId)
                 ->whereDate('created_at', today())
                 ->lockForUpdate()
                 ->count();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Provider;
+use App\Scopes\OutletScope;
 use App\Services\PaymentGatewayService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,9 +52,36 @@ class PaymentGatewayController extends Controller
             ], 400);
         }
 
+        // Anti amount-tampering: nominal diambil dari sisa tagihan order di
+        // server, bukan dari angka kiriman client. Order harus milik outlet user.
+        $user = $request->user();
+        // Lepas global scope agar bisa bedakan 404 vs 403 eksplisit.
+        $order = \App\Models\Order::withoutGlobalScope(OutletScope::class)
+            ->where('order_number', $request->order_number)->first();
+
+        if (! $order) {
+            return response()->json(['success' => false, 'message' => 'Order tidak ditemukan.'], 404);
+        }
+
+        if (! $user->hasPermission('*') && ! in_array((int) $order->outlet_id, $user->getAccessibleOutletIds(), true)) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada akses ke order ini.'], 403);
+        }
+
+        $remaining = max(0, (float) $order->total_amount - (float) $order->payments()->where('status', 'success')->sum('amount'));
+        if ($remaining <= 0) {
+            return response()->json(['success' => false, 'message' => 'Order sudah lunas.'], 422);
+        }
+
+        if (abs((float) $request->amount - $remaining) > 0.01) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nominal harus sama dengan sisa tagihan: '.number_format($remaining, 0, ',', '.'),
+            ], 422);
+        }
+
         $result = $service->createTransaction([
             'order_number' => $request->order_number,
-            'amount' => $request->amount,
+            'amount' => $remaining,
             'items' => $request->items ?? [],
             'customer' => $request->customer ?? [
                 'first_name' => $request->user()->name,

@@ -14,6 +14,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class SupplierRatingResource extends Resource
 {
@@ -45,6 +46,28 @@ class SupplierRatingResource extends Resource
     public static function getRelations(): array
     {
         return [];
+    }
+
+    /**
+     * Rating mengikuti outlet purchase order-nya. Non-admin hanya melihat
+     * rating dari PO di outlet yang boleh diaksesnya (fail-closed).
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if (! $user) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($user->hasPermission('*')) {
+            return $query;
+        }
+
+        $ids = $user->getAccessibleOutletIds();
+
+        return $query->whereHas('purchaseOrder', fn ($q) => $q->whereIn('outlet_id', $ids));
     }
 
     public static function getPages(): array

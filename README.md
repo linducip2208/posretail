@@ -65,9 +65,16 @@ php artisan key:generate
 # DB_USERNAME=root
 # DB_PASSWORD=
 
-# 5. Migrate & seed
+# 5. Migrate & seed (fresh DB: seluruh rantai migrasi terurut,
+# tanpa snapshot — `php artisan migrate` harus hijau dari nol)
 php artisan migrate --force
 php artisan db:seed --force
+
+> Catatan DB lama/drift: bila `migrate` gagal karena tabel yang sudah
+> ada di luar migrasi (mis. `Table 'x' already exists`), migrasi
+> `Schema::create` di project ini sudah idempoten (guard `hasTable`).
+> Periksa `php artisan migrate:status`, lalu jalankan ulang `migrate`.
+> Jangan `migrate:fresh` di database berisi data tanpa backup.
 
 # 6. Create storage symlink
 php artisan storage:link

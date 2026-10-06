@@ -8,7 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Guard hasTable: sebagian DB lama terbuat di luar migrasi.
+        // Di database fresh semua tabel dibuat normal; di DB drift
+        // yang sudah punya tabelnya, pembuatan dilewati dengan aman.
+
         // ─── 1. Faktur Pajak ─────────────────────────────
+        if (! Schema::hasTable('tax_invoices')) {
         Schema::create('tax_invoices', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_number')->unique();
@@ -28,7 +33,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        } // end if tax_invoices
+
         // ─── 2. Multi-Level Pricing ─────────────────────
+        if (! Schema::hasTable('volume_pricings')) {
         Schema::create('volume_pricings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
@@ -42,6 +50,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        } // end if volume_pricings
+
         // ─── 3. Customer Credit Limit ───────────────────
         Schema::table('customers', function (Blueprint $table) {
             if (!Schema::hasColumn('customers', 'credit_limit')) {
@@ -53,6 +63,7 @@ return new class extends Migration
         });
 
         // ─── 4. Gift Card / Voucher ─────────────────────
+        if (! Schema::hasTable('gift_cards')) {
         Schema::create('gift_cards', function (Blueprint $table) {
             $table->id();
             $table->string('code', 20)->unique();
@@ -70,6 +81,9 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        } // end if gift_cards
+
+        if (! Schema::hasTable('gift_card_usages')) {
         Schema::create('gift_card_usages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('gift_card_id')->constrained()->cascadeOnDelete();
@@ -78,7 +92,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        } // end if gift_card_usages
+
         // ─── 5. Delivery Tracking ───────────────────────
+        if (! Schema::hasTable('deliveries')) {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
             $table->string('delivery_number')->unique();
@@ -98,7 +115,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        } // end if deliveries
+
         // ─── 6. Sales Target ────────────────────────────
+        if (! Schema::hasTable('sales_targets')) {
         Schema::create('sales_targets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('outlet_id')->constrained()->cascadeOnDelete();
@@ -110,7 +130,10 @@ return new class extends Migration
             $table->unique(['outlet_id', 'user_id', 'year', 'month']);
         });
 
+        } // end if sales_targets
+
         // ─── 7. Waste / Damage ──────────────────────────
+        if (! Schema::hasTable('write_offs')) {
         Schema::create('write_offs', function (Blueprint $table) {
             $table->id();
             $table->string('writeoff_number')->unique();
@@ -126,7 +149,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        } // end if write_offs
+
         // ─── 8. Consignment Stock ───────────────────────
+        if (! Schema::hasTable('consignments')) {
         Schema::create('consignments', function (Blueprint $table) {
             $table->id();
             $table->string('consignment_number')->unique();
@@ -144,7 +170,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        } // end if consignments
+
         // ─── 9. Table Reservation ───────────────────────
+        // (Legacy restoran; tabel reservations di-drop migrasi remove_restaurant.
+        // Guard hasTable agar DB drift yang sudah punya tabelnya tetap lolos.)
+        if (! Schema::hasTable('reservations')) {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->string('reservation_number')->unique();
@@ -159,6 +190,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
         });
+        } // end if reservations
     }
 
     public function down(): void

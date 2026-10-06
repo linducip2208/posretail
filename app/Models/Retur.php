@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class Retur extends Model
 {
@@ -81,6 +82,47 @@ class Retur extends Model
     }
 
     /**
+     * Validasi kumulatif: total yang pernah di-refund (retur completed)
+     * + yang diminta tidak boleh melebihi qty yang dibeli.
+     * Mencegah refund ganda melebihi pembelian (mis. beli 10, refund 6 + 5).
+     *
+     * @param  array<int, array{product_id:int, quantity:int}>  $rows
+     */
+    public static function assertCumulativeQty(Order $order, array $rows, ?int $ignoreReturId = null): void
+    {
+        $purchased = OrderItem::where('order_id', $order->id)
+            ->selectRaw('product_id, SUM(quantity) as qty')
+            ->groupBy('product_id')
+            ->pluck('qty', 'product_id');
+
+        $refunded = ReturnItem::whereHas('retur', function ($q) use ($order, $ignoreReturId) {
+            $q->where('order_id', $order->id)->where('status', 'completed');
+            if ($ignoreReturId) {
+                $q->where('id', '!=', $ignoreReturId);
+            }
+        })
+            ->selectRaw('product_id, SUM(quantity) as qty')
+            ->groupBy('product_id')
+            ->pluck('qty', 'product_id');
+
+        $requested = [];
+        foreach ($rows as $row) {
+            $pid = (int) $row['product_id'];
+            $requested[$pid] = ($requested[$pid] ?? 0) + (int) $row['quantity'];
+        }
+
+        foreach ($requested as $pid => $qty) {
+            $max = (int) ($purchased[$pid] ?? 0);
+            $done = (int) ($refunded[$pid] ?? 0);
+            if ($qty < 1 || $done + $qty > $max) {
+                throw ValidationException::withMessages([
+                    'items' => "Qty refund melebihi sisa yang bisa di-refund (dibeli {$max}, sudah refund {$done}).",
+                ]);
+            }
+        }
+    }
+
+    /**
      * Terapkan efek retur: stok kembali, stock movement, serial kembali, jurnal balik.
      * Idempotent — hanya jalan sekali (dicek via completed_at).
      */
@@ -91,6 +133,17 @@ class Retur extends Model
         }
 
         DB::transaction(function () {
+            // Backstop: validasi kumulatif juga saat retur dari admin panel.
+            if ($this->order_id) {
+                $order = Order::where('id', $this->order_id)->lockForUpdate()->first();
+                if ($order) {
+                    static::assertCumulativeQty($order, $this->returnItems->map(fn ($i) => [
+                        'product_id' => $i->product_id,
+                        'quantity' => $i->quantity,
+                    ])->toArray(), $this->id);
+                }
+            }
+
             $this->loadMissing('returnItems.product');
 
             foreach ($this->returnItems as $item) {

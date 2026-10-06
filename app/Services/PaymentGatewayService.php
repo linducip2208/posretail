@@ -208,6 +208,20 @@ class PaymentGatewayService
         };
 
         if ($newStatus) {
+            // Anti-replay: status terminal tidak boleh turun/menyimpang.
+            // Replay webhook lama (mis. 'failure' setelah 'success') diabaikan.
+            $terminal = ['success', 'failed', 'refunded'];
+            $current = $payment->status;
+            if (in_array($current, $terminal, true) && $current !== $newStatus) {
+                Log::warning('Payment webhook replay ignored', [
+                    'order_number' => $orderNumber,
+                    'current' => $current,
+                    'incoming' => $newStatus,
+                ]);
+
+                return ['success' => true, 'status' => $current, 'ignored' => 'replay'];
+            }
+
             $payment->update(['status' => $newStatus]);
 
             if ($newStatus === 'success') {
