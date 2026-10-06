@@ -14,7 +14,7 @@ class ProductController extends Controller
         $request->validate([
             'search' => 'nullable|string|max:100',
             'category_id' => 'nullable|integer|exists:categories,id',
-            'per_page' => 'nullable|integer|min:1|max:100',
+            'per_page' => 'nullable|integer|min:1',
         ]);
 
         $query = Product::with(['category', 'unit', 'variants'])

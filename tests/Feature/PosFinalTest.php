@@ -63,6 +63,9 @@ class PosFinalTest extends TestCase
         $res->assertCreated();
 
         $badToken = $k->createToken('bad', ['other-ability'])->plainTextToken;
+        // Guard Sanctum di-cache per application instance — lupakan agar request
+        // kedua benar-benar otentikasi ulang dengan token baru (seperti request HTTP asli).
+        $this->app['auth']->forgetGuards();
         $res2 = $this->withHeader('Authorization', "Bearer $badToken")->postJson('/api/v1/orders', [
             'outlet_id' => $o->id,
             'items' => [['product_id' => $p->id, 'quantity' => 1]],

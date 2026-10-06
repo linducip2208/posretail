@@ -64,6 +64,15 @@ Route::get('/export/laporan/laba-rugi', [ReportExportController::class, 'labaRug
 Route::get('/export/laporan/neraca', [ReportExportController::class, 'neraca'])->name('export.neraca')->middleware('auth');
 Route::get('/export/laporan/pembatalan', [ReportExportController::class, 'cancelled'])->name('export.cancelled')->middleware('auth');
 Route::get('/export/laporan/piutang', [ReportExportController::class, 'receivables'])->name('export.receivables')->middleware('auth');
+Route::get('/export/laporan/profit', [ReportExportController::class, 'profit'])->name('export.profit')->middleware('auth');
+Route::get('/export/laporan/profit/xlsx', [ReportExportController::class, 'profit'])->name('export.profit.xlsx')->middleware('auth');
+Route::get('/export/laporan/stok-lambat', [ReportExportController::class, 'stockSlow'])->name('export.stock-slow')->middleware('auth');
+Route::get('/export/laporan/arus-kas', [ReportExportController::class, 'cashflow'])->name('export.cashflow')->middleware('auth');
+Route::get('/export/laporan/hutang-supplier', [ReportExportController::class, 'payables'])->name('export.payables')->middleware('auth');
+Route::get('/export/laporan/pajak', [ReportExportController::class, 'tax'])->name('export.tax')->middleware('auth');
+Route::get('/export/laporan/pelanggan', [ReportExportController::class, 'customers'])->name('export.customers')->middleware('auth');
+Route::get('/export/laporan/promo', [ReportExportController::class, 'promo'])->name('export.promo')->middleware('auth');
+Route::get('/export/laporan/komprehensif/xlsx', [ReportExportController::class, 'comprehensiveXlsx'])->name('export.comprehensive.xlsx')->middleware('auth');
 
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('guest:customer')->group(function () {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\AdvancedReportService;
 use App\Services\ReportPdfService;
 use App\Services\SimpleXlsxService;
 use Illuminate\Http\Request;
@@ -675,6 +676,176 @@ class ReportExportController extends Controller
                     });
             });
         });
+    }
+
+    // ================= LAPORAN BARU (luas) =================
+
+    protected function csvResponse(string $filename, array $headers, array $rows): mixed
+    {
+        $handle = fopen('php://temp', 'r+');
+        fwrite($handle, "\xEF\xBB\xBF");
+        fputcsv($handle, $headers);
+        foreach ($rows as $r) {
+            fputcsv($handle, array_values($r));
+        }
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
+    protected function outletIdOrNull(?string $outletId): ?int
+    {
+        return $outletId ? (int) $outletId : null;
+    }
+
+    public function profit(Request $request): mixed
+    {
+        $start = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $end = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+        $format = $request->query('format', 'csv');
+
+        $headers = AdvancedReportService::profitHeaders();
+        $rows = AdvancedReportService::profitRows($start, $end, $outletId);
+
+        if ($format === 'xlsx' || $request->route()->getName() === 'export.profit.xlsx') {
+            return SimpleXlsxService::download("laporan-profit-{$start}-sd-{$end}.xlsx", $headers, $rows, AdvancedReportService::profitNumericColumns());
+        }
+
+        return $this->csvResponse("laporan-profit-{$start}-sd-{$end}.csv", $headers, $rows);
+    }
+
+    public function stockSlow(Request $request): mixed
+    {
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+        $format = $request->query('format', 'csv');
+
+        $headers = AdvancedReportService::slowHeaders();
+        $rows = AdvancedReportService::slowRows($outletId);
+
+        if ($format === 'xlsx') {
+            return SimpleXlsxService::download('laporan-stok-lambat-'.now()->format('Y-m-d').'.xlsx', $headers, $rows, AdvancedReportService::slowNumericColumns());
+        }
+
+        return $this->csvResponse('laporan-stok-lambat-'.now()->format('Y-m-d').'.csv', $headers, $rows);
+    }
+
+    public function cashflow(Request $request): mixed
+    {
+        $start = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $end = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+
+        $headers = AdvancedReportService::cashflowHeaders();
+        $rows = AdvancedReportService::cashflowRows($start, $end, $outletId);
+
+        if ($request->query('format') === 'xlsx') {
+            return SimpleXlsxService::download("laporan-arus-kas-{$start}-sd-{$end}.xlsx", $headers, $rows, AdvancedReportService::cashflowNumericColumns());
+        }
+
+        return $this->csvResponse("laporan-arus-kas-{$start}-sd-{$end}.csv", $headers, $rows);
+    }
+
+    public function payables(Request $request): mixed
+    {
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+
+        $headers = AdvancedReportService::payableHeaders();
+        $rows = AdvancedReportService::payableRows($outletId);
+
+        if ($request->query('format') === 'xlsx') {
+            return SimpleXlsxService::download('laporan-hutang-supplier-'.now()->format('Y-m-d').'.xlsx', $headers, $rows, AdvancedReportService::payableNumericColumns());
+        }
+
+        return $this->csvResponse('laporan-hutang-supplier-'.now()->format('Y-m-d').'.csv', $headers, $rows);
+    }
+
+    public function tax(Request $request): mixed
+    {
+        $start = $request->query('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $end = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+
+        $headers = AdvancedReportService::taxHeaders();
+        $rows = AdvancedReportService::taxRows($start, $end, $outletId);
+
+        if ($request->query('format') === 'xlsx') {
+            return SimpleXlsxService::download("laporan-pajak-{$start}-sd-{$end}.xlsx", $headers, $rows, AdvancedReportService::taxNumericColumns());
+        }
+
+        return $this->csvResponse("laporan-pajak-{$start}-sd-{$end}.csv", $headers, $rows);
+    }
+
+    public function customers(Request $request): mixed
+    {
+        $start = $request->query('start_date', now()->subDays(90)->format('Y-m-d'));
+        $end = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+
+        $headers = AdvancedReportService::rfmHeaders();
+        $rows = AdvancedReportService::rfmRows($start, $end, $outletId);
+
+        if ($request->query('format') === 'xlsx') {
+            return SimpleXlsxService::download("laporan-pelanggan-rfm-{$start}-sd-{$end}.xlsx", $headers, $rows, AdvancedReportService::rfmNumericColumns());
+        }
+
+        return $this->csvResponse("laporan-pelanggan-rfm-{$start}-sd-{$end}.csv", $headers, $rows);
+    }
+
+    public function promo(Request $request): mixed
+    {
+        $start = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $end = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+
+        $headers = AdvancedReportService::promoHeaders();
+        $rows = AdvancedReportService::promoRows($start, $end, $outletId);
+
+        if ($request->query('format') === 'xlsx') {
+            return SimpleXlsxService::download("laporan-efektivitas-diskon-{$start}-sd-{$end}.xlsx", $headers, $rows, AdvancedReportService::promoNumericColumns());
+        }
+
+        return $this->csvResponse("laporan-efektivitas-diskon-{$start}-sd-{$end}.csv", $headers, $rows);
+    }
+
+    /** Satu file multi-sheet: Ringkasan + Profit + Arus Kas + Hutang + RFM + Diskon. */
+    public function comprehensiveXlsx(Request $request): mixed
+    {
+        $start = $request->query('start_date', now()->subDays(30)->format('Y-m-d'));
+        $end = $request->query('end_date', now()->format('Y-m-d'));
+        $outletId = $this->outletIdOrNull($request->query('outlet_id'));
+        $this->validateOutletAccess($request->query('outlet_id'));
+
+        $summary = AdvancedReportService::dailySummary($outletId, $end);
+        $summaryRows = [
+            ['Tanggal', $summary['date']],
+            ['Transaksi', $summary['trx']],
+            ['Omzet', $summary['omzet']],
+            ['Diskon', $summary['diskon']],
+            ['Hutang jatuh tempo', $summary['overduePayables']],
+            ['Stok menipis', $summary['lowStock']],
+        ];
+
+        return SimpleXlsxService::downloadMulti("laporan-komprehensif-{$start}-sd-{$end}.xlsx", [
+            ['name' => 'Ringkasan', 'headers' => ['Metrik', 'Nilai'], 'rows' => $summaryRows, 'numericColumns' => ['B']],
+            ['name' => 'Profit Produk', 'headers' => AdvancedReportService::profitHeaders(), 'rows' => AdvancedReportService::profitRows($start, $end, $outletId), 'numericColumns' => AdvancedReportService::profitNumericColumns()],
+            ['name' => 'Arus Kas', 'headers' => AdvancedReportService::cashflowHeaders(), 'rows' => AdvancedReportService::cashflowRows($start, $end, $outletId), 'numericColumns' => AdvancedReportService::cashflowNumericColumns()],
+            ['name' => 'Hutang Supplier', 'headers' => AdvancedReportService::payableHeaders(), 'rows' => AdvancedReportService::payableRows($outletId), 'numericColumns' => AdvancedReportService::payableNumericColumns()],
+            ['name' => 'Pelanggan RFM', 'headers' => AdvancedReportService::rfmHeaders(), 'rows' => AdvancedReportService::rfmRows($start, $end, $outletId), 'numericColumns' => AdvancedReportService::rfmNumericColumns()],
+            ['name' => 'Efek Diskon', 'headers' => AdvancedReportService::promoHeaders(), 'rows' => AdvancedReportService::promoRows($start, $end, $outletId), 'numericColumns' => AdvancedReportService::promoNumericColumns()],
+        ]);
     }
 
     protected function exportStockCsv(?string $outletId): mixed
