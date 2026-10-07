@@ -146,6 +146,17 @@ class ApiSecurityTest extends TestCase
         $this->assertCount(1, $outlets->json('data'));
     }
 
+    public function test_inactive_user_cannot_login(): void
+    {
+        $kasir = User::factory()->create(['role' => 'kasir', 'active' => false]);
+        $this->postJson('/api/v1/login', ['email' => $kasir->email, 'password' => 'password'])
+            ->assertStatus(422);
+
+        $kasir->update(['active' => true]);
+        $this->postJson('/api/v1/login', ['email' => $kasir->email, 'password' => 'password'])
+            ->assertOk();
+    }
+
     public function test_api_responses_carry_request_id(): void
     {
         ['kasir' => $k] = $this->ctx();

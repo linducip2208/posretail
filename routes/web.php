@@ -229,6 +229,7 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
         'password' => ['required', 'string'],
     ]);
 
+    $credentials['active'] = true;
     if (! Auth::attempt($credentials, $request->boolean('remember'))) {
         return back()->withErrors(['email' => 'Kredensial tidak valid.'])->withInput($request->only('email'));
     }

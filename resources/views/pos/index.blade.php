@@ -8,20 +8,7 @@
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>POS — Point of Sale</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800|jetbrains-mono:400,700" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                }
-            }
-        }
-    </script>
+    @vite('resources/css/portal.css')
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }

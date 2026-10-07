@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(\App\Filament\Auth\Login::class)
             ->brandName(fn () => SystemSetting::getAppName())
             ->brandLogo(fn () => SystemSetting::getLogoUrl() ? new HtmlString('<img src="' . SystemSetting::getLogoUrl() . '" alt="Logo" style="height:2rem">') : null)
             ->darkMode(true)

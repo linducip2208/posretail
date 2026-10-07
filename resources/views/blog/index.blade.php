@@ -5,28 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $seoTitle ?? 'Blog — ' . config('app.name') }}</title>
     <meta name="description" content="{{ $seoDescription ?? 'Tips bisnis retail dan panduan manajemen toko Indonesia.' }}">
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800|jetbrains-mono:400,500,700" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
-                            300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
-                            600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af',
-                        },
-                    },
-                },
-            },
-        }
-    </script>
+    @vite('resources/css/portal.css')
 </head>
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">
     {{-- Navbar --}}

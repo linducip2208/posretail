@@ -21,8 +21,7 @@ $typeLabels = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sitemap — {{ $totalPages }}+ Halaman | POS Retail</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|jetbrains-mono:400,700" rel="stylesheet">
+    @vite('resources/css/portal.css')
     <style>body{font-family:Inter, sans-serif; background:#f8fafc}</style>
 </head>
 <body class="p-6 max-w-5xl mx-auto">

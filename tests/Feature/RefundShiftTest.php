@@ -18,7 +18,7 @@ class RefundShiftTest extends TestCase
     protected function ctx(): array
     {
         $outlet = Outlet::create(['name' => 'Toko', 'code' => 'T1', 'active' => true]);
-        $owner = User::factory()->create(['role' => 'owner']);
+        $owner = User::factory()->create(['role' => 'owner', 'active' => true]);
         $owner->outlets()->attach($outlet->id);
         // Hak refund (di production berasal dari RolePermissionSeeder).
         $perm = \App\Models\Permission::create(['name' => 'Hapus Transaksi', 'slug' => 'hapus-transaksi', 'group' => 'transaksi']);
@@ -80,6 +80,28 @@ class RefundShiftTest extends TestCase
             'items' => [['order_item_id' => $itemId, 'quantity' => 4]],
         ]);
         $r3->assertCreated();
+    }
+
+    public function test_stock_cannot_oversell(): void
+    {
+        $c = $this->ctx();
+        $c['p']->update(['current_stock' => 5]);
+        $token = $c['owner']->createToken('t', ['pos-access', 'owner'])->plainTextToken;
+        $h = ['Authorization' => "Bearer $token"];
+        $payload = fn ($qty) => [
+            'outlet_id' => $c['outlet']->id,
+            'items' => [['product_id' => $c['p']->id, 'quantity' => $qty]],
+            'payments' => [['payment_method_id' => $c['cash']->id, 'amount' => 50000]],
+        ];
+
+        // Stok 5: ambil 5 habis → OK, stok 0.
+        $this->withHeaders($h)->postJson('/api/v1/orders', $payload(5))->assertCreated();
+        $this->assertSame(0, $c['p']->fresh()->current_stock);
+
+        // Sisa 0: ambil 1 lagi → 422, stok tetap 0 (tidak minus).
+        $this->app['auth']->forgetGuards();
+        $this->withHeaders($h)->postJson('/api/v1/orders', $payload(1))->assertStatus(422);
+        $this->assertSame(0, $c['p']->fresh()->current_stock);
     }
 
     public function test_shift_cash_excludes_online_payments(): void

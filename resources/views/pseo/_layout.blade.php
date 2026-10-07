@@ -13,8 +13,7 @@
     <meta property="og:url" content="{{ $seoMeta['canonical'] }}">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800|jetbrains-mono:400,700" rel="stylesheet">
+    @vite('resources/css/portal.css')
     <style>body{font-family:Inter,sans-serif}</style>
 </head>
 <body class="bg-gray-50 min-h-screen">

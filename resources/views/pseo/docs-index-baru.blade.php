@@ -14,9 +14,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#3b82f6">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800|jetbrains-mono:400,700" rel="stylesheet">
-    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
+    @vite('resources/css/portal.css')
     <script type="application/ld+json">{"@@context":"https://schema.org","@type":"Article","headline":"{{ $seoMeta['title'] }}","description":"{{ $seoMeta['description'] }}","inLanguage":"id"}</script>
     <style>
         html{scroll-behavior:smooth}
