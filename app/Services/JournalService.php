@@ -266,6 +266,12 @@ class JournalService
 
     /**
      * Create a journal entry with items.
+     *
+     * Concurrency-safe: nomor dihitung dari MAX (bukan count) di dalam
+     * transaksi dengan SELECT ... FOR UPDATE, plus retry saat tetap
+     * terjadi duplicate-key (dua request lolos bersamaan). Idempoten
+     * per (reference_type, reference_id) agar retry order tidak dobel.
+     * Kegagalan jurnal tidak boleh menggagalkan penjualan → return null.
      */
     protected static function createJournal($date, array $items, string $refType, int $refId, string $desc): ?JournalEntry
     {
@@ -282,25 +288,63 @@ class JournalService
             return null;
         }
 
-        $seq = JournalEntry::whereDate('created_at', today())->count() + 1;
+        // Idempotency: jangan posting dua kali untuk referensi yang sama.
+        $existing = JournalEntry::where('reference_type', $refType)
+            ->where('reference_id', $refId)
+            ->first();
+        if ($existing) {
+            return $existing;
+        }
 
-        return DB::transaction(function () use ($date, $items, $refType, $refId, $desc, $seq) {
-            $journal = JournalEntry::create([
-                'journal_number' => 'JRN-'.date('Ymd').'-'.str_pad($seq, 4, '0', STR_PAD_LEFT),
-                'journal_date' => $date,
-                'reference_type' => $refType,
-                'reference_id' => $refId,
-                'description' => $desc,
-                'status' => 'posted',
-                'posted_at' => now(),
-            ]);
+        $maxAttempts = 5;
 
-            foreach ($items as $item) {
-                $journal->items()->create($item);
+        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+            try {
+                return DB::transaction(function () use ($date, $items, $refType, $refId, $desc) {
+                    // Double-check idempotency di dalam transaksi (anti-race).
+                    $existing = JournalEntry::where('reference_type', $refType)
+                        ->where('reference_id', $refId)
+                        ->lockForUpdate()
+                        ->first();
+                    if ($existing) {
+                        return $existing;
+                    }
+
+                    $journal = JournalEntry::create([
+                        'journal_number' => JournalEntry::generateNextNumber(withLock: true),
+                        'journal_date' => $date,
+                        'reference_type' => $refType,
+                        'reference_id' => $refId,
+                        'description' => $desc,
+                        'status' => 'posted',
+                        'posted_at' => now(),
+                    ]);
+
+                    foreach ($items as $item) {
+                        $journal->items()->create($item);
+                    }
+
+                    return $journal;
+                });
+            } catch (\Illuminate\Database\QueryException $e) {
+                if (JournalEntry::isDuplicateKeyException($e) && $attempt < $maxAttempts) {
+                    Log::warning("Journal duplicate number, retry {$attempt}/{$maxAttempts} for {$refType}#{$refId}");
+                    usleep(50000 * $attempt); // backoff 50ms, 100ms, ...
+
+                    continue;
+                }
+
+                Log::error('Journal create failed: '.$e->getMessage());
+
+                return null;
+            } catch (\Throwable $e) {
+                Log::error('Journal create failed: '.$e->getMessage());
+
+                return null;
             }
+        }
 
-            return $journal;
-        });
+        return null;
     }
 
     /**
