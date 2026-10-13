@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use App\Helpers\BarcodeHelper;
 use App\Models\SystemSetting;
+use App\Support\SafeNumber;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -51,30 +52,54 @@ class ProductForm
                 TextInput::make('cost_price')
                     ->required()
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::MONEY_MAX)
+                    ->validationAttribute('Harga beli')
                     ->default(0)
                     ->prefix('Rp'),
                 TextInput::make('selling_price')
                     ->required()
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::MONEY_MAX)
+                    ->validationAttribute('Harga jual')
                     ->default(0)
                     ->prefix('Rp'),
                 TextInput::make('wholesale_price')
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::MONEY_MAX)
+                    ->validationAttribute('Harga grosir')
                     ->prefix('Rp'),
                 TextInput::make('member_price')
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::MONEY_MAX)
+                    ->validationAttribute('Harga member')
                     ->prefix('Rp'),
                 TextInput::make('min_stock')
                     ->required()
                     ->numeric()
+                    ->integer()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::STOCK_MAX)
+                    ->validationAttribute('Stok minimum')
                     ->default(0),
                 TextInput::make('max_stock')
                     ->required()
                     ->numeric()
+                    ->integer()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::STOCK_MAX)
+                    ->validationAttribute('Stok maksimum')
                     ->default(0),
                 TextInput::make('current_stock')
                     ->required()
                     ->numeric()
+                    ->integer()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::STOCK_MAX)
+                    ->validationAttribute('Stok saat ini')
                     ->default(0),
                 FileUpload::make('image')
                     ->image(),
@@ -91,7 +116,10 @@ class ProductForm
                     ->label('Pelacakan Serial / IMEI'),
                 TextInput::make('warranty_months')
                     ->numeric()
+                    ->integer()
                     ->minValue(0)
+                    ->maxValue(SafeNumber::WARRANTY_MAX)
+                    ->validationAttribute('Masa garansi')
                     ->default(0)
                     ->suffix('bulan')
                     ->helperText('Masa garansi dalam bulan. 0 = tanpa garansi.')

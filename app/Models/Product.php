@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\SafeNumber;
 use App\Traits\HasOutletScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,11 @@ class Product extends Model
     protected static function booted(): void
     {
         static::saving(function (Product $product) {
+            // Guard angka PERTAMA (sebelum query apa pun): ubah potensi
+            // error 500 "out of range" menjadi ValidationException yang
+            // tampil sebagai error field di form / 422 di API.
+            SafeNumber::guardProductAttributes($product->getAttributes());
+
             if (blank($product->slug) && filled($product->name)) {
                 $product->slug = Str::slug($product->name);
             }

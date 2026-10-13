@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Outlet;
 use App\Models\Product;
 use App\Models\Unit;
+use App\Support\SafeNumber;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -83,37 +84,37 @@ class ProductImporter extends Importer
             ImportColumn::make('cost_price')
                 ->label('Harga Beli')
                 ->numeric()
-                ->rules(['nullable', 'numeric', 'min:0']),
+                ->rules(['nullable', 'numeric', 'min:0', 'max:'.SafeNumber::MONEY_MAX]),
 
             ImportColumn::make('selling_price')
                 ->label('Harga Jual')
                 ->numeric()
-                ->rules(['nullable', 'numeric', 'min:0']),
+                ->rules(['nullable', 'numeric', 'min:0', 'max:'.SafeNumber::MONEY_MAX]),
 
             ImportColumn::make('wholesale_price')
                 ->label('Harga Grosir')
                 ->numeric()
-                ->rules(['nullable', 'numeric', 'min:0']),
+                ->rules(['nullable', 'numeric', 'min:0', 'max:'.SafeNumber::MONEY_MAX]),
 
             ImportColumn::make('member_price')
                 ->label('Harga Member')
                 ->numeric()
-                ->rules(['nullable', 'numeric', 'min:0']),
+                ->rules(['nullable', 'numeric', 'min:0', 'max:'.SafeNumber::MONEY_MAX]),
 
             ImportColumn::make('current_stock')
                 ->label('Stok Saat Ini')
                 ->numeric()
-                ->rules(['nullable', 'integer', 'min:0']),
+                ->rules(['nullable', 'integer', 'min:0', 'max:'.SafeNumber::STOCK_MAX]),
 
             ImportColumn::make('min_stock')
                 ->label('Stok Minimum')
                 ->numeric()
-                ->rules(['nullable', 'integer', 'min:0']),
+                ->rules(['nullable', 'integer', 'min:0', 'max:'.SafeNumber::STOCK_MAX]),
 
             ImportColumn::make('max_stock')
                 ->label('Stok Maksimum')
                 ->numeric()
-                ->rules(['nullable', 'integer', 'min:0']),
+                ->rules(['nullable', 'integer', 'min:0', 'max:'.SafeNumber::STOCK_MAX]),
 
             ImportColumn::make('active')
                 ->label('Aktif (1/0)')

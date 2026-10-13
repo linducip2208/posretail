@@ -42,6 +42,35 @@ return Application::configure(basePath: dirname(__DIR__))
                 'path' => $request->path(),
             ]);
 
+            // Petakan error DB yang umum ke pesan ramah + status 422
+            // (bukan 500) agar client tahu yang harus diperbaiki.
+            $sqlState = (string) $e->getCode();
+            $raw = $e->getMessage();
+
+            if ($sqlState === '22003' || str_contains($raw, 'Out of range')) {
+                return response()->json([
+                    'message' => 'Angka yang dimasukkan terlalu besar (melebihi batas sistem). Perkecil nilainya lalu coba lagi.',
+                    'code' => 'NUMBER_OUT_OF_RANGE',
+                    'request_id' => $rid,
+                ], 422);
+            }
+
+            if ($sqlState === '22001' || str_contains($raw, 'Data too long')) {
+                return response()->json([
+                    'message' => 'Teks yang dimasukkan terlalu panjang. Singkat lalu coba lagi.',
+                    'code' => 'DATA_TOO_LONG',
+                    'request_id' => $rid,
+                ], 422);
+            }
+
+            if ($sqlState === '23000' && str_contains($raw, 'Duplicate entry')) {
+                return response()->json([
+                    'message' => 'Data duplikat: data yang sama sudah ada di sistem.',
+                    'code' => 'DUPLICATE_ENTRY',
+                    'request_id' => $rid,
+                ], 422);
+            }
+
             return response()->json([
                 'message' => 'Terjadi gangguan database, coba lagi.',
                 'code' => 'DB_ERROR',

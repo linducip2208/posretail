@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\RelationManagers;
 
+use App\Support\SafeNumber;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -40,13 +41,23 @@ class ProductVariantsRelationManager extends RelationManager
                     ),
                 TextInput::make('cost_price')
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::MONEY_MAX)
+                    ->validationAttribute('Harga beli varian')
                     ->default(0),
                 TextInput::make('selling_price')
                     ->required()
                     ->numeric()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::MONEY_MAX)
+                    ->validationAttribute('Harga jual varian')
                     ->default(0),
                 TextInput::make('current_stock')
                     ->numeric()
+                    ->integer()
+                    ->minValue(0)
+                    ->maxValue(SafeNumber::STOCK_MAX)
+                    ->validationAttribute('Stok varian')
                     ->default(0),
             ]);
     }

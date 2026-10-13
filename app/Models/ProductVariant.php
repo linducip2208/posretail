@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\SafeNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +21,9 @@ class ProductVariant extends Model
     protected static function booted(): void
     {
         static::saving(function (ProductVariant $variant) {
+            // Guard angka PERTAMA: cegah error 500 "out of range".
+            SafeNumber::guardVariantAttributes($variant->getAttributes());
+
             if (blank($variant->sku)) {
                 $last = static::where('sku', 'like', 'SKU%')
                     ->orderByRaw('LENGTH(sku) DESC, sku DESC')->first();
