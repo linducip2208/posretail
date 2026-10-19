@@ -66,6 +66,7 @@ class LaporanKomisi extends Page
     public function getKomisiPerUserProperty()
     {
         return $this->commissionQuery()
+            ->join('users', 'orders.user_id', '=', 'users.id')
             ->selectRaw('user_id, users.name as user_name, users.commission_percent, COUNT(*) as total_orders, SUM(total_amount) as total_sales, SUM(commission_amount) as total_commission')
             ->groupBy('user_id', 'users.name', 'users.commission_percent')
             ->orderByDesc('total_commission')
@@ -116,10 +117,10 @@ class LaporanKomisi extends Page
 
     protected function commissionQuery()
     {
-        return Order::where('order_status', 'completed')
-            ->where('commission_amount', '>', 0)
-            ->whereBetween('created_at', [$this->startDate, $this->endDate . ' 23:59:59'])
-            ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
-            ->when($this->userId, fn ($q) => $q->where('user_id', $this->userId));
+        return Order::where('orders.order_status', 'completed')
+            ->where('orders.commission_amount', '>', 0)
+            ->whereBetween('orders.created_at', [$this->startDate, $this->endDate . ' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
+            ->when($this->userId, fn ($q) => $q->where('orders.user_id', $this->userId));
     }
 }

@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Laporan Stok" subtitle="Nilai stok, stok rendah, dan distribusi per kategori" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Outlet</label>
             <select wire:model.live="outletId" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -78,7 +80,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Distribusi Nilai Stok per Kategori</h3>
-            <canvas id="categoryDoughnutChart" height="80"></canvas>
+            <div class="rp-chart rp-chart--doughnut"><canvas id="categoryDoughnutChart"></canvas></div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Top 10 Produk Stok Terbanyak</h3>
@@ -156,56 +158,18 @@
     </div>
 </div>
 
-<script src="{{ asset('vendor/chart.js/chart.umd.min.js') }}"></script>
+@include('filament.pages.partials.report-charts')
 <script>
 (function() {
-    const doughnutEl = document.getElementById('categoryDoughnutChart');
-    if (!doughnutEl) return;
-    if (doughnutEl._chart) doughnutEl._chart.destroy();
-
     const categoryLabels = {!! json_encode($this->categoryLabels) !!};
     const categoryData = {!! json_encode($this->categoryData) !!};
 
-    const colors = [
-        'rgba(79, 70, 229, 0.8)',
-        'rgba(16, 185, 129, 0.8)',
-        'rgba(245, 158, 11, 0.8)',
-        'rgba(59, 130, 246, 0.8)',
-        'rgba(168, 85, 247, 0.8)',
-        'rgba(236, 72, 153, 0.8)',
-        'rgba(20, 184, 166, 0.8)',
-        'rgba(249, 115, 22, 0.8)',
-        'rgba(99, 102, 241, 0.8)',
-        'rgba(34, 197, 94, 0.8)',
-    ];
-
-    doughnutEl._chart = new Chart(doughnutEl.getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: categoryLabels,
-            datasets: [{
-                data: categoryData,
-                backgroundColor: colors.slice(0, categoryLabels.length),
-                borderWidth: 2,
-                borderColor: '#fff',
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { usePointStyle: true, padding: 16, font: { size: 11 } }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) {
-                            return ' Rp ' + ctx.raw.toLocaleString('id-ID');
-                        }
-                    }
-                }
-            }
-        }
+    PosChart.doughnut('categoryDoughnutChart', {
+        labels: categoryLabels,
+        data: categoryData,
+        colors: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#818cf8', '#22c55e'],
+        centerTitle: 'Nilai Stok',
+        centerValue: PosChart.compact((categoryData || []).reduce((a, b) => a + b, 0)),
     });
 })();
 </script>

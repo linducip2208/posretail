@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Pelanggan & Promo" subtitle="Segmentasi RFM pelanggan dan efektivitas diskon" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Dari</label>
             <input type="date" wire:model.live="startDate" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -24,6 +26,15 @@
     </div>
 
     <div class="bg-white rounded-xl border p-5 mb-6">
+        <h3 class="font-semibold mb-4">Omzet Kotor vs Setelah Diskon per Bucket</h3>
+        @if(collect($this->promoRows)->isNotEmpty())
+        <div class="rp-chart rp-chart--tall"><canvas id="promoBucketChart"></canvas></div>
+        @else
+        <div class="py-6 text-center text-sm text-gray-400">Belum ada data</div>
+        @endif
+    </div>
+
+    <div class="bg-white rounded-xl border p-5 mb-6">
         <h3 class="font-semibold mb-4">Efektivitas Diskon (apakah diskon menaikkan omzet?)</h3>
         <div class="overflow-x-auto"><table class="w-full text-sm">
             <thead><tr class="text-left border-b"><th class="pb-2">Bucket</th><th class="pb-2 text-right">Trx</th><th class="pb-2 text-right">Omzet Kotor</th><th class="pb-2 text-right">Diskon</th><th class="pb-2 text-right">Bersih</th><th class="pb-2 text-right">Rata2/Trx</th></tr></thead>
@@ -40,3 +51,20 @@
         </table></div>
     </div>
 </div>
+
+@include('filament.pages.partials.report-charts')
+<script>
+(function() {
+    @if(collect($this->promoRows)->isNotEmpty())
+    const promos = {!! json_encode(collect($this->promoRows)->map(fn ($r) => ['label' => (string) $r[0], 'kotor' => (float) $r[2], 'bersih' => (float) $r[4]])->values()) !!};
+
+    PosChart.bar('promoBucketChart', {
+        labels: promos.map(function (r) { return r.label; }),
+        datasets: [
+            { label: 'Omzet Kotor', data: promos.map(function (r) { return r.kotor; }), color: '#3b82f6' },
+            { label: 'Setelah Diskon', data: promos.map(function (r) { return r.bersih; }), color: '#10b981' }
+        ],
+    });
+    @endif
+})();
+</script>

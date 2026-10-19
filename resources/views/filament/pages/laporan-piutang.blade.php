@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Laporan Piutang" subtitle="Umur piutang dan daftar tagihan pelanggan" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Outlet</label>
             <select wire:model.live="outletId" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -45,6 +47,13 @@
         </div>
     </div>
 
+    @if($this->totalReceivable > 0)
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+        <h3 class="font-semibold text-gray-900 mb-4">Umur Piutang</h3>
+        <div class="rp-chart"><canvas id="receivableAgingChart"></canvas></div>
+    </div>
+    @endif
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-4 border-b border-gray-100">
             <h2 class="font-bold text-gray-800">Daftar Piutang Pelanggan</h2>
@@ -87,3 +96,19 @@
         </div>
     </div>
 </div>
+
+@include('filament.pages.partials.report-charts')
+<script>
+(function() {
+    @if($this->totalReceivable > 0)
+    PosChart.bar('receivableAgingChart', {
+        labels: ['0-30 hari', '31-60 hari', '61-90 hari', '>90 hari'],
+        datasets: [{
+            label: 'Piutang',
+            data: [{{ $this->agingCurrent }}, {{ $this->aging31to60 }}, {{ $this->aging61to90 }}, {{ $this->agingOver90 }}],
+            color: '#f59e0b',
+        }],
+    });
+    @endif
+})();
+</script>

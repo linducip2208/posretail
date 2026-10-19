@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Laporan Keuangan" subtitle="Pendapatan vs pengeluaran, arus kas, dan piutang usaha" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Dari</label>
             <input type="date" wire:model.live="startDate" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -77,11 +79,11 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Pendapatan vs Pengeluaran</h3>
-            <canvas id="revExpChart" height="80"></canvas>
+            <div class="rp-chart rp-chart--tall"><canvas id="revExpChart"></canvas></div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Pendapatan per Metode Bayar</h3>
-            <canvas id="paymentPieChart" height="80"></canvas>
+            <div class="rp-chart rp-chart--doughnut"><canvas id="paymentPieChart"></canvas></div>
         </div>
     </div>
 
@@ -225,87 +227,35 @@
     </div>
 </div>
 
-<script src="{{ asset('vendor/chart.js/chart.umd.min.js') }}"></script>
+@include('filament.pages.partials.report-charts')
 <script>
 (function() {
-    const revEl = document.getElementById('revExpChart');
-    if (revEl) {
-        if (revEl._chart) revEl._chart.destroy();
-        revEl._chart = new Chart(revEl.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($this->chartLabels) !!},
-                datasets: [
-                    {
-                        label: 'Pendapatan',
-                        data: {!! json_encode($this->chartRevenue) !!},
-                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                        borderColor: 'rgba(16, 185, 129, 1)',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    },
-                    {
-                        label: 'Pengeluaran',
-                        data: {!! json_encode($this->chartExpense) !!},
-                        backgroundColor: 'rgba(244, 63, 94, 0.7)',
-                        borderColor: 'rgba(244, 63, 94, 1)',
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    }
-                ]
+    PosChart.bar('revExpChart', {
+        labels: {!! json_encode($this->chartLabels) !!},
+        datasets: [
+            {
+                label: 'Pendapatan',
+                data: {!! json_encode($this->chartRevenue) !!},
+                color: '#10b981',
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 20 }
-                    }
-                },
-                scales: {
-                    y: { ticks: { callback: v => 'Rp ' + (v / 1000000).toFixed(0) + 'M' } }
-                }
+            {
+                label: 'Pengeluaran',
+                data: {!! json_encode($this->chartExpense) !!},
+                color: '#f43f5e',
             }
-        });
-    }
+        ],
+    });
 
-    const pieEl = document.getElementById('paymentPieChart');
-    if (pieEl) {
-        if (pieEl._chart) pieEl._chart.destroy();
-        const methods = {!! json_encode($this->revenueByPayment->pluck('method')) !!};
-        const totals = {!! json_encode($this->revenueByPayment->pluck('total')->map(fn($v) => (float)$v)) !!};
-        const colors = [
-            'rgba(79, 70, 229, 0.8)',
-            'rgba(16, 185, 129, 0.8)',
-            'rgba(245, 158, 11, 0.8)',
-            'rgba(59, 130, 246, 0.8)',
-            'rgba(168, 85, 247, 0.8)',
-            'rgba(236, 72, 153, 0.8)',
-            'rgba(20, 184, 166, 0.8)',
-            'rgba(249, 115, 22, 0.8)',
-        ];
-        pieEl._chart = new Chart(pieEl.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: methods,
-                datasets: [{
-                    data: totals,
-                    backgroundColor: colors.slice(0, methods.length),
-                    borderWidth: 2,
-                    borderColor: '#fff',
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 16 }
-                    }
-                }
-            }
-        });
-    }
+    const methods = {!! json_encode($this->revenueByPayment->pluck('method')) !!};
+    const totals = {!! json_encode($this->revenueByPayment->pluck('total')->map(fn($v) => (float)$v)) !!};
+
+    PosChart.doughnut('paymentPieChart', {
+        labels: methods,
+        data: totals,
+        colors: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#f97316'],
+        centerTitle: 'Total',
+        centerValue: PosChart.compact((totals || []).reduce((a, b) => a + b, 0)),
+    });
 })();
 </script>
 

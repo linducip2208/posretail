@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Laporan Laba Rugi" subtitle="Pendapatan, beban, dan laba bersih per periode" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Dari</label>
             <input type="date" wire:model.live="startDate" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -60,11 +62,11 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Komposisi Pendapatan</h3>
-            <canvas id="revenuePieChart" height="80"></canvas>
+            <div class="rp-chart rp-chart--doughnut"><canvas id="revenuePieChart"></canvas></div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Rincian Beban</h3>
-            <canvas id="expenseBarChart" height="80"></canvas>
+            <div class="rp-chart rp-chart--tall"><canvas id="expenseBarChart"></canvas></div>
         </div>
     </div>
 
@@ -161,76 +163,29 @@
     </div>
 </div>
 
-<script src="{{ asset('vendor/chart.js/chart.umd.min.js') }}"></script>
+@include('filament.pages.partials.report-charts')
 <script>
 (function() {
     const revenueData = {!! json_encode($this->revenueChartData) !!};
     const expenseData = {!! json_encode($this->expenseChartData) !!};
 
-    const pieEl = document.getElementById('revenuePieChart');
-    if (pieEl) {
-        if (pieEl._chart) pieEl._chart.destroy();
-        const colors = [
-            'rgba(16, 185, 129, 0.8)',
-            'rgba(79, 70, 229, 0.8)',
-            'rgba(245, 158, 11, 0.8)',
-            'rgba(59, 130, 246, 0.8)',
-            'rgba(168, 85, 247, 0.8)',
-            'rgba(236, 72, 153, 0.8)',
-            'rgba(20, 184, 166, 0.8)',
-            'rgba(249, 115, 22, 0.8)',
-        ];
-        pieEl._chart = new Chart(pieEl.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: revenueData.labels,
-                datasets: [{
-                    data: revenueData.data,
-                    backgroundColor: colors.slice(0, revenueData.labels.length),
-                    borderWidth: 2,
-                    borderColor: '#fff',
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 16 }
-                    }
-                }
-            }
-        });
-    }
+    PosChart.doughnut('revenuePieChart', {
+        labels: revenueData.labels,
+        data: revenueData.data,
+        colors: ['#10b981', '#6366f1', '#f59e0b', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#f97316'],
+        centerTitle: 'Pendapatan',
+        centerValue: PosChart.compact((revenueData.data || []).reduce((a, b) => a + b, 0)),
+    });
 
-    const barEl = document.getElementById('expenseBarChart');
-    if (barEl) {
-        if (barEl._chart) barEl._chart.destroy();
-        barEl._chart = new Chart(barEl.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: expenseData.labels,
-                datasets: [{
-                    label: 'Beban',
-                    data: expenseData.data,
-                    backgroundColor: 'rgba(244, 63, 94, 0.7)',
-                    borderColor: 'rgba(244, 63, 94, 1)',
-                    borderWidth: 1,
-                    borderRadius: 6,
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: { ticks: { callback: v => 'Rp ' + (v / 1000000).toFixed(0) + 'M' } }
-                }
-            }
-        });
-    }
+    PosChart.bar('expenseBarChart', {
+        labels: expenseData.labels,
+        datasets: [{
+            label: 'Beban',
+            data: expenseData.data,
+            color: '#f43f5e',
+        }],
+        horizontal: true,
+    });
 })();
 </script>
 

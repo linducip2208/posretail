@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Laporan Penjualan" subtitle="Omzet, laba kotor, dan kontribusi metode bayar per periode" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Dari</label>
             <input type="date" wire:model.live="startDate" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -84,7 +86,7 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
         <h3 class="font-semibold text-gray-900 mb-4">Grafik Penjualan</h3>
-        <canvas id="salesChart" height="80"></canvas>
+        <div class="rp-chart rp-chart--tall"><canvas id="salesChart"></canvas></div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
@@ -199,33 +201,15 @@
     </div>
 </div>
 
-<script src="{{ asset('vendor/chart.js/chart.umd.min.js') }}"></script>
+@include('filament.pages.partials.report-charts')
 <script>
 (function() {
-    const el = document.getElementById('salesChart');
-    if (!el) return;
-    if (el._chart) el._chart.destroy();
-    const ctx = el.getContext('2d');
-    el._chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($this->chartLabels) !!},
-            datasets: [{
-                label: 'Pendapatan',
-                data: {!! json_encode($this->chartData) !!},
-                backgroundColor: 'rgba(79, 70, 229, 0.7)',
-                borderColor: 'rgba(79, 70, 229, 1)',
-                borderWidth: 1,
-                borderRadius: 6,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { ticks: { callback: v => 'Rp ' + (v / 1000000).toFixed(0) + 'M' } }
-            }
-        }
+    PosChart.bar('salesChart', {
+        labels: {!! json_encode($this->chartLabels) !!},
+        datasets: [{
+            label: 'Pendapatan',
+            data: {!! json_encode($this->chartData) !!},
+        }],
     });
 })();
 </script>

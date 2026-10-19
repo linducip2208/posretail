@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Laporan Neraca" subtitle="Posisi aset, liabilitas, dan ekuitas per tanggal" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Per Tanggal</label>
             <input type="date" wire:model.live="asOfDate" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -62,7 +64,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Komposisi Neraca</h3>
-            <canvas id="balanceChart" height="80"></canvas>
+            <div class="rp-chart rp-chart--doughnut"><canvas id="balanceChart"></canvas></div>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h3 class="font-semibold text-gray-900 mb-4">Persamaan Dasar Akuntansi</h3>
@@ -203,49 +205,19 @@
     </div>
 </div>
 
-<script src="{{ asset('vendor/chart.js/chart.umd.min.js') }}"></script>
+@include('filament.pages.partials.report-charts')
 <script>
 (function() {
-    const chartEl = document.getElementById('balanceChart');
-    if (!chartEl) return;
-    if (chartEl._chart) chartEl._chart.destroy();
+    const aset = {{ $this->totalAset }};
+    const liabilitas = {{ $this->totalLiabilitas }};
+    const ekuitas = {{ $this->totalEkuitas }};
 
-    chartEl._chart = new Chart(chartEl.getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Aset', 'Liabilitas', 'Ekuitas'],
-            datasets: [{
-                data: [
-                    {{ $this->totalAset }},
-                    {{ $this->totalLiabilitas }},
-                    {{ $this->totalEkuitas }}
-                ],
-                backgroundColor: [
-                    'rgba(59, 130, 246, 0.8)',
-                    'rgba(244, 63, 94, 0.8)',
-                    'rgba(168, 85, 247, 0.8)',
-                ],
-                borderWidth: 2,
-                borderColor: '#fff',
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { usePointStyle: true, padding: 20 }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) {
-                            const v = ctx.parsed;
-                            return 'Rp ' + v.toLocaleString('id-ID');
-                        }
-                    }
-                }
-            }
-        }
+    PosChart.doughnut('balanceChart', {
+        labels: ['Aset', 'Liabilitas', 'Ekuitas'],
+        data: [aset, liabilitas, ekuitas],
+        colors: ['#3b82f6', '#f43f5e', '#a855f7'],
+        centerTitle: 'Total',
+        centerValue: PosChart.compact(aset + liabilitas + ekuitas),
     });
 })();
 </script>

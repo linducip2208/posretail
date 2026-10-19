@@ -1,6 +1,7 @@
-<div>
-    <x-filament::section>
-        <div class="flex flex-wrap gap-3 items-end">
+<div class="rp-page">
+    <x-report-head title="Tutup Hari" subtitle="Penjualan, pembayaran, shift, dan net cash harian" />
+
+    <div class="rp-toolbar">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
                 <input type="date" wire:model.live="date" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -14,8 +15,7 @@
                     @endforeach
                 </select>
             </div>
-        </div>
-    </x-filament::section>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mt-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
@@ -39,6 +39,13 @@
             <div class="text-2xl font-extrabold text-[#d63939]">Rp {{ number_format($this->summary['expenses'], 0, ',', '.') }}</div>
         </div>
     </div>
+
+    @if($this->paymentsByMethod->isNotEmpty())
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+        <h3 class="font-semibold text-gray-900 mb-4">Komposisi Pembayaran</h3>
+        <div class="rp-chart rp-chart--doughnut"><canvas id="paymentMixChart"></canvas></div>
+    </div>
+    @endif
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
@@ -116,3 +123,20 @@
         </div>
     </div>
 </div>
+
+@include('filament.pages.partials.report-charts')
+<script>
+(function() {
+    @if($this->paymentsByMethod->isNotEmpty())
+    const payments = {!! json_encode($this->paymentsByMethod->map(fn ($p) => ['method' => (string) $p->method, 'total' => (float) $p->total])->values()) !!};
+
+    PosChart.doughnut('paymentMixChart', {
+        labels: payments.map(function (p) { return p.method; }),
+        data: payments.map(function (p) { return p.total; }),
+        colors: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#f97316'],
+        centerTitle: 'Total',
+        centerValue: PosChart.compact(payments.reduce(function (a, p) { return a + p.total; }, 0)),
+    });
+    @endif
+})();
+</script>

@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Laporan Profit & Stok Mati" subtitle="Laba per produk dan produk yang tidak laku" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Dari</label>
             <input type="date" wire:model.live="startDate" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -39,6 +41,16 @@
             <div class="text-2xl font-extrabold text-green-600">Rp {{ number_format($this->totalLaba, 0, ',', '.') }}</div>
         </div>
     </div>
+
+    @php
+        $posTopProfit = collect($this->profitRows)->sortByDesc(fn ($r) => (float) $r[6])->take(10)->values();
+    @endphp
+    @if($posTopProfit->isNotEmpty())
+    <div class="bg-white rounded-xl border p-5 mb-6">
+        <h3 class="font-semibold mb-4">Top 10 Produk Paling Untung</h3>
+        <div class="rp-chart rp-chart--tall"><canvas id="profitTopChart"></canvas></div>
+    </div>
+    @endif
 
     <div class="bg-white rounded-xl border p-5 mb-6">
         <h3 class="font-semibold mb-4">Profit / HPP per Produk</h3>
@@ -96,3 +108,23 @@
         </div>
     </div>
 </div>
+
+@include('filament.pages.partials.report-charts')
+<script>
+(function() {
+    @if($posTopProfit->isNotEmpty())
+    const topProfit = {!! json_encode($posTopProfit->map(fn ($r) => ['name' => (string) $r[1], 'laba' => (float) $r[6]])->values()) !!};
+    const shortName = function (name) { return name.length > 26 ? name.slice(0, 25) + '…' : name; };
+
+    PosChart.bar('profitTopChart', {
+        labels: topProfit.map(function (r) { return shortName(r.name); }),
+        datasets: [{
+            label: 'Laba',
+            data: topProfit.map(function (r) { return r.laba; }),
+            color: '#10b981',
+        }],
+        horizontal: true,
+    });
+    @endif
+})();
+</script>

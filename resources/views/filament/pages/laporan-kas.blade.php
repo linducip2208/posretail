@@ -1,5 +1,7 @@
-<div>
-    <div class="flex flex-wrap gap-3 items-end mb-6">
+<div class="rp-page">
+    <x-report-head title="Arus Kas, Hutang & Pajak" subtitle="Arus kas harian, hutang supplier, dan faktur pajak" />
+
+    <div class="rp-toolbar">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Dari</label>
             <input type="date" wire:model.live="startDate" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
@@ -32,6 +34,9 @@
 
     <div class="bg-white rounded-xl border p-5 mb-6">
         <h3 class="font-semibold mb-4">Arus Kas Harian</h3>
+        @if(collect($this->cashflowRows)->isNotEmpty())
+        <div class="rp-chart rp-chart--tall mb-4"><canvas id="cashflowChart"></canvas></div>
+        @endif
         <div class="overflow-x-auto"><table class="w-full text-sm">
             <thead><tr class="text-left border-b"><th class="pb-2">Tanggal</th><th class="pb-2 text-right">Masuk</th><th class="pb-2 text-right">Keluar</th><th class="pb-2 text-right">Bersih</th><th class="pb-2 text-right">Trx</th></tr></thead>
             <tbody>@forelse($this->cashflowRows as $r)<tr class="border-b border-gray-50"><td class="py-2">{{ $r[0] }}</td><td class="py-2 text-right">Rp {{ number_format($r[1], 0, ',', '.') }}</td><td class="py-2 text-right">Rp {{ number_format($r[2], 0, ',', '.') }}</td><td class="py-2 text-right font-semibold {{ $r[3] >= 0 ? 'text-green-600' : 'text-red-600' }}">Rp {{ number_format($r[3], 0, ',', '.') }}</td><td class="py-2 text-right">{{ $r[4] }}</td></tr>@empty<tr><td colspan="5" class="py-6 text-center text-gray-400">Belum ada data</td></tr>@endforelse</tbody>
@@ -54,3 +59,18 @@
         </table></div>
     </div>
 </div>
+
+@include('filament.pages.partials.report-charts')
+<script>
+(function() {
+    const cashflow = {!! json_encode(collect($this->cashflowRows)->take(45)->map(fn ($r) => ['label' => (string) $r[0], 'masuk' => (float) $r[1], 'keluar' => (float) $r[2]])->values()) !!};
+
+    PosChart.line('cashflowChart', {
+        labels: cashflow.map(function (r) { return r.label; }),
+        datasets: [
+            { label: 'Kas Masuk', data: cashflow.map(function (r) { return r.masuk; }), color: '#10b981' },
+            { label: 'Kas Keluar', data: cashflow.map(function (r) { return r.keluar; }), color: '#f43f5e' }
+        ],
+    });
+})();
+</script>
