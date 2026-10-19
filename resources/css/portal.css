@@ -6,3 +6,6 @@
 }
 
 /* Portal pelanggan + login web: seluruh styling dari build lokal (tanpa CDN). */
+
+/* Sembunyikan elemen Alpine (x-cloak) sebelum Alpine.js selesai init. */
+[x-cloak] { display: none !important; }

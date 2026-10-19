@@ -476,7 +476,7 @@
     "src": "_jetbrains-mono-700-normal-k5PzE07T.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BZaK0Y8T.css",
+    "file": "assets/app-ucx3LYq_.css",
     "name": "app",
     "names": [
       "app.css"
@@ -494,7 +494,7 @@
     "isEntry": true
   },
   "resources/css/portal.css": {
-    "file": "assets/portal-D1mGUJ7g.css",
+    "file": "assets/portal-C3kryaPE.css",
     "name": "portal",
     "names": [
       "portal.css"
@@ -506,6 +506,12 @@
     "file": "assets/app-BvRk9kiK.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/portal.js": {
+    "file": "assets/portal-BiLIj-7j.js",
+    "name": "portal",
+    "src": "resources/js/portal.js",
     "isEntry": true
   }
 }

@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/portal.css',
                 'resources/css/filament/admin/theme.css',
                 'resources/js/app.js',
+                'resources/js/portal.js',
             ],
             refresh: true,
             fonts: [

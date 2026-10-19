@@ -25,7 +25,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $appName }} — Solusi Kasir Modern untuk Toko Anda">
     <meta name="twitter:description" content="Sistem kasir modern untuk toko retail Indonesia. Multi-outlet, inventori real-time, loyalitas pelanggan, laporan lengkap.">
-    @vite('resources/css/portal.css')
+    @vite(['resources/css/portal.css', 'resources/js/portal.js'])
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
@@ -240,10 +240,12 @@
                 Jelajahi Fitur
                 <x-ti name="arrow-right" class="w-5 h-5" />
             </a>
+            @if(\App\Support\DemoMode::enabled())
             <a href="#demo" class="px-8 py-3.5 btn-outline rounded-xl font-bold text-lg inline-flex items-center gap-2 justify-center">
                 Coba Akun Demo
                 <x-ti name="arrow-right" class="w-5 h-5" />
             </a>
+            @endif
         </div>
         <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-5 max-w-4xl mx-auto">
             <div class="glass rounded-2xl p-5 backdrop-blur-xl">
@@ -755,6 +757,7 @@
 </section>
 
 {{-- DEMO ACCOUNTS --}}
+@if(\App\Support\DemoMode::enabled())
 <section id="demo" class="py-24 bg-white">
     <div class="max-w-4xl mx-auto px-4">
         <h2 class="text-center text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Coba Langsung &mdash; Akun Demo</h2>
@@ -811,6 +814,7 @@
         </div>
     </div>
 </section>
+@endif
 
 {{-- PRICING --}}
 <section id="harga" class="py-24 bg-gray-50">
@@ -931,7 +935,9 @@
                     <li><a href="/admin/login" class="hover:text-white transition-colors">Login Admin</a></li>
                     <li><a href="/docs" class="hover:text-white transition-colors">Tutorial Lengkap</a></li>
                     <li><a href="/sitemap.xml" class="hover:text-white transition-colors">Sitemap</a></li>
+                    @if(\App\Support\DemoMode::enabled())
                     <li><a href="#demo" class="hover:text-white transition-colors">Akun Demo</a></li>
+                    @endif
                 </ul>
             </div>
             <div>
@@ -1025,8 +1031,6 @@
     }, 500);
 })();
 </script>
-
-@include('components.purchase-cta')
 
 </body>
 </html>
