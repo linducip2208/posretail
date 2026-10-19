@@ -71,11 +71,22 @@ php artisan migrate --force
 php artisan db:seed --class=DatabaseSeeder
 ```
 
-Seeder akan membuat:
-- 1 outlet (default)
-- Payment methods (Cash, Debit, QRIS, Transfer)
-- Admin user: `admin@pos-retail.test` / `password`
-- Kategori & unit default
+Seeder akan menyiapkan:
+- Role & permission seluruh user (RolePermissionSeeder)
+- Data contoh lengkap (outlet, produk, metode bayar, akun demo `*@pos-retail.test`) — **hanya di local/testing atau bila `POS_ALLOW_DEMO_SEED=true`** (DemoDataSeeder)
+
+> **Keamanan — wajib dibaca sebelum produksi:**
+> 1. Di `APP_ENV=production`, `DemoDataSeeder` otomatis dilewati — akun demo berkata sandi lemah tidak dibuat.
+> 2. Bila database pernah di-seed dengan data demo (staging/kloning, atau `POS_ALLOW_DEMO_SEED=true`), nonaktifkan semua akun demo:
+>    ```bash
+>    php artisan pos:disable-demo-accounts --force
+>    ```
+> 3. Buat akun owner/admin asli dengan kata sandi kuat, lalu sinkronkan rolenya:
+>    ```bash
+>    php artisan tinker --execute="App\Models\User::create(['name' => 'Owner', 'email' => 'owner@domainanda.com', 'password' => bcrypt('KataSandiKuat!'), 'role' => 'owner', 'active' => true]);"
+>    php artisan db:seed --class=RolePermissionSeeder --force
+>    ```
+> 4. Login akun demo (`*@pos-retail.test`) harus **gagal** di produksi.
 
 ---
 
@@ -222,6 +233,9 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Keamanan: pastikan akun demo nonaktif (idempotent, aman diulang)
+php artisan pos:disable-demo-accounts --force
+
 # Verify
 php artisan route:list --except-vendor
 php artisan about
@@ -235,6 +249,7 @@ Verifikasi endpoint:
 - `GET /robots.txt` → Robots (200)
 - `POST /api/v1/login` → API login endpoint
 - `GET /pos` → POS Kasir (redirect ke login jika belum auth)
+- Login akun demo (`*@pos-retail.test`) → **gagal** (kredensial tidak valid)
 
 ---
 

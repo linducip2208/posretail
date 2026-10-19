@@ -55,7 +55,7 @@
         </div>
         <div class="flex-1"></div>
         <span id="syncQueueBadge" class="bg-[#f59f00] text-white px-2 py-0.5 rounded-full text-xs font-bold mr-1 hidden" title="Transaksi offline pending sync">0</span>
-        <button onclick="window.open('/pos/display','_blank','width=1024,height=768')" aria-label="Buka customer display" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 mr-1 border border-slate-200 min-h-[40px]" title="Customer Display">
+        <button onclick="window.open('/pos/display?outlet_id=' + (document.getElementById('outletId')?.value || ''),'_blank','width=1024,height=768')" aria-label="Buka customer display" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 mr-1 border border-slate-200 min-h-[40px]" title="Customer Display">
             <x-ti name="device-desktop" class="w-4 h-4" />
             Display
         </button>

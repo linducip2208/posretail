@@ -185,12 +185,23 @@ Lihat panduan deployment lengkap di [DEPLOYMENT.md](DEPLOYMENT.md) untuk:
 
 ## Scheduler / Automation
 
+Didefinisikan di `routes/console.php` (butuh cron `* * * * * php artisan schedule:run` — lihat [DEPLOYMENT.md](DEPLOYMENT.md)):
+
 | Command | Schedule | Deskripsi |
 |---------|----------|-----------|
-| Low stock alert | Setiap jam | Kirim notifikasi produk stok menipis |
-| Backup database | Daily 2 AM | mysqldump terkompresi + retensi 30 hari |
-| Loyalty point expiry | Daily | Hapus poin kadaluarsa |
-| Stok opname reminder | Weekly | Notifikasi untuk jadwal stok opname |
+| `pos:send-notifications` | Setiap 5 menit | Kirim notifikasi pending dari queue |
+| `pos:update-promos` | Setiap jam | Aktivasi/nonaktivasi promo & voucher sesuai periode |
+| `pos:escalate-overdue` | Setiap jam | Eskalasi order lewat jatuh tempo (tandai batal) |
+| `pos:backup-database` | Harian 02:00 | mysqldump ke `storage/backups` (file `.sql`, retensi 30 file) |
+| `seo:indexnow` | Harian 02:45 | Submit URL ke IndexNow (Bing, Yandex, dll) |
+| `pos:cloud-backup` | Harian 03:00 | Backup database + upload ke cloud storage (S3/DigitalOcean Spaces) |
+| `seo:google-index` | Harian 03:00 | Notifikasi Google Indexing API untuk URL yang berubah |
+| `pos:archive-data` | Harian 04:00 | Arsip/purge audit log & notifikasi lama |
+| `pos:check-expiry` | Harian 06:00 | Cek tanggal kedaluwarsa produk + kirim alert |
+| `pos:auto-po` | Harian 07:00 | Auto-generate purchase order untuk produk di bawah stok minimum |
+| `pos:send-daily-report` | Harian 07:00 | Ringkasan laporan harian + file XLSX |
+| `pos:send-reminders` | Harian 08:00 | Reminder stok menipis & order pending |
+| `pos:birthday-rewards` | Harian 08:30 | Poin loyalty untuk pelanggan yang ulang tahun |
 
 ---
 

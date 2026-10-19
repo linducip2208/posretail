@@ -21,6 +21,7 @@
 /storage/*.key
 /storage/app/.license.lock
 /storage/pail
+/storage/backups
 /vendor
 # build/distribution artifacts
 *.zip

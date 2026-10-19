@@ -61,7 +61,8 @@
     <script>
         const API = '/api/pos';
         let lastOrderId = null;
-        let outletId = null;
+        // Dibuka dari halaman /pos dengan ?outlet_id=... — batasi ke outlet itu.
+        let outletId = new URLSearchParams(window.location.search).get('outlet_id') || '';
 
         async function poll() {
             try {

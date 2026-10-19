@@ -23,6 +23,12 @@ class DocsController extends Controller
 
     protected function demoAccounts(): array
     {
+        // Jangan pernah menampilkan kredensial demo di production kecuali
+        // instance ini memang instance demo publik (POS_DEMO_MODE=true).
+        if (! \App\Support\DemoMode::enabled()) {
+            return [];
+        }
+
         return [
             [
                 'role' => 'Owner',

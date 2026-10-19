@@ -19,9 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\RequirePair::class,
         ]);
 
-        $middleware->validateCsrfTokens(except: [
-            'pos/checkout',
-        ]);
+        // Catatan: /pos/checkout tidak lagi di-exempt dari CSRF. Kedua pemanggil
+        // (checkout langsung & PosOffline.syncQueue) sudah mengirim X-CSRF-TOKEN.
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

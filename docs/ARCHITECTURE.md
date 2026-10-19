@@ -67,7 +67,7 @@ Sistem Point-of-Sale Retail lengkap: **Laravel 13 + Filament 5.6 + Blade + Tailw
               │  │  └──────────┘ └───────────────┘  │  │
               │  │  ┌──────────┐ ┌───────────────┐  │  │
               │  │  │ Throttle │ │ Audit Logger  │  │  │
-              │  │  │ (60/min) │ │ (all changes) │  │  │
+              │  │  │ 120/min  │ │ (all changes) │  │  │
               │  │  └──────────┘ └───────────────┘  │  │
               │  └──────────────────────────────────┘  │
               │                                        │
@@ -1417,25 +1417,15 @@ Route::prefix('v1')->group(function () {
 
 ### 5.3 Rate Limiting
 
-Default: **60 request per menit** untuk API endpoint.
-
-```php
-// Di config/sanctum.php atau via middleware
-RateLimiter::for('api', function (Request $request) {
-    return Limit::perMinute(60)->by(
-        $request->user()?->id ?: $request->ip()
-    );
-});
-```
-
-Rate limit per endpoint disesuaikan:
+Rate limit didefinisikan langsung di route middleware (`routes/api.php` & `routes/web.php`) — tidak ada limiter global "api" default:
 
 | Endpoint | Rate Limit | Reason |
 |----------|-----------|--------|
-| `/api/v1/auth/login` | 5/min | Brute force protection |
-| `/api/v1/orders` | 60/min | Transaksi normal |
-| `/api/v1/sync` | 30/min | Batch sync (payload besar) |
-| `/api/v1/products` | 120/min | Browsing produk (cached) |
+| `POST /api/v1/login` | 10/min | Brute force protection |
+| Grup API terautentikasi (`auth:api`) — orders, products, sync, dll | 120/min | Operasional kasir + browsing produk |
+| `POST /api/v1/payments/{provider}` (webhook) | 30/min | Webhook eksternal |
+| `POST /api/v1/marketplace/{platform}` (webhook) | 30/min | Webhook marketplace |
+| AJAX POS (`/api/pos/products`, `/api/pos/barcode/*`, `/api/pos/display`) | 120/min | Wajib login; customer display ter-scope outlet |
 
 ### 5.4 Endpoint Structure
 
@@ -1914,7 +1904,7 @@ class OrderResource extends Resource
 │                                                                  │
 │  [✅] Sanctum token dengan abilities (product:read, order:* )    │
 │  [✅] CORS dibatasi ke domain yang diketahui                     │
-│  [✅] Rate limiting: 60 req/min global, 5/min login             │
+│  [✅] Rate limiting: 120 req/min API, 10/min login, 30/min hook │
 │  [✅] Password: min 8 char, harus ada angka + huruf             │
 │  [✅] API keys di-encrypt di DB (AES-256-GCM)                   │
 │  [✅] Session hijacking: session driver = database              │

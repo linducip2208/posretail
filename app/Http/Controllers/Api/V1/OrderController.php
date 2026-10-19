@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Services\CheckoutService;
 use App\Models\SystemSetting;
+use App\Scopes\OutletScope;
+use App\Services\CheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -60,11 +61,32 @@ class OrderController extends Controller
             'payments.*.payment_method_id' => 'required|exists:payment_methods,id',
             'payments.*.amount' => 'required|numeric|min:0|max:1000000000',
             'notes' => 'nullable|string|max:2000',
+            'client_uuid' => 'nullable|string|max:100',
         ]);
 
         $outletIds = $request->user()->getAccessibleOutletIds();
         if (! $request->user()->hasPermission('*') && ! in_array((int) $request->outlet_id, $outletIds, true)) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
+
+        // Idempotency: client_uuid sama = order pernah dibuat (retry setelah
+        // timeout / sync offline). Kembalikan order existing, jangan 422 duplikat
+        // dan jangan potong stok dua kali.
+        $clientUuid = $request->input('client_uuid');
+        if ($clientUuid) {
+            // withoutGlobalScope: lookup harus lintas outlet supaya uuid asing
+            // terdeteksi sebagai duplikat (bukan dicoba-insert lalu 500).
+            $existing = Order::withoutGlobalScope(OutletScope::class)
+                ->with(['orderItems.product', 'payments.paymentMethod'])
+                ->where('client_uuid', $clientUuid)
+                ->first();
+            if ($existing) {
+                if (! $request->user()->hasPermission('*') && ! in_array((int) $existing->outlet_id, $outletIds, true)) {
+                    return response()->json(['message' => 'client_uuid sudah dipakai order lain.'], 422);
+                }
+
+                return response()->json(['data' => $this->formatOrder($existing), 'duplicate' => true], 200);
+            }
         }
 
         $items = collect($request->items)->map(fn ($i) => [
@@ -75,22 +97,37 @@ class OrderController extends Controller
             'serial_numbers' => $i['serial_numbers'] ?? [],
         ])->toArray();
 
-        $order = $checkout->checkout([
-            'outlet_id' => (int) $request->outlet_id,
-            'items' => $items,
-            'payments' => $request->payments,
-            'customer_id' => $request->customer_id,
-            'employee_id' => $request->employee_id,
-            'order_type' => $request->order_type,
-            'order_notes' => $request->order_notes,
-            'notes' => $request->notes,
-            'voucher_code' => $request->voucher_code ?? null,
-            'use_tax' => false, // API mobile: pajak dihitung di server via setting jika diperlukan
-            'deposit_amount' => (float) ($request->deposit_amount ?? 0),
-            'is_installment' => (bool) ($request->is_installment ?? false),
-            'installment_period' => $request->installment_period,
-            'installment_count' => (int) ($request->installment_count ?? 1),
-        ], (int) $request->user()->id);
+        try {
+            $order = $checkout->checkout([
+                'client_uuid' => $clientUuid,
+                'outlet_id' => (int) $request->outlet_id,
+                'items' => $items,
+                'payments' => $request->payments,
+                'customer_id' => $request->customer_id,
+                'employee_id' => $request->employee_id,
+                'order_type' => $request->order_type,
+                'order_notes' => $request->order_notes,
+                'notes' => $request->notes,
+                'voucher_code' => $request->voucher_code ?? null,
+                'use_tax' => false, // API mobile: pajak dihitung di server via setting jika diperlukan
+                'deposit_amount' => (float) ($request->deposit_amount ?? 0),
+                'is_installment' => (bool) ($request->is_installment ?? false),
+                'installment_period' => $request->installment_period,
+                'installment_count' => (int) ($request->installment_count ?? 1),
+            ], (int) $request->user()->id);
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Race: request paralel dengan uuid sama — kembalikan yang sudah terbuat.
+            if ($clientUuid && str_contains($e->getMessage(), 'client_uuid')) {
+                $dup = Order::withoutGlobalScope(OutletScope::class)
+                    ->with(['orderItems.product', 'payments.paymentMethod'])
+                    ->where('client_uuid', $clientUuid)
+                    ->first();
+                if ($dup) {
+                    return response()->json(['data' => $this->formatOrder($dup), 'duplicate' => true], 200);
+                }
+            }
+            throw $e;
+        }
 
         $order->load(['orderItems.product', 'payments.paymentMethod']);
 

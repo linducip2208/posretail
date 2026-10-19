@@ -233,10 +233,28 @@ class PosController extends Controller
 
     public function display(Request $request): JsonResponse
     {
+        // Scoping: display hanya menampilkan order dari outlet yang boleh
+        // diakses user login. Outlet eksplisit yang bukan milik user → kosong.
+        // Tanpa outlet_id, pakai outlet pertama yang accessible.
+        $accessible = array_map('intval', $request->user()?->getAccessibleOutletIds() ?? []);
+        $outletId = (int) $request->query('outlet_id');
+
+        if ($outletId > 0 && ! in_array($outletId, $accessible, true)) {
+            return response()->json(['items' => [], 'total' => 0, 'queue_number' => null]);
+        }
+
+        if ($outletId <= 0) {
+            $outletId = (int) ($accessible[0] ?? 0);
+        }
+
+        if ($outletId <= 0) {
+            return response()->json(['items' => [], 'total' => 0, 'queue_number' => null]);
+        }
+
         $latest = Order::with(['orderItems.product', 'orderItems.productVariant', 'outlet'])
             ->excludeCancelled()
             ->whereDate('created_at', today())
-            ->when($request->outlet_id, fn ($q) => $q->where('outlet_id', $request->outlet_id))
+            ->where('outlet_id', $outletId)
             ->latest()
             ->first();
 

@@ -2,13 +2,13 @@
 @php
     $brandName = \App\Models\SystemSetting::getAppName();
     $logoUrl = \App\Models\SystemSetting::getLogoUrl();
-    $demoAccounts = [
+    $demoAccounts = \App\Support\DemoMode::enabled() ? [
         ['role' => 'Owner', 'email' => 'owner@pos-retail.test', 'password' => 'password'],
         ['role' => 'Manager', 'email' => 'manager@pos-retail.test', 'password' => 'password'],
         ['role' => 'Admin', 'email' => 'admin@pos-retail.test', 'password' => 'password'],
         ['role' => 'Kasir', 'email' => 'kasir@pos-retail.test', 'password' => 'password'],
         ['role' => 'Gudang', 'email' => 'gudang@pos-retail.test', 'password' => 'password'],
-    ];
+    ] : [];
 @endphp
 <!DOCTYPE html>
 <html lang="id">
@@ -115,6 +115,7 @@
                     </button>
                 </form>
 
+                @if(count($demoAccounts) > 0)
                 <div class="my-8 flex items-center gap-3">
                     <div class="flex-1 h-px bg-slate-200"></div>
                     <span class="text-xs text-slate-400 uppercase tracking-wider">atau</span>
@@ -129,6 +130,7 @@
                         @endforeach
                     </div>
                 </div>
+                @endif
             </div>
         </div>
     </div>

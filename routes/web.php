@@ -35,11 +35,13 @@ Route::get('/pos/display', function () {
     $appName = SystemSetting::getAppName();
 
     return view('pos.customer-display', compact('appName'));
-})->name('pos.display');
+})->name('pos.display')->middleware('auth');
 
-Route::get('/api/pos/products', [PosController::class, 'products']);
-Route::get('/api/pos/barcode/{barcode}', [PosController::class, 'barcode']);
-Route::get('/api/pos/display', [PosController::class, 'display']);
+// Endpoint AJAX POS — hanya untuk kasir yang sudah login (dipakai halaman /pos
+// dan customer display yang dibuka dari sesi kasir). Throttle membatasi scraping.
+Route::get('/api/pos/products', [PosController::class, 'products'])->middleware(['auth', 'throttle:120,1']);
+Route::get('/api/pos/barcode/{barcode}', [PosController::class, 'barcode'])->middleware(['auth', 'throttle:120,1']);
+Route::get('/api/pos/display', [PosController::class, 'display'])->middleware(['auth', 'throttle:120,1']);
 Route::post('/api/pos/validate-voucher', [PosController::class, 'validateVoucher'])->name('pos.validate-voucher')->middleware('auth');
 Route::post('/pos/checkout', [PosController::class, 'checkout'])->name('pos.checkout')->middleware('auth');
 Route::get('/admin/orders/{id}/receipt', [PosController::class, 'receipt'])->name('orders.receipt')->middleware('auth');

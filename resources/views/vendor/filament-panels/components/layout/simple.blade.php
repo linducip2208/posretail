@@ -76,6 +76,7 @@
                     <div class="fi-login-form">
                         {{ $slot }}
                     </div>
+                    @if(\App\Support\DemoMode::enabled())
                     <div class="fi-login-demo-box">
                         <strong>Demo Login</strong>
                         <div>Owner: owner@pos-retail.test / password</div>
@@ -84,6 +85,7 @@
                         <div>Kasir: kasir@pos-retail.test / password</div>
                         <div>Gudang: gudang@pos-retail.test / password</div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

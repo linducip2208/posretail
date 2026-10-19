@@ -65,6 +65,7 @@
     </div>
 </section>
 
+@if(count($demoAccounts) > 0)
 <section id="demo" class="py-16 bg-white">
     <div class="max-w-4xl mx-auto px-4">
         <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Akun Demo — 5 Role</h2>
@@ -86,6 +87,7 @@
         </div>
     </div>
 </section>
+@endif
 
 <section id="menu" class="py-16 bg-gray-50">
     <div class="max-w-4xl mx-auto px-4">

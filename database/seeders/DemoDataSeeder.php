@@ -29,6 +29,16 @@ class DemoDataSeeder extends Seeder
 
     public function run(): void
     {
+        // Pengaman production: seeder ini memuat akun berkata sandi lemah
+        // (password) dan melakukan truncate banyak tabel. Hanya boleh jalan
+        // bila diizinkan eksplisit (POS_ALLOW_DEMO_SEED=true) atau di luar
+        // environment production.
+        if (app()->environment('production') && ! config('pos.allow_demo_seed')) {
+            $this->command?->warn('DemoDataSeeder dilewati di production (set POS_ALLOW_DEMO_SEED=true untuk memaksa).');
+
+            return;
+        }
+
         $faker = FakerFactory::create('id_ID');
         $now = now();
 
