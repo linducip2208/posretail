@@ -141,36 +141,14 @@ async function screenshot() {
     console.log(`  [${idx}/${PAGES.length}] ${label} → ${fullUrl}`);
 
     try {
-      await page.goto(fullUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await page.waitForTimeout(3000);
-
-      const content = await page.content();
-      const urlLabel = getUrlLabel(label, name);
-
-      const htmlWithChrome = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>${BROWSER_CHROME_CSS}</style>
-</head>
-<body>
-  <div class="browser-mock">
-    <div class="browser-topbar">
-      <div class="browser-dot red"></div>
-      <div class="browser-dot yellow"></div>
-      <div class="browser-dot green"></div>
-      <div class="browser-url">${urlLabel}</div>
-    </div>
-    ${content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')}
-  </div>
-</body>
-</html>`;
-
-      await page.setContent(htmlWithChrome, { waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(500);
+      await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 60000 });
+      // Tunggu widget Livewire + Chart.js selesai render.
+      await page.waitForTimeout(6000);
 
       const filePath = path.join(SCREENSHOT_DIR, `${name}.png`);
-      await page.screenshot({ path: filePath, fullPage: true });
+      // Viewport 1440x900 (landscape) — tanpa fullPage agar proporsional
+      // untuk mockup browser di landing page.
+      await page.screenshot({ path: filePath, fullPage: false });
       console.log(`    Saved: ${name}.png`);
     } catch (err) {
       failures++;
