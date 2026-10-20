@@ -93,18 +93,19 @@ body {
 }
 
 .fi-sidebar {
-    background: var(--pos-sidebar) !important;
-    border-right: 1px solid var(--pos-border);
+    background: #0B2854 !important;
+    border-right: 1px solid #0B2854;
+    scrollbar-color: rgba(220, 232, 248, 0.25) transparent;
 }
 
 .fi-sidebar-header {
-    background: var(--pos-sidebar);
-    border-bottom: 1px solid var(--pos-divider);
+    background: transparent;
+    border-bottom: 1px solid rgba(220, 232, 248, 0.14);
     padding: 14px 16px;
 }
 
 .fi-sidebar-header .fi-logo {
-    color: var(--pos-text);
+    color: #FFFFFF;
 }
 
 .fi-sidebar-item {
@@ -114,62 +115,71 @@ body {
 .fi-sidebar-item .fi-sidebar-item-btn {
     border-radius: 8px;
     min-height: 38px;
-    color: var(--pos-text-secondary);
+    color: #FFFFFF;
     font-size: 13px;
 }
 
 .fi-sidebar-item .fi-sidebar-item-btn:hover {
-    background: var(--pos-primary-soft);
-    color: var(--pos-primary);
+    background: #173B70;
+    color: #FFFFFF;
+}
+.fi-sidebar-item .fi-sidebar-item-btn:focus-visible {
+    outline: 2px solid #0878F9;
+    outline-offset: 1px;
 }
 
-/* Satu aksen: menu aktif latar biru muda + teks biru + indikator kiri. */
+/* Aktif: biru elektrik penuh + teks/ikon putih. */
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-    background: var(--pos-primary);
-    color: #ffffff;
+    background: #0878F9;
+    color: #FFFFFF;
     font-weight: 600;
-    box-shadow: 0 1px 2px rgba(8, 120, 249, 0.4);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
-/* Aksen oranye identitas: hanya ikon POS Kasir. */
+/* Ikon POS Kasir oranye (satu-satunya aksen non-biru di sidebar). */
 .fi-sidebar-group[data-group-label=""] .fi-sidebar-item:nth-child(2) .fi-sidebar-item-icon {
-    color: var(--pos-accent-hover);
+    color: #FF9800;
 }
 
 .fi-sidebar-item .fi-sidebar-item-icon {
-    color: var(--pos-text-muted);
+    color: #DCE8F8;
     width: 18px;
     height: 18px;
 }
 
 .fi-sidebar-item .fi-sidebar-item-label {
-    color: var(--pos-text-secondary);
+    color: #FFFFFF;
 }
 
 .fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-label {
-    color: var(--pos-primary);
+    color: #FFFFFF;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
-    color: #ffffff;
+    color: #FFFFFF;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
 .fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-icon {
-    color: var(--pos-primary);
+    color: #FFFFFF;
 }
-
-.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
-    color: #ffffff;
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:nth-child(2):not(.fi-active) .fi-sidebar-item-icon {
+    color: #FF9800;
 }
 
 .dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-    background: rgba(8, 120, 249, 0.16);
-    color: #fff;
+    background: #0878F9;
+    color: #FFFFFF;
 }
 
 .dark .fi-sidebar-item.fi-active .fi-sidebar-item-icon {
-    color: #7fb3e8;
+    color: #FFFFFF;
+}
+.dark .fi-sidebar-item .fi-sidebar-item-icon {
+    color: #DCE8F8;
+}
+.dark .fi-sidebar-item .fi-sidebar-item-label {
+    color: #FFFFFF;
 }
 
 .fi-sidebar-group-label {
@@ -177,11 +187,16 @@ body {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     font-weight: 700;
-    color: #64748B;
+    color: #9EB8DD;
     padding: 10px 16px 4px;
 }
 
-/* Pencarian menu sidebar. */
+/* Tombol collapse grup di atas navy. */
+.fi-sidebar-group-collapse-btn {
+    color: #9EB8DD !important;
+}
+
+/* Pencarian menu di atas navy. */
 .fi-sidebar-search {
     position: relative;
     margin: 4px 12px 8px;
@@ -193,7 +208,7 @@ body {
     transform: translateY(-50%);
     width: 16px;
     height: 16px;
-    color: var(--pos-text-muted);
+    color: #9EB8DD;
     pointer-events: none;
 }
 .fi-sidebar-search-input {
@@ -201,13 +216,26 @@ body {
     min-height: 36px;
     padding: 6px 10px 6px 32px;
     font-size: 13px;
-    color: var(--pos-text);
-    background: var(--pos-surface-hover);
-    border: 1px solid var(--pos-border);
+    color: #FFFFFF;
+    background: rgba(220, 232, 248, 0.1);
+    border: 1px solid rgba(220, 232, 248, 0.2);
     border-radius: 8px;
 }
 .fi-sidebar-search-input::placeholder {
-    color: var(--pos-text-muted);
+    color: #9EB8DD;
+}
+.fi-sidebar-search-input:focus {
+    outline: none;
+    border-color: #0878F9;
+    box-shadow: 0 0 0 3px rgba(8, 120, 249, 0.35);
+    background: rgba(220, 232, 248, 0.14);
+}
+.fi-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.fi-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(220, 232, 248, 0.22);
+    border-radius: 8px;
 }
 .fi-sidebar-search-input:focus {
     outline: none;
