@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-amber">
     <x-report-head title="Laporan Piutang" subtitle="Umur piutang dan daftar tagihan pelanggan" />
 
     <div class="rp-toolbar">

@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-orange">
     <x-report-head title="Laporan Komisi" subtitle="Komisi pegawai dari transaksi berkomisi" />
 
     <div class="rp-toolbar">

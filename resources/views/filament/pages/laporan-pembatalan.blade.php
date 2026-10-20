@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-red">
     <x-report-head title="Laporan Pembatalan" subtitle="Order batal beserta nilai dan alasannya" />
 
     <div class="rp-toolbar">

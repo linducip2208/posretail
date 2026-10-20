@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-green">
     <x-report-head title="Laporan Keuangan" subtitle="Pendapatan vs pengeluaran, arus kas, dan piutang usaha" />
 
     <div class="rp-toolbar">

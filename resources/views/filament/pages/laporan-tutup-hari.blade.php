@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-green">
     <x-report-head title="Tutup Hari" subtitle="Penjualan, pembayaran, shift, dan net cash harian" />
 
     <div class="rp-toolbar">

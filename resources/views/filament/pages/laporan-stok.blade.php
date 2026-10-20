@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-amber">
     <x-report-head title="Laporan Stok" subtitle="Nilai stok, stok rendah, dan distribusi per kategori" />
 
     <div class="rp-toolbar">

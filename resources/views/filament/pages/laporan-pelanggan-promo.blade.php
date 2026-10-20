@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-orange">
     <x-report-head title="Pelanggan & Promo" subtitle="Segmentasi RFM pelanggan dan efektivitas diskon" />
 
     <div class="rp-toolbar">

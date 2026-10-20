@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-teal">
     <x-report-head title="Laporan Laba Rugi" subtitle="Pendapatan, beban, dan laba bersih per periode" />
 
     <div class="rp-toolbar">

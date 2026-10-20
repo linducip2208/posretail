@@ -333,6 +333,14 @@ body {
     color: var(--pos-text-secondary) !important;
 }
 
+/* Paksa 4 kolom hanya untuk grid berisi tepat 4 stat (KPI utama);
+   grid berisi 5 stat (KPI lanjutan) tetap mengikuti perilaku bawaan. */
+@media (min-width: 1024px) {
+    .fi-wi-stats-overview .fi-sc.fi-grid:has(> :nth-child(4):last-child) {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+}
+
 .fi-wi-stats-overview-stat-description {
     font-size: 12px !important;
 }
@@ -933,12 +941,22 @@ textarea.fi-textarea:focus {
 .rp-page {
     --rp-ink: #0f172a;
     --rp-muted: #64748b;
+    --rp-accent: #0878F9;
+    --rp-accent-rgb: 8, 120, 249;
     --rp-card-border: rgba(15, 23, 42, 0.07);
-    --rp-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 44px -30px rgba(8, 120, 249, 0.5);
-    --rp-card-shadow-hover: 0 2px 6px rgba(15, 23, 42, 0.05), 0 28px 56px -28px rgba(8, 120, 249, 0.55);
-    --rp-hairline: linear-gradient(90deg, rgba(8, 120, 249, 0), rgba(8, 120, 249, 0.55) 18%, rgba(8, 120, 249, 0.6) 50%, rgba(2, 132, 199, 0.5) 82%, rgba(8, 120, 249, 0));
+    --rp-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 44px -30px rgba(var(--rp-accent-rgb), 0.5);
+    --rp-card-shadow-hover: 0 2px 6px rgba(15, 23, 42, 0.05), 0 28px 56px -28px rgba(var(--rp-accent-rgb), 0.55);
+    --rp-hairline: linear-gradient(90deg, rgba(var(--rp-accent-rgb), 0), rgba(var(--rp-accent-rgb), 0.55) 18%, rgba(var(--rp-accent-rgb), 0.6) 50%, rgba(var(--rp-accent-rgb), 0.5) 82%, rgba(var(--rp-accent-rgb), 0));
     display: block;
 }
+
+/* Aksen warna per menu laporan — badan tetap putih, hanya aksen yang beda. */
+.rp-page.rp-accent-green { --rp-accent: #16A34A; --rp-accent-rgb: 22, 163, 74; }
+.rp-page.rp-accent-amber { --rp-accent: #D97706; --rp-accent-rgb: 217, 119, 6; }
+.rp-page.rp-accent-red { --rp-accent: #DC2626; --rp-accent-rgb: 220, 38, 38; }
+.rp-page.rp-accent-teal { --rp-accent: #0284C7; --rp-accent-rgb: 2, 132, 199; }
+.rp-page.rp-accent-orange { --rp-accent: #F28C00; --rp-accent-rgb: 242, 140, 0; }
+.rp-page.rp-accent-navy { --rp-accent: #173B70; --rp-accent-rgb: 23, 59, 112; }
 
 /* ---- Judul halaman ------------------------------------------------------- */
 
@@ -964,8 +982,8 @@ textarea.fi-textarea:focus {
     width: 6px;
     height: 22px;
     border-radius: 999px;
-    background: linear-gradient(180deg, #0878F9, #0878F9 55%, #0284C7);
-    box-shadow: 0 0 14px rgba(8, 120, 249, 0.6);
+    background: var(--rp-accent);
+    box-shadow: 0 0 14px rgba(var(--rp-accent-rgb), 0.6);
 }
 
 .rp-head p {
@@ -987,8 +1005,8 @@ textarea.fi-textarea:focus {
     border-radius: 18px;
     border: 1px solid var(--rp-card-border);
     background:
-        radial-gradient(120% 180% at 0% 0%, rgba(8, 120, 249, 0.09), transparent 55%),
-        radial-gradient(120% 180% at 100% 0%, rgba(8, 120, 249, 0.08), transparent 55%),
+        radial-gradient(120% 180% at 0% 0%, rgba(var(--rp-accent-rgb), 0.09), transparent 55%),
+        radial-gradient(120% 180% at 100% 0%, rgba(var(--rp-accent-rgb), 0.08), transparent 55%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78));
     box-shadow: var(--rp-card-shadow);
     backdrop-filter: blur(14px) saturate(160%);
@@ -1032,8 +1050,8 @@ textarea.fi-textarea:focus {
 .rp-toolbar input:focus,
 .rp-toolbar select:focus {
     outline: none;
-    border-color: rgba(8, 120, 249, 0.55) !important;
-    box-shadow: 0 0 0 4px rgba(8, 120, 249, 0.14);
+    border-color: rgba(var(--rp-accent-rgb), 0.55) !important;
+    box-shadow: 0 0 0 4px rgba(var(--rp-accent-rgb), 0.14);
 }
 
 /* ---- Cards (stat + panel) ------------------------------------------------ */
@@ -1067,7 +1085,7 @@ textarea.fi-textarea:focus {
 @media (hover: hover) {
     .rp-page .bg-white.rounded-xl:has(> div.text-xs):hover {
         transform: translateY(-2px);
-        border-color: rgba(8, 120, 249, 0.24) !important;
+        border-color: rgba(var(--rp-accent-rgb), 0.24) !important;
         box-shadow: var(--rp-card-shadow-hover) !important;
     }
 }
@@ -1100,8 +1118,8 @@ textarea.fi-textarea:focus {
     width: 4px;
     height: 16px;
     border-radius: 999px;
-    background: linear-gradient(180deg, #0878F9, #0878F9 55%, #0284C7);
-    box-shadow: 0 0 10px rgba(8, 120, 249, 0.55);
+    background: var(--rp-accent);
+    box-shadow: 0 0 10px rgba(var(--rp-accent-rgb), 0.55);
 }
 
 /* ---- Tabel modern -------------------------------------------------------- */
@@ -1130,7 +1148,7 @@ textarea.fi-textarea:focus {
 }
 
 .rp-page table tbody tr:hover {
-    background: rgba(8, 120, 249, 0.05);
+    background: rgba(var(--rp-accent-rgb), 0.05);
 }
 
 .rp-page table tbody td {

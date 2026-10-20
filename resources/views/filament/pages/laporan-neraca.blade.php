@@ -1,4 +1,4 @@
-<div class="rp-page">
+<div class="rp-page rp-accent-navy">
     <x-report-head title="Laporan Neraca" subtitle="Posisi aset, liabilitas, dan ekuitas per tanggal" />
 
     <div class="rp-toolbar">
