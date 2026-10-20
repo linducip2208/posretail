@@ -24,34 +24,39 @@
 }
 
 :root {
-    /* POS Retail Visual Lock — token terpusat. Satu aksen biru untuk semua. */
-    --pos-primary: #1769F5;
-    --pos-primary-hover: #0D56D9;
+    /* POS Retail Enterprise — token terpusat (brief master). */
+    --pos-primary: #0878F9;
+    --pos-primary-hover: #0666D6;
     --pos-primary-soft: #EAF2FF;
     --pos-primary-border: #CFE0FF;
 
+    --pos-navy: #0B2854;
+    --pos-navy-2: #173B70;
+    --pos-accent: #FF9800;
+    --pos-accent-hover: #F28C00;
+
     --pos-sidebar: #FFFFFF;
-    --pos-background: #F0F5FA;
+    --pos-background: #F3F7FC;
     --pos-surface: #FFFFFF;
     --pos-surface-hover: #F7FAFF;
 
-    --pos-text: #17345C;
-    --pos-text-secondary: #607895;
+    --pos-text: #172B4D;
+    --pos-text-secondary: #64748B;
     --pos-text-muted: #91A3B9;
 
-    --pos-border: #E1EAF4;
+    --pos-border: #E2EAF4;
     --pos-divider: #EAF0F7;
 
-    --pos-success: #16A875;
+    --pos-success: #16A34A;
     --pos-success-soft: #E8F8F0;
 
     --pos-warning: #F59E0B;
     --pos-warning-soft: #FFF5DF;
 
-    --pos-danger: #E45858;
+    --pos-danger: #DC2626;
     --pos-danger-soft: #FFF0F0;
 
-    --pos-info: #3987F6;
+    --pos-info: #0284C7;
     --pos-info-soft: #EAF3FF;
 
     --pos-radius-sm: 6px;
@@ -61,22 +66,22 @@
     --pos-shadow-card: 0 1px 3px rgba(28, 63, 104, 0.05);
     --pos-shadow-dropdown: 0 12px 32px rgba(28, 63, 104, 0.12);
 
-    /* Jembatan ke variabel lama bertema primary-* (skala biru #1769F5). */
-    --primary-50: 234, 242, 255;
-    --primary-100: 207, 224, 255;
-    --primary-200: 165, 196, 255;
-    --primary-300: 120, 165, 250;
+    /* Jembatan ke variabel lama bertema primary-* (skala biru #0878F9). */
+    --primary-50: 234, 243, 255;
+    --primary-100: 207, 228, 255;
+    --primary-200: 165, 203, 255;
+    --primary-300: 110, 170, 250;
     --primary-400: 57, 135, 246;
-    --primary-500: 23, 105, 245;
-    --primary-600: 13, 86, 217;
-    --primary-700: 12, 72, 180;
-    --primary-800: 14, 62, 148;
-    --primary-900: 18, 54, 120;
-    --primary-950: 12, 34, 76;
+    --primary-500: 8, 120, 249;
+    --primary-600: 6, 102, 214;
+    --primary-700: 8, 84, 175;
+    --primary-800: 12, 72, 145;
+    --primary-900: 15, 60, 120;
+    --primary-950: 10, 35, 75;
     --sidebar-bg: 255, 255, 255;
-    --sidebar-fg: 23, 52, 92;
+    --sidebar-fg: 23, 43, 77;
     --card-radius: 10px;
-    --body-bg: 240, 245, 250;
+    --body-bg: 243, 247, 252;
 }
 
 body {
@@ -126,6 +131,11 @@ body {
     box-shadow: inset 3px 0 0 var(--pos-primary);
 }
 
+/* Aksen oranye identitas: hanya ikon POS Kasir. */
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:nth-child(2) .fi-sidebar-item-icon {
+    color: var(--pos-accent-hover);
+}
+
 .fi-sidebar-item .fi-sidebar-item-icon {
     color: var(--pos-text-muted);
     width: 18px;
@@ -150,7 +160,7 @@ body {
 }
 
 .dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-    background: rgba(23, 105, 245, 0.16);
+    background: rgba(8, 120, 249, 0.16);
     color: #fff;
 }
 
@@ -302,7 +312,7 @@ body {
 }
 
 .dark .fi-ta-row:hover {
-    background: rgba(23, 105, 245, 0.14) !important;
+    background: rgba(8, 120, 249, 0.14) !important;
 }
 
 .fi-input-wrp,
@@ -443,7 +453,7 @@ textarea.fi-textarea:focus {
 
 .fi-login-left-panel {
     width: 50%;
-    background: linear-gradient(160deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
+    background: linear-gradient(160deg, #0B2854 0%, #173B70 55%, #0878F9 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -460,7 +470,7 @@ textarea.fi-textarea:focus {
     width: 500px;
     height: 500px;
     border-radius: 50%;
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(8, 120, 249, 0.1);
     pointer-events: none;
 }
 
@@ -817,9 +827,9 @@ textarea.fi-textarea:focus {
     --rp-ink: #0f172a;
     --rp-muted: #64748b;
     --rp-card-border: rgba(15, 23, 42, 0.07);
-    --rp-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 44px -30px rgba(23, 105, 245, 0.5);
-    --rp-card-shadow-hover: 0 2px 6px rgba(15, 23, 42, 0.05), 0 28px 56px -28px rgba(23, 105, 245, 0.55);
-    --rp-hairline: linear-gradient(90deg, rgba(23, 105, 245, 0), rgba(23, 105, 245, 0.55) 18%, rgba(99, 102, 241, 0.6) 50%, rgba(6, 182, 212, 0.5) 82%, rgba(23, 105, 245, 0));
+    --rp-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 44px -30px rgba(8, 120, 249, 0.5);
+    --rp-card-shadow-hover: 0 2px 6px rgba(15, 23, 42, 0.05), 0 28px 56px -28px rgba(8, 120, 249, 0.55);
+    --rp-hairline: linear-gradient(90deg, rgba(8, 120, 249, 0), rgba(8, 120, 249, 0.55) 18%, rgba(8, 120, 249, 0.6) 50%, rgba(2, 132, 199, 0.5) 82%, rgba(8, 120, 249, 0));
     display: block;
 }
 
@@ -847,8 +857,8 @@ textarea.fi-textarea:focus {
     width: 6px;
     height: 22px;
     border-radius: 999px;
-    background: linear-gradient(180deg, #1769F5, #6366f1 55%, #06b6d4);
-    box-shadow: 0 0 14px rgba(99, 102, 241, 0.6);
+    background: linear-gradient(180deg, #0878F9, #0878F9 55%, #0284C7);
+    box-shadow: 0 0 14px rgba(8, 120, 249, 0.6);
 }
 
 .rp-head p {
@@ -870,8 +880,8 @@ textarea.fi-textarea:focus {
     border-radius: 18px;
     border: 1px solid var(--rp-card-border);
     background:
-        radial-gradient(120% 180% at 0% 0%, rgba(23, 105, 245, 0.09), transparent 55%),
-        radial-gradient(120% 180% at 100% 0%, rgba(99, 102, 241, 0.08), transparent 55%),
+        radial-gradient(120% 180% at 0% 0%, rgba(8, 120, 249, 0.09), transparent 55%),
+        radial-gradient(120% 180% at 100% 0%, rgba(8, 120, 249, 0.08), transparent 55%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78));
     box-shadow: var(--rp-card-shadow);
     backdrop-filter: blur(14px) saturate(160%);
@@ -915,8 +925,8 @@ textarea.fi-textarea:focus {
 .rp-toolbar input:focus,
 .rp-toolbar select:focus {
     outline: none;
-    border-color: rgba(23, 105, 245, 0.55) !important;
-    box-shadow: 0 0 0 4px rgba(23, 105, 245, 0.14);
+    border-color: rgba(8, 120, 249, 0.55) !important;
+    box-shadow: 0 0 0 4px rgba(8, 120, 249, 0.14);
 }
 
 /* ---- Cards (stat + panel) ------------------------------------------------ */
@@ -950,7 +960,7 @@ textarea.fi-textarea:focus {
 @media (hover: hover) {
     .rp-page .bg-white.rounded-xl:has(> div.text-xs):hover {
         transform: translateY(-2px);
-        border-color: rgba(23, 105, 245, 0.24) !important;
+        border-color: rgba(8, 120, 249, 0.24) !important;
         box-shadow: var(--rp-card-shadow-hover) !important;
     }
 }
@@ -983,8 +993,8 @@ textarea.fi-textarea:focus {
     width: 4px;
     height: 16px;
     border-radius: 999px;
-    background: linear-gradient(180deg, #1769F5, #6366f1 55%, #06b6d4);
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.55);
+    background: linear-gradient(180deg, #0878F9, #0878F9 55%, #0284C7);
+    box-shadow: 0 0 10px rgba(8, 120, 249, 0.55);
 }
 
 /* ---- Tabel modern -------------------------------------------------------- */
@@ -1013,7 +1023,7 @@ textarea.fi-textarea:focus {
 }
 
 .rp-page table tbody tr:hover {
-    background: rgba(23, 105, 245, 0.05);
+    background: rgba(8, 120, 249, 0.05);
 }
 
 .rp-page table tbody td {
@@ -1067,14 +1077,14 @@ textarea.fi-textarea:focus {
     box-shadow: 0 16px 32px -14px rgba(225, 29, 72, 0.9);
 }
 
-.rp-page a[class*="bg-[#1769F5]"] {
+.rp-page a[class*="bg-[#0878F9]"] {
     border-radius: 12px !important;
     background-image: linear-gradient(135deg, #2f7fd6, #1a569d) !important;
-    box-shadow: 0 12px 26px -16px rgba(23, 105, 245, 0.85);
+    box-shadow: 0 12px 26px -16px rgba(8, 120, 249, 0.85);
     transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
-.rp-page a[class*="bg-[#1769F5]"]:hover {
+.rp-page a[class*="bg-[#0878F9]"]:hover {
     transform: translateY(-1px);
     filter: brightness(1.05);
 }
@@ -1113,13 +1123,13 @@ textarea.fi-textarea:focus {
     --rp-card-border: rgba(148, 163, 184, 0.14);
     --rp-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 22px 48px -30px rgba(2, 6, 23, 0.95);
     --rp-card-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.4), 0 30px 60px -28px rgba(2, 6, 23, 1);
-    --rp-hairline: linear-gradient(90deg, rgba(76, 155, 232, 0), rgba(76, 155, 232, 0.7) 18%, rgba(129, 140, 248, 0.75) 50%, rgba(34, 211, 238, 0.6) 82%, rgba(76, 155, 232, 0));
+    --rp-hairline: linear-gradient(90deg, rgba(57, 135, 246, 0), rgba(57, 135, 246, 0.7) 18%, rgba(110, 170, 250, 0.75) 50%, rgba(56, 189, 248, 0.6) 82%, rgba(57, 135, 246, 0));
 }
 
 .dark .rp-toolbar {
     background:
-        radial-gradient(120% 180% at 0% 0%, rgba(76, 155, 232, 0.14), transparent 55%),
-        radial-gradient(120% 180% at 100% 0%, rgba(129, 140, 248, 0.12), transparent 55%),
+        radial-gradient(120% 180% at 0% 0%, rgba(57, 135, 246, 0.14), transparent 55%),
+        radial-gradient(120% 180% at 100% 0%, rgba(110, 170, 250, 0.12), transparent 55%),
         linear-gradient(180deg, rgba(21, 30, 48, 0.92), rgba(15, 23, 42, 0.8));
 }
 
@@ -1157,7 +1167,7 @@ textarea.fi-textarea:focus {
 }
 
 .dark .rp-page [class*="text-[#1a569d]"],
-.dark .rp-page [class*="text-[#1769F5]"] {
+.dark .rp-page [class*="text-[#0878F9]"] {
     color: #7cb8f2 !important;
 }
 
@@ -1171,7 +1181,7 @@ textarea.fi-textarea:focus {
 }
 
 .dark .rp-page table tbody tr:hover {
-    background: rgba(76, 155, 232, 0.08);
+    background: rgba(57, 135, 246, 0.08);
 }
 
 .dark .rp-page .divide-y > * + * {

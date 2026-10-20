@@ -2,11 +2,12 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Order;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 
 class RecentOrders extends BaseWidget
 {
@@ -25,8 +26,15 @@ class RecentOrders extends BaseWidget
                     ->excludeCancelled()
                     ->whereDate('created_at', today())
                     ->latest()
-                    ->limit(10)
+                    ->limit(7)
             )
+            ->headerActions([
+                Action::make('lihat-semua')
+                    ->label('Lihat Semua')
+                    ->icon('tabler-arrow-right')
+                    ->url(fn (): string => OrderResource::getUrl('index'))
+                    ->link(),
+            ])
             ->columns([
                 TextColumn::make('order_number')
                     ->label('No. Order')

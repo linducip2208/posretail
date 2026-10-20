@@ -2,10 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\Login;
+use App\Models\SystemSetting;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -15,11 +19,8 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\NavigationItem;
-use App\Models\SystemSetting;
 use Illuminate\Support\HtmlString;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,9 +30,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(\App\Filament\Auth\Login::class)
+            ->login(Login::class)
             ->brandName(fn () => SystemSetting::getAppName())
-            ->brandLogo(fn () => new HtmlString('<img src="' . (SystemSetting::getLogoUrl() ?: '/assets/posretail/01-logo-posretail.png') . '" alt="POS Retail" style="height:2rem">'))
+            ->brandLogo(fn () => new HtmlString('<img src="'.(SystemSetting::getLogoUrl() ?: '/assets/posretail/01-logo-posretail.png').'" alt="POS Retail" style="height:2rem">'))
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop(true)
             ->sidebarWidth('15rem')
@@ -40,11 +41,11 @@ class AdminPanelProvider extends PanelProvider
             ->favicon('/assets/posretail/02-icon-android.png')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => Color::hex('#1769F5'),
-                'success' => Color::hex('#16A875'),
+                'primary' => Color::hex('#0878F9'),
+                'success' => Color::hex('#16A34A'),
                 'warning' => Color::hex('#F59E0B'),
-                'danger' => Color::hex('#E45858'),
-                'gray' => Color::hex('#607895'),
+                'danger' => Color::hex('#DC2626'),
+                'gray' => Color::hex('#64748B'),
             ])
             ->navigationGroups([
                 NavigationGroup::make('Penjualan')->collapsed(false),

@@ -32,13 +32,13 @@ class ManagerChartWidget extends ChartWidget
             ->get();
 
         return [
-                'datasets' => [
+            'datasets' => [
                 [
                     'label' => 'Pendapatan',
                     'data' => $revenue->pluck('total')->toArray(),
                     'fill' => 'start',
-                    'backgroundColor' => 'rgba(32, 107, 196, 0.10)',
-                    'borderColor' => '#206bc4',
+                    'backgroundColor' => 'rgba(8, 120, 249, 0.08)',
+                    'borderColor' => '#0878F9',
                     'tension' => 0.3,
                 ],
             ],
