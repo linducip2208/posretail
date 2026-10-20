@@ -62,17 +62,38 @@ class User extends Authenticatable
     }
 
     /**
+     * Auto-sync kolom `role` (string lawas) ke pivot `role_user`
+     * agar tidak divergen: role=owner tanpa pivot '*' = kehilangan
+     * semua akses outlet. Hook ini menjamin pivot selalu terisi.
+     */
+    protected static function booted(): void
+    {
+        $syncRoleString = function (User $user): void {
+            if (filled($user->role)) {
+                $roleId = Role::where('slug', $user->role)->value('id');
+                if ($roleId && ! $user->roles()->where('roles.id', $roleId)->exists()) {
+                    $user->roles()->syncWithoutDetaching([$roleId]);
+                }
+            }
+        };
+
+        static::created($syncRoleString);
+        static::updated($syncRoleString);
+    }
+
+    /**
      * Get outlet IDs this user can access.
-     * Owner with '*' permission sees all outlets.
+     * Owner with '*' permission (atau kolom role=owner sebagai fallback
+     * bila pivot role belum tersinkron) sees all outlets.
      * Others only see their assigned outlets.
      */
     public function getAccessibleOutletIds(): array
     {
-        if ($this->hasPermission('*')) {
+        if (($this->role ?? null) === 'owner' || $this->hasPermission('*')) {
             return Outlet::pluck('id')->toArray();
         }
 
-        return $this->outlets()->pluck('outlet_id')->toArray();
+        return $this->outlets()->pluck('outlets.id')->toArray();
     }
 
     /**
@@ -80,7 +101,7 @@ class User extends Authenticatable
      */
     public function accessibleOutlets()
     {
-        if ($this->hasPermission('*')) {
+        if (($this->role ?? null) === 'owner' || $this->hasPermission('*')) {
             return Outlet::where('active', true)->orderBy('name');
         }
 
