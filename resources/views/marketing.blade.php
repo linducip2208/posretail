@@ -13,6 +13,8 @@
         $heroSub = \App\Models\SystemSetting::getValue('hero_subheadline', 'Kelola produk, transaksi penjualan, inventori, pelanggan, dan laporan — semua dalam satu dashboard. Dukung multi-outlet, scan barcode, dan program loyalitas.');
         $wa = \App\Models\SystemSetting::getValue('whatsapp_number', '6281296052010');
         $logoUrl = \App\Models\SystemSetting::getLogoUrl();
+        // Versi cache-buster untuk screenshot marketing (naikkan tiap ganti gambar).
+        $shotV = '20261020c';
     @endphp
     <title>{{ $appName }} — Solusi Kasir Modern untuk Toko Anda</title>
     <meta name="description" content="{{ $appName }} adalah sistem kasir modern untuk toko retail Indonesia. Kelola produk, transaksi, inventori, pelanggan, dan laporan dalam satu dashboard.">
@@ -266,10 +268,28 @@
                 </div>
             </div>
         </div>
-        <div class="flex items-end justify-center gap-4">
-            <img src="/assets/posretail/05-dashboard-screen.png" alt="Layar dashboard aplikasi POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl" loading="lazy">
-            <img src="/assets/posretail/06-product-screen.png" alt="Layar produk aplikasi POS Retail" class="w-44 md:w-56 rounded-[2rem] border-4 border-slate-900 shadow-2xl -mb-4" loading="lazy">
-            <img src="/assets/posretail/07-cart-checkout-screen.png" alt="Layar keranjang dan checkout POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl hidden sm:block" loading="lazy">
+        <div class="relative">
+            <div class="browser-mock">
+                <div class="browser-mock-header">
+                    <div class="browser-dot red"></div>
+                    <div class="browser-dot yellow"></div>
+                    <div class="browser-dot green"></div>
+                    <div class="browser-url">posretail.test/admin</div>
+                </div>
+                <img src="/marketing/screens/dashboard.png?v={{ $shotV }}" alt="Dashboard terbaru POS Retail" class="w-full" loading="eager">
+            </div>
+            <div class="browser-mock absolute -bottom-8 -right-2 sm:-right-6 w-1/2 hidden sm:block">
+                <div class="browser-mock-header">
+                    <div class="browser-dot red"></div>
+                    <div class="browser-dot yellow"></div>
+                    <div class="browser-dot green"></div>
+                    <div class="browser-url">posretail.test/pos</div>
+                </div>
+                <img src="/marketing/screens/pos-web.png?v={{ $shotV }}" alt="POS Kasir terbaru POS Retail" class="w-full" loading="lazy">
+            </div>
+            <div class="absolute -top-4 -left-2 sm:-left-4 bg-white border border-slate-100 rounded-2xl shadow-lg px-4 py-2.5 text-sm font-bold text-slate-800">
+                <span class="text-[#2563eb]">●</span> Live dari aplikasi
+            </div>
         </div>
     </div>
 </section>
@@ -387,7 +407,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/products</div>
                     </div>
-                    <img src="/marketing/screens/products.png" alt="Manajemen Produk POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Manajemen Produk</div>'">
+                    <img src="/marketing/screens/products.png?v={{ $shotV }}" alt="Manajemen Produk POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Manajemen Produk</div>'">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -417,7 +437,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/orders/create</div>
                     </div>
-                    <img src="/marketing/screens/pos-web.png" alt="Point of Sale POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Point of Sale</div>'">
+                    <img src="/marketing/screens/pos-web.png?v={{ $shotV }}" alt="Point of Sale POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Point of Sale</div>'">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -447,7 +467,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/stock-opnames</div>
                     </div>
-                    <img src="/marketing/screens/stock-opnames.png" alt="Manajemen Inventori POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Manajemen Inventori</div>'">
+                    <img src="/marketing/screens/stock-opnames.png?v={{ $shotV }}" alt="Manajemen Inventori POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Manajemen Inventori</div>'">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -476,7 +496,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/purchase-orders</div>
                     </div>
-                    <img src="/marketing/screens/purchase-orders.png" alt="Purchase Order POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Purchase Order</div>'">
+                    <img src="/marketing/screens/purchase-orders.png?v={{ $shotV }}" alt="Purchase Order POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Purchase Order</div>'">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -504,7 +524,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/loyalty-rewards</div>
                     </div>
-                    <img src="/marketing/screens/loyalty-rewards.png" alt="Program Loyalitas POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Program Loyalitas</div>'">
+                    <img src="/marketing/screens/loyalty-rewards.png?v={{ $shotV }}" alt="Program Loyalitas POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Program Loyalitas</div>'">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -533,7 +553,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/reports</div>
                     </div>
-                    <img src="/marketing/screens/laporan-penjualan.png" alt="Laporan & Analisis POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Laporan & Analisis</div>'">
+                    <img src="/marketing/screens/laporan-penjualan.png?v={{ $shotV }}" alt="Laporan & Analisis POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Laporan & Analisis</div>'">
                 </div>
             </div>
             <div class="md:w-1/2">
