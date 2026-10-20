@@ -1100,6 +1100,179 @@
           }
         }
       ]
+    },
+    {
+      "name": "Batch 2",
+      "item": [
+        {
+          "name": "Serials",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/serials?serial=",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Gift Cards",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/gift-cards",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Customer Groups",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/customer-groups",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sales Targets",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/sales-targets",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deliveries",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/deliveries",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delivery Advance",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/deliveries/1/advance",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Marketplace Orders",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/marketplace-orders",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Payables",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/supplier-payables?overdue=true",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pay Payable",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/supplier-payables/1/pay",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"amount\":50000}"
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [

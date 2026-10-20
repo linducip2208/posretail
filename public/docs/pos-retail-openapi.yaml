@@ -539,3 +539,53 @@ paths:
     get:
       summary: Riwayat shift user login
       responses: { '200': { description: OK } }
+  /serials:
+    get:
+      summary: Lookup nomor seri/IMEI + garansi per outlet
+      responses: { '200': { description: OK } }
+  /gift-cards:
+    get:
+      summary: Katalog gift card/voucher aktif
+      responses: { '200': { description: OK } }
+  /customer-groups:
+    get:
+      summary: Grup pelanggan + diskon
+      responses: { '200': { description: OK } }
+  /sales-targets:
+    get:
+      summary: Target penjualan bulan berjalan per outlet
+      responses: { '200': { description: OK } }
+  /deliveries:
+    get:
+      summary: Daftar pengiriman (filter status, outlet_id)
+      responses: { '200': { description: OK } }
+  /deliveries/{id}/advance:
+    post:
+      summary: Maju 1 tahap (pending→packed→shipped→delivered)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /marketplace-orders:
+    get:
+      summary: Order marketplace (filter platform, status)
+      responses: { '200': { description: OK } }
+  /supplier-payables:
+    get:
+      summary: Hutang supplier (filter status, supplier_id, overdue)
+      responses: { '200': { description: OK } }
+  /supplier-payables/{id}/pay:
+    post:
+      summary: Bayar hutang (tolak lebih bayar; partial/paid otomatis)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount: { type: number }
+                payment_method: { type: string }
+      responses: { '200': { description: OK }, '422': { description: Melebihi sisa } }
