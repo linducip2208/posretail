@@ -27,6 +27,13 @@ trait HasRoles
 
     public function hasPermission(string $slug): bool
     {
+        // Fallback kolom `role` (string lawas): owner selalu superadmin
+        // walau pivot `role_user` belum tersinkron. Ini mencegah tombol
+        // Create/halaman admin hilang untuk owner yang divergen.
+        if (($this->getAttribute('role') ?? null) === 'owner') {
+            return true;
+        }
+
         return $this->permissions()->contains('slug', $slug);
     }
 
