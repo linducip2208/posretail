@@ -16,8 +16,12 @@ class MarketplaceWebhookController extends Controller
         }
 
         // Token opsional: hanya ditegakkan jika MARKETPLACE_WEBHOOK_TOKEN di-set.
-        // Kompatibel mundur — integrasi lama tanpa token tetap jalan bila env kosong.
+        // Di production token WAJIB di-set (fail-closed) agar endpoint publik
+        // ini tidak bisa dipakai spam order oleh siapa pun.
         $expected = (string) config('services.marketplace.webhook_token', '');
+        if (app()->environment('production') && $expected === '') {
+            return response()->json(['message' => 'Webhook belum dikonfigurasi.'], 503);
+        }
         if ($expected !== '' && ! hash_equals($expected, (string) $request->header('X-Webhook-Token', ''))) {
             return response()->json(['message' => 'Webhook tidak sah.'], 401);
         }
