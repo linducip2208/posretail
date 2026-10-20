@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Product;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -21,9 +22,9 @@ class DemandForecastWidget extends BaseWidget
     {
         return $table
             ->query(
-                DB::table('order_items')
+                Product::query()
+                    ->join('order_items', 'order_items.product_id', '=', 'products.id')
                     ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                    ->join('products', 'order_items.product_id', '=', 'products.id')
                     ->where('orders.order_status', 'completed')
                     ->where('orders.created_at', '>=', now()->subWeeks(12))
                     ->select(
@@ -40,8 +41,7 @@ class DemandForecastWidget extends BaseWidget
             )
             ->columns([
                 TextColumn::make('product_name')
-                    ->label('Produk')
-                    ->searchable(),
+                    ->label('Produk'),
 
                 TextColumn::make('avg_weekly_sold')
                     ->label('Rata-rata Mingguan')

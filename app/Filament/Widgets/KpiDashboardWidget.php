@@ -66,10 +66,10 @@ class KpiDashboardWidget extends BaseWidget
             ->avg('total_amount');
         $avgBasket = round($avgBasket ?? 0, 0);
 
-        // AR Aging — total overdue
+        // AR Aging — total overdue (sisa = total - terbayar; tidak ada kolom `amount`).
         $overdueAR = (float) SupplierPayable::where('status', 'pending')
             ->where('due_date', '<', now())
-            ->sum('amount');
+            ->sum(DB::raw('total_amount - paid_amount'));
 
         return [
             Stat::make('GMROI', $gmroi . '%')

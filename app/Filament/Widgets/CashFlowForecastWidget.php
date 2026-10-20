@@ -127,7 +127,7 @@ class CashFlowForecastWidget extends ChartWidget
     {
         $payables = (float) SupplierPayable::where('status', 'pending')
             ->whereDate('due_date', $date)
-            ->sum('amount');
+            ->sum(DB::raw('total_amount - paid_amount'));
 
         $avgExpense = 0;
         if (Schema::hasTable('expenses')) {

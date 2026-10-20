@@ -22,16 +22,22 @@ class SupplierScoreSummaryWidget extends BaseWidget
     {
         return $table
             ->query(
-                SupplierRating::query()
-                    ->select('supplier_id')
-                    ->selectRaw('ROUND(AVG(on_time), 1) as avg_on_time')
-                    ->selectRaw('ROUND(AVG(quality), 1) as avg_quality')
-                    ->selectRaw('ROUND(AVG(price_competitiveness), 1) as avg_price')
-                    ->selectRaw('ROUND(AVG(communication), 1) as avg_communication')
-                    ->selectRaw('ROUND(AVG(avg_score), 1) as avg_overall')
-                    ->selectRaw('COUNT(*) as total_ratings')
-                    ->groupBy('supplier_id')
-                    ->with('supplier')
+                // Agregat per supplier sebagai subquery agar ORDER BY bawaan
+                // Filament (by key) tetap valid di ONLY_FULL_GROUP_BY:
+                // semua kolom order adalah output subquery.
+                SupplierRating::query()->fromSub(
+                    DB::table('supplier_ratings')
+                        ->select('supplier_id')
+                        ->selectRaw('MAX(id) as id')
+                        ->selectRaw('ROUND(AVG(on_time), 1) as avg_on_time')
+                        ->selectRaw('ROUND(AVG(quality), 1) as avg_quality')
+                        ->selectRaw('ROUND(AVG(price_competitiveness), 1) as avg_price')
+                        ->selectRaw('ROUND(AVG(communication), 1) as avg_communication')
+                        ->selectRaw('ROUND(AVG(avg_score), 1) as avg_overall')
+                        ->selectRaw('COUNT(*) as total_ratings')
+                        ->groupBy('supplier_id'),
+                    'supplier_ratings'
+                )->with('supplier')
             )
             ->columns([
                 TextColumn::make('supplier.name')
