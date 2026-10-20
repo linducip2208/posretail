@@ -71,6 +71,7 @@ class DemoDataSeeder extends Seeder
             'blog_posts', 'blog_categories',
             'categories',
             'outlets', 'users',
+            'supplier_ratings', 'sales_targets',
         ];
         foreach ($tables as $table) {
             DB::table($table)->truncate();
@@ -111,6 +112,11 @@ class DemoDataSeeder extends Seeder
         $this->seedAttendances($now);
         $this->seedBlogCategories($now);
         $this->seedBlogPosts($now);
+        $this->seedSalesTargets($now);
+        $this->seedSupplierRatings($now);
+        $this->seedPendingApprovalOrders($faker, $now);
+        $this->seedLowStockProducts();
+        $this->seedExpiringProducts($now);
 
         $this->command?->info('Demo data seeded: 1000 produk, 500 orders, 200 customers, and more!');
     }
@@ -1807,5 +1813,130 @@ class DemoDataSeeder extends Seeder
             ],
         ];
         DB::table('blog_posts')->insert($posts);
+    }
+
+    // ================================================================
+    // SALES TARGETS — agar widget Progress Target terisi
+    // ================================================================
+    private function seedSalesTargets(Carbon $now): void
+    {
+        $targets = [
+            ['outlet_id' => 1, 'user_id' => null, 'target_amount' => 150000000],
+            ['outlet_id' => 2, 'user_id' => null, 'target_amount' => 100000000],
+            ['outlet_id' => 3, 'user_id' => null, 'target_amount' => 80000000],
+        ];
+        foreach ($targets as $t) {
+            DB::table('sales_targets')->insert([
+                'outlet_id' => $t['outlet_id'], 'user_id' => $t['user_id'],
+                'year' => (int) $now->format('Y'), 'month' => (int) $now->format('m'),
+                'target_amount' => $t['target_amount'],
+                'created_at' => $now, 'updated_at' => $now,
+            ]);
+        }
+    }
+
+    // ================================================================
+    // SUPPLIER RATINGS — agar widget Ringkasan Skor Supplier terisi
+    // ================================================================
+    private function seedSupplierRatings(Carbon $now): void
+    {
+        $pos = DB::table('purchase_orders')->where('status', 'received')->get();
+        if ($pos->isEmpty()) {
+            return;
+        }
+        $notes = ['Pengiriman cepat, barang lengkap.', 'Kualitas stabil, harga bersaing.', 'Kadang telat 1-2 hari.', 'Respon admin cepat, recommended.', 'Kemasan rapi, tidak ada retur.'];
+        $ratings = [];
+        foreach ($this->supplierIds as $supplierId) {
+            $supplierPos = $pos->where('supplier_id', $supplierId)->take(3);
+            if ($supplierPos->isEmpty()) {
+                continue;
+            }
+            foreach ($supplierPos as $po) {
+                $scores = [random_int(3, 5), random_int(3, 5), random_int(3, 5), random_int(3, 5)];
+                $ratings[] = [
+                    'supplier_id' => $supplierId, 'purchase_order_id' => $po->id,
+                    'on_time' => $scores[0], 'quality' => $scores[1],
+                    'price_competitiveness' => $scores[2], 'communication' => $scores[3],
+                    'avg_score' => round(array_sum($scores) / 4, 1),
+                    'notes' => $notes[array_rand($notes)],
+                    'created_at' => $now->copy()->subDays(random_int(0, 20)), 'updated_at' => $now,
+                ];
+            }
+        }
+        foreach (array_chunk($ratings, 50) as $chunk) {
+            DB::table('supplier_ratings')->insert($chunk);
+        }
+    }
+
+    // ================================================================
+    // PENDING APPROVAL ORDERS — agar widget Menunggu Approval terisi
+    // ================================================================
+    private function seedPendingApprovalOrders($faker, Carbon $now): void
+    {
+        $nextId = (int) DB::table('orders')->max('id') + 1;
+        for ($k = 0; $k < 4; $k++) {
+            $orderDate = $now->copy()->subHours(random_int(1, 30));
+            $outletId = $this->outletIds[array_rand($this->outletIds)];
+            $pids = $this->pickRandomProducts(random_int(1, 3));
+            $subtotal = 0;
+            $items = [];
+            foreach ($pids as $pid) {
+                $qty = random_int(2, 10);
+                $line = $qty * $this->products[$pid]['sell'];
+                $subtotal += $line;
+                $items[] = [
+                    'order_id' => $nextId, 'product_id' => $pid, 'product_variant_id' => null,
+                    'quantity' => $qty, 'unit_price' => $this->products[$pid]['sell'],
+                    'discount_percent' => 0, 'discount_amount' => 0, 'subtotal' => $line,
+                    'created_at' => $orderDate, 'updated_at' => $orderDate,
+                ];
+            }
+            $total = $subtotal + round($subtotal * 0.11);
+            $orderNumber = 'INV-' . $orderDate->format('Ymd') . '-' . str_pad((string) $nextId, 5, '0', STR_PAD_LEFT);
+            DB::table('orders')->insert([
+                'order_number' => $orderNumber, 'customer_id' => null,
+                'outlet_id' => $outletId, 'user_id' => 4,
+                'order_type' => 'walk_in', 'subtotal' => $subtotal,
+                'discount_amount' => 0, 'tax_amount' => round($subtotal * 0.11),
+                'total_amount' => $total, 'payment_status' => 'pending',
+                'order_status' => 'pending_approval',
+                'notes' => 'Butuh approval manager: ' . $faker->sentence,
+                'created_at' => $orderDate, 'updated_at' => $orderDate,
+            ]);
+            DB::table('order_items')->insert($items);
+            $nextId++;
+        }
+    }
+
+    // ================================================================
+    // LOW STOCK — sebagian produk dibuat di bawah stok minimum
+    // ================================================================
+    private function seedLowStockProducts(): void
+    {
+        $ids = DB::table('products')->inRandomOrder()->limit(10)->pluck('id', 'min_stock');
+        foreach ($ids as $minStock => $id) {
+            DB::table('products')->where('id', $id)->update([
+                'current_stock' => max(0, ((int) $minStock) - random_int(1, 5)),
+            ]);
+        }
+    }
+
+    // ================================================================
+    // EXPIRING PRODUCTS — agar widget FEFO terisi
+    // ================================================================
+    private function seedExpiringProducts(Carbon $now): void
+    {
+        $ids = DB::table('products')
+            ->whereIn('category_id', [1, 2, 8, 9, 10, 11])
+            ->where('current_stock', '>', 0)
+            ->inRandomOrder()->limit(12)->pluck('id');
+        $i = 0;
+        foreach ($ids as $id) {
+            $days = [-4, -1, 2, 5, 9, 14, 20, 27][($i++) % 8];
+            DB::table('products')->where('id', $id)->update([
+                'batch_number' => 'B' . $now->format('Ym') . '-' . str_pad((string) $id, 4, '0', STR_PAD_LEFT),
+                'expired_date' => $now->copy()->addDays($days)->format('Y-m-d'),
+            ]);
+        }
     }
 }

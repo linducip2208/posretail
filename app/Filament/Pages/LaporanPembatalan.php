@@ -94,8 +94,8 @@ class LaporanPembatalan extends Page
     protected function trendBase()
     {
         return \Illuminate\Support\Facades\DB::table('orders')
-            ->whereBetween('created_at', [$this->startDate, $this->endDate.' 23:59:59'])
-            ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
-            ->where('order_status', 'cancelled');
+            ->whereBetween('orders.created_at', [$this->startDate, $this->endDate.' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('orders.outlet_id', $this->outletId))
+            ->where('orders.order_status', 'cancelled');
     }
 }
