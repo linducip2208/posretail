@@ -24,22 +24,24 @@
 }
 
 :root {
-    /* Tabler: primer #206bc4, light #e7f1fb */
-    --primary-50: 231, 241, 251;
-    --primary-100: 219, 232, 247;
-    --primary-200: 186, 211, 239;
-    --primary-300: 137, 182, 228;
-    --primary-400: 84, 148, 213;
-    --primary-500: 32, 107, 196;
-    --primary-600: 27, 90, 165;
-    --primary-700: 24, 75, 138;
-    --primary-800: 24, 63, 113;
-    --primary-900: 22, 55, 95;
-    --primary-950: 15, 38, 68;
+    /* POS Retail brand palette (dari aset desain):
+       Primary #2563EB, Secondary #3B82F6, Success #10B981,
+       Warning #F59E0B, Error #EF4444, Neutral #64748B */
+    --primary-50: 239, 246, 255;
+    --primary-100: 219, 234, 254;
+    --primary-200: 191, 219, 254;
+    --primary-300: 147, 197, 253;
+    --primary-400: 96, 165, 250;
+    --primary-500: 37, 99, 235;
+    --primary-600: 29, 78, 216;
+    --primary-700: 30, 64, 175;
+    --primary-800: 30, 58, 138;
+    --primary-900: 30, 58, 138;
+    --primary-950: 23, 37, 84;
     --sidebar-bg: 255, 255, 255;
     --sidebar-fg: 15, 23, 42;
-    --card-radius: 8px;
-    --body-bg: 245, 247, 251;
+    --card-radius: 12px;
+    --body-bg: 241, 245, 249;
 }
 
 body {
@@ -51,65 +53,65 @@ body {
 }
 
 .fi-sidebar {
-    background: #1a2233 !important;
-    border-right: 1px solid #1a2233;
+    background: #ffffff !important;
+    border-right: 1px solid #e2e8f0;
 }
 
 .fi-sidebar-header {
-    background: #1a2233;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
     padding: 16px;
 }
 
 .fi-sidebar-header .fi-logo {
-    color: #fff;
+    color: #0f172a;
 }
 
 .fi-sidebar-item {
     margin: 2px 8px;
-    color: #dbe2ec;
+    color: #334155;
 }
 
 .fi-sidebar-item .fi-sidebar-item-btn {
-    border-radius: 8px;
+    border-radius: 12px;
     min-height: 40px;
-    color: #dbe2ec;
+    color: #334155;
 }
 
 .fi-sidebar-item .fi-sidebar-item-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-    color: #fff;
+    background: #eff6ff;
+    color: #1d4ed8;
 }
 
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-    background: rgba(76, 155, 232, 0.16);
-    color: #fff;
+    background: #eff6ff;
+    color: #1d4ed8;
     font-weight: 600;
-    box-shadow: inset 3px 0 0 #4c9be8;
+    box-shadow: inset 3px 0 0 #2563eb;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-icon {
-    color: #6aa5e8;
+    color: #2563eb;
 }
 
 .fi-sidebar-item .fi-sidebar-item-icon {
-    color: #b8c2d4;
+    color: #64748b;
 }
 
 .fi-sidebar-item .fi-sidebar-item-label {
-    color: #dbe2ec;
+    color: #334155;
 }
 
 .fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-label {
-    color: #fff;
+    color: #1d4ed8;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
-    color: #fff;
+    color: #1d4ed8;
 }
 
 .fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-icon {
-    color: #fff;
+    color: #2563eb;
 }
 
 .dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
@@ -126,7 +128,7 @@ body {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     font-weight: 700;
-    color: #9aa6bb;
+    color: #64748b;
     padding: 10px 16px 4px;
 }
 
@@ -294,23 +296,23 @@ textarea.fi-textarea:focus {
 }
 
 .fi-btn {
-    border-radius: 8px !important;
+    border-radius: 12px !important;
     font-weight: 600 !important;
     transition: all 0.2s ease !important;
 }
 
 .fi-btn.fi-color {
-    background: rgb(var(--primary-500)) !important;
-    box-shadow: none !important;
+    background: #2563eb !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
     border: none !important;
 }
 
 .fi-btn.fi-color:hover {
-    background: rgb(var(--primary-600)) !important;
+    background: #1d4ed8 !important;
 }
 
 .fi-btn.fi-color:active {
-    background: rgb(var(--primary-700)) !important;
+    background: #1e40af !important;
 }
 
 ::-webkit-scrollbar {
@@ -384,7 +386,7 @@ textarea.fi-textarea:focus {
 
 .fi-login-left-panel {
     width: 50%;
-    background: linear-gradient(160deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+    background: linear-gradient(160deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
     display: flex;
     align-items: center;
     justify-content: center;

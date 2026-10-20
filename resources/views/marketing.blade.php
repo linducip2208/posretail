@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#2563EB">
     <meta name="apple-mobile-web-app-capable" content="yes">
     @php
         $appName = \App\Models\SystemSetting::getAppName();
@@ -48,32 +48,30 @@
         ::selection { background: #4338ca; color: white; }
 
         .gradient-hero {
-            background: linear-gradient(160deg, #0c1d4a 0%, #1e3a8a 20%, #1e40af 40%, #2563eb 60%, #3b82f6 80%, #60a5fa 100%);
+            background: #f8faff;
             position: relative;
             overflow: hidden;
         }
         .gradient-hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -30%;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+            top: -180px;
+            right: -140px;
+            width: 640px;
+            height: 640px;
+            background: radial-gradient(circle, rgba(37,99,235,0.14) 0%, transparent 70%);
             border-radius: 50%;
-            animation: float 8s ease-in-out infinite;
             pointer-events: none;
         }
         .gradient-hero::after {
             content: '';
             position: absolute;
-            bottom: -40%;
-            left: -20%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(96,165,250,0.12) 0%, transparent 70%);
+            bottom: -220px;
+            left: -160px;
+            width: 560px;
+            height: 560px;
+            background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
             border-radius: 50%;
-            animation: float-delay 8s ease-in-out infinite;
             pointer-events: none;
         }
 
@@ -125,7 +123,7 @@
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #a5b4fc 0%, #c7d2fe 40%, #e0e7ff 70%, #a5b4fc 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 60%, #1d4ed8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -149,21 +147,23 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            box-shadow: 0 4px 16px rgba(79,70,229,0.3);
+            background: #2563eb;
+            box-shadow: 0 8px 20px rgba(37,99,235,0.35);
             transition: all 0.3s ease;
         }
         .btn-primary:hover {
+            background: #1d4ed8;
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(79,70,229,0.4);
+            box-shadow: 0 12px 28px rgba(37,99,235,0.4);
         }
         .btn-outline {
-            border: 2px solid rgba(255,255,255,0.25);
+            border: 2px solid #bfdbfe;
+            color: #1d4ed8;
             transition: all 0.3s ease;
         }
         .btn-outline:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.4);
+            background: #eff6ff;
+            border-color: #93c5fd;
         }
 
         .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
@@ -190,80 +190,86 @@
 </head>
 <body class="font-sans antialiased text-gray-900 bg-white">
 
-{{-- NAV --}}
-<nav class="sticky top-0 z-50 border-b border-white/10 text-white" style="background: rgba(15,10,46,0.92); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);">
+{{-- NAV — terang gaya poster --}}
+<nav class="sticky top-0 z-50 border-b border-slate-100 bg-white/90 text-slate-800" style="backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <a href="/" class="flex items-center gap-2.5 group">
                 @if($logoUrl)
                     <img src="{{ $logoUrl }}" alt="{{ $appName }}" class="h-8 w-auto">
                 @else
-                    <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30 transition-transform group-hover:scale-110">
-                        <x-ti name="building-store" class="w-6 h-6 text-[white]" />
-                    </div>
+                    <img src="/assets/posretail/01-logo-posretail.png" alt="POS Retail — Mudah, Cepat, Terpercaya" class="h-8 w-auto">
                 @endif
-                <span class="font-bold text-lg tracking-tight">{{ $appName }}</span>
             </a>
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="#fitur" class="hover:text-indigo-300 transition-colors">Fitur</a>
-                <a href="#harga" class="hover:text-indigo-300 transition-colors">Harga</a>
-                <a href="/docs" class="hover:text-indigo-300 transition-colors">Dokumentasi</a>
-                <a href="/admin/login" class="px-5 py-2.5 bg-white text-indigo-700 rounded-lg font-semibold hover:bg-indigo-50 transition-all shadow-md shadow-indigo-900/20">Login Admin</a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <a href="#fitur" class="hover:text-[#2563eb] transition-colors">Fitur</a>
+                <a href="#harga" class="hover:text-[#2563eb] transition-colors">Harga</a>
+                <a href="/docs" class="hover:text-[#2563eb] transition-colors">Dokumentasi</a>
+                <a href="/admin/login" class="px-5 py-2.5 bg-[#2563eb] text-white rounded-xl font-semibold hover:bg-[#1d4ed8] transition-all shadow-md shadow-blue-600/25">Login Admin</a>
             </div>
         </div>
     </div>
 </nav>
 
-{{-- HERO --}}
-<section class="gradient-hero text-white pt-28 pb-36 px-4 min-h-[650px] flex items-center">
-    <div class="particles absolute inset-0 pointer-events-none" id="particles"></div>
-    <div class="max-w-5xl mx-auto text-center relative z-10">
-        <div class="inline-flex items-center gap-2 bg-white/10 rounded-full px-5 py-2 text-sm mb-10 backdrop-blur border border-white/10">
-            <span class="relative flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span>
-            </span>
-            <span class="text-indigo-200">POS Retail v1.0 — Sistem Kasir Modern</span>
+{{-- HERO — gaya poster: terang, headline biru, mockup HP asli dari aset --}}
+<section class="gradient-hero text-slate-900 pt-14 pb-20 px-4">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
+        <div>
+            <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-full px-5 py-2 text-sm mb-6">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+                <span class="text-[#1d4ed8] font-semibold">POS Retail — Mudah • Cepat • Terpercaya</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4 text-slate-900">
+                Kelola Toko Lebih Mudah,<br>
+                <span class="text-[#2563eb]">Lebih Cepat, Lebih Untung!</span>
+            </h1>
+            <p class="text-base md:text-lg text-slate-600 max-w-xl mb-4 leading-relaxed">
+                {{ $heroSub }}
+            </p>
+            <p class="text-sm text-slate-500 italic mb-8">Satu Sistem Semua Kebutuhan Retail Anda!</p>
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                <a href="#fitur" class="px-8 py-3.5 btn-primary text-white rounded-xl font-bold text-base inline-flex items-center gap-2 justify-center">
+                    Jelajahi Fitur
+                    <x-ti name="arrow-right" class="w-5 h-5" />
+                </a>
+                <a href=https://wa.me/{{ $wa }}" target="_blank" rel="noopener" class="px-8 py-3.5 rounded-xl font-bold text-base inline-flex items-center gap-2 justify-center bg-[#10b981] text-white hover:bg-[#059669] transition-all shadow-lg shadow-emerald-500/30">
+                    Hubungi Kami
+                    <x-ti name="arrow-right" class="w-5 h-5" />
+                </a>
+            </div>
+            <div class="flex items-center gap-3 mb-8">
+                <img src="/assets/posretail/02-icon-android.png" alt="Ikon Android POS Retail" class="h-10 w-10 rounded-xl shadow">
+                <div class="text-sm">
+                    <div class="font-bold text-slate-900">Aplikasi Android Tersedia di Play Store</div>
+                    <div class="text-slate-500">Web &amp; Android, online dan offline.</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 max-w-lg">
+                <div class="flex items-start gap-3 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                    <span class="w-10 h-10 rounded-full bg-[#10b981] text-white flex items-center justify-center font-bold shrink-0">✓</span>
+                    <div><div class="font-bold text-slate-900 text-sm">Multi-Outlet</div><div class="text-xs text-slate-500">Banyak cabang dalam satu sistem.</div></div>
+                </div>
+                <div class="flex items-start gap-3 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                    <span class="w-10 h-10 rounded-full bg-[#2563eb] text-white flex items-center justify-center font-bold shrink-0">☁</span>
+                    <div><div class="font-bold text-slate-900 text-sm">Akses Kapan Saja</div><div class="text-xs text-slate-500">Web &amp; Android.</div></div>
+                </div>
+                <div class="flex items-start gap-3 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                    <span class="w-10 h-10 rounded-full bg-[#f59e0b] text-white flex items-center justify-center font-bold shrink-0">◈</span>
+                    <div><div class="font-bold text-slate-900 text-sm">Keamanan Data</div><div class="text-xs text-slate-500">Akses, backup, enkripsi.</div></div>
+                </div>
+                <div class="flex items-start gap-3 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                    <span class="w-10 h-10 rounded-full bg-[#8b5cf6] text-white flex items-center justify-center font-bold shrink-0">↗</span>
+                    <div><div class="font-bold text-slate-900 text-sm">Efisiensi</div><div class="text-xs text-slate-500">Lebih cepat &amp; akurat.</div></div>
+                </div>
+            </div>
         </div>
-        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-8">
-            {{ $heroHeadline }}
-            @unless (str_ends_with(trim($heroHeadline), 'untuk Toko Retail Anda'))
-                <br>
-                <span class="gradient-text">untuk Toko Retail Anda</span>
-            @endunless
-        </h1>
-        <p class="text-lg md:text-xl text-indigo-200 max-w-2xl mx-auto mb-12 leading-relaxed">
-            {{ $heroSub }}
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#fitur" class="px-8 py-3.5 btn-primary text-white rounded-xl font-bold text-lg inline-flex items-center gap-2 justify-center">
-                Jelajahi Fitur
-                <x-ti name="arrow-right" class="w-5 h-5" />
-            </a>
-            @if(\App\Support\DemoMode::enabled())
-            <a href="#demo" class="px-8 py-3.5 btn-outline rounded-xl font-bold text-lg inline-flex items-center gap-2 justify-center">
-                Coba Akun Demo
-                <x-ti name="arrow-right" class="w-5 h-5" />
-            </a>
-            @endif
-        </div>
-        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-5 max-w-4xl mx-auto">
-            <div class="glass rounded-2xl p-5 backdrop-blur-xl">
-                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="10">0</span>+</div>
-                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Outlet per Instalasi</div>
-            </div>
-            <div class="glass rounded-2xl p-5 backdrop-blur-xl">
-                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="10000">0</span>+</div>
-                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Produk Terkelola</div>
-            </div>
-            <div class="glass rounded-2xl p-5 backdrop-blur-xl">
-                <div class="text-3xl font-extrabold gradient-text"><span class="counter" data-target="1000">0</span>+</div>
-                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Transaksi per Hari</div>
-            </div>
-            <div class="glass rounded-2xl p-5 backdrop-blur-xl">
-                <div class="text-3xl font-extrabold gradient-text">99.9<span class="text-lg">%</span></div>
-                <div class="text-xs text-indigo-200 mt-1.5 font-medium">Uptime</div>
-            </div>
+        <div class="flex items-end justify-center gap-4">
+            <img src="/assets/posretail/05-dashboard-screen.png" alt="Layar dashboard aplikasi POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl" loading="lazy">
+            <img src="/assets/posretail/06-product-screen.png" alt="Layar produk aplikasi POS Retail" class="w-44 md:w-56 rounded-[2rem] border-4 border-slate-900 shadow-2xl -mb-4" loading="lazy">
+            <img src="/assets/posretail/07-cart-checkout-screen.png" alt="Layar keranjang dan checkout POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl hidden sm:block" loading="lazy">
         </div>
     </div>
 </section>
@@ -549,7 +555,7 @@
 </section>
 
 {{-- PERCAYA KAMI — Stats Counter --}}
-<section class="py-20 bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white relative overflow-hidden">
+<section class="py-20 text-white relative overflow-hidden" style="background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);">
     <div class="absolute inset-0 opacity-10">
         <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
         <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400 rounded-full blur-3xl"></div>
