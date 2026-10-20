@@ -13,7 +13,9 @@ class RecentOrders extends BaseWidget
 {
     protected static ?int $sort = 2;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = [
+        'md' => 8,
+    ];
 
     protected ?string $pollingInterval = '60s';
 

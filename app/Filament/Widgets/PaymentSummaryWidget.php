@@ -9,7 +9,9 @@ class PaymentSummaryWidget extends Widget
 {
     protected string $view = 'filament.widgets.payment-summary';
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = [
+        'md' => 4,
+    ];
 
     protected static ?int $sort = 4;
 

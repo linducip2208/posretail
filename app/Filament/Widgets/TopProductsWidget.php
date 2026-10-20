@@ -6,13 +6,14 @@ use App\Models\Product;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 
 class TopProductsWidget extends BaseWidget
 {
     protected static ?int $sort = 5;
 
-    protected int|string|array $columnSpan = 1;
+    protected int|string|array $columnSpan = [
+        'md' => 4,
+    ];
 
     protected ?string $pollingInterval = '120s';
 

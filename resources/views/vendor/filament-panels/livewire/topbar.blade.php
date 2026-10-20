@@ -104,6 +104,19 @@
             @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_AFTER) }}
+
+            @php
+                $topbarOutlets = filament()->auth()->check() ? auth()->user()?->accessibleOutlets()?->get() : collect();
+            @endphp
+            @if ($topbarOutlets && $topbarOutlets->isNotEmpty())
+                <a href="/admin/outlets" title="Kelola outlet" class="fi-topbar-outlet-chip">
+                    <span class="fi-topbar-outlet-dot"></span>
+                    <span class="fi-topbar-outlet-name">{{ $topbarOutlets->first()->name }}</span>
+                    @if ($topbarOutlets->count() > 1)
+                        <span class="fi-topbar-outlet-more">+{{ $topbarOutlets->count() - 1 }}</span>
+                    @endif
+                </a>
+            @endif
         </div>
 
         @if ($hasTopNavigation || (! $hasNavigation))

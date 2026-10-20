@@ -109,6 +109,25 @@
         <nav class="fi-sidebar-nav">
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
+            {{-- Pencarian menu (filter sisi klien, tanpa mengubah navigasi). --}}
+            <div
+                @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                    x-show="$store.sidebar.isOpen"
+                @endif
+                class="fi-sidebar-search"
+                x-data="{ q: '' }"
+            >
+                <svg class="fi-sidebar-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input
+                    x-model="q"
+                    x-on:input="$el.closest('.fi-sidebar').querySelectorAll('.fi-sidebar-item').forEach((el) => { const t = (el.innerText || '').toLowerCase(); el.style.display = (! $data.q || t.includes($data.q.toLowerCase())) ? '' : 'none'; })"
+                    type="search"
+                    placeholder="Cari menu…"
+                    aria-label="Cari menu navigasi"
+                    class="fi-sidebar-search-input"
+                />
+            </div>
+
             <ul class="fi-sidebar-nav-groups">
                 @foreach ($navigation as $group)
                     @php

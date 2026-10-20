@@ -125,10 +125,10 @@ body {
 
 /* Satu aksen: menu aktif latar biru muda + teks biru + indikator kiri. */
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-    background: var(--pos-primary-soft);
-    color: var(--pos-primary);
+    background: var(--pos-primary);
+    color: #ffffff;
     font-weight: 600;
-    box-shadow: inset 3px 0 0 var(--pos-primary);
+    box-shadow: 0 1px 2px rgba(8, 120, 249, 0.4);
 }
 
 /* Aksen oranye identitas: hanya ikon POS Kasir. */
@@ -151,12 +151,16 @@ body {
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
-    color: var(--pos-primary);
+    color: #ffffff;
 }
 
 .fi-sidebar-item.fi-active .fi-sidebar-item-icon,
 .fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-icon {
     color: var(--pos-primary);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
+    color: #ffffff;
 }
 
 .dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
@@ -173,8 +177,43 @@ body {
     letter-spacing: 0.06em;
     text-transform: uppercase;
     font-weight: 700;
-    color: #64748b;
+    color: #64748B;
     padding: 10px 16px 4px;
+}
+
+/* Pencarian menu sidebar. */
+.fi-sidebar-search {
+    position: relative;
+    margin: 4px 12px 8px;
+}
+.fi-sidebar-search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--pos-text-muted);
+    pointer-events: none;
+}
+.fi-sidebar-search-input {
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 10px 6px 32px;
+    font-size: 13px;
+    color: var(--pos-text);
+    background: var(--pos-surface-hover);
+    border: 1px solid var(--pos-border);
+    border-radius: 8px;
+}
+.fi-sidebar-search-input::placeholder {
+    color: var(--pos-text-muted);
+}
+.fi-sidebar-search-input:focus {
+    outline: none;
+    border-color: var(--pos-primary);
+    box-shadow: 0 0 0 3px rgba(8, 120, 249, 0.14);
+    background: #ffffff;
 }
 
 .fi-topbar {
@@ -182,6 +221,46 @@ body {
     background: var(--pos-surface) !important;
     border-bottom: 1px solid var(--pos-border);
     box-shadow: none;
+}
+
+/* Chip konteks outlet di topbar. */
+.fi-topbar-outlet-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-left: 12px;
+    padding: 5px 12px 5px 9px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--pos-text);
+    background: var(--pos-surface-hover);
+    border: 1px solid var(--pos-border);
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.fi-topbar-outlet-chip:hover {
+    border-color: var(--pos-primary-border);
+    color: var(--pos-primary);
+}
+.fi-topbar-outlet-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--pos-success);
+    flex: none;
+}
+.fi-topbar-outlet-name {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.fi-topbar-outlet-more {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--pos-primary);
+    border-radius: 999px;
+    padding: 1px 7px;
 }
 
 .dark .fi-topbar {
