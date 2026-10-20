@@ -85,8 +85,24 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
-        <h3 class="font-semibold text-gray-900 mb-4">Grafik Penjualan</h3>
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-gray-900">Grafik Penjualan</h3>
+            <span class="text-xs text-gray-400">Batang = pendapatan • Garis = jumlah transaksi</span>
+        </div>
         <div class="rp-chart rp-chart--tall"><canvas id="salesChart"></canvas></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h3 class="font-semibold text-gray-900 mb-1">Komposisi Metode Bayar</h3>
+            <p class="text-xs text-gray-400 mb-4">Kontribusi pendapatan per metode</p>
+            <div class="rp-chart rp-chart--doughnut"><canvas id="paymentMixChart"></canvas></div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h3 class="font-semibold text-gray-900 mb-1">Top 10 Produk (Pendapatan)</h3>
+            <p class="text-xs text-gray-400 mb-4">Berdasarkan periode terpilih</p>
+            <div class="rp-chart rp-chart--doughnut"><canvas id="topProductChart"></canvas></div>
+        </div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
@@ -204,11 +220,28 @@
 @include('filament.pages.partials.report-charts')
 <script>
 (function() {
-    PosChart.bar('salesChart', {
+    PosChart.mixed('salesChart', {
         labels: {!! json_encode($this->chartLabels) !!},
+        barLabel: 'Pendapatan',
+        barData: {!! json_encode($this->chartData) !!},
+        lineLabel: 'Transaksi',
+        lineData: {!! json_encode($this->chartOrders) !!},
+        barColor: '#2563eb',
+        lineColor: '#f59e0b',
+    });
+    PosChart.doughnut('paymentMixChart', {
+        labels: {!! json_encode($this->revenueByPayment->pluck('method')->toArray()) !!},
+        data: {!! json_encode($this->revenueByPayment->pluck('total')->map(fn ($v) => (float) $v)->toArray()) !!},
+        centerTitle: 'Total',
+        centerValue: PosChart.compact(@json($this->revenueByPayment->sum('total'))),
+    });
+    PosChart.bar('topProductChart', {
+        horizontal: true,
+        labels: {!! json_encode($this->topProducts->pluck('name')->toArray()) !!},
         datasets: [{
             label: 'Pendapatan',
-            data: {!! json_encode($this->chartData) !!},
+            data: {!! json_encode($this->topProducts->pluck('total_revenue')->map(fn ($v) => (float) $v)->toArray()) !!},
+            color: '#10b981',
         }],
     });
 })();

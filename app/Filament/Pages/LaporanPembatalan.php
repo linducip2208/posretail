@@ -59,4 +59,43 @@ class LaporanPembatalan extends Page
     {
         return $this->queryBase()->count();
     }
+
+    public function getTrendLabelsProperty(): array
+    {
+        return $this->trendBase()
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d') as period")
+            ->groupBy('period')
+            ->orderBy('period')
+            ->pluck('period')
+            ->toArray();
+    }
+
+    public function getTrendDataProperty(): array
+    {
+        return $this->trendBase()
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d') as period, COUNT(*) as total")
+            ->groupBy('period')
+            ->orderBy('period')
+            ->pluck('total')
+            ->map(fn ($v) => (int) $v)
+            ->toArray();
+    }
+
+    public function getByOutletProperty()
+    {
+        return $this->trendBase()
+            ->join('outlets', 'orders.outlet_id', '=', 'outlets.id')
+            ->selectRaw('outlets.name as outlet, COUNT(*) as total')
+            ->groupBy('outlets.id', 'outlets.name')
+            ->orderByDesc('total')
+            ->get();
+    }
+
+    protected function trendBase()
+    {
+        return \Illuminate\Support\Facades\DB::table('orders')
+            ->whereBetween('created_at', [$this->startDate, $this->endDate.' 23:59:59'])
+            ->when($this->outletId, fn ($q) => $q->where('outlet_id', $this->outletId))
+            ->where('order_status', 'cancelled');
+    }
 }

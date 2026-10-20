@@ -64,14 +64,8 @@ class LaporanPenjualan extends Page
 
     public function getChartLabelsProperty(): array
     {
-        $format = match ($this->groupBy) {
-            'weekly' => '%x-W%v',
-            'monthly' => '%Y-%m',
-            default => '%Y-%m-%d',
-        };
-
         return $this->queryBase()
-            ->selectRaw("DATE_FORMAT(created_at, '{$format}') as period")
+            ->selectRaw("DATE_FORMAT(created_at, '{$this->periodFormat()}') as period")
             ->groupBy('period')
             ->orderBy('period')
             ->pluck('period')
@@ -80,19 +74,33 @@ class LaporanPenjualan extends Page
 
     public function getChartDataProperty(): array
     {
-        $format = match ($this->groupBy) {
-            'weekly' => '%x-W%v',
-            'monthly' => '%Y-%m',
-            default => '%Y-%m-%d',
-        };
-
         return $this->queryBase()
-            ->selectRaw("DATE_FORMAT(created_at, '{$format}') as period, SUM(total_amount) as total")
+            ->selectRaw("DATE_FORMAT(created_at, '{$this->periodFormat()}') as period, SUM(total_amount) as total")
             ->groupBy('period')
             ->orderBy('period')
             ->pluck('total')
             ->map(fn ($v) => (float) $v)
             ->toArray();
+    }
+
+    public function getChartOrdersProperty(): array
+    {
+        return $this->queryBase()
+            ->selectRaw("DATE_FORMAT(created_at, '{$this->periodFormat()}') as period, COUNT(*) as total")
+            ->groupBy('period')
+            ->orderBy('period')
+            ->pluck('total')
+            ->map(fn ($v) => (int) $v)
+            ->toArray();
+    }
+
+    protected function periodFormat(): string
+    {
+        return match ($this->groupBy) {
+            'weekly' => '%x-W%v',
+            'monthly' => '%Y-%m',
+            default => '%Y-%m-%d',
+        };
     }
 
     public function getTopProductsProperty()

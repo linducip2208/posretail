@@ -10,7 +10,9 @@ if (!window.PosChart) {
         'use strict';
 
         var FONT = "'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif";
-        var PALETTE = ['#6366f1', '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#f43f5e', '#14b8a6', '#3b82f6', '#a855f7', '#f97316'];
+        /* Palet brand POS Retail: Primary #2563EB, Secondary #3B82F6,
+           Success #10B981, Warning #F59E0B, Error #EF4444, Neutral #64748B. */
+        var PALETTE = ['#2563eb', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#14b8a6', '#f97316', '#64748b'];
         var registry = new Set();
 
         function dark() {
@@ -331,6 +333,83 @@ if (!window.PosChart) {
             });
         }
 
+        /* Combo bar (uang) + garis (jumlah) dengan dua sumbu. */
+        function mixed(target, opts) {
+            opts = opts || {};
+            var barColor = opts.barColor || PALETTE[0];
+            var lineColor = opts.lineColor || PALETTE[3];
+            return init(target, function () {
+                return {
+                    type: 'bar',
+                    data: {
+                        labels: opts.labels || [],
+                        datasets: [
+                            {
+                                type: 'bar',
+                                label: opts.barLabel || '',
+                                data: (opts.barData || []).map(num),
+                                backgroundColor: function (c) { return barGradient(c, barColor, false); },
+                                hoverBackgroundColor: alpha(barColor, 1),
+                                borderWidth: 0,
+                                borderRadius: 9,
+                                borderSkipped: false,
+                                maxBarThickness: 36,
+                                barPercentage: 0.72,
+                                categoryPercentage: 0.66,
+                                yAxisID: 'y'
+                            },
+                            {
+                                type: 'line',
+                                label: opts.lineLabel || '',
+                                data: (opts.lineData || []).map(num),
+                                borderColor: lineColor,
+                                backgroundColor: areaGradient(lineColor),
+                                fill: true,
+                                tension: 0.42,
+                                borderWidth: 2.6,
+                                borderCapStyle: 'round',
+                                pointRadius: 0,
+                                pointHitRadius: 14,
+                                pointHoverRadius: 5,
+                                pointHoverBorderWidth: 3,
+                                pointHoverBackgroundColor: '#ffffff',
+                                pointHoverBorderColor: lineColor,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 800, easing: 'easeOutQuart' },
+                        layout: { padding: { top: 8, right: 8 } },
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: legendOptions(true),
+                            tooltip: tooltipOptions(opts.money !== false)
+                        },
+                        scales: {
+                            x: scaleOptions(false, false).x,
+                            y: scaleOptions(true, false).y,
+                            y1: {
+                                beginAtZero: true,
+                                position: 'right',
+                                grid: { display: false },
+                                border: { display: false },
+                                ticks: {
+                                    color: tickColor(),
+                                    padding: 6,
+                                    maxTicksLimit: 5,
+                                    precision: 0,
+                                    font: { family: FONT, size: 11, weight: '500' }
+                                }
+                            }
+                        }
+                    }
+                };
+            });
+        }
+
         function doughnut(target, opts) {
             opts = opts || {};
             var isMoney = opts.money !== false;
@@ -386,6 +465,7 @@ if (!window.PosChart) {
             thousand: thousand,
             bar: bar,
             line: line,
+            mixed: mixed,
             doughnut: doughnut
         };
     })();

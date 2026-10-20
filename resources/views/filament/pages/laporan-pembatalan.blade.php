@@ -43,6 +43,19 @@
         </div>
     </div>
 
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h3 class="font-semibold text-gray-900 mb-1">Tren Pembatalan Harian</h3>
+            <p class="text-xs text-gray-400 mb-4">Jumlah order batal per hari</p>
+            <div class="rp-chart"><canvas id="cancelTrendChart"></canvas></div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h3 class="font-semibold text-gray-900 mb-1">Pembatalan per Outlet</h3>
+            <p class="text-xs text-gray-400 mb-4">Distribusi order batal</p>
+            <div class="rp-chart rp-chart--doughnut"><canvas id="cancelOutletChart"></canvas></div>
+        </div>
+    </div>
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-4 border-b border-gray-100">
             <h2 class="font-bold text-gray-800">Daftar Order Dibatalkan</h2>
@@ -87,3 +100,25 @@
         </div>
     </div>
 </div>
+
+@include('filament.pages.partials.report-charts')
+<script>
+(function() {
+    PosChart.bar('cancelTrendChart', {
+        money: false,
+        labels: {!! json_encode($this->trendLabels) !!},
+        datasets: [{
+            label: 'Order Batal',
+            data: {!! json_encode($this->trendData) !!},
+            color: '#ef4444',
+        }],
+    });
+    PosChart.doughnut('cancelOutletChart', {
+        money: false,
+        labels: {!! json_encode($this->byOutlet->pluck('outlet')->toArray()) !!},
+        data: {!! json_encode($this->byOutlet->pluck('total')->map(fn ($v) => (int) $v)->toArray()) !!},
+        centerTitle: 'Total Batal',
+        centerValue: PosChart.thousand(@json($this->totalCount)),
+    });
+})();
+</script>
