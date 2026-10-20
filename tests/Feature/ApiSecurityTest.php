@@ -166,4 +166,20 @@ class ApiSecurityTest extends TestCase
             ->assertOk()
             ->assertHeader('X-Request-ID');
     }
+
+    public function test_semua_endpoint_data_wajib_auth(): void
+    {
+        $this->ctx();
+        foreach ([
+            '/api/v1/products', '/api/v1/orders/history', '/api/v1/users',
+            '/api/v1/reports/sales', '/api/v1/user', '/api/v1/customers',
+            '/api/v1/purchase-orders', '/api/v1/suppliers', '/api/v1/returns',
+            '/api/v1/users', '/api/v1/roles', '/api/v1/attendances/today',
+            '/api/pos/products',
+        ] as $uri) {
+            $this->getJson($uri)->assertStatus(401);
+        }
+        // Login tanpa body tetap validasi (tidak terbuka bebas)
+        $this->postJson('/api/v1/login')->assertStatus(422);
+    }
 }
