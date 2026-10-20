@@ -17,55 +17,8 @@
 <x-filament-panels::layout.base :livewire="$livewire">
     @if ($isLogin)
         <div class="fi-login-split-wrapper">
-            <div class="fi-login-left-panel">
-                <div class="fi-login-left-content">
-                    <div class="fi-login-left-logo">
-                        <x-ti name="building-store" class="w-9 h-9 text-white/90" />
-                        <span>POS Retail</span>
-                    </div>
-                    <div class="fi-login-illustration">
-                        @if($loginIllustration)
-                            <img src="{{ $loginIllustration }}" alt="POS Illustration" style="max-width:100%;max-height:240px;object-fit:contain;">
-                        @else
-                            <svg viewBox="0 0 400 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Desk/Counter -->
-                                <rect x="60" y="200" width="280" height="16" rx="4" fill="rgba(255,255,255,0.15)"/>
-                                <rect x="80" y="216" width="240" height="80" rx="6" fill="rgba(255,255,255,0.08)"/>
-                                <!-- POS Monitor -->
-                                <rect x="180" y="120" width="120" height="78" rx="8" fill="rgba(255,255,255,0.12)"/>
-                                <rect x="188" y="128" width="104" height="62" rx="4" fill="rgba(255,255,255,0.06)"/>
-                                <rect x="230" y="68" width="20" height="54" rx="3" fill="rgba(255,255,255,0.1)"/>
-                                <rect x="220" y="66" width="40" height="6" rx="3" fill="rgba(255,255,255,0.15)"/>
-                                <!-- Monitor screen -->
-                                <rect x="192" y="132" width="40" height="4" rx="2" fill="rgba(255,255,255,0.25)"/>
-                                <rect x="192" y="140" width="60" height="3" rx="1.5" fill="rgba(255,255,255,0.15)"/>
-                                <rect x="192" y="147" width="48" height="3" rx="1.5" fill="rgba(255,255,255,0.15)"/>
-                                <!-- Receipt printer -->
-                                <rect x="140" y="175" width="50" height="25" rx="4" fill="rgba(255,255,255,0.1)"/>
-                                <rect x="150" y="180" width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.15)"/>
-                                <!-- Receipt paper -->
-                                <path d="M155 175 Q165 140 160 100" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="4 3"/>
-                                <!-- Barcode scanner -->
-                                <rect x="310" y="190" width="34" height="10" rx="3" fill="rgba(255,255,255,0.1)"/>
-                                <rect x="314" y="192" width="12" height="6" rx="1" fill="rgba(255,255,255,0.15)"/>
-                                <!-- Person - head -->
-                                <circle cx="110" cy="105" r="20" fill="rgba(255,255,255,0.2)"/>
-                                <!-- Person - body -->
-                                <path d="M85 160 Q85 125 110 125 Q135 125 135 160" fill="rgba(255,255,255,0.15)"/>
-                                <!-- Person - arms -->
-                                <path d="M85 140 Q60 145 65 170" stroke="rgba(255,255,255,0.2)" stroke-width="8" stroke-linecap="round"/>
-                                <path d="M135 140 Q160 135 155 165" stroke="rgba(255,255,255,0.2)" stroke-width="8" stroke-linecap="round"/>
-                                <!-- Shopping bags -->
-                                <rect x="250" y="195" width="20" height="18" rx="2" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-                                <path d="M254 195 Q260 188 266 195" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none"/>
-                            </svg>
-                        @endif
-                    </div>
-                    <div class="fi-login-left-text">
-                        <h2>Kelola Bisnis Retail</h2>
-                        <p>Point of Sale, Inventori, Laporan — semua dalam satu dashboard.</p>
-                    </div>
-                </div>
+            <div class="fi-login-left-panel" style="padding:0;overflow:hidden;">
+                <img src="/assets/posretail/poster-login.png" alt="POS Retail — Kelola Toko Lebih Mudah, Lebih Cepat, Lebih Untung" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;min-height:100vh;">
             </div>
             <div class="fi-login-right-panel">
                 <div class="fi-login-right-inner">
