@@ -12,7 +12,7 @@ class ManagerChartWidget extends ChartWidget
     protected static ?int $sort = 6;
 
     protected int|string|array $columnSpan = [
-        'md' => 8,
+        'md' => 1,
     ];
 
     protected ?string $pollingInterval = '300s';

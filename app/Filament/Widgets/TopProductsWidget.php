@@ -12,7 +12,7 @@ class TopProductsWidget extends BaseWidget
     protected static ?int $sort = 5;
 
     protected int|string|array $columnSpan = [
-        'md' => 4,
+        'md' => 1,
     ];
 
     protected ?string $pollingInterval = '120s';

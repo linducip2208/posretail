@@ -14,7 +14,7 @@ class ExpiringProductsWidget extends BaseWidget
     protected static ?int $sort = 4;
 
     protected int|string|array $columnSpan = [
-        'md' => 6,
+        'md' => 1,
     ];
 
     protected ?string $pollingInterval = '300s';

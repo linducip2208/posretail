@@ -402,6 +402,26 @@ body {
     color: #667382;
 }
 
+/* ---- Aksen warna per card dashboard (badan tetap putih) ---- */
+.fi-wi-table .fi-ta-ctn,
+.fi-wi-chart .fi-section {
+    border-top: 3px solid var(--wi-accent, #0878F9);
+}
+.fi-wi-mod-recent-orders,
+.fi-wi-mod-kasir-today-widget,
+.fi-wi-mod-manager-chart-widget { --wi-accent: #0878F9; }
+.fi-wi-mod-realtime-dashboard-widget,
+.fi-wi-mod-sales-target-progress-widget,
+.fi-wi-mod-cash-flow-forecast-widget { --wi-accent: #16A34A; }
+.fi-wi-mod-top-products-widget { --wi-accent: #FF9800; }
+.fi-wi-mod-low-stock-alert { --wi-accent: #D97706; }
+.fi-wi-mod-expiring-products-widget { --wi-accent: #DC2626; }
+.fi-wi-mod-pending-approvals-widget,
+.fi-wi-mod-supplier-score-summary-widget { --wi-accent: #0284C7; }
+.fi-wi-mod-demand-forecast-widget,
+.fi-wi-mod-rfm-analysis-widget,
+.fi-wi-mod-warehouse-stock-widget { --wi-accent: #173B70; }
+
 .fi-badge {
     border-radius: 999px !important;
     font-weight: 600 !important;

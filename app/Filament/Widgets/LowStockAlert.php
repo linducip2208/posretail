@@ -12,7 +12,7 @@ class LowStockAlert extends BaseWidget
     protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = [
-        'md' => 6,
+        'md' => 1,
     ];
 
     protected ?string $pollingInterval = '120s';
