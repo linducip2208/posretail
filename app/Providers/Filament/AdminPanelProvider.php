@@ -34,17 +34,17 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn () => new HtmlString('<img src="' . (SystemSetting::getLogoUrl() ?: '/assets/posretail/01-logo-posretail.png') . '" alt="POS Retail" style="height:2rem">'))
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop(true)
-            ->sidebarWidth('16rem')
+            ->sidebarWidth('15rem')
             ->collapsedSidebarWidth('4.5rem')
             ->databaseNotifications(true)
             ->favicon('/assets/posretail/02-icon-android.png')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => Color::hex('#2563EB'),
-                'success' => Color::hex('#10B981'),
+                'primary' => Color::hex('#1769F5'),
+                'success' => Color::hex('#16A875'),
                 'warning' => Color::hex('#F59E0B'),
-                'danger' => Color::hex('#EF4444'),
-                'gray' => Color::hex('#64748B'),
+                'danger' => Color::hex('#E45858'),
+                'gray' => Color::hex('#607895'),
             ])
             ->navigationGroups([
                 NavigationGroup::make('Penjualan')->collapsed(false),
