@@ -22,6 +22,12 @@ class StockMovementResource extends Resource
 
     protected static ?int $navigationSort = 6;
 
+    protected static ?string $navigationLabel = 'Mutasi Stok';
+
+    protected static ?string $label = 'Mutasi Stok';
+
+    protected static ?string $pluralLabel = 'Mutasi Stok';
+
     protected static ?string $model = StockMovement::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-arrows-exchange';

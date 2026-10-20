@@ -22,6 +22,12 @@ class CustomerResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationLabel = 'Pelanggan';
+
+    protected static ?string $label = 'Pelanggan';
+
+    protected static ?string $pluralLabel = 'Pelanggan';
+
     protected static ?string $model = Customer::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-users';

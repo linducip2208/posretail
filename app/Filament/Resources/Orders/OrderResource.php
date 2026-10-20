@@ -26,6 +26,10 @@ class OrderResource extends Resource
 
     protected static ?string $navigationLabel = 'Daftar Penjualan';
 
+    protected static ?string $label = 'Penjualan';
+
+    protected static ?string $pluralLabel = 'Daftar Penjualan';
+
     protected static ?string $model = Order::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-shopping-bag';

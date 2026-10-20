@@ -20,8 +20,10 @@ class OrdersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('order_number')
+                    ->label('No. Order')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('order_type')
@@ -30,11 +32,14 @@ class OrdersTable
                     ->sortable(),
                 TextColumn::make('queue_number')
                     ->label('Antrian')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('customer.name')
+                    ->label('Pelanggan')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('outlet.name')
+                    ->label('Outlet')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('user.name')
@@ -46,23 +51,29 @@ class OrdersTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('subtotal')
+                    ->label('Subtotal')
                     ->numeric()
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('discount_amount')
+                    ->label('Diskon')
                     ->numeric()
                     ->money('IDR')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('tax_amount')
+                    ->label('Pajak')
                     ->numeric()
                     ->money('IDR')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('total_amount')
+                    ->label('Total')
                     ->numeric()
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold'),
                 TextColumn::make('deposit_amount')
                     ->label('DP')
                     ->numeric()
@@ -70,12 +81,15 @@ class OrdersTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('payment_status')
+                    ->label('Pembayaran')
                     ->badge()
                     ->sortable(),
                 TextColumn::make('order_status')
+                    ->label('Status')
                     ->badge()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Tanggal')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

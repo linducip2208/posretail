@@ -22,6 +22,12 @@ class InstallmentResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $navigationLabel = 'Cicilan';
+
+    protected static ?string $label = 'Cicilan';
+
+    protected static ?string $pluralLabel = 'Cicilan';
+
     protected static ?string $model = Installment::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-calendar';

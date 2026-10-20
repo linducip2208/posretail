@@ -22,6 +22,12 @@ class BrandResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    protected static ?string $navigationLabel = 'Merek';
+
+    protected static ?string $label = 'Merek';
+
+    protected static ?string $pluralLabel = 'Merek';
+
     protected static ?string $model = Brand::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-bookmark';

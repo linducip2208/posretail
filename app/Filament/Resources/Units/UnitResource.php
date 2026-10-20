@@ -22,6 +22,12 @@ class UnitResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    protected static ?string $navigationLabel = 'Satuan';
+
+    protected static ?string $label = 'Satuan';
+
+    protected static ?string $pluralLabel = 'Satuan';
+
     protected static ?string $model = Unit::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-scale';

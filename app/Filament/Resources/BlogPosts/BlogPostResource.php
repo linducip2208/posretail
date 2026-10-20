@@ -22,6 +22,12 @@ class BlogPostResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationLabel = 'Artikel Blog';
+
+    protected static ?string $label = 'Artikel Blog';
+
+    protected static ?string $pluralLabel = 'Artikel Blog';
+
     protected static ?string $model = BlogPost::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-newspaper';

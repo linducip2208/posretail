@@ -22,6 +22,12 @@ class PurchaseOrderResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationLabel = 'Order Pembelian';
+
+    protected static ?string $label = 'Order Pembelian';
+
+    protected static ?string $pluralLabel = 'Order Pembelian';
+
     protected static ?string $model = PurchaseOrder::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-copy';

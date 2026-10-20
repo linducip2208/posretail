@@ -22,6 +22,12 @@ class CategoryResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $navigationLabel = 'Kategori';
+
+    protected static ?string $label = 'Kategori';
+
+    protected static ?string $pluralLabel = 'Kategori';
+
     protected static ?string $model = Category::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-folder';

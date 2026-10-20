@@ -22,6 +22,12 @@ class AttendanceResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $navigationLabel = 'Absensi';
+
+    protected static ?string $label = 'Absensi';
+
+    protected static ?string $pluralLabel = 'Absensi';
+
     protected static ?string $model = Attendance::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-clock';

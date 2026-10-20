@@ -22,6 +22,12 @@ class SupplierResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationLabel = 'Supplier';
+
+    protected static ?string $label = 'Supplier';
+
+    protected static ?string $pluralLabel = 'Daftar Supplier';
+
     protected static ?string $model = Supplier::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-building';

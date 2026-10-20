@@ -22,6 +22,12 @@ class CustomerGroupResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $navigationLabel = 'Grup Pelanggan';
+
+    protected static ?string $label = 'Grup Pelanggan';
+
+    protected static ?string $pluralLabel = 'Grup Pelanggan';
+
     protected static ?string $model = CustomerGroup::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-users';

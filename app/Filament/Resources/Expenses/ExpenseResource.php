@@ -22,6 +22,12 @@ class ExpenseResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
+    protected static ?string $navigationLabel = 'Pengeluaran';
+
+    protected static ?string $label = 'Pengeluaran';
+
+    protected static ?string $pluralLabel = 'Pengeluaran';
+
     protected static ?string $model = Expense::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-currency-dollar';

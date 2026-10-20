@@ -24,6 +24,12 @@ class OutletResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationLabel = 'Outlet';
+
+    protected static ?string $label = 'Outlet';
+
+    protected static ?string $pluralLabel = 'Daftar Outlet';
+
     protected static ?string $model = Outlet::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-building-store';

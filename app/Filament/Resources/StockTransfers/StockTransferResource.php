@@ -23,6 +23,12 @@ class StockTransferResource extends Resource
 
     protected static ?int $navigationSort = 7;
 
+    protected static ?string $navigationLabel = 'Transfer Stok';
+
+    protected static ?string $label = 'Transfer Stok';
+
+    protected static ?string $pluralLabel = 'Transfer Stok';
+
     protected static ?string $model = StockTransfer::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-refresh';

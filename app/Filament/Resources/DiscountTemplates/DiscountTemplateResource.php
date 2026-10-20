@@ -22,6 +22,12 @@ class DiscountTemplateResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationLabel = 'Template Diskon';
+
+    protected static ?string $label = 'Template Diskon';
+
+    protected static ?string $pluralLabel = 'Template Diskon';
+
     protected static ?string $model = DiscountTemplate::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-ticket';

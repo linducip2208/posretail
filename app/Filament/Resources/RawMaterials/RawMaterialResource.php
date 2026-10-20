@@ -22,6 +22,12 @@ class RawMaterialResource extends Resource
 
     protected static ?int $navigationSort = 8;
 
+    protected static ?string $navigationLabel = 'Bahan Baku';
+
+    protected static ?string $label = 'Bahan Baku';
+
+    protected static ?string $pluralLabel = 'Bahan Baku';
+
     protected static ?string $model = RawMaterial::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-flask';

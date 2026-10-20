@@ -22,6 +22,12 @@ class StockOpnameResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    protected static ?string $navigationLabel = 'Stock Opname';
+
+    protected static ?string $label = 'Stock Opname';
+
+    protected static ?string $pluralLabel = 'Stock Opname';
+
     protected static ?string $model = StockOpname::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-clipboard-check';

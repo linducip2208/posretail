@@ -22,6 +22,12 @@ class BlogCategoryResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $navigationLabel = 'Kategori Blog';
+
+    protected static ?string $label = 'Kategori Blog';
+
+    protected static ?string $pluralLabel = 'Kategori Blog';
+
     protected static ?string $model = BlogCategory::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-tag';

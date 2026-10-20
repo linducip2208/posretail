@@ -22,6 +22,12 @@ class PaymentMethodResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $navigationLabel = 'Metode Pembayaran';
+
+    protected static ?string $label = 'Metode Pembayaran';
+
+    protected static ?string $pluralLabel = 'Metode Pembayaran';
+
     protected static ?string $model = PaymentMethod::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'tabler-credit-card';
