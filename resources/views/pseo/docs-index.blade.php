@@ -149,7 +149,7 @@
                             <div class="browser-dot red"></div><div class="browser-dot yellow"></div><div class="browser-dot green"></div>
                             <div class="browser-url">pos-retail/admin/{{ $item['screenshot'] ?? 'dashboard' }}</div>
                         </div>
-                        <img src="/marketing/screens/{{ $item['screenshot'] ?? 'dashboard' }}.png" alt="{{ $item['title'] }}" class="w-full" loading="lazy" onerror="this.style.display='none'">
+                        <img src="/marketing/screens/{{ $item['screenshot'] ?? 'dashboard' }}.png?v=20261020c" alt="{{ $item['title'] }}" class="w-full" loading="lazy" onerror="this.style.display='none'">
                     </div>
                 </div>
                 <div class="md:w-1/2">
