@@ -215,9 +215,55 @@ class MobileParityApiTest extends TestCase
         $this->getJson('/api/v1/reports/sales')->assertForbidden();
     }
 
+    public function test_batch2_serial_gift_delivery_marketplace_payable(): void
+    {
+        $this->actingAs($this->owner, 'api');
+
+        \App\Models\Brand::create(['name' => 'Indofood', 'slug' => 'indofood', 'active' => true]);
+        $this->getJson('/api/v1/brands')->assertOk()->assertJsonPath('meta.total', 1);
+
+        $this->getJson('/api/v1/serials')->assertOk();
+        $this->getJson('/api/v1/gift-cards')->assertOk();
+        $this->getJson('/api/v1/customer-groups')->assertOk();
+        $this->getJson('/api/v1/sales-targets')->assertOk();
+        $this->getJson('/api/v1/marketplace-orders')->assertOk();
+
+        // Delivery advance sesuai alur web
+        $order = \App\Models\Order::create([
+            'order_number' => 'INV-T-00002', 'outlet_id' => $this->outlet->id,
+            'user_id' => $this->owner->id, 'subtotal' => 50000, 'total_amount' => 55500,
+            'payment_status' => 'paid', 'order_status' => 'completed',
+        ]);
+        $delivery = \App\Models\Delivery::create([
+            'delivery_number' => 'DLV-T-00001', 'order_id' => $order->id,
+            'outlet_id' => $this->outlet->id, 'status' => 'pending',
+            'shipping_address' => 'Jl. Test 1', 'recipient_name' => 'Budi', 'recipient_phone' => '0811',
+        ]);
+        $this->getJson('/api/v1/deliveries')->assertOk();
+        $this->postJson('/api/v1/deliveries/' . $delivery->id . '/advance')->assertOk()
+            ->assertJsonPath('data.status', 'packed');
+
+        // Payable + bayar (tolak lebih bayar)
+        $payable = \App\Models\SupplierPayable::create([
+            'supplier_id' => Supplier::first()->id, 'total_amount' => 100000,
+            'paid_amount' => 0, 'status' => 'pending',
+        ]);
+        $this->getJson('/api/v1/supplier-payables')->assertOk();
+        $this->postJson('/api/v1/supplier-payables/' . $payable->id . '/pay', ['amount' => 150000])
+            ->assertStatus(422);
+        $this->postJson('/api/v1/supplier-payables/' . $payable->id . '/pay', ['amount' => 40000])
+            ->assertOk()->assertJsonPath('data.status', 'partial');
+        $this->postJson('/api/v1/supplier-payables/' . $payable->id . '/pay', ['amount' => 60000])
+            ->assertOk()->assertJsonPath('data.status', 'paid');
+
+        // Kasir tidak boleh payable & deliveries
+        $this->actingAs($this->kasir, 'api');
+        $this->getJson('/api/v1/supplier-payables')->assertForbidden();
+        $this->getJson('/api/v1/deliveries')->assertForbidden();
+    }
+
     public function test_katalog_pelengkap_dan_expense_dan_shift(): void
     {
-        \App\Models\Brand::create(['name' => 'Indofood', 'slug' => 'indofood', 'active' => true]);
         \App\Models\Unit::create(['name' => 'Pcs', 'code' => 'PCS']);
 
         $this->actingAs($this->kasir, 'api');

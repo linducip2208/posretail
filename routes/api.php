@@ -98,6 +98,15 @@ Route::prefix('v1')->group(function () {
         // Mobile parity: katalog & operasional pelengkap
         Route::get('/brands', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'brands']);
         Route::get('/units', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'units']);
+        Route::get('/serials', [\App\Http\Controllers\Api\V1\CatalogLookupController::class, 'serials']);
+        Route::get('/gift-cards', [\App\Http\Controllers\Api\V1\CatalogLookupController::class, 'giftCards']);
+        Route::get('/customer-groups', [\App\Http\Controllers\Api\V1\CatalogLookupController::class, 'customerGroups']);
+        Route::get('/sales-targets', [\App\Http\Controllers\Api\V1\CatalogLookupController::class, 'salesTargets']);
+        Route::get('/deliveries', [\App\Http\Controllers\Api\V1\FulfillmentController::class, 'deliveries']);
+        Route::post('/deliveries/{delivery}/advance', [\App\Http\Controllers\Api\V1\FulfillmentController::class, 'advanceDelivery']);
+        Route::get('/marketplace-orders', [\App\Http\Controllers\Api\V1\FulfillmentController::class, 'marketplaceOrders']);
+        Route::get('/supplier-payables', [\App\Http\Controllers\Api\V1\PayableController::class, 'index']);
+        Route::post('/supplier-payables/{supplierPayable}/pay', [\App\Http\Controllers\Api\V1\PayableController::class, 'pay']);
         Route::get('/expenses', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'expenses']);
         Route::post('/expenses', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'storeExpense']);
         Route::get('/shifts', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'shifts']);
