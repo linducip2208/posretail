@@ -268,26 +268,26 @@
                 </div>
             </div>
         </div>
-        <div class="relative">
-            <div class="browser-mock">
-                <div class="browser-mock-header">
-                    <div class="browser-dot red"></div>
-                    <div class="browser-dot yellow"></div>
-                    <div class="browser-dot green"></div>
-                    <div class="browser-url">posretail.test/admin</div>
-                </div>
-                <img src="/marketing/screens/dashboard.png?v={{ $shotV }}" alt="Dashboard terbaru POS Retail" class="w-full" loading="eager">
+        <div class="relative flex justify-center items-start gap-5">
+            <div class="w-52 md:w-64 shrink-0 rounded-[2.2rem] border-[6px] border-slate-900 shadow-2xl overflow-hidden bg-white">
+                <img src="/marketing/screens-mobile/pos-web.png?v={{ $shotV }}" alt="Aplikasi POS Retail di handphone" class="w-full h-[480px] md:h-[560px] object-cover object-top" loading="eager">
             </div>
-            <div class="browser-mock absolute -bottom-8 -right-2 sm:-right-6 w-1/2 hidden sm:block">
-                <div class="browser-mock-header">
-                    <div class="browser-dot red"></div>
-                    <div class="browser-dot yellow"></div>
-                    <div class="browser-dot green"></div>
-                    <div class="browser-url">posretail.test/pos</div>
+            <div class="hidden md:flex flex-col gap-4 max-w-xs pt-6">
+                <div class="rounded-3xl overflow-hidden shadow-xl border border-blue-100">
+                    <img src="/assets/posretail/13-banner-and-empty-state.png" alt="Banner aplikasi POS Retail Mobile" class="w-full h-44 object-cover object-center" loading="lazy">
                 </div>
-                <img src="/marketing/screens/pos-web.png?v={{ $shotV }}" alt="POS Kasir terbaru POS Retail" class="w-full" loading="lazy">
+                <div class="bg-slate-900 text-white rounded-3xl p-5 shadow-xl">
+                    <div class="flex items-center gap-3 mb-2">
+                        <img src="/assets/posretail/02-icon-android.png" alt="Ikon Android" class="h-10 w-10 rounded-xl">
+                        <div class="font-bold leading-tight">Aplikasi Android<br><span class="text-slate-300 text-sm font-medium">Tersedia di Play Store</span></div>
+                    </div>
+                    <a href=https://wa.me/{{ $wa }}?text={{ urlencode('Halo, saya mau info aplikasi Android POS Retail') }}" target="_blank" rel="noopener" class="mt-3 flex items-center justify-center gap-2 bg-white text-slate-900 rounded-xl px-4 py-2.5 text-sm font-bold hover:bg-blue-50 transition-colors">
+                        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M3.6 2.3 13.7 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1zm11.6 8.1L4.9 1.9l11.8 6.8-1.5 1.7zm1.5 3.2 1.5 1.7-11.8 6.8 10.3-8.5zM19 10.3c.6.3.9.8.9 1.4v.6c0 .6-.3 1.1-.9 1.4l-1.3.7-2-2.4 2-2.4 1.3.7z"/></svg>
+                        GET IT ON Google Play
+                    </a>
+                </div>
             </div>
-            <div class="absolute -top-4 -left-2 sm:-left-4 bg-white border border-slate-100 rounded-2xl shadow-lg px-4 py-2.5 text-sm font-bold text-slate-800">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:-left-2 bg-white border border-slate-100 rounded-2xl shadow-lg px-4 py-2.5 text-sm font-bold text-slate-800 whitespace-nowrap">
                 <span class="text-[#2563eb]">●</span> Live dari aplikasi
             </div>
         </div>
