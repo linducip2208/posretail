@@ -86,7 +86,18 @@ Seeder akan menyiapkan:
 >    php artisan tinker --execute="App\Models\User::create(['name' => 'Owner', 'email' => 'owner@domainanda.com', 'password' => bcrypt('KataSandiKuat!'), 'role' => 'owner', 'active' => true]);"
 >    php artisan db:seed --class=RolePermissionSeeder --force
 >    ```
-> 4. Login akun demo (`*@pos-retail.test`) harus **gagal** di produksi.
+> 4. **Mode jualan (demo wajib ada di produksi):** aktifkan 5 akun demo
+>    tanpa menghapus data bisnis (idempoten, aman diulang):
+>    ```bash
+>    php artisan pos:enable-demo --force
+>    ```
+>    Untuk menampilkan kotak/tombol demo di halaman publik saat presentasi:
+>    ```env
+>    POS_DEMO_MODE=true
+>    ```
+>    lalu `php artisan config:cache`. Selesai presentasi, matikan lagi:
+>    `php artisan pos:disable-demo-accounts --force` + `POS_DEMO_MODE=false`.
+> 5. Tanpa mode jualan, login akun demo (`*@pos-retail.test`) harus **gagal** di produksi.
 
 ---
 
