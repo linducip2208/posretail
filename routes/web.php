@@ -51,6 +51,7 @@ Route::get('/sitemap-static.xml', [SitemapController::class, 'staticSitemap'])->
 Route::get('/sitemap-blog.xml', [SitemapController::class, 'blogSitemap'])->name('sitemap.blog');
 Route::get('/sitemap-pseo-{chunk}.xml', [SitemapController::class, 'pseoSitemap'])->name('sitemap.pseo')->where('chunk', '[0-9]+');
 Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html');
+Route::get('/llms.txt', [SitemapController::class, 'llms'])->name('llms');
 
 Route::get('/export/laporan/penjualan', [ReportExportController::class, 'sales'])->name('export.sales')->middleware('auth');
 Route::get('/export/laporan/penjualan-item', [ReportExportController::class, 'salesItems'])->name('export.sales.items')->middleware('auth');

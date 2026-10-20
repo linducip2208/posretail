@@ -200,7 +200,7 @@ class ProgrammaticSeoController extends Controller
             $out .= "Jika Anda mencari aplikasi POS di <strong>{$data['city']['name']}</strong> dan sekitarnya, {$brand} adalah solusi tepat. ";
         }
 
-        $out .= "Aplikasi ini dilengkapi fitur lengkap: multi-outlet, inventori real-time, payment gateway dinamis (QRIS, GoPay, OVO), laporan penjualan & keuangan, program loyalitas pelanggan, API v1, role-based access, dan anti-fraud.</p>";
+        $out .= "Aplikasi ini dilengkapi fitur lengkap: multi-outlet, inventori real-time (FEFO, IMEI, bin location), approval workflow, payment gateway dinamis (QRIS, GoPay, OVO), laporan penjualan & keuangan (laba rugi, neraca, kas, komisi), demand forecast, program loyalitas pelanggan, rating supplier, target penjualan, API v1 + webhook, role-based access, dan anti-fraud.</p>";
 
         if ($data['city']) {
             $out .= "<p><strong>Butuh aplikasi POS di {$data['city']['name']}?</strong> {$brand} sudah digunakan oleh berbagai toko retail di Indonesia. Source code bisa dibeli dan di-custom sesuai kebutuhan. <strong>Lifetime update, 6 bulan support.</strong></p>";
