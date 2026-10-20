@@ -53,13 +53,13 @@ body {
 }
 
 .fi-sidebar {
-    background: #ffffff !important;
+    background: linear-gradient(180deg, #f8faff 0%, #ffffff 30%) !important;
     border-right: 1px solid #e2e8f0;
 }
 
 .fi-sidebar-header {
-    background: #ffffff;
-    border-bottom: 1px solid #f1f5f9;
+    background: transparent;
+    border-bottom: 1px solid #eef2f7;
     padding: 16px;
 }
 
@@ -74,44 +74,98 @@ body {
 
 .fi-sidebar-item .fi-sidebar-item-btn {
     border-radius: 12px;
-    min-height: 40px;
+    min-height: 44px;
     color: #334155;
 }
 
-.fi-sidebar-item .fi-sidebar-item-btn:hover {
-    background: #eff6ff;
-    color: #1d4ed8;
+/* Ikon jadi chip berwarna per grup menu */
+.fi-sidebar-item .fi-sidebar-item-icon {
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    border-radius: 10px;
+    flex: none;
 }
 
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
-    background: #eff6ff;
-    color: #1d4ed8;
-    font-weight: 600;
+/* Grup tanpa label: Dasbor (biru) & POS Kasir (hijau) */
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:first-child .fi-sidebar-item-icon {
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.12);
+}
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:nth-child(2) .fi-sidebar-item-icon {
+    color: #059669;
+    background: rgba(16, 185, 129, 0.14);
+}
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:first-child.fi-active > .fi-sidebar-item-btn {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.16), rgba(37, 99, 235, 0.05));
     box-shadow: inset 3px 0 0 #2563eb;
 }
-
-.fi-sidebar-item.fi-active .fi-sidebar-item-icon {
-    color: #2563eb;
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:nth-child(2).fi-active > .fi-sidebar-item-btn {
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.06));
+    box-shadow: inset 3px 0 0 #10b981;
+}
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:nth-child(2).fi-active .fi-sidebar-item-label,
+.fi-sidebar-group[data-group-label=""] .fi-sidebar-item:nth-child(2).fi-active .fi-sidebar-item-icon {
+    color: #047857;
 }
 
-.fi-sidebar-item .fi-sidebar-item-icon {
-    color: #64748b;
-}
+/* Penjualan — biru */
+.fi-sidebar-group[data-group-label="Penjualan"] .fi-sidebar-item-icon { color: #2563eb; background: rgba(37, 99, 235, 0.12); }
+.fi-sidebar-group[data-group-label="Penjualan"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(37, 99, 235, 0.16), rgba(37, 99, 235, 0.05)); box-shadow: inset 3px 0 0 #2563eb; }
+.fi-sidebar-group[data-group-label="Penjualan"] .fi-active .fi-sidebar-item-label { color: #1d4ed8; }
+/* Operasional — cyan */
+.fi-sidebar-group[data-group-label="Operasional"] .fi-sidebar-item-icon { color: #0891b2; background: rgba(6, 182, 212, 0.14); }
+.fi-sidebar-group[data-group-label="Operasional"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(6, 182, 212, 0.16), rgba(6, 182, 212, 0.05)); box-shadow: inset 3px 0 0 #06b6d4; }
+.fi-sidebar-group[data-group-label="Operasional"] .fi-active .fi-sidebar-item-label { color: #0e7490; }
+/* Inventory — amber */
+.fi-sidebar-group[data-group-label="Inventory"] .fi-sidebar-item-icon { color: #d97706; background: rgba(245, 158, 11, 0.15); }
+.fi-sidebar-group[data-group-label="Inventory"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.06)); box-shadow: inset 3px 0 0 #f59e0b; }
+.fi-sidebar-group[data-group-label="Inventory"] .fi-active .fi-sidebar-item-label { color: #b45309; }
+/* Pembelian — ungu */
+.fi-sidebar-group[data-group-label="Pembelian"] .fi-sidebar-item-icon { color: #7c3aed; background: rgba(139, 92, 246, 0.13); }
+.fi-sidebar-group[data-group-label="Pembelian"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(139, 92, 246, 0.16), rgba(139, 92, 246, 0.05)); box-shadow: inset 3px 0 0 #8b5cf6; }
+.fi-sidebar-group[data-group-label="Pembelian"] .fi-active .fi-sidebar-item-label { color: #6d28d9; }
+/* Pelanggan — pink */
+.fi-sidebar-group[data-group-label="Pelanggan"] .fi-sidebar-item-icon { color: #db2777; background: rgba(236, 72, 153, 0.13); }
+.fi-sidebar-group[data-group-label="Pelanggan"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(236, 72, 153, 0.15), rgba(236, 72, 153, 0.05)); box-shadow: inset 3px 0 0 #ec4899; }
+.fi-sidebar-group[data-group-label="Pelanggan"] .fi-active .fi-sidebar-item-label { color: #be185d; }
+/* Promo — merah */
+.fi-sidebar-group[data-group-label="Promo"] .fi-sidebar-item-icon { color: #e11d48; background: rgba(244, 63, 94, 0.12); }
+.fi-sidebar-group[data-group-label="Promo"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(244, 63, 94, 0.15), rgba(244, 63, 94, 0.05)); box-shadow: inset 3px 0 0 #f43f5e; }
+.fi-sidebar-group[data-group-label="Promo"] .fi-active .fi-sidebar-item-label { color: #be123c; }
+/* Laporan — teal */
+.fi-sidebar-group[data-group-label="Laporan"] .fi-sidebar-item-icon { color: #0d9488; background: rgba(20, 184, 166, 0.14); }
+.fi-sidebar-group[data-group-label="Laporan"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(20, 184, 166, 0.16), rgba(20, 184, 166, 0.05)); box-shadow: inset 3px 0 0 #14b8a6; }
+.fi-sidebar-group[data-group-label="Laporan"] .fi-active .fi-sidebar-item-label { color: #0f766e; }
+/* Keuangan — oranye */
+.fi-sidebar-group[data-group-label="Keuangan"] .fi-sidebar-item-icon { color: #ea580c; background: rgba(249, 115, 22, 0.13); }
+.fi-sidebar-group[data-group-label="Keuangan"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(249, 115, 22, 0.16), rgba(249, 115, 22, 0.05)); box-shadow: inset 3px 0 0 #f97316; }
+.fi-sidebar-group[data-group-label="Keuangan"] .fi-active .fi-sidebar-item-label { color: #c2410c; }
+/* Akuntansi — indigo */
+.fi-sidebar-group[data-group-label="Akuntansi"] .fi-sidebar-item-icon { color: #4f46e5; background: rgba(99, 102, 241, 0.13); }
+.fi-sidebar-group[data-group-label="Akuntansi"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(99, 102, 241, 0.16), rgba(99, 102, 241, 0.05)); box-shadow: inset 3px 0 0 #6366f1; }
+.fi-sidebar-group[data-group-label="Akuntansi"] .fi-active .fi-sidebar-item-label { color: #4338ca; }
+/* Sistem — abu */
+.fi-sidebar-group[data-group-label="Sistem"] .fi-sidebar-item-icon { color: #475569; background: rgba(100, 116, 139, 0.14); }
+.fi-sidebar-group[data-group-label="Sistem"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(100, 116, 139, 0.18), rgba(100, 116, 139, 0.06)); box-shadow: inset 3px 0 0 #64748b; }
+.fi-sidebar-group[data-group-label="Sistem"] .fi-active .fi-sidebar-item-label { color: #334155; }
+/* Website — langit */
+.fi-sidebar-group[data-group-label="Website"] .fi-sidebar-item-icon { color: #0284c7; background: rgba(14, 165, 233, 0.13); }
+.fi-sidebar-group[data-group-label="Website"] .fi-active > .fi-sidebar-item-btn { background: linear-gradient(90deg, rgba(14, 165, 233, 0.16), rgba(14, 165, 233, 0.05)); box-shadow: inset 3px 0 0 #0ea5e9; }
+.fi-sidebar-group[data-group-label="Website"] .fi-active .fi-sidebar-item-label { color: #0369a1; }
 
-.fi-sidebar-item .fi-sidebar-item-label {
-    color: #334155;
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    font-weight: 700;
 }
-
-.fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-label {
-    color: #1d4ed8;
-}
-
 .fi-sidebar-item.fi-active .fi-sidebar-item-label {
     color: #1d4ed8;
 }
 
-.fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-icon {
-    color: #2563eb;
+.fi-sidebar-item .fi-sidebar-item-btn:hover {
+    background: #eef4ff;
+}
+.fi-sidebar-item .fi-sidebar-item-btn:hover .fi-sidebar-item-label {
+    color: #1d4ed8;
 }
 
 .dark .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
