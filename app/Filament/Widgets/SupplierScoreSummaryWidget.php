@@ -49,22 +49,27 @@ class SupplierScoreSummaryWidget extends BaseWidget
 
                 TextColumn::make('avg_on_time')
                     ->label('Ketepatan Waktu')
+                    ->html()
                     ->formatStateUsing(fn (float $state): string => self::renderStars($state)),
 
                 TextColumn::make('avg_quality')
                     ->label('Kualitas')
+                    ->html()
                     ->formatStateUsing(fn (float $state): string => self::renderStars($state)),
 
                 TextColumn::make('avg_price')
                     ->label('Daya Saing Harga')
+                    ->html()
                     ->formatStateUsing(fn (float $state): string => self::renderStars($state)),
 
                 TextColumn::make('avg_communication')
                     ->label('Komunikasi')
+                    ->html()
                     ->formatStateUsing(fn (float $state): string => self::renderStars($state)),
 
                 TextColumn::make('avg_overall')
                     ->label('Rata-rata')
+                    ->html()
                     ->formatStateUsing(fn (float $state): string => self::renderStars($state) . ' (' . $state . ')'),
             ])
             ->heading('Ringkasan Skor Supplier')
@@ -75,19 +80,19 @@ class SupplierScoreSummaryWidget extends BaseWidget
 
     protected static function renderStars(float $score): string
     {
-        $rounded = (int) round($score);
+        // Bintang kompak (1 span, bukan 5 SVG) agar ringan & rapi.
+        $filled = (int) round($score);
         $color = match (true) {
             $score >= 4 => 'text-[#2fb344]',
             $score >= 3 => 'text-[#f59f00]',
             default => 'text-[#d63939]',
         };
-        $out = '';
+        $out = '<span class="' . $color . '" style="letter-spacing:2px;font-size:15px;line-height:1;white-space:nowrap;" aria-label="Skor ' . $score . ' dari 5">';
         for ($i = 1; $i <= 5; $i++) {
-            $out .= $i <= $rounded
-                ? \App\Support\TablerIcons::svg('star-filled', 'inline h-4 w-4 ' . $color)
-                : \App\Support\TablerIcons::svg('star', 'inline h-4 w-4 text-slate-300');
+            $out .= $i <= $filled ? '★' : '<span class="text-slate-300">★</span>';
         }
-        return $out;
+
+        return $out . '</span>';
     }
 
     protected static function isVisibleToRole(?string $role): bool
