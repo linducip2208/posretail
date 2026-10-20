@@ -16,13 +16,16 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->searchable(),
                 TextColumn::make('role')
+                    ->label('Peran')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'owner' => 'danger',
@@ -33,21 +36,24 @@ class UsersTable
                         default => 'gray',
                     }),
                 TextColumn::make('roles.name')
-                    ->label('Role Permission')
+                    ->label('Hak Akses')
                     ->badge()
                     ->color('primary')
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diubah')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
+                    ->label('Dihapus')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

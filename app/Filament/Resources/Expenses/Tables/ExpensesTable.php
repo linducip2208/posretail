@@ -14,6 +14,7 @@ class ExpensesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('expense_date')
                     ->label('Tanggal')
@@ -46,7 +47,8 @@ class ExpensesTable
                 TextColumn::make('description')
                     ->label('Deskripsi')
                     ->searchable()
-                    ->limit(50),
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('reference_number')
                     ->label('Nomor Referensi')

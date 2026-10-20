@@ -13,20 +13,26 @@ class CustomerGroupsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Grup')
                     ->searchable(),
                 TextColumn::make('discount_percent')
+                    ->label('Diskon %')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('min_spent')
+                    ->label('Min. Belanja')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Diubah')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
