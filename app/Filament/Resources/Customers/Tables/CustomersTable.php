@@ -14,25 +14,36 @@ class CustomersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Pelanggan')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
+                    ->label('Email')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('phone')
+                    ->label('Telepon')
                     ->searchable(),
                 TextColumn::make('customerGroup.name')
+                    ->label('Grup')
+                    ->badge()
                     ->searchable(),
                 TextColumn::make('total_points')
+                    ->label('Poin')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('total_spent')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Belanja')
+                    ->money('IDR')
+                    ->sortable()
+                    ->weight('bold'),
                 IconColumn::make('active')
+                    ->label('Aktif')
                     ->boolean(),
                 TextColumn::make('created_at')
+                    ->label('Terdaftar')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -19,56 +19,87 @@ class ProductsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Produk')
                     ->searchable(),
                 TextColumn::make('slug')
-                    ->searchable(),
+                    ->label('Slug')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('category.name')
+                    ->label('Kategori')
                     ->searchable(),
                 TextColumn::make('brand.name')
+                    ->label('Merek')
                     ->searchable(),
                 TextColumn::make('unit.name')
-                    ->searchable(),
+                    ->label('Satuan')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('outlet.name')
-                    ->searchable(),
+                    ->label('Outlet')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('sku')
                     ->label('SKU')
                     ->searchable(),
                 TextColumn::make('barcode')
-                    ->searchable(),
+                    ->label('Barcode')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 ImageColumn::make('barcode_image')
                     ->getStateUsing(fn ($record) => $record->barcode ? route('barcode.image', ['code' => $record->barcode, 'width' => 1, 'height' => 25]) : null)
                     ->label('Barcode')
                     ->size(120)
-                    ->defaultImageUrl(null),
+                    ->defaultImageUrl(null)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('cost_price')
+                    ->label('Modal')
                     ->money('IDR')
                     ->sortable(),
                 TextColumn::make('selling_price')
+                    ->label('Jual')
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold'),
                 TextColumn::make('wholesale_price')
+                    ->label('Grosir')
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('member_price')
+                    ->label('Member')
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('min_stock')
+                    ->label('Min')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('max_stock')
+                    ->label('Maks')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('current_stock')
+                    ->label('Stok')
                     ->numeric()
                     ->sortable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                    ->label('Foto')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('has_variants')
-                    ->boolean(),
+                    ->label('Varian')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('active')
+                    ->label('Aktif')
                     ->boolean(),
                 TextColumn::make('created_at')
+                    ->label('Dibuat')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
