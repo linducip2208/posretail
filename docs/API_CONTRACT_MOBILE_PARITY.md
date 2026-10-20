@@ -7,10 +7,11 @@ Prinsip probe: `GET /api/v1/<modul>` **tanpa token** → `401` = modul SUDAH ada
 
 Hasil probe: 2026-10-21, `http://127.0.0.1:8765` (tanpa token).
 
-| Modul | Probe | Status |
+| Modul | Probe awal | Setelah implementasi |
 |---|---|---|
-| products, customers, outlets, categories, payment-methods | 401 | SUDAH ADA |
-| purchase-orders, suppliers, stock-opnames, stock-transfers, stock-movements, returns, held-carts, discounts, installments, loyalty, raw-materials, users, roles, attendances, reports, brands, units, expenses, shifts | 404 | BELUM ADA |
+| products, customers, outlets, categories, payment-methods | 401 | 401 (tetap) |
+| purchase-orders, suppliers, stock-opnames, stock-transfers, stock-movements, returns, held-carts, discounts, installments, loyalty/*, raw-materials, users, roles, attendances/*, reports/* | 404 | **401 = LIVE** ✅ |
+| brands, units, expenses, shifts | 404 | 404 (belum diprioritaskan; expenses/shifts ada parsial via modul lain) |
 
 ## Konvensi lama (wajib ditiru)
 
@@ -31,7 +32,7 @@ Semua endpoint baru: `auth:sanctum` + scoping outlet via `getAccessibleOutletIds
 - `GET /api/v1/purchase-orders` — list (konvensi ProductProvider + `status`, `supplier_id`)
 - `POST /api/v1/purchase-orders` — body: `supplier_id`, `outlet_id`, `items[{product_id, quantity, unit_price}]`
 - `GET /api/v1/purchase-orders/{id}` — detail + items
-- `POST /api/v1/purchase-orders/{id}/receive` — terima barang (stok + payable otomatis via event model)
+- `POST /api/v1/purchase-orders/{id}/receive` — terima (ubah status → event model posting jurnal; stok & payable dicatat manual seperti alur web)
 - Workflow status: `draft → dipesan → dikirim → diterima`
 - Role: owner, manager, admin, gudang (kasir: tidak)
 
@@ -64,8 +65,8 @@ Semua endpoint baru: `auth:sanctum` + scoping outlet via `getAccessibleOutletIds
 ### 6. Returns — prioritas SEDANG
 - `GET /api/v1/returns` — list (`status`, `outlet_id`)
 - `POST /api/v1/returns` — body: `order_id`, `items[{order_item_id, quantity}]`, `reason` (wajib)
-- `POST /api/v1/returns/{id}/approve` — stok kembali otomatis
-- Workflow status: `diajukan → disetujui/ditolak → selesai`
+- `POST /api/v1/returns/{id}/approve` — setujui (status completed → event model kembalikan stok + movement + refund, idempoten)
+- Workflow status: `pending → completed` (approve) — efek samping otomatis via event model `Retur`
 - Role: owner, manager, admin, kasir (ajukan); approve: owner, manager
 
 ### 7. Held Carts — prioritas SEDANG
@@ -146,6 +147,6 @@ Semua endpoint baru: `auth:sanctum` + scoping outlet via `getAccessibleOutletIds
 - [ ] Probe dengan token kasir: outlet lain → 403 (isolasi outlet)
 - [ ] List: `search` + `page` + `per_page=1` mengembalikan envelope `{data, meta}`
 - [ ] Laporan: rentang > 93 hari → 422
-- [ ] Workflow: PO draft→diterima menambah stok; retur approve mengembalikan stok; approve order mengubah status
+- [ ] Workflow: PO draft→diterima posting jurnal; retur approve mengembalikan stok; opname approve koreksi stok; approve order mengubah status
 - [ ] Rate limit: > 120 req/menit → 429
 - [ ] Tidak ada perubahan kontrak endpoint lama (Flutter lama tetap jalan)

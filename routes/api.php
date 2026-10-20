@@ -45,6 +45,56 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/inventory/forecast', [\App\Http\Controllers\Api\V1\InventoryController::class, 'forecast']);
 
+        // Mobile parity: purchasing & suppliers
+        Route::get('/purchase-orders', [\App\Http\Controllers\Api\V1\PurchaseOrderController::class, 'index']);
+        Route::post('/purchase-orders', [\App\Http\Controllers\Api\V1\PurchaseOrderController::class, 'store']);
+        Route::get('/purchase-orders/{purchaseOrder}', [\App\Http\Controllers\Api\V1\PurchaseOrderController::class, 'show']);
+        Route::post('/purchase-orders/{purchaseOrder}/receive', [\App\Http\Controllers\Api\V1\PurchaseOrderController::class, 'receive']);
+        Route::get('/suppliers', [\App\Http\Controllers\Api\V1\SupplierController::class, 'index']);
+        Route::post('/suppliers', [\App\Http\Controllers\Api\V1\SupplierController::class, 'store']);
+        Route::get('/suppliers/{supplier}', [\App\Http\Controllers\Api\V1\SupplierController::class, 'show']);
+
+        // Mobile parity: inventory operations
+        Route::get('/stock-opnames', [\App\Http\Controllers\Api\V1\StockOpnameController::class, 'index']);
+        Route::post('/stock-opnames', [\App\Http\Controllers\Api\V1\StockOpnameController::class, 'store']);
+        Route::post('/stock-opnames/{stockOpname}/approve', [\App\Http\Controllers\Api\V1\StockOpnameController::class, 'approve']);
+        Route::get('/stock-transfers', [\App\Http\Controllers\Api\V1\StockTransferController::class, 'index']);
+        Route::post('/stock-transfers', [\App\Http\Controllers\Api\V1\StockTransferController::class, 'store']);
+        Route::post('/stock-transfers/{stockTransfer}/send', [\App\Http\Controllers\Api\V1\StockTransferController::class, 'send']);
+        Route::post('/stock-transfers/{stockTransfer}/receive', [\App\Http\Controllers\Api\V1\StockTransferController::class, 'receive']);
+        Route::get('/stock-movements', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'movements']);
+        Route::get('/raw-materials', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'rawMaterials']);
+        Route::post('/raw-materials', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'storeRawMaterial']);
+
+        // Mobile parity: sales extras
+        Route::get('/returns', [\App\Http\Controllers\Api\V1\ReturController::class, 'index']);
+        Route::post('/returns', [\App\Http\Controllers\Api\V1\ReturController::class, 'store']);
+        Route::post('/returns/{retur}/approve', [\App\Http\Controllers\Api\V1\ReturController::class, 'approve']);
+        Route::get('/held-carts', [\App\Http\Controllers\Api\V1\HeldCartController::class, 'index']);
+        Route::post('/held-carts', [\App\Http\Controllers\Api\V1\HeldCartController::class, 'store']);
+        Route::post('/held-carts/{heldCart}/resume', [\App\Http\Controllers\Api\V1\HeldCartController::class, 'resume']);
+        Route::delete('/held-carts/{heldCart}', [\App\Http\Controllers\Api\V1\HeldCartController::class, 'destroy']);
+
+        // Mobile parity: finance extras & loyalty
+        Route::get('/discounts', [\App\Http\Controllers\Api\V1\FinanceExtraController::class, 'discounts']);
+        Route::get('/installments', [\App\Http\Controllers\Api\V1\FinanceExtraController::class, 'installments']);
+        Route::post('/installments/{installment}/pay', [\App\Http\Controllers\Api\V1\FinanceExtraController::class, 'payInstallment']);
+        Route::get('/loyalty/summary', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'summary']);
+        Route::get('/loyalty/rewards', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'rewards']);
+        Route::post('/loyalty/redeem', [\App\Http\Controllers\Api\V1\LoyaltyController::class, 'redeem']);
+
+        // Mobile parity: team & attendance
+        Route::get('/users', [\App\Http\Controllers\Api\V1\TeamController::class, 'users']);
+        Route::get('/roles', [\App\Http\Controllers\Api\V1\TeamController::class, 'roles']);
+        Route::post('/attendances/clock-in', [\App\Http\Controllers\Api\V1\AttendanceController::class, 'clockIn']);
+        Route::post('/attendances/clock-out', [\App\Http\Controllers\Api\V1\AttendanceController::class, 'clockOut']);
+        Route::get('/attendances/today', [\App\Http\Controllers\Api\V1\AttendanceController::class, 'today']);
+
+        // Mobile parity: reports (maks 93 hari)
+        Route::get('/reports/sales', [\App\Http\Controllers\Api\V1\ReportController::class, 'sales']);
+        Route::get('/reports/stock', [\App\Http\Controllers\Api\V1\ReportController::class, 'stock']);
+        Route::get('/reports/finance', [\App\Http\Controllers\Api\V1\ReportController::class, 'finance']);
+
         // Payment Gateway
         Route::post('/payment/create', [PaymentGatewayController::class, 'createTransaction']);
         Route::post('/payment/status', [PaymentGatewayController::class, 'checkStatus']);
