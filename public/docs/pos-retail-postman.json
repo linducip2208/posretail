@@ -611,6 +611,495 @@
           }
         }
       ]
+    },
+    {
+      "name": "Purchasing",
+      "item": [
+        {
+          "name": "PO List",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/purchase-orders",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PO Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/purchase-orders",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"supplier_id\":1,\"outlet_id\":1,\"items\":[{\"product_id\":1,\"quantity\":5,\"unit_price\":10000}]}"
+            }
+          }
+        },
+        {
+          "name": "PO Receive",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/purchase-orders/1/receive",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Suppliers",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/suppliers",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory Ops",
+      "item": [
+        {
+          "name": "Opname Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/stock-opnames",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"outlet_id\":1,\"items\":[{\"product_id\":1,\"actual_stock\":90}]}"
+            }
+          }
+        },
+        {
+          "name": "Opname Approve",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/stock-opnames/1/approve",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Transfer Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/stock-transfers",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"from_outlet_id\":1,\"to_outlet_id\":2,\"items\":[{\"product_id\":1,\"quantity\":3}]}"
+            }
+          }
+        },
+        {
+          "name": "Transfer Receive",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/stock-transfers/1/receive",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Movements",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/stock-movements",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Raw Materials",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/raw-materials",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sales Extras",
+      "item": [
+        {
+          "name": "Return Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/returns",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"order_id\":1,\"reason\":\"Rusak\",\"items\":[{\"product_id\":1,\"quantity\":1}]}"
+            }
+          }
+        },
+        {
+          "name": "Return Approve",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/returns/1/approve",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Hold Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/held-carts",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"outlet_id\":1,\"label\":\"Tunggu\",\"items\":[{\"product_id\":1,\"qty\":2}]}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Finance & Loyalty",
+      "item": [
+        {
+          "name": "Discounts",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/discounts",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Installments",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/installments",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Loyalty Summary",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/loyalty/summary?customer_id=1",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Loyalty Rewards",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/loyalty/rewards",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Expenses",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/expenses",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Team & Reports",
+      "item": [
+        {
+          "name": "Users",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Clock In",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/attendances/clock-in",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"outlet_id\":1}"
+            }
+          }
+        },
+        {
+          "name": "Report Sales",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/reports/sales?start_date=2026-09-21&end_date=2026-10-21",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Brands & Units",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/brands",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [

@@ -295,3 +295,247 @@ paths:
       parameters:
         - { name: platform, in: path, required: true, schema: { type: string } }
       responses: { '200': { description: OK } }
+  /purchase-orders:
+    get:
+      summary: List PO (filter status, supplier_id, outlet_id)
+      responses: { '200': { description: OK } }
+    post:
+      summary: Buat PO draft + items (total dihitung server)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [supplier_id, outlet_id, items]
+              properties:
+                supplier_id: { type: integer }
+                outlet_id: { type: integer }
+                notes: { type: string }
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [product_id, quantity, unit_price]
+                    properties:
+                      product_id: { type: integer }
+                      quantity: { type: integer }
+                      unit_price: { type: number }
+      responses: { '201': { description: Dibuat } }
+  /purchase-orders/{id}/receive:
+    post:
+      summary: Terima PO (status → received + jurnal otomatis)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /suppliers:
+    get:
+      summary: List supplier (search nama/telepon)
+      responses: { '200': { description: OK } }
+    post:
+      summary: Tambah supplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                contact_person: { type: string }
+                phone: { type: string }
+      responses: { '201': { description: Dibuat } }
+  /stock-opnames:
+    post:
+      summary: Buat opname + item aktual (selisih dihitung server)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [outlet_id, items]
+              properties:
+                outlet_id: { type: integer }
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [product_id, actual_stock]
+                    properties:
+                      product_id: { type: integer }
+                      actual_stock: { type: integer }
+      responses: { '201': { description: Dibuat } }
+  /stock-opnames/{id}/approve:
+    post:
+      summary: Setujui opname (koreksi stok + movement, idempoten)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /stock-transfers:
+    post:
+      summary: Buat transfer antar outlet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [from_outlet_id, to_outlet_id, items]
+              properties:
+                from_outlet_id: { type: integer }
+                to_outlet_id: { type: integer }
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [product_id, quantity]
+                    properties:
+                      product_id: { type: integer }
+                      quantity: { type: integer }
+      responses: { '201': { description: Dibuat } }
+  /stock-transfers/{id}/receive:
+    post:
+      summary: Terima transfer (movement keluar+masuk audit)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /stock-movements:
+    get:
+      summary: Jejak mutasi stok read-only (filter product_id, type, outlet_id)
+      responses: { '200': { description: OK } }
+  /raw-materials:
+    get:
+      summary: Bahan baku (filter search, low_stock)
+      responses: { '200': { description: OK } }
+  /returns:
+    post:
+      summary: Ajukan retur (validasi kumulatif vs qty dibeli)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [order_id, reason, items]
+              properties:
+                order_id: { type: integer }
+                reason: { type: string }
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [product_id, quantity]
+                    properties:
+                      product_id: { type: integer }
+                      quantity: { type: integer }
+      responses: { '201': { description: Dibuat } }
+  /returns/{id}/approve:
+    post:
+      summary: Setujui retur (stok kembali + refund, idempoten)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /held-carts:
+    get:
+      summary: Keranjang tertahan milik user login
+      responses: { '200': { description: OK } }
+    post:
+      summary: Tahan keranjang (auto-expire 24 jam)
+      responses: { '201': { description: Dibuat } }
+  /discounts:
+    get:
+      summary: Template diskon aktif (read-only)
+      responses: { '200': { description: OK } }
+  /installments:
+    get:
+      summary: Daftar cicilan
+      responses: { '200': { description: OK } }
+  /installments/{id}/pay:
+    post:
+      summary: Bayar cicilan (sisa & status order diperbarui)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, payment_method_id]
+              properties:
+                amount: { type: number }
+                payment_method_id: { type: integer }
+      responses: { '200': { description: OK } }
+  /loyalty/summary:
+    get:
+      summary: Poin & tier pelanggan (query customer_id)
+      parameters:
+        - { name: customer_id, in: query, required: true, schema: { type: integer } }
+      responses: { '200': { description: OK } }
+  /loyalty/rewards:
+    get:
+      summary: Katalog reward aktif
+      responses: { '200': { description: OK } }
+  /loyalty/redeem:
+    post:
+      summary: Tukar reward (cek saldo poin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, reward_id]
+              properties:
+                customer_id: { type: integer }
+                reward_id: { type: integer }
+      responses: { '200': { description: OK }, '422': { description: Poin tidak cukup } }
+  /users:
+    get:
+      summary: User se-outlet (tanpa hash, owner/manager)
+      responses: { '200': { description: OK } }
+  /roles:
+    get:
+      summary: Daftar role (owner/manager)
+      responses: { '200': { description: OK } }
+  /attendances/clock-in:
+    post:
+      summary: Clock-in (anti-ganda per hari)
+      responses: { '201': { description: OK } }
+  /attendances/clock-out:
+    post:
+      summary: Clock-out
+      responses: { '200': { description: OK } }
+  /reports/sales:
+    get:
+      summary: Omzet, transaksi, rata-rata, top produk (maks 93 hari)
+      responses: { '200': { description: OK }, '422': { description: Rentang terlalu panjang } }
+  /reports/stock:
+    get:
+      summary: Nilai inventori, low-stock, out-of-stock
+      responses: { '200': { description: OK } }
+  /reports/finance:
+    get:
+      summary: Pemasukan vs pengeluaran (maks 93 hari)
+      responses: { '200': { description: OK } }
+  /brands:
+    get:
+      summary: Daftar merek
+      responses: { '200': { description: OK } }
+  /units:
+    get:
+      summary: Daftar satuan
+      responses: { '200': { description: OK } }
+  /expenses:
+    get:
+      summary: Daftar pengeluaran (owner/manager/admin/gudang sesuai akses finance)
+      responses: { '200': { description: OK } }
+    post:
+      summary: Catat pengeluaran
+      responses: { '201': { description: Dibuat } }
+  /shifts:
+    get:
+      summary: Riwayat shift user login
+      responses: { '200': { description: OK } }

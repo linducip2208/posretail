@@ -56,7 +56,7 @@ class MobileParityApiTest extends TestCase
 
     public function test_probe_tanpa_token_401_untuk_semua_grup(): void
     {
-        foreach (['purchase-orders', 'suppliers', 'stock-opnames', 'stock-transfers', 'stock-movements', 'returns', 'held-carts', 'discounts', 'installments', 'loyalty/rewards', 'raw-materials', 'users', 'roles', 'reports/sales', 'attendances/today'] as $p) {
+        foreach (['purchase-orders', 'suppliers', 'stock-opnames', 'stock-transfers', 'stock-movements', 'returns', 'held-carts', 'discounts', 'installments', 'loyalty/rewards', 'raw-materials', 'users', 'roles', 'reports/sales', 'attendances/today', 'brands', 'units', 'expenses', 'shifts'] as $p) {
             $this->getJson("/api/v1/{$p}")->assertStatus(401);
         }
     }
@@ -213,5 +213,26 @@ class MobileParityApiTest extends TestCase
 
         $this->actingAs($this->kasir, 'api');
         $this->getJson('/api/v1/reports/sales')->assertForbidden();
+    }
+
+    public function test_katalog_pelengkap_dan_expense_dan_shift(): void
+    {
+        \App\Models\Brand::create(['name' => 'Indofood', 'slug' => 'indofood', 'active' => true]);
+        \App\Models\Unit::create(['name' => 'Pcs', 'code' => 'PCS']);
+
+        $this->actingAs($this->kasir, 'api');
+        $this->getJson('/api/v1/brands')->assertOk();
+        $this->getJson('/api/v1/units')->assertOk()->assertJsonPath('data.0.code', 'PCS');
+        $this->getJson('/api/v1/shifts')->assertOk();
+
+        // Kasir tanpa akses finance → 403
+        $this->getJson('/api/v1/expenses')->assertForbidden();
+
+        $this->actingAs($this->owner, 'api');
+        $this->getJson('/api/v1/expenses')->assertOk();
+        $this->postJson('/api/v1/expenses', [
+            'outlet_id' => $this->outlet->id, 'category' => 'Listrik', 'amount' => 250000,
+        ])->assertCreated();
+        $this->assertDatabaseHas('expenses', ['category' => 'Listrik', 'amount' => 250000]);
     }
 }

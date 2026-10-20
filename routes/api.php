@@ -95,6 +95,13 @@ Route::prefix('v1')->group(function () {
         Route::get('/reports/stock', [\App\Http\Controllers\Api\V1\ReportController::class, 'stock']);
         Route::get('/reports/finance', [\App\Http\Controllers\Api\V1\ReportController::class, 'finance']);
 
+        // Mobile parity: katalog & operasional pelengkap
+        Route::get('/brands', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'brands']);
+        Route::get('/units', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'units']);
+        Route::get('/expenses', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'expenses']);
+        Route::post('/expenses', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'storeExpense']);
+        Route::get('/shifts', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'shifts']);
+
         // Payment Gateway
         Route::post('/payment/create', [PaymentGatewayController::class, 'createTransaction']);
         Route::post('/payment/status', [PaymentGatewayController::class, 'checkStatus']);

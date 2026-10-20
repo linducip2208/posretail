@@ -11,7 +11,7 @@ Hasil probe: 2026-10-21, `http://127.0.0.1:8765` (tanpa token).
 |---|---|---|
 | products, customers, outlets, categories, payment-methods | 401 | 401 (tetap) |
 | purchase-orders, suppliers, stock-opnames, stock-transfers, stock-movements, returns, held-carts, discounts, installments, loyalty/*, raw-materials, users, roles, attendances/*, reports/* | 404 | **401 = LIVE** ✅ |
-| brands, units, expenses, shifts | 404 | 404 (belum diprioritaskan; expenses/shifts ada parsial via modul lain) |
+| brands, units, expenses, shifts | 404 | **401 = LIVE** ✅ |
 
 ## Konvensi lama (wajib ditiru)
 
