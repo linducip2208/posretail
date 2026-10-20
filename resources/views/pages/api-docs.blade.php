@@ -17,10 +17,15 @@
             <p class="text-slate-500 mt-2">Base URL: <code class="bg-slate-200 px-2 py-0.5 rounded text-sm">{{ config('app.url') }}/api/v1</code></p>
         </div>
 
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
             <div class="font-semibold text-amber-800 mb-2">Authentication</div>
             <p class="text-amber-700 text-sm">Semua endpoint (kecuali login & webhooks) menggunakan <strong>Laravel Sanctum</strong> token. Header: <code class="bg-amber-100 px-1.5 py-0.5 rounded">Authorization: Bearer {token}</code></p>
             <p class="text-amber-700 text-sm mt-1">Rate limit: login 10/min, API 120/min, webhooks 30/min</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mb-8">
+            <a href="/docs/pos-retail-postman.json" download class="px-5 py-2.5 bg-[#FF6C37] text-white rounded-xl font-bold text-sm hover:brightness-95">Download Postman Collection</a>
+            <a href="/docs/pos-retail-openapi.yaml" download class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl font-bold text-sm hover:border-slate-400">Download OpenAPI YAML</a>
         </div>
 
         @foreach($grouped as $group => $routes)
