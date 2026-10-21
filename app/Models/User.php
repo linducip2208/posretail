@@ -79,6 +79,24 @@ class User extends Authenticatable
 
         static::created($syncRoleString);
         static::updated($syncRoleString);
+
+        // Pengaman terakhir (model-level, berlaku untuk semua jalur hapus
+        // termasuk bulk action & force delete): tolak hapus diri sendiri
+        // dan owner aktif terakhir. policy + UI menyembunyikan tombolnya;
+        // ini jaring pengaman bila request dibuat manual.
+        static::deleting(function (User $user): bool {
+            if (! auth()->check()) {
+                return true;
+            }
+            if ((int) $user->id === (int) auth()->id()) {
+                return false;
+            }
+            if ($user->isSuperAdmin() && static::otherActiveSuperAdmins($user)->doesntExist()) {
+                return false;
+            }
+
+            return true;
+        });
     }
 
     /**
@@ -106,6 +124,32 @@ class User extends Authenticatable
         }
 
         return $this->outlets()->where('active', true)->orderBy('name');
+    }
+
+    /**
+     * Superadmin untuk keperluan proteksi: kolom role lawas ATAU permission '*'.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return ($this->getAttribute('role') ?? null) === 'owner' || $this->hasPermission('*');
+    }
+
+    /**
+     * Owner aktif lain selain user yang diberikan (untuk proteksi owner terakhir).
+     */
+    public static function otherActiveSuperAdmins(User $except): \Illuminate\Database\Eloquent\Builder
+    {
+        $ownerRoleId = \App\Models\Role::where('slug', 'owner')->value('id');
+
+        return static::query()
+            ->where('active', true)
+            ->where('id', '!=', $except->id)
+            ->where(function ($q) use ($ownerRoleId) {
+                $q->where('role', 'owner');
+                if ($ownerRoleId) {
+                    $q->orWhereHas('roles', fn ($r) => $r->where('roles.id', $ownerRoleId));
+                }
+            });
     }
 
     public function orders(): HasMany

@@ -14,9 +14,13 @@ class EditUser extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        $protected = fn ($record): bool => $record
+            && ((int) $record->id === (int) auth()->id()
+                || ($record->isSuperAdmin() && \App\Models\User::otherActiveSuperAdmins($record)->doesntExist()));
+
         return [
-            DeleteAction::make(),
-            ForceDeleteAction::make(),
+            DeleteAction::make()->hidden(fn ($record) => $protected($record)),
+            ForceDeleteAction::make()->hidden(fn ($record) => $protected($record)),
             RestoreAction::make(),
         ];
     }
