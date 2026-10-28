@@ -27,6 +27,8 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $appName }} — Solusi Kasir Modern untuk Toko Anda">
     <meta name="twitter:description" content="Sistem kasir modern untuk toko retail Indonesia. Multi-outlet, inventori real-time, loyalitas pelanggan, laporan lengkap.">
+    <meta property="og:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     @vite(['resources/css/portal.css', 'resources/js/portal.js'])
     <script type="application/ld+json">
     {
@@ -954,9 +956,9 @@
             <div>
                 <h4 class="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Legal</h4>
                 <ul class="space-y-2.5 text-sm">
-                    <li><a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Syarat &amp; Ketentuan</a></li>
-                    <li><a href="#" class="hover:text-white transition-colors">Kontak</a></li>
+                    <li><a href="/privacy" class="hover:text-white transition-colors">Kebijakan Privasi</a></li>
+                    <li><a href="/terms" class="hover:text-white transition-colors">Syarat &amp; Ketentuan</a></li>
+                    <li><a href="/contact" class="hover:text-white transition-colors">Kontak</a></li>
                 </ul>
             </div>
         </div>

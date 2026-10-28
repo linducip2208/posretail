@@ -52,6 +52,7 @@ Route::get('/sitemap-blog.xml', [SitemapController::class, 'blogSitemap'])->name
 Route::get('/sitemap-pseo-{chunk}.xml', [SitemapController::class, 'pseoSitemap'])->name('sitemap.pseo')->where('chunk', '[0-9]+');
 Route::get('/sitemap', [SitemapController::class, 'html'])->name('sitemap.html');
 Route::get('/llms.txt', [SitemapController::class, 'llms'])->name('llms');
+Route::get('/llms-full.txt', [SitemapController::class, 'llmsFull'])->name('llms.full');
 
 Route::get('/export/laporan/penjualan', [ReportExportController::class, 'sales'])->name('export.sales')->middleware('auth');
 Route::get('/export/laporan/penjualan-item', [ReportExportController::class, 'salesItems'])->name('export.sales.items')->middleware('auth');
@@ -104,6 +105,10 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 // FAQ & Contact
 Route::get('/faq', fn () => view('pages.faq'))->name('faq');
 Route::get('/contact', fn () => view('pages.contact'))->name('contact');
+
+// Legal (SEO + requirement AdSense/Play Store)
+Route::get('/privacy', fn () => view('pages.privacy'))->name('privacy');
+Route::get('/terms', fn () => view('pages.terms'))->name('terms');
 
 // PSEO — Source code landing pages (high priority)
 Route::get('/beli-aplikasi-pos', [ProgrammaticSeoController::class, 'staticPage'])->defaults('slug', 'beli-aplikasi-pos');
@@ -183,6 +188,8 @@ Route::get('/robots.txt', function () {
     $content .= "Allow: /blog\n";
     $content .= "Allow: /faq\n";
     $content .= "Allow: /contact\n";
+    $content .= "Allow: /privacy\n";
+    $content .= "Allow: /terms\n";
     $content .= "Allow: /beli-\n";
     $content .= "Allow: /jual-\n";
     $content .= "Allow: /harga-\n";
@@ -211,6 +218,18 @@ Route::get('/robots.txt', function () {
     $content .= "Disallow: /__pair\n";
     $content .= "Disallow: /webhooks\n";
     $content .= "Sitemap: /sitemap.xml\n";
+    $content .= "\n";
+    $content .= "# AI crawlers: ringkasan resmi tersedia di /llms.txt (ringkas) dan /llms-full.txt (lengkap)\n";
+    $content .= "User-agent: GPTBot\n";
+    $content .= "Allow: /\n";
+    $content .= "User-agent: ChatGPT-User\n";
+    $content .= "Allow: /\n";
+    $content .= "User-agent: ClaudeBot\n";
+    $content .= "Allow: /\n";
+    $content .= "User-agent: Google-Extended\n";
+    $content .= "Allow: /\n";
+    $content .= "User-agent: CCBot\n";
+    $content .= "Allow: /\n";
 
     return response($content, 200)
         ->header('Content-Type', 'text/plain; charset=utf-8');

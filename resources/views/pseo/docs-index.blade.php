@@ -11,7 +11,11 @@
     <meta property="og:description" content="{{ $seoMeta['description'] }}">
     <meta property="og:url" content="{{ config('app.url') }}/docs">
     <meta property="og:type" content="article">
+    <meta property="og:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoMeta['title'] }}">
+    <meta name="twitter:description" content="{{ $seoMeta['description'] }}">
+    <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#3b82f6">
     @vite('resources/css/portal.css')

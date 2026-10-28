@@ -50,14 +50,15 @@ class RequirePair
         if ($path === '/docs' || str_starts_with($path, '/docs/')) return true;
         if ($path === '/sitemap.xml' || str_starts_with($path, '/sitemap-')) return true;
         if ($path === '/sitemap') return true;
+        if ($path === '/llms.txt' || $path === '/llms-full.txt') return true;
         if ($path === '/robots.txt') return true;
         if (str_starts_with($path, '/marketing/')) return true;
 
         // Blog (public content, SEO)
         if (str_starts_with($path, '/blog')) return true;
 
-        // FAQ & Contact (public)
-        if ($path === '/faq' || $path === '/contact') return true;
+        // FAQ, Contact & Legal (public)
+        if ($path === '/faq' || $path === '/contact' || $path === '/privacy' || $path === '/terms') return true;
 
         // PSEO routes (public marketing pages)
         $pseoPrefixes = [

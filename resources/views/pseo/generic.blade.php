@@ -12,7 +12,11 @@
     <meta property="og:description" content="{{ $seoMeta['description'] }}">
     <meta property="og:url" content="{{ $seoMeta['canonical'] }}">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoMeta['title'] }}">
+    <meta name="twitter:description" content="{{ $seoMeta['description'] }}">
+    <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     @vite('resources/css/portal.css')
     <style>body{font-family:Inter,sans-serif}</style>
     <script type="application/ld+json">
@@ -49,14 +53,8 @@
             "price": "4999000",
             "priceCurrency": "IDR",
             "availability": "https://schema.org/InStock"
-        },
-        @endif
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "127",
-            "bestRating": "5"
         }
+        @endif
     }
     </script>
 </head>
@@ -122,6 +120,17 @@
                     @endforeach
                 </div>
             </div>
+
+            @if(!empty($relatedPages))
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                <h4 class="font-semibold text-gray-900 mb-3 text-sm uppercase tracking-wider">Halaman Terkait</h4>
+                <div class="space-y-1">
+                    @foreach($relatedPages as $r)
+                        <a href="{{ $r['url'] }}" class="block px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition">{{ $r['title'] }}</a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </main>

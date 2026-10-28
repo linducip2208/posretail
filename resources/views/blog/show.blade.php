@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $seoTitle ?? $post->title . ' — ' . config('app.name') }}</title>
     <meta name="description" content="{{ $seoDescription ?? $post->excerpt }}">
+    <link rel="canonical" href="{{ route('blog.show', $post->slug) }}">
     <meta property="og:title" content="{{ $seoTitle ?? $post->title }}">
     <meta property="og:description" content="{{ $seoDescription ?? $post->excerpt }}">
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ route('blog.show', $post->slug) }}">
-    @if($post->featured_image)
-        <meta property="og:image" content="{{ asset($post->featured_image) }}">
-    @endif
+    <meta property="og:image" content="{{ $post->featured_image ? asset($post->featured_image) : config('app.url') . '/brand/logo-posretail.png' }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle ?? $post->title }}">
+    <meta name="twitter:description" content="{{ $seoDescription ?? $post->excerpt }}">
+    <meta name="twitter:image" content="{{ $post->featured_image ? asset($post->featured_image) : config('app.url') . '/brand/logo-posretail.png' }}">
     <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @vite('resources/css/portal.css')
 </head>

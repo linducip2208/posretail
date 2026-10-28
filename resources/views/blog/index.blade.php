@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $seoTitle ?? 'Blog — ' . config('app.name') }}</title>
     <meta name="description" content="{{ $seoDescription ?? 'Tips bisnis retail dan panduan manajemen toko Indonesia.' }}">
+    <link rel="canonical" href="{{ isset($category) ? route('blog.category', $category->slug) : route('blog.index') }}">
+    <meta property="og:title" content="{{ $seoTitle ?? 'Blog — ' . config('app.name') }}">
+    <meta property="og:description" content="{{ $seoDescription ?? 'Tips bisnis retail dan panduan manajemen toko Indonesia.' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ isset($category) ? route('blog.category', $category->slug) : route('blog.index') }}">
+    <meta property="og:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle ?? 'Blog — ' . config('app.name') }}">
+    <meta name="twitter:description" content="{{ $seoDescription ?? 'Tips bisnis retail dan panduan manajemen toko Indonesia.' }}">
+    <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     @vite('resources/css/portal.css')
 </head>
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">

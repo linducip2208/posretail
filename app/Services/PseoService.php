@@ -42,11 +42,6 @@ class PseoService
         $count += $cities * min($features, 20) * 4;
         $count += $cities * $industries * 2;
 
-        $count += $cities * min($features, 15) * $industries * 1;
-        $count += $cities * min($features, 10) * min($features, 10) * 1;
-
-        $count += $cities * ($cities - 1);
-
         return $count;
     }
 
@@ -179,30 +174,9 @@ class PseoService
             }
         }
 
-        $topFeatures2 = array_slice($features, 0, 15);
-        foreach ($cities as $city) {
-            $citySlug = Str::slug($city['name']);
-            foreach ($topFeatures2 as $feat) {
-                $featSlug = Str::slug($feat['name']);
-                foreach ($industries as $ind) {
-                    $indSlug = Str::slug($ind['name']);
-                    if (! $emit("/aplikasi-pos-{$citySlug}-{$featSlug}-{$indSlug}", 'city-feat-industry', '0.5')) return $pages;
-                }
-            }
-        }
-
-        $topFeatures3 = array_slice($features, 0, 10);
-        foreach ($cities as $city) {
-            $citySlug = Str::slug($city['name']);
-            foreach ($topFeatures3 as $f1) {
-                $f1Slug = Str::slug($f1['name']);
-                foreach ($topFeatures3 as $f2) {
-                    if ($f1['name'] === $f2['name']) continue;
-                    $f2Slug = Str::slug($f2['name']);
-                    if (! $emit("/aplikasi-pos-{$citySlug}-{$f1Slug}-{$f2Slug}", 'city-dual-feature', '0.5')) return $pages;
-                }
-            }
-        }
+        // NOTE: pola 3-kombo (kota+fitur+industri, kota+2 fitur) sengaja TIDAK
+        // dimasukkan sitemap karena tidak ada route-nya (akan 404 jika di-crawl).
+        // Tambahkan route + konten unik dulu sebelum mengiklankannya ke crawler.
 
         return $pages;
     }

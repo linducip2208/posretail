@@ -1,9 +1,15 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
+        Options -MultiViews
     </IfModule>
+    Options -Indexes
 
     RewriteEngine On
+
+    # Paksa route Laravel meski public/docs adalah folder fisik.
+    # Hanya exact /docs dan /docs/api -- file /docs/*.yaml|json tetap diserve statis.
+    RewriteRule ^docs/?$ index.php [L]
+    RewriteRule ^docs/api/?$ index.php [L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

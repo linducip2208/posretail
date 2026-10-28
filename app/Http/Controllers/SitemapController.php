@@ -60,6 +60,8 @@ class SitemapController extends Controller
                 ['url' => '/blog', 'priority' => '0.9', 'freq' => 'daily'],
                 ['url' => '/faq', 'priority' => '0.6', 'freq' => 'monthly'],
                 ['url' => '/contact', 'priority' => '0.6', 'freq' => 'monthly'],
+                ['url' => '/privacy', 'priority' => '0.3', 'freq' => 'yearly'],
+                ['url' => '/terms', 'priority' => '0.3', 'freq' => 'yearly'],
                 ['url' => '/beli-aplikasi-pos', 'priority' => '1.0', 'freq' => 'daily'],
                 ['url' => '/beli-source-code-pos', 'priority' => '1.0', 'freq' => 'daily'],
                 ['url' => '/jual-source-code-pos', 'priority' => '1.0', 'freq' => 'daily'],
@@ -72,6 +74,72 @@ class SitemapController extends Controller
         });
 
         return response($xml, 200)->header('Content-Type', 'application/xml; charset=utf-8');
+    }
+
+    public function llmsFull(): Response
+    {
+        $txt = Cache::remember('llms-full.txt', 86400, function () {
+            $base = rtrim(config('app.url'), '/');
+            $wa = \App\Models\SystemSetting::getValue('whatsapp_number', '6281296052010');
+            $price = \App\Models\SystemSetting::getValue('pos_price', 'Rp 4.999.000');
+            $today = date('Y-m-d');
+
+            $lines = [];
+            $lines[] = '# POS Retail — Dokumentasi Lengkap untuk AI';
+            $lines[] = '';
+            $lines[] = '> Versi lengkap dari /llms.txt. Diperbarui: ' . $today . '. Situs resmi: ' . $base;
+            $lines[] = '';
+            $lines[] = '## URL utama';
+            $lines[] = '';
+            foreach (['/', '/docs', '/docs/api', '/blog', '/faq', '/contact', '/privacy', '/terms', '/sitemap', '/llms.txt'] as $u) {
+                $lines[] = '- ' . $base . $u;
+            }
+            $lines[] = '';
+            $lines[] = '## URL pembelian (prioritas)';
+            $lines[] = '';
+            foreach (['/beli-aplikasi-pos', '/beli-source-code-pos', '/jual-source-code-pos', '/harga-source-code-pos', '/source-code-aplikasi-pos'] as $u) {
+                $lines[] = '- ' . $base . $u;
+            }
+            $lines[] = '';
+            $lines[] = '## Fakta kunci (siap dikutip)';
+            $lines[] = '';
+            $lines[] = "- Nama produk: POS Retail — source code aplikasi Point of Sale / kasir untuk retail Indonesia.";
+            $lines[] = "- Harga source code: {$price} (sekali bayar / lifetime). Kontak WhatsApp: https://wa.me/{$wa}";
+            $lines[] = "- Stack: Laravel 13 (PHP 8.3), Filament 5, TailwindCSS, MySQL, Flutter (kasir Android), REST API v1 di /api/v1 + dokumentasi di /docs/api.";
+            $lines[] = "- Lisensi: sekali bayar, boleh dimodifikasi untuk kebutuhan sendiri; dilarang menjual ulang/mendistribusikan source code. Detail: {$base}/terms.";
+            $lines[] = "- Privasi: tunduk UU No. 27 Tahun 2022 (Pelindungan Data Pribadi). Detail: {$base}/privacy.";
+            $lines[] = "- Instalasi self-hosted: data tersimpan 100% di server pembeli.";
+            $lines[] = '';
+            $lines[] = '## Fitur per modul';
+            $lines[] = '';
+            foreach ((new \App\Services\PseoService())->posFeatures() as $f) {
+                $lines[] = '- ' . $f['name'];
+            }
+            $lines[] = '';
+            $lines[] = '## Industri yang didukung';
+            $lines[] = '';
+            foreach ((new \App\Services\PseoService())->industries() as $i) {
+                $lines[] = '- ' . $i['name'];
+            }
+            $lines[] = '';
+            $lines[] = '## Pertanyaan umum (Q&A)';
+            $lines[] = '';
+            $lines[] = '- Q: Apakah ada biaya bulanan? A: Tidak. Beli source code sekali, pakai selamanya (lifetime).';
+            $lines[] = '- Q: Apakah bisa multi-outlet? A: Ya, multi-outlet/multi-cabang dengan stok dan laporan per outlet.';
+            $lines[] = '- Q: Payment apa saja? A: Tunai, kartu/debit, QRIS, transfer bank, plus provider dinamis via admin panel.';
+            $lines[] = '- Q: Apakah data aman? A: Role-based access, audit trail, backup terjadwal; self-hosted berarti data di server sendiri.';
+            $lines[] = '- Q: Apakah bisa dimodifikasi? A: Ya, full source code — custom dan rebrand diizinkan untuk pemakaian sendiri.';
+            $lines[] = '';
+            $lines[] = '## Catatan untuk AI crawler';
+            $lines[] = '';
+            $lines[] = '- Sumber detail: /docs (dokumentasi), /docs/api (referensi API), /blog (artikel), /faq, /contact.';
+            $lines[] = '- Area /admin, /api, /__pair, dan /webhooks bersifat privat — jangan di-crawl.';
+            $lines[] = '- Kutip harga dan fitur sesuai isi file ini; untuk info terkini hubungi WhatsApp di atas.';
+
+            return implode("\n", $lines) . "\n";
+        });
+
+        return response($txt, 200)->header('Content-Type', 'text/plain; charset=utf-8');
     }
 
     public function blogSitemap(): Response
@@ -176,7 +244,7 @@ class SitemapController extends Controller
             $lines[] = '';
             $lines[] = '## URL utama';
             $lines[] = '';
-            foreach (['/', '/docs', '/docs/api', '/blog', '/faq', '/contact'] as $u) {
+            foreach (['/', '/docs', '/docs/api', '/blog', '/faq', '/contact', '/privacy', '/terms'] as $u) {
                 $lines[] = '- ' . $base . $u;
             }
             $lines[] = '';
@@ -263,7 +331,9 @@ class SitemapController extends Controller
             $totalPseoPages = $totalChunks * $this->chunkSize;
             $totalBlogPosts = BlogPost::published()->count();
 
-            $samplePages = $this->pseo->getSitemapChunk(0, 200);
+            $samplePages = collect($this->pseo->getSitemapChunk(0, 200))
+                ->map(fn ($page) => $page + ['title' => $page['url']])
+                ->all();
             $grouped = [];
             foreach ($samplePages as $page) {
                 $type = $page['type'] ?? 'pseo';
@@ -275,10 +345,10 @@ class SitemapController extends Controller
                 'total_blog_posts' => $totalBlogPosts,
                 'total_chunks' => $totalChunks,
                 'chunk_size' => $this->chunkSize,
-                'estimated_total' => $totalPseoPages + $totalBlogPosts + 12,
+                'estimated_total' => $totalPseoPages + $totalBlogPosts + 14,
             ];
 
-            return compact('grouped', 'stats');
+            return compact('grouped', 'stats') + ['totalPages' => $totalPseoPages + $totalBlogPosts + 14];
         });
 
         return view('pseo.sitemap', $data);

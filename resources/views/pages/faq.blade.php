@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ — {{ config('app.name') }}</title>
     <meta name="description" content="Pertanyaan yang sering diajukan tentang aplikasi POS Retail.">
+    <link rel="canonical" href="{{ config('app.url') }}/faq">
+    <meta property="og:title" content="FAQ — {{ config('app.name') }}">
+    <meta property="og:description" content="Pertanyaan yang sering diajukan tentang aplikasi POS Retail.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ config('app.url') }}/faq">
+    <meta property="og:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FAQ — {{ config('app.name') }}">
+    <meta name="twitter:description" content="Pertanyaan yang sering diajukan tentang aplikasi POS Retail.">
+    <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     @vite('resources/css/portal.css')
 </head>
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">
@@ -55,6 +65,15 @@
 
     <footer class="bg-slate-900 text-slate-400 py-10 text-sm">
         <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="mb-3">
+                <a href="/privacy" class="hover:text-white transition">Kebijakan Privasi</a>
+                <span class="mx-2">&middot;</span>
+                <a href="/terms" class="hover:text-white transition">Syarat &amp; Ketentuan</a>
+                <span class="mx-2">&middot;</span>
+                <a href="/contact" class="hover:text-white transition">Kontak</a>
+                <span class="mx-2">&middot;</span>
+                <a href="/faq" class="hover:text-white transition">FAQ</a>
+            </p>
             <p>&copy; {{ date('Y') }} {{ config('app.name') }} &middot; Powered by Laravel</p>
         </div>
     </footer>

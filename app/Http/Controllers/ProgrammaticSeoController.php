@@ -206,6 +206,14 @@ class ProgrammaticSeoController extends Controller
             $out .= "<p><strong>Butuh aplikasi POS di {$data['city']['name']}?</strong> {$brand} sudah digunakan oleh berbagai toko retail di Indonesia. Source code bisa dibeli dan di-custom sesuai kebutuhan. <strong>Lifetime update, 6 bulan support.</strong></p>";
         }
 
+        if ($data['industry']) {
+            $out .= "<p>Untuk bisnis <strong>{$data['industry']['name']}</strong>, {$brand} menyediakan alur kerja yang relevan: transaksi cepat di kasir, pencatatan stok yang akurat, serta laporan penjualan harian yang bisa di-export ke PDF/Excel. Mendukung multi-outlet dan multi-user dengan hak akses per peran (owner, kasir, gudang).</p>";
+        }
+
+        if ($data['feature']) {
+            $out .= "<p>Fitur <strong>{$data['feature']['name']}</strong> tersedia penuh tanpa biaya tambahan dan terintegrasi dengan modul lain — bukan add-on berbayar. Dokumentasi penggunaan tersedia di halaman <a href='/docs'>/docs</a>.</p>";
+        }
+
         return $out;
     }
 
