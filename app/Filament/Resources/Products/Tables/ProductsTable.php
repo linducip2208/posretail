@@ -90,6 +90,7 @@ class ProductsTable
                     ->sortable(),
                 ImageColumn::make('image')
                     ->label('Foto')
+                    ->disk('public')
                     ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('has_variants')
                     ->label('Varian')

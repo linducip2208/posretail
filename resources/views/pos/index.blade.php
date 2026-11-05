@@ -379,7 +379,7 @@
                 <div class="${cardClass}" ${clickAttr}>
                     ${badge}
                     <div class="h-24 bg-gray-100 flex items-center justify-center overflow-hidden">
-                        <img src="${p.image || '/marketing/screens/default-product.png'}" alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23e2e8f0%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%2394a3b8%22 font-size=%2212%22>No Image</text></svg>'">
+                        <img src="${p.image_url || p.image || '/marketing/screens/default-product.png'}" alt="${escapeHtml(p.name)}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect fill=%22%23e2e8f0%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%2394a3b8%22 font-size=%2212%22>No Image</text></svg>'">
                     </div>
                     <div class="p-2">
                         <div class="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight">${escapeHtml(p.name)}</div>

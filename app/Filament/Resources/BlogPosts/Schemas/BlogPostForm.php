@@ -47,7 +47,11 @@ class BlogPostForm
                 FileUpload::make('featured_image')
                     ->label('Gambar Utama')
                     ->image()
+                    ->disk('public')
                     ->directory('blog')
+                    ->visibility('public')
+                    ->maxSize(5120)
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                     ->columnSpanFull(),
                 Toggle::make('is_published')
                     ->label('Publikasikan')

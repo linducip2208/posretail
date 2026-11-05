@@ -102,7 +102,14 @@ class ProductForm
                     ->validationAttribute('Stok saat ini')
                     ->default(0),
                 FileUpload::make('image')
-                    ->image(),
+                    ->label('Foto Produk')
+                    ->image()
+                    ->disk('public')
+                    ->directory('products')
+                    ->visibility('public')
+                    ->maxSize(5120)
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->columnSpanFull(),
                 Toggle::make('has_variants')
                     ->required(),
                 Select::make('serial_tracking')

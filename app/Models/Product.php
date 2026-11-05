@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Support\SafeNumber;
 use App\Traits\HasOutletScope;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -126,6 +127,56 @@ class Product extends Model
         'min_stock', 'max_stock', 'current_stock', 'image',
         'has_variants', 'serial_tracking', 'warranty_months', 'active', 'expired_date',
     ];
+
+    protected $appends = ['image_url'];
+
+    /**
+     * URL publik foto produk. Menangani nilai lama berupa path privat,
+     * path relatif public-disk, maupun URL penuh.
+     */
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::get(function (): ?string {
+            $image = $this->attributes['image'] ?? null;
+
+            if (blank($image)) {
+                return null;
+            }
+
+            // Sudah URL penuh (mis. dari import lama) → pakai apa adanya.
+            if (str_starts_with($image, 'http://') || str_starts_with($image, 'https://')) {
+                return $image;
+            }
+
+            // Normalisasi: hilangkan prefix storage// yang umum dari data lama.
+            $path = ltrim(preg_replace('#^(/?storage/|/)+#', '', $image) ?? '', '/');
+
+            if ($path === '') {
+                return null;
+            }
+
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            }
+
+            // Fallback untuk data lama yang tersimpan di disk privat
+            // (FILESYSTEM_DISK=local sebelum perbaikan): coba pindahkan ke public.
+            if (\Illuminate\Support\Facades\Storage::disk('local')->exists($path)) {
+                try {
+                    \Illuminate\Support\Facades\Storage::disk('public')->put(
+                        $path,
+                        \Illuminate\Support\Facades\Storage::disk('local')->get($path)
+                    );
+
+                    return \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+                } catch (\Throwable) {
+                    return null;
+                }
+            }
+
+            return null;
+        });
+    }
 
     protected function casts(): array
     {

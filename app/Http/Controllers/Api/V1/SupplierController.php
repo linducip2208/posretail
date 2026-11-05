@@ -49,6 +49,25 @@ class SupplierController extends Controller
         return response()->json(['data' => $supplier], 201);
     }
 
+    public function update(Request $request, Supplier $supplier): JsonResponse
+    {
+        if ($deny = $this->denyGroup($request, 'master-data', 'edit')) {
+            return $deny;
+        }
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:1000',
+            'active' => 'nullable|boolean',
+        ]);
+
+        $supplier->update($data);
+
+        return response()->json(['data' => $supplier->fresh()]);
+    }
+
     public function show(Request $request, Supplier $supplier): JsonResponse
     {
         if ($deny = $this->denyGroup($request, 'pembelian')) {

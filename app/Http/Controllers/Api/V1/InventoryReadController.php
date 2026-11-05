@@ -8,6 +8,7 @@ use App\Models\RawMaterial;
 use App\Models\StockMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class InventoryReadController extends Controller
 {
@@ -68,9 +69,9 @@ class InventoryReadController extends Controller
         }
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50',
+            'code' => 'required|string|max:50|unique:raw_materials,code',
             'outlet_id' => 'required|integer|exists:outlets,id',
-            'unit_id' => 'nullable|integer|exists:units,id',
+            'unit_id' => 'required|integer|exists:units,id',
             'cost_per_unit' => 'nullable|numeric|min:0',
             'current_stock' => 'nullable|numeric|min:0',
             'min_stock' => 'nullable|numeric|min:0',
@@ -81,5 +82,35 @@ class InventoryReadController extends Controller
         }
 
         return response()->json(['data' => RawMaterial::create($data + ['active' => true])], 201);
+    }
+
+    public function updateRawMaterial(Request $request, RawMaterial $rawMaterial): JsonResponse
+    {
+        if ($deny = $this->denyGroup($request, 'inventori', 'edit')) {
+            return $deny;
+        }
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'code' => ['nullable', 'string', 'max:50', Rule::unique('raw_materials', 'code')->ignore($rawMaterial->id)],
+            'outlet_id' => 'nullable|integer|exists:outlets,id',
+            'unit_id' => 'nullable|integer|exists:units,id',
+            'cost_per_unit' => 'nullable|numeric|min:0',
+            'current_stock' => 'nullable|numeric|min:0',
+            'min_stock' => 'nullable|numeric|min:0',
+            'active' => 'nullable|boolean',
+        ]);
+
+        if (array_key_exists('outlet_id', $data) && filled($data['outlet_id'] ?? null)
+            && ! in_array((int) $data['outlet_id'], $this->outletIds($request), true)) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
+
+        if (! in_array((int) $rawMaterial->outlet_id, $this->outletIds($request), true)) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke data ini.'], 403);
+        }
+
+        $rawMaterial->update($data);
+
+        return response()->json(['data' => $rawMaterial->fresh()->load(['outlet', 'unit'])]);
     }
 }

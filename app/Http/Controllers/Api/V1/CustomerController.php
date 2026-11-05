@@ -59,6 +59,7 @@ class CustomerController extends Controller
             'email' => 'nullable|email|unique:customers,email',
             'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string',
+            'birth_date' => 'nullable|date',
             'customer_group_id' => 'nullable|exists:customer_groups,id',
         ]);
 
@@ -67,5 +68,31 @@ class CustomerController extends Controller
         $customer = Customer::create($validated);
 
         return response()->json(['data' => $customer], 201);
+    }
+
+    public function update(Request $request, Customer $customer): JsonResponse
+    {
+        // Batasan sama seperti show: non-owner hanya untuk customer
+        // yang punya order di outletnya. Tanpa cek permission baru agar
+        // kasir tetap bisa perbarui data member seperti sebelumnya.
+        $user = $request->user();
+        if (! $user->hasPermission('*') && ! $customer->orders()->whereIn('outlet_id', $user->getAccessibleOutletIds())->exists()) {
+            return response()->json(['message' => 'Anda tidak memiliki akses ke customer ini.'], 403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'nullable|email|unique:customers,email,'.$customer->id,
+            'phone' => 'nullable|string|max:30',
+            'address' => 'nullable|string',
+            'birth_date' => 'nullable|date',
+            'customer_group_id' => 'nullable|exists:customer_groups,id',
+            'active' => 'nullable|boolean',
+        ]);
+
+        $customer->update($validated);
+        $customer->load('customerGroup');
+
+        return response()->json(['data' => $customer]);
     }
 }

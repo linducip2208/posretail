@@ -17,18 +17,32 @@ Route::prefix('v1')->group(function () {
         Route::get('/user', [AuthController::class, 'user']);
         Route::get('/outlets', [AuthController::class, 'outlets']);
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/tokens', [AuthController::class, 'tokens']);
+        Route::delete('/tokens', [AuthController::class, 'revokeTokens']);
 
         Route::get('/categories', [CategoryController::class, 'index']);
+        Route::post('/categories', [CategoryController::class, 'store']);
+        Route::get('/categories/{category}', [CategoryController::class, 'show']);
+        Route::match(['put', 'patch'], '/categories/{category}', [CategoryController::class, 'update']);
+        Route::post('/categories/{category}', [CategoryController::class, 'update']);
 
         Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 
         Route::get('/products', [ProductController::class, 'index']);
+        Route::post('/products', [ProductController::class, 'store']);
         Route::get('/products/{product}', [ProductController::class, 'show']);
+        Route::match(['put', 'patch'], '/products/{product}', [ProductController::class, 'update']);
         Route::post('/products/barcode', [ProductController::class, 'byBarcode']);
+        // Update via POST (multipart PUT mentah tidak terbaca PHP;
+        // klien bisa pakai POST ini atau POST + _method=PUT ke rute di atas).
+        // Didaftarkan setelah /barcode agar tidak membayangi rute tersebut.
+        Route::post('/products/{product}', [ProductController::class, 'update']);
 
         Route::get('/customers', [CustomerController::class, 'index']);
         Route::get('/customers/{customer}', [CustomerController::class, 'show']);
         Route::post('/customers', [CustomerController::class, 'store']);
+        Route::match(['put', 'patch'], '/customers/{customer}', [CustomerController::class, 'update']);
+        Route::post('/customers/{customer}', [CustomerController::class, 'update']);
 
         Route::get('/orders/today', [OrderController::class, 'today']);
         Route::get('/orders/history', [OrderController::class, 'history']);
@@ -53,6 +67,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/suppliers', [\App\Http\Controllers\Api\V1\SupplierController::class, 'index']);
         Route::post('/suppliers', [\App\Http\Controllers\Api\V1\SupplierController::class, 'store']);
         Route::get('/suppliers/{supplier}', [\App\Http\Controllers\Api\V1\SupplierController::class, 'show']);
+        Route::match(['put', 'patch'], '/suppliers/{supplier}', [\App\Http\Controllers\Api\V1\SupplierController::class, 'update']);
+        Route::post('/suppliers/{supplier}', [\App\Http\Controllers\Api\V1\SupplierController::class, 'update']);
 
         // Mobile parity: inventory operations
         Route::get('/stock-opnames', [\App\Http\Controllers\Api\V1\StockOpnameController::class, 'index']);
@@ -65,6 +81,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/stock-movements', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'movements']);
         Route::get('/raw-materials', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'rawMaterials']);
         Route::post('/raw-materials', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'storeRawMaterial']);
+        Route::match(['put', 'patch'], '/raw-materials/{rawMaterial}', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'updateRawMaterial']);
+        Route::post('/raw-materials/{rawMaterial}', [\App\Http\Controllers\Api\V1\InventoryReadController::class, 'updateRawMaterial']);
 
         // Mobile parity: sales extras
         Route::get('/returns', [\App\Http\Controllers\Api\V1\ReturController::class, 'index']);
@@ -97,7 +115,15 @@ Route::prefix('v1')->group(function () {
 
         // Mobile parity: katalog & operasional pelengkap
         Route::get('/brands', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'brands']);
+        Route::post('/brands', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'storeBrand']);
+        Route::get('/brands/{brand}', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'showBrand']);
+        Route::match(['put', 'patch'], '/brands/{brand}', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'updateBrand']);
+        Route::post('/brands/{brand}', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'updateBrand']);
         Route::get('/units', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'units']);
+        Route::post('/units', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'storeUnit']);
+        Route::get('/units/{unit}', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'showUnit']);
+        Route::match(['put', 'patch'], '/units/{unit}', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'updateUnit']);
+        Route::post('/units/{unit}', [\App\Http\Controllers\Api\V1\CatalogExtraController::class, 'updateUnit']);
         Route::get('/serials', [\App\Http\Controllers\Api\V1\CatalogLookupController::class, 'serials']);
         Route::get('/gift-cards', [\App\Http\Controllers\Api\V1\CatalogLookupController::class, 'giftCards']);
         Route::get('/customer-groups', [\App\Http\Controllers\Api\V1\CatalogLookupController::class, 'customerGroups']);

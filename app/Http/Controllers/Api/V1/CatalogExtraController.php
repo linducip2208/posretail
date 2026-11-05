@@ -10,6 +10,8 @@ use App\Models\Shift;
 use App\Models\Unit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CatalogExtraController extends Controller
 {
@@ -29,6 +31,99 @@ class CatalogExtraController extends Controller
     public function units(Request $request): JsonResponse
     {
         return response()->json(['data' => Unit::orderBy('name')->get()]);
+    }
+
+    public function showBrand(Brand $brand): JsonResponse
+    {
+        return response()->json(['data' => $brand]);
+    }
+
+    public function storeBrand(Request $request): JsonResponse
+    {
+        if ($deny = $this->denyGroup($request, 'inventori', 'create')) {
+            return $deny;
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:brands,slug',
+            'description' => 'nullable|string',
+            'active' => 'nullable|boolean',
+        ]);
+
+        $data['slug'] = $this->uniqueBrandSlug($data['slug'] ?? null, $data['name']);
+
+        return response()->json(['data' => Brand::create($data + ['active' => $data['active'] ?? true])], 201);
+    }
+
+    public function updateBrand(Request $request, Brand $brand): JsonResponse
+    {
+        if ($deny = $this->denyGroup($request, 'inventori', 'edit')) {
+            return $deny;
+        }
+
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'slug' => ['nullable', 'string', 'max:255', Rule::unique('brands', 'slug')->ignore($brand->id)],
+            'description' => 'nullable|string',
+            'active' => 'nullable|boolean',
+        ]);
+
+        if (array_key_exists('slug', $data) || array_key_exists('name', $data)) {
+            $data['slug'] = $this->uniqueBrandSlug($data['slug'] ?? null, $data['name'] ?? $brand->name, $brand->id);
+        }
+
+        $brand->update($data);
+
+        return response()->json(['data' => $brand->fresh()]);
+    }
+
+    public function showUnit(Unit $unit): JsonResponse
+    {
+        return response()->json(['data' => $unit]);
+    }
+
+    public function storeUnit(Request $request): JsonResponse
+    {
+        if ($deny = $this->denyGroup($request, 'inventori', 'create')) {
+            return $deny;
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:50|unique:units,code',
+        ]);
+
+        return response()->json(['data' => Unit::create($data)], 201);
+    }
+
+    public function updateUnit(Request $request, Unit $unit): JsonResponse
+    {
+        if ($deny = $this->denyGroup($request, 'inventori', 'edit')) {
+            return $deny;
+        }
+
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'code' => ['sometimes', 'required', 'string', 'max:50', Rule::unique('units', 'code')->ignore($unit->id)],
+        ]);
+
+        $unit->update($data);
+
+        return response()->json(['data' => $unit->fresh()]);
+    }
+
+    protected function uniqueBrandSlug(?string $wanted, string $name, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($wanted ?: $name) ?: 'brand';
+        $slug = $base;
+        $i = 2;
+
+        while (Brand::where('slug', $slug)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists()) {
+            $slug = $base.'-'.$i++;
+        }
+
+        return $slug;
     }
 
     public function expenses(Request $request): JsonResponse
