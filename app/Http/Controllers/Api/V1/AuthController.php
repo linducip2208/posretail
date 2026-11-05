@@ -67,4 +67,36 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out']);
     }
+
+    /** Daftar sesi/token aktif milik user (tanpa membeberkan token plaintext). */
+    public function tokens(Request $request): JsonResponse
+    {
+        $currentId = $request->user()->currentAccessToken()?->id;
+
+        $tokens = $request->user()->tokens()
+            ->orderByDesc('last_used_at')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn ($t) => [
+                'id' => $t->id,
+                'name' => $t->name,
+                'abilities' => $t->abilities,
+                'last_used_at' => $t->last_used_at,
+                'created_at' => $t->created_at,
+                'expires_at' => config('sanctum.expiration')
+                    ? $t->created_at?->addMinutes((int) config('sanctum.expiration'))
+                    : null,
+                'is_current' => $t->id === $currentId,
+            ]);
+
+        return response()->json(['data' => $tokens]);
+    }
+
+    /** Cabut SEMUA token milik user (logout dari semua perangkat, termasuk saat ini). */
+    public function revokeTokens(Request $request): JsonResponse
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => 'Semua sesi telah dicabut. Silakan login ulang.']);
+    }
 }
