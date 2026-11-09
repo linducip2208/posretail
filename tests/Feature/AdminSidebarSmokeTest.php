@@ -29,6 +29,8 @@ class AdminSidebarSmokeTest extends TestCase
         $res->assertOk();
         // pastikan ada item navigasi ter-render
         $res->assertSee('Produk');
+        // workaround bug Filament collapsedGroups=null ikut ter-render
+        $res->assertSee('fixSidebarCollapsedGroups', false);
     }
 
     public function test_user_nonaktif_ditolak_masuk_panel(): void

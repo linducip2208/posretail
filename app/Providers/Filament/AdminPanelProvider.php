@@ -14,6 +14,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -87,6 +88,35 @@ class AdminPanelProvider extends PanelProvider
                     ->openUrlInNewTab()
                     ->sort(100)
                     ->visible(fn (): bool => auth()->check() && auth()->user()?->hasPermission('pos-access')),
-            ]);
+            ])
+            ->renderHook(
+                PanelsRenderHook::SCRIPTS_AFTER,
+                fn () => new HtmlString(
+                    <<<'HTML'
+                    <script>
+                    (function () {
+                        // Workaround bug Filament: collapsedGroups default null
+                        // (localStorage kosong) -> groupIsCollapsed() throw
+                        // "Cannot read properties of null" dan sidebar mati.
+                        function fixSidebarCollapsedGroups() {
+                            try {
+                                var s = window.Alpine && window.Alpine.store('sidebar');
+                                if (s && s.collapsedGroups == null) {
+                                    s.collapsedGroups = [];
+                                }
+                            } catch (e) {}
+                        }
+                        document.addEventListener('alpine:initialized', fixSidebarCollapsedGroups);
+                        document.addEventListener('livewire:navigated', fixSidebarCollapsedGroups);
+                        if (document.readyState === 'complete') {
+                            fixSidebarCollapsedGroups();
+                        } else {
+                            window.addEventListener('load', fixSidebarCollapsedGroups);
+                        }
+                    })();
+                    </script>
+                    HTML
+                ),
+            );
     }
 }
