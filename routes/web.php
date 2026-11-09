@@ -78,6 +78,31 @@ Route::get('/export/laporan/pelanggan', [ReportExportController::class, 'custome
 Route::get('/export/laporan/promo', [ReportExportController::class, 'promo'])->name('export.promo')->middleware('auth');
 Route::get('/export/laporan/komprehensif/xlsx', [ReportExportController::class, 'comprehensiveXlsx'])->name('export.comprehensive.xlsx')->middleware('auth');
 
+// Progress generate foto produk ComfyUI (proteksi auth, auto-refresh 5 detik)
+Route::get('/admin/image-progress', function () {
+    $dir = storage_path('app/public/products');
+    $files = glob($dir . '/*.jpg') ?: [];
+    usort($files, fn ($a, $b) => filemtime($b) <=> filemtime($a));
+    $total = (int) \App\Models\Product::count() ?: 1000;
+    $done = count($files);
+    $prog = @json_decode(@file_get_contents($dir . '/_progress.json'), true) ?: [];
+    $fail = (int) ($prog['fail'] ?? 0);
+    $pct = $total > 0 ? round($done / $total * 100, 1) : 0;
+    $latest = array_slice($files, 0, 20);
+    $latest = array_map(fn ($f) => [
+        'name' => pathinfo($f, PATHINFO_FILENAME),
+        'url' => asset('storage/products/' . basename($f)),
+    ], $latest);
+    $lastFile = $files ? basename($files[0]) : '-';
+    $lastTime = $files ? date('H:i:s', filemtime($files[0])) : '-';
+    // ETA kasar: 7 detik/gambar
+    $remaining = max(0, $total - $done);
+    $etaMin = round($remaining * 7 / 60);
+    $eta = $etaMin >= 60 ? floor($etaMin / 60) . ' jam ' . ($etaMin % 60) . ' mnt' : $etaMin . ' mnt';
+
+    return view('image-progress', compact('done', 'total', 'fail', 'pct', 'latest', 'lastFile', 'lastTime', 'remaining', 'eta'));
+})->middleware('auth')->name('image.progress');
+
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('guest:customer')->group(function () {
         Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

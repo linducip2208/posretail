@@ -375,7 +375,7 @@ class DemoDataSeeder extends Seeder
                 'cost_price' => $p['cost'], 'selling_price' => $p['sell'],
                 'wholesale_price' => $p['whole'], 'member_price' => $p['mem'],
                 'min_stock' => $p['min'], 'max_stock' => $p['max'], 'current_stock' => $p['stock'],
-                'image' => 'https://picsum.photos/seed/' . urlencode($slug) . '/200/200',
+                'image' => 'products/' . $slug . '.jpg',
                 'has_variants' => false, 'active' => true,
                 'created_at' => $now, 'updated_at' => $now,
             ];
