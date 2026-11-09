@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Product extends Model
@@ -74,6 +76,35 @@ class Product extends Model
                     'changed_fields' => implode(',', $changed),
                     'source' => request()->is('api/*') ? 'api' : 'manual',
                 ]);
+            }
+
+            // Error-trap gambar: setiap simpan produk, catat ke log bila kolom
+            // image menunjuk file lokal yang tidak ada di disk public, plus
+            // catat setiap perubahan nilai image (membantu diagnosa
+            // "sudah tersimpan tetapi tidak keluar").
+            if ($product->wasChanged('image')) {
+                Log::info('Product image berubah', [
+                    'product_id' => $product->id,
+                    'slug' => $product->slug,
+                    'old' => $product->getOriginal('image'),
+                    'new' => $product->image,
+                    'source' => request()->is('api/*') ? 'api' : 'manual',
+                ]);
+            }
+
+            $image = $product->image;
+            if (is_string($image) && $image !== ''
+                && ! str_starts_with($image, 'http://')
+                && ! str_starts_with($image, 'https://')) {
+                $path = ltrim(preg_replace('#^(/?storage/|/)+#', '', $image) ?? '', '/');
+                if ($path !== '' && ! Storage::disk('public')->exists($path)) {
+                    Log::warning('Product image menunjuk file yang tidak ada di disk public', [
+                        'product_id' => $product->id,
+                        'slug' => $product->slug,
+                        'image' => $image,
+                        'checked_path' => $path,
+                    ]);
+                }
             }
         });
     }
