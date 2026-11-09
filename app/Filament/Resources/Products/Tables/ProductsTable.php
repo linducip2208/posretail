@@ -91,7 +91,7 @@ class ProductsTable
                 ImageColumn::make('image')
                     ->label('Foto')
                     ->disk('public')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(),
                 IconColumn::make('has_variants')
                     ->label('Varian')
                     ->boolean()
