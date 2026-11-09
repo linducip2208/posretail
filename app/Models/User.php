@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
@@ -59,6 +61,16 @@ class User extends Authenticatable
     public function outlets(): BelongsToMany
     {
         return $this->belongsToMany(Outlet::class, 'user_outlet')->withTimestamps();
+    }
+
+    /**
+     * Filament v5: syarat akses panel. Tanpa ini, user non-FilamentUser
+     * hanya boleh akses saat APP_ENV=local (403 di production).
+     * Syarat: akun aktif. Otorisasi per-menu tetap via AuthorizesByNavigation.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return (bool) $this->active;
     }
 
     /**
