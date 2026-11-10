@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/pwa/apple-touch-icon.png">
     <meta name="theme-color" content="#2563EB">
     <meta name="apple-mobile-web-app-capable" content="yes">
     @php
@@ -1043,6 +1044,13 @@
         });
     }, 500);
 })();
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(function(err) {
+            console.log('PWA Service Worker failed:', err);
+        });
+    }
 </script>
 
 </body>

@@ -5,18 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/pwa/apple-touch-icon.png">
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>POS — Point of Sale</title>
     @vite('resources/css/portal.css')
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+        html, body { height: 100%; margin: 0; padding: 0; }
+        body { height: 100vh; height: 100dvh; overflow: hidden; overscroll-behavior: none; }
+        #mainLayout { min-height: 0; }
         #cartPanel { overflow: hidden !important; display: flex !important; flex-direction: column !important; }
-        #cartItems { overflow-y: auto !important; flex: 1 1 0% !important; min-height: 0; }
-        #cartSummary { flex-shrink: 0 !important; }
+        #cartItems { overflow-y: auto !important; flex: 1 1 0% !important; min-height: 0; -webkit-overflow-scrolling: touch; }
+        #cartSummary { flex-shrink: 0 !important; padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+        #productGrid { padding-bottom: 5.5rem; }
+        @media (min-width: 768px) {
+            #productGrid { padding-bottom: 0.75rem; }
+        }
         @media (max-width: 767px) {
-            #cartPanel { width: 100% !important; max-width: 24rem !important; }
+            #topbar { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+            #topbar::-webkit-scrollbar { display: none; }
+            #topbar > * { flex-shrink: 0; }
+            .btn-text { display: none; }
         }
         .cart-item-enter { animation: slideIn 0.2s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
@@ -28,12 +38,12 @@
         .product-card:active { transform: scale(0.97); }
     </style>
 </head>
-<body class="font-sans bg-gray-50" style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
+<body class="font-sans bg-gray-50" style="display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden">
     {{-- Hidden barcode input for USB scanner --}}
     <input type="text" id="barcodeInput" autocomplete="off">
 
     {{-- TOP BAR --}}
-    <header class="bg-white text-slate-700 px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-3 border-b border-slate-200 shadow-sm z-10" style="flex-shrink:0">
+    <header id="topbar" class="bg-white text-slate-700 px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-3 border-b border-slate-200 shadow-sm z-10" style="flex-shrink:0;padding-top:max(0.5rem, env(safe-area-inset-top))">
         <div class="flex items-center gap-2">
             <span class="w-8 h-8 rounded-lg bg-[#206bc4] text-white flex items-center justify-center font-extrabold">P</span>
             <div class="font-extrabold text-lg tracking-tight text-slate-800">POS</div>
@@ -57,7 +67,7 @@
         <span id="syncQueueBadge" class="bg-[#f59f00] text-white px-2 py-0.5 rounded-full text-xs font-bold mr-1 hidden" title="Transaksi offline pending sync">0</span>
         <button onclick="window.open('/pos/display?outlet_id=' + (document.getElementById('outletId')?.value || ''),'_blank','width=1024,height=768')" aria-label="Buka customer display" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 mr-1 border border-slate-200 min-h-[40px]" title="Customer Display">
             <x-ti name="device-desktop" class="w-4 h-4" />
-            Display
+            <span class="btn-text">Display</span>
         </button>
         @auth
         <span class="text-xs text-slate-500 flex items-center gap-1.5"><x-ti name="user" class="w-4 h-4" />{{ auth()->user()->name }}</span>
@@ -66,11 +76,11 @@
         @endauth
         <button onclick="toggleScanner()" aria-label="Scan barcode kamera" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-slate-200 min-h-[40px]">
             <x-ti name="barcode" class="w-4 h-4" />
-            Scan
+            <span class="btn-text">Scan</span>
         </button>
         <button onclick="connectPrinter()" aria-label="Hubungkan printer" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-slate-200 min-h-[40px]">
             <x-ti name="printer" class="w-4 h-4" />
-            Print
+            <span class="btn-text">Print</span>
         </button>
         <a href="/admin" class="bg-[#206bc4]/10 hover:bg-[#206bc4]/20 text-[#206bc4] px-3 py-1.5 rounded-lg text-sm font-semibold">Admin</a>
     </header>
@@ -126,7 +136,7 @@
         <div id="cartBackdrop" onclick="closeCart()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
         {{-- CART PANEL --}}
-        <div id="cartPanel" class="fixed md:static inset-y-0 right-0 z-40 w-full max-w-sm md:w-auto bg-white border-l shadow-2xl md:shadow-lg translate-x-full md:translate-x-0 transition-transform duration-300" style="display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;width:20%">
+        <div id="cartPanel" class="fixed md:static inset-y-0 right-0 z-40 w-[88vw] max-w-sm md:w-[380px] md:max-w-[380px] bg-white border-l shadow-2xl md:shadow-lg translate-x-full md:translate-x-0 transition-transform duration-300" style="display:flex;flex-direction:column;overflow:hidden;flex-shrink:0">
             <div class="p-4 border-b bg-gray-50" style="flex-shrink:0">
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-lg">Keranjang</h2>
@@ -177,7 +187,7 @@
     </div>
 
     {{-- MOBILE CART FAB --}}
-    <button id="cartFab" onclick="openCart()" class="md:hidden fixed bottom-4 right-4 z-30 bg-[#206bc4] text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 font-bold hover:bg-[#1a569d] active:scale-95 transition">
+    <button id="cartFab" onclick="openCart()" style="bottom:calc(1rem + env(safe-area-inset-bottom))" class="md:hidden fixed right-4 z-30 bg-[#206bc4] text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 font-bold hover:bg-[#1a569d] active:scale-95 transition">
         <x-ti name="shopping-cart" class="w-6 h-6" />
         <span id="cartFabCount" class="bg-white text-[#1a569d] rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
         <span id="cartFabTotal" class="font-mono text-sm">Rp 0</span>
@@ -982,8 +992,9 @@
             } catch(e) {}
         }, 4 * 60 * 1000);
 
-        // Offline mode
+        // Offline mode (pos-offline.js dimuat di bawah; guard agar tidak fatal bila gagal load)
         (function() {
+            if (typeof PosOffline === 'undefined') return;
             const indicator = document.createElement('div');
             indicator.id = 'offlineIndicator';
             indicator.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;background:#ef4444;color:white;text-align:center;padding:4px;font-size:12px;font-weight:600;z-index:9999';
@@ -1003,6 +1014,7 @@
 
             window.addEventListener('online', async () => {
                 updateStatus();
+                if (typeof PosOffline === 'undefined') return;
                 const result = await PosOffline.syncQueue('/pos/checkout');
                 if (result.synced > 0) {
                     alert('Sync: ' + result.synced + ' transaksi offline berhasil dikirim.' + (result.failed > 0 ? ' ' + result.failed + ' gagal.' : ''));
@@ -1061,5 +1073,12 @@
     </script>
     <script src="{{ asset('js/pos-offline.js') }}"></script>
     <script src="{{ asset('js/pos-printer.js') }}"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                console.log('PWA Service Worker failed:', err);
+            });
+        }
+    </script>
 </body>
 </html>

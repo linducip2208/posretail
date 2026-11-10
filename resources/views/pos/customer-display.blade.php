@@ -15,17 +15,17 @@
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-8">
+<body class="flex items-center justify-center min-h-screen p-4 sm:p-8">
     <div class="w-full max-w-4xl">
-        <div class="text-center mb-8">
-            <div class="text-5xl font-extrabold mb-2">{{ $appName }}</div>
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="font-extrabold mb-2" style="font-size:clamp(1.75rem,7vw,3rem)">{{ $appName }}</div>
             <div class="text-xl text-slate-400" id="outletName"></div>
         </div>
 
         <div class="bg-slate-800 rounded-2xl p-8 mb-6">
             <div class="text-center mb-6">
                 <div class="text-lg text-slate-400 mb-1">TOTAL BELANJA</div>
-                <div class="text-7xl font-extrabold text-[#5fcf74]" id="totalDisplay">Rp 0</div>
+                <div class="font-extrabold text-[#5fcf74]" style="font-size:clamp(2.5rem,12vw,4.5rem);line-height:1.1" id="totalDisplay">Rp 0</div>
             </div>
 
             <div class="grid grid-cols-2 gap-6 text-center">

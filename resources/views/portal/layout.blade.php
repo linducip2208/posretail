@@ -36,5 +36,12 @@
         </div>
     </footer>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                console.log('PWA Service Worker failed:', err);
+            });
+        }
+    </script>
 </body>
 </html>
