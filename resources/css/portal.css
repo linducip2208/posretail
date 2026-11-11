@@ -7,5 +7,14 @@
 
 /* Portal pelanggan + login web: seluruh styling dari build lokal (tanpa CDN). */
 
+/* Kunci skema terang: browser HP lama tanpa oklch + dark mode sistem
+   bisa membuat teks mewarisi putih. */
+html {
+    color-scheme: light;
+}
+body {
+    color: #1e293b;
+}
+
 /* Sembunyikan elemen Alpine (x-cloak) sebelum Alpine.js selesai init. */
 [x-cloak] { display: none !important; }

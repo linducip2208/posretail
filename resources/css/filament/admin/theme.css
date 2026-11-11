@@ -5,6 +5,16 @@
 @source '../../../../resources/views/vendor';
 @source '../../../../vendor/filament/**/*.blade.php';
 
+/* HP lama (browser tanpa oklch) + dark mode sistem: deklarasi warna oklch
+   di-drop browser sehingga teks mewarisi warna default UA (putih).
+   Paksa skema terang + warna teks dasar hex agar selalu terbaca. */
+html {
+    color-scheme: light;
+}
+body {
+    color: #182433;
+}
+
 .fi-login-demo-box {
     margin-top: 1.25rem;
     padding: 0.9rem 1rem;

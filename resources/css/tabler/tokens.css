@@ -5,6 +5,7 @@
  * Jangan hardcode warna di file lain; pakai variabel atau kelas utilitas ini.
  */
 :root {
+    color-scheme: light;
     /* --- Tabler palette (speklock) --- */
     --tb-primary: #206bc4;
     --tb-primary-dark: #1a569d;
