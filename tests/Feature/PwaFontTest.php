@@ -46,7 +46,7 @@ class PwaFontTest extends TestCase
     {
         $sw = file_get_contents(public_path('sw.js'));
         // Cache harus berversi agar HTML lama (menunjuk hash /build lama) tidak bikin layar putih.
-        $this->assertStringContainsString('pos-retail-v5', $sw);
+        $this->assertStringContainsString('pos-retail-v6', $sw);
         $this->assertStringContainsString('/build/', $sw);
         // Precaching harus toleran gagal: satu aset 404 tidak boleh menggagalkan install.
         $this->assertStringNotContainsString('cache.addAll', $sw);

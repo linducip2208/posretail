@@ -16,6 +16,16 @@ use Illuminate\View\View;
 
 class PosController extends Controller
 {
+    /**
+     * Token CSRF segar untuk halaman POS yang lama terbuka di HP.
+     * Dipakai retry otomatis saat checkout/sync kena 419 (token di meta basi),
+     * supaya kasir tidak langsung ditendang ke halaman login.
+     */
+    public function csrf(): JsonResponse
+    {
+        return response()->json(['token' => csrf_token()]);
+    }
+
     public function index(): View
     {
         $outlets = auth()->user()?->accessibleOutlets()?->get();

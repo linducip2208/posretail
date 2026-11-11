@@ -65,6 +65,35 @@ const PosOffline = {
         return this.getQueue().length;
     },
 
+    refreshCsrfToken: async function () {
+        try {
+            const res = await fetch('/pos/csrf', { headers: { 'Accept': 'application/json' } });
+            if (!res.ok) return false;
+            const data = await res.json();
+            if (data.token) {
+                document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', data.token);
+                return true;
+            }
+        } catch (e) { /* abaikan */ }
+        return false;
+    },
+
+    postCheckout: async function (checkoutUrl, cleanOrder, retried) {
+        const res = await fetch(checkoutUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+            },
+            body: JSON.stringify(cleanOrder),
+        });
+        // Token basi (halaman lama terbuka / sesi diregenerasi): refresh + retry sekali.
+        if (res.status === 419 && !retried && await this.refreshCsrfToken()) {
+            return this.postCheckout(checkoutUrl, cleanOrder, true);
+        }
+        return res;
+    },
+
     syncQueue: async function (checkoutUrl) {
         if (!this.isOnline()) return { synced: 0, failed: 0 };
 
@@ -78,14 +107,7 @@ const PosOffline = {
         for (const order of queue) {
             try {
                 const { _queuedAt, _id, ...cleanOrder } = order;
-                const res = await fetch(checkoutUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                    },
-                    body: JSON.stringify(cleanOrder),
-                });
+                const res = await this.postCheckout(checkoutUrl, cleanOrder, false);
                 if (res.ok) {
                     synced++;
                 } else {

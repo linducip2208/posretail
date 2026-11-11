@@ -28,6 +28,7 @@ Route::get('/docs', [DocsController::class, 'index'])->name('docs');
 Route::get('/docs/api', [ApiDocsController::class, 'index'])->name('docs.api');
 
 Route::get('/pos', [PosController::class, 'index'])->name('pos')->middleware('auth');
+Route::get('/pos/csrf', [PosController::class, 'csrf'])->name('pos.csrf')->middleware('auth');
 
 Route::get('/barcode/{code}', [BarcodeController::class, 'show'])->name('barcode.image');
 

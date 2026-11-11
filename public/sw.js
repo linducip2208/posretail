@@ -4,10 +4,10 @@
  * - Aset build (/build/): stale-while-revalidate.
  * - API GET: network-first + cache bacaan offline; non-GET tidak disentuh.
  * - Precaching dibuat toleran gagal (satu aset 404 tidak boleh menggagalkan install).
- * v5: bump cache agar cache v4 yang menyimpan HTML/aset hash lama langsung dibuang
- * (sumber layar putih setelah deploy: HTML cache menunjuk /build hash yang sudah hilang).
+ * v6: jangan cache halaman auth (token CSRF basi = 419); bump agar cache
+ * v5 yang menyimpan HTML auth lama langsung dibuang.
  */
-const CACHE_NAME = 'pos-retail-v5';
+const CACHE_NAME = 'pos-retail-v6';
 
 const PRECACHE_URLS = [
     '/',
@@ -67,11 +67,18 @@ self.addEventListener('fetch', (event) => {
     const url = new URL(request.url);
 
     // 1. Navigasi halaman: network-first + fallback offline.
+    // Halaman auth TIDAK di-cache: HTML-nya membawa token CSRF sekali pakai per sesi.
+    // Menyajikan versi cache-nya saat sesi sudah berganti = 419 "Page Expired".
+    const NO_CACHE_NAV = ['/admin/login', '/login', '/register', '/portal/login', '/portal/register'];
+    function isAuthPage(pathname) {
+        return NO_CACHE_NAV.some((p) => pathname === p || pathname.startsWith('/password/'));
+    }
+
     if (request.mode === 'navigate') {
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    if (response && response.ok) {
+                    if (response && response.ok && !isAuthPage(url.pathname)) {
                         const clone = response.clone();
                         caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
                     }

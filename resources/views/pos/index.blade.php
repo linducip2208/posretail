@@ -769,12 +769,35 @@
                 voucher_code: voucherCode || null,
             };
 
-            try {
+            // Token di meta bisa basi kalau halaman lama terbuka di HP (419).
+            // Refresh sekali + retry sebelum menyerah ke halaman login.
+            async function refreshCsrfToken() {
+                try {
+                    const r = await fetch('/pos/csrf', { headers: { 'Accept': 'application/json' } });
+                    if (!r.ok) return false;
+                    const j = await r.json();
+                    if (j.token) {
+                        document.querySelector('meta[name="csrf-token"]')?.setAttribute('content', j.token);
+                        return true;
+                    }
+                } catch (e) { /* abaikan, anggap sesi habis */ }
+                return false;
+            }
+
+            async function postCheckout(payload, retried) {
                 const res = await fetch('/pos/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
                     body: JSON.stringify(payload),
                 });
+                if (res.status === 419 && !retried && await refreshCsrfToken()) {
+                    return postCheckout(payload, true);
+                }
+                return res;
+            }
+
+            try {
+                const res = await postCheckout(payload, false);
 
                 if (res.status === 401 || res.status === 419) {
                     alert('Sesi habis. Silakan login dulu.');
