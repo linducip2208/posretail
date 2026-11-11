@@ -1,13 +1,16 @@
-/* POS Retail PWA service worker (v4).
+/* POS Retail PWA service worker (v5).
  * Strategi:
  * - Navigasi: network-first, fallback cache, fallback halaman offline.
  * - Aset build (/build/): stale-while-revalidate.
  * - API GET: network-first + cache bacaan offline; non-GET tidak disentuh.
  * - Precaching dibuat toleran gagal (satu aset 404 tidak boleh menggagalkan install).
+ * v5: bump cache agar cache v4 yang menyimpan HTML/aset hash lama langsung dibuang
+ * (sumber layar putih setelah deploy: HTML cache menunjuk /build hash yang sudah hilang).
  */
-const CACHE_NAME = 'pos-retail-v4';
+const CACHE_NAME = 'pos-retail-v5';
 
 const PRECACHE_URLS = [
+    '/',
     '/manifest.json',
     '/pwa/icon.svg',
     '/pwa/icon-192.png',

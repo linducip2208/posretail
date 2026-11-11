@@ -17,6 +17,7 @@
     <meta name="twitter:title" content="{{ $seoMeta['title'] }}">
     <meta name="twitter:description" content="{{ $seoMeta['description'] }}">
     <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    @fonts
     @vite('resources/css/portal.css')
     <style>body{font-family:Inter,sans-serif}</style>
 </head>

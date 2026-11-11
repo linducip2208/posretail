@@ -16,6 +16,7 @@
     <meta name="twitter:description" content="{{ $seoDescription ?? $post->excerpt }}">
     <meta name="twitter:image" content="{{ $post->featured_image ? asset($post->featured_image) : config('app.url') . '/brand/logo-posretail.png' }}">
     <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    @fonts
     @vite('resources/css/portal.css')
 </head>
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">

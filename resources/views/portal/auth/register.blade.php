@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar — POS Retail</title>
+    @fonts
     @vite('resources/css/portal.css')
 </head>
 <body class="bg-gray-50 min-h-screen font-sans antialiased flex items-center justify-center px-4">

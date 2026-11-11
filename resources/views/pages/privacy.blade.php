@@ -15,6 +15,7 @@
     <meta name="twitter:title" content="Kebijakan Privasi — {{ config('app.name') }}">
     <meta name="twitter:description" content="{{ config('app.name') }} tunduk pada UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi.">
     <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    @fonts
     @vite('resources/css/portal.css')
 </head>
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">

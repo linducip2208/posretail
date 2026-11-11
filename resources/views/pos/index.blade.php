@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>POS — Point of Sale</title>
+    @fonts
     @vite('resources/css/portal.css')
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }

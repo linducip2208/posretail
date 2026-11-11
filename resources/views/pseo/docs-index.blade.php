@@ -18,6 +18,7 @@
     <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#3b82f6">
+    @fonts
     @vite('resources/css/portal.css')
     <script type="application/ld+json"><?php echo json_encode(['@context' => 'https://schema.org', '@type' => 'Article', 'headline' => $seoMeta['title'], 'description' => $seoMeta['description'], 'inLanguage' => 'id']); ?></script>
     <style>

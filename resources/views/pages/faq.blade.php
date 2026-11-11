@@ -15,6 +15,7 @@
     <meta name="twitter:title" content="FAQ — {{ config('app.name') }}">
     <meta name="twitter:description" content="Pertanyaan yang sering diajukan tentang aplikasi POS Retail.">
     <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    @fonts
     @vite('resources/css/portal.css')
 </head>
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">

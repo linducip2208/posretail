@@ -21,6 +21,7 @@ $typeLabels = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sitemap — {{ $totalPages }}+ Halaman | POS Retail</title>
+    @fonts
     @vite('resources/css/portal.css')
     <style>body{font-family:Inter, sans-serif; background:#f8fafc}</style>
 </head>

@@ -15,6 +15,7 @@
     <meta name="twitter:title" content="{{ $seoTitle ?? 'Blog — ' . config('app.name') }}">
     <meta name="twitter:description" content="{{ $seoDescription ?? 'Tips bisnis retail dan panduan manajemen toko Indonesia.' }}">
     <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    @fonts
     @vite('resources/css/portal.css')
 </head>
 <body class="font-sans bg-stone-50 text-slate-800 antialiased">

@@ -30,6 +30,7 @@
     <meta name="twitter:description" content="Sistem kasir modern untuk toko retail Indonesia. Multi-outlet, inventori real-time, loyalitas pelanggan, laporan lengkap.">
     <meta property="og:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
     <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    @fonts
     @vite(['resources/css/portal.css', 'resources/js/portal.js'])
     <script type="application/ld+json">
     {
