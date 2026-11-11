@@ -74,9 +74,18 @@ self.addEventListener('fetch', (event) => {
         return NO_CACHE_NAV.some((p) => pathname === p || pathname.startsWith('/password/'));
     }
 
+    // Navigasi dengan batas waktu: di HP sinyal lemah, fetch bisa menggantung
+    // puluhan detik (layar putih). Setelah timeout, pakai cache / halaman offline.
+    const NAV_TIMEOUT_MS = 15000;
+    function fetchWithTimeout(req, ms) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), ms);
+        return fetch(req, { signal: controller.signal }).finally(() => clearTimeout(timer));
+    }
+
     if (request.mode === 'navigate') {
         event.respondWith(
-            fetch(request)
+            fetchWithTimeout(request, NAV_TIMEOUT_MS)
                 .then((response) => {
                     if (response && response.ok && !isAuthPage(url.pathname)) {
                         const clone = response.clone();
