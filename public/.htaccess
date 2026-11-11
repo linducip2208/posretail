@@ -29,3 +29,15 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Service worker & manifest PWA: jangan di-cache agar update langsung sampai ke HP.
+<Files "sw.js">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-store"
+    </IfModule>
+</Files>
+<Files "manifest.json">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "public, max-age=3600"
+    </IfModule>
+</Files>
