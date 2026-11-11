@@ -54,6 +54,14 @@ class WebRoutesTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_admin_layout_has_boot_guard(): void
+    {
+        // Pengaman layar putih di HP: banner pulihkan muncul bila Alpine/Livewire gagal boot.
+        $response = $this->get('/admin/login');
+        $response->assertStatus(200);
+        $response->assertSee('fi-boot-guard', false);
+    }
+
     public function test_api_login_endpoint(): void
     {
         $user = User::factory()->create(['role' => 'kasir']);
