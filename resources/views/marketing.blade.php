@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="color-scheme" content="light">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/pwa/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('pwa/apple-touch-icon.png') }}">
     <meta name="theme-color" content="#2563EB">
     <meta name="apple-mobile-web-app-capable" content="yes">
     @php
@@ -29,8 +29,8 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $appName }} — Solusi Kasir Modern untuk Toko Anda">
     <meta name="twitter:description" content="Sistem kasir modern untuk toko retail Indonesia. Multi-outlet, inventori real-time, loyalitas pelanggan, laporan lengkap.">
-    <meta property="og:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
-    <meta name="twitter:image" content="{{ config('app.url') }}/brand/logo-posretail.png">
+    <meta property="og:image" content="{{ asset('brand/logo-posretail.png') }}">
+    <meta name="twitter:image" content="{{ asset('brand/logo-posretail.png') }}">
     @fonts
     @vite(['resources/css/portal.css', 'resources/js/portal.js'])
     <script type="application/ld+json">
@@ -203,9 +203,9 @@
         <div class="flex items-center justify-between h-16">
             <a href="/" class="flex items-center gap-2.5 group">
                 @if($logoUrl)
-                    <img src="{{ $logoUrl }}" alt="{{ $appName }}" class="h-8 w-auto">
+                    <img src="{{ $logoUrl }}" alt="{{ $appName }}" class="h-8 w-auto" onerror="this.onerror=null;this.src='{{ asset('assets/posretail/01-logo-posretail.png') }}'">
                 @else
-                    <img src="/assets/posretail/01-logo-posretail.png" alt="POS Retail — Mudah, Cepat, Terpercaya" class="h-8 w-auto">
+                    <img src="{{ asset('assets/posretail/01-logo-posretail.png') }}" alt="POS Retail — Mudah, Cepat, Terpercaya" class="h-8 w-auto">
                 @endif
             </a>
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
@@ -248,7 +248,7 @@
                 </a>
             </div>
             <div class="flex items-center gap-3 mb-8">
-                <img src="/assets/posretail/02-icon-android.png" alt="Ikon Android POS Retail" class="h-10 w-10 rounded-xl shadow">
+                <img src="{{ asset('assets/posretail/02-icon-android.png') }}" alt="Ikon Android POS Retail" class="h-10 w-10 rounded-xl shadow">
                 <div class="text-sm">
                     <div class="font-bold text-slate-900">Aplikasi Android Tersedia di Play Store</div>
                     <div class="text-slate-500">Web &amp; Android, online dan offline.</div>
@@ -274,9 +274,9 @@
             </div>
         </div>
         <div class="relative flex items-end justify-center gap-4">
-            <img src="/assets/posretail/05-dashboard-screen.png" alt="Dashboard aplikasi POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl" loading="eager">
-            <img src="/assets/posretail/06-product-screen.png" alt="Layar produk aplikasi POS Retail" class="w-44 md:w-56 rounded-[2rem] border-4 border-slate-900 shadow-2xl -mb-4" loading="lazy">
-            <img src="/assets/posretail/07-cart-checkout-screen.png" alt="Keranjang dan checkout POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl hidden sm:block" loading="lazy">
+            <img src="{{ asset('assets/posretail/05-dashboard-screen.png') }}" alt="Dashboard aplikasi POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl" loading="eager">
+            <img src="{{ asset('assets/posretail/06-product-screen.png') }}" alt="Layar produk aplikasi POS Retail" class="w-44 md:w-56 rounded-[2rem] border-4 border-slate-900 shadow-2xl -mb-4" loading="lazy">
+            <img src="{{ asset('assets/posretail/07-cart-checkout-screen.png') }}" alt="Keranjang dan checkout POS Retail" class="w-40 md:w-48 rounded-[2rem] border-4 border-slate-900 shadow-2xl hidden sm:block" loading="lazy">
             <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white border border-slate-100 rounded-2xl shadow-lg px-4 py-2.5 text-sm font-bold text-slate-800 whitespace-nowrap">
                 <span class="text-[#2563eb]">●</span> Aplikasi Android &amp; Web
             </div>
@@ -397,7 +397,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/products</div>
                     </div>
-                    <img src="/marketing/screens/products.png?v={{ $shotV }}" alt="Manajemen Produk POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Manajemen Produk</div>'">
+                    <img src="{{ asset('marketing/screens/products.png') }}?v={{ $shotV }}" alt="Manajemen Produk POS Retail" class="w-full" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm&quot;>Screenshot: Manajemen Produk</div>')">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -427,7 +427,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/orders/create</div>
                     </div>
-                    <img src="/marketing/screens/pos-web.png?v={{ $shotV }}" alt="Point of Sale POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Point of Sale</div>'">
+                    <img src="{{ asset('marketing/screens/pos-web.png') }}?v={{ $shotV }}" alt="Point of Sale POS Retail" class="w-full" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm&quot;>Screenshot: Point of Sale</div>')">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -457,7 +457,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/stock-opnames</div>
                     </div>
-                    <img src="/marketing/screens/stock-opnames.png?v={{ $shotV }}" alt="Manajemen Inventori POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Manajemen Inventori</div>'">
+                    <img src="{{ asset('marketing/screens/stock-opnames.png') }}?v={{ $shotV }}" alt="Manajemen Inventori POS Retail" class="w-full" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm&quot;>Screenshot: Manajemen Inventori</div>')">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -486,7 +486,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/purchase-orders</div>
                     </div>
-                    <img src="/marketing/screens/purchase-orders.png?v={{ $shotV }}" alt="Purchase Order POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Purchase Order</div>'">
+                    <img src="{{ asset('marketing/screens/purchase-orders.png') }}?v={{ $shotV }}" alt="Purchase Order POS Retail" class="w-full" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm&quot;>Screenshot: Purchase Order</div>')">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -514,7 +514,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/loyalty-rewards</div>
                     </div>
-                    <img src="/marketing/screens/loyalty-rewards.png?v={{ $shotV }}" alt="Program Loyalitas POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Program Loyalitas</div>'">
+                    <img src="{{ asset('marketing/screens/loyalty-rewards.png') }}?v={{ $shotV }}" alt="Program Loyalitas POS Retail" class="w-full" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm&quot;>Screenshot: Program Loyalitas</div>')">
                 </div>
             </div>
             <div class="md:w-1/2">
@@ -543,7 +543,7 @@
                         <div class="browser-dot green"></div>
                         <div class="browser-url">pos-retail/admin/reports</div>
                     </div>
-                    <img src="/marketing/screens/laporan-penjualan.png?v={{ $shotV }}" alt="Laporan & Analisis POS Retail" class="w-full" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm>Screenshot: Laporan & Analisis</div>'">
+                    <img src="{{ asset('marketing/screens/laporan-penjualan.png') }}?v={{ $shotV }}" alt="Laporan & Analisis POS Retail" class="w-full" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;bg-gray-100 h-64 flex items-center justify-center text-gray-400 text-sm&quot;>Screenshot: Laporan &amp; Analisis</div>')">
                 </div>
             </div>
             <div class="md:w-1/2">

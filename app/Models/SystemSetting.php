@@ -55,6 +55,14 @@ class SystemSetting extends Model
             return null;
         }
 
+        // File upload tersimpan di storage/app/public (tidak ikut git).
+        // Di server produksi file bisa belum ada / symlink belum dibuat,
+        // jadi cek dulu — kalau tidak ada, kembalikan null agar Blade
+        // memakai fallback aset statis di public/assets.
+        if (! \Illuminate\Support\Facades\Storage::disk('public')->exists($logo)) {
+            return null;
+        }
+
         return asset('storage/'.$logo);
     }
 
@@ -62,6 +70,10 @@ class SystemSetting extends Model
     {
         $illustration = static::getValue('login_illustration');
         if (! $illustration) {
+            return null;
+        }
+
+        if (! \Illuminate\Support\Facades\Storage::disk('public')->exists($illustration)) {
             return null;
         }
 
