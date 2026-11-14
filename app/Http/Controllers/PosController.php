@@ -171,11 +171,34 @@ class PosController extends Controller
             'paid_amount' => 'required|numeric|min:0|max:1000000000',
             'use_tax' => 'nullable|boolean',
             'voucher_code' => 'nullable|string|max:100',
+            'client_uuid' => 'nullable|string|max:100',
         ]);
 
         $user = auth()->user();
         if ($user && ! in_array($request->outlet_id, $user->getAccessibleOutletIds())) {
             return response()->json(['message' => 'Anda tidak memiliki akses ke outlet ini.'], 403);
+        }
+
+        // Idempotency: double-click / double-tap / retry setelah timeout dengan
+        // client_uuid sama = order pernah dibuat. Kembalikan order existing,
+        // jangan buat order baru dan jangan potong stok dua kali.
+        $clientUuid = $request->input('client_uuid');
+        if ($clientUuid) {
+            $accessibleIds = $user ? $user->getAccessibleOutletIds() : [];
+            $existing = Order::where('client_uuid', $clientUuid)
+                ->when($accessibleIds, fn ($q) => $q->whereIn('outlet_id', $accessibleIds))
+                ->first();
+            if ($existing) {
+                return response()->json([
+                    'success' => true,
+                    'duplicate' => true,
+                    'id' => $existing->id,
+                    'order_number' => $existing->order_number,
+                    'queue_number' => $existing->queue_number,
+                    'total' => $existing->total_amount,
+                    'change' => $request->paid_amount - $existing->total_amount,
+                ]);
+            }
         }
 
         $items = collect($request->items)->map(fn ($i) => [
@@ -186,7 +209,10 @@ class PosController extends Controller
             'serial_numbers' => $i['serial_numbers'] ?? [],
         ])->toArray();
 
-        $order = $checkout->checkout([
+        $order = null;
+        try {
+            $order = $checkout->checkout([
+            'client_uuid' => $clientUuid,
             'outlet_id' => (int) $request->outlet_id,
             'items' => $items,
             'payments' => [['payment_method_id' => (int) $request->payment_method_id, 'amount' => (float) $request->paid_amount]],
@@ -201,6 +227,25 @@ class PosController extends Controller
             'installment_period' => $request->installment_period,
             'installment_count' => (int) ($request->installment_count ?? 1),
         ], (int) auth()->id());
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Race: dua request paralel dengan uuid sama lolos cek di atas
+            // bersamaan — kembalikan order yang sudah terbuat.
+            if ($clientUuid && str_contains($e->getMessage(), 'client_uuid')) {
+                $dup = Order::where('client_uuid', $clientUuid)->first();
+                if ($dup) {
+                    return response()->json([
+                        'success' => true,
+                        'duplicate' => true,
+                        'id' => $dup->id,
+                        'order_number' => $dup->order_number,
+                        'queue_number' => $dup->queue_number,
+                        'total' => $dup->total_amount,
+                        'change' => $request->paid_amount - $dup->total_amount,
+                    ]);
+                }
+            }
+            throw $e;
+        }
 
         return response()->json([
             'success' => true,

@@ -47,10 +47,17 @@ const PosOffline = {
 
     queueTransaction: function (orderData) {
         const queue = this.getQueue();
+        // UUID stabil sejak antre: sync ulang / replay tidak bikin order ganda.
+        if (!orderData.client_uuid) {
+            const uuid = (typeof crypto !== 'undefined' && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : 'offline-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+            orderData = { ...orderData, client_uuid: uuid };
+        }
         queue.push({
             ...orderData,
             _queuedAt: Date.now(),
-            _id: 'offline_' + Date.now(),
+            _id: orderData.client_uuid,
         });
         localStorage.setItem(this.keys.queue, JSON.stringify(queue));
         return queue.length;
@@ -94,9 +101,15 @@ const PosOffline = {
         return res;
     },
 
+    _syncing: false,
+
     syncQueue: async function (checkoutUrl) {
         if (!this.isOnline()) return { synced: 0, failed: 0 };
+        // Event 'online' bisa fire berkali-kali — jangan sync paralel.
+        if (this._syncing) return { synced: 0, failed: 0, skipped: true };
+        this._syncing = true;
 
+        try {
         const queue = this.getQueue();
         if (queue.length === 0) return { synced: 0, failed: 0 };
 
@@ -122,6 +135,9 @@ const PosOffline = {
 
         localStorage.setItem(this.keys.queue, JSON.stringify(remaining));
         return { synced, failed, remaining: remaining.length };
+        } finally {
+            this._syncing = false;
+        }
     },
 
     clearCache: function () {

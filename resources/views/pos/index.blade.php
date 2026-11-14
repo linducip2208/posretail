@@ -227,7 +227,7 @@
 
             <div class="flex gap-2">
                 <button onclick="hidePayment()" class="flex-1 border border-gray-300 py-2.5 rounded-lg font-semibold hover:bg-gray-50">Batal</button>
-                <button onclick="processPayment()" class="flex-1 bg-[#206bc4] text-white py-2.5 rounded-lg font-bold hover:bg-[#1a569d]">Proses</button>
+                <button onclick="processPayment()" id="processPayBtn" class="flex-1 bg-[#206bc4] text-white py-2.5 rounded-lg font-bold hover:bg-[#1a569d] disabled:opacity-60">Proses</button>
             </div>
         </div>
     </div>
@@ -275,6 +275,13 @@
         let printerDevice = null;
         let voucherDiscount = 0;
         let voucherCode = '';
+        let isProcessing = false;
+        let paymentUuid = null;
+
+        function newPaymentUuid() {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+            return 'web-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+        }
 
         const RECEIPT = {
             appName: @json($appName),
@@ -721,6 +728,9 @@
         // === PAYMENT ===
         function showPayment() {
             if (cart.length === 0) return;
+            // Satu sesi bayar = satu UUID. Stabil untuk retry 419 / timeout,
+            // supaya server mengenali pengulangan sebagai duplikat, bukan order baru.
+            paymentUuid = newPaymentUuid();
             const total = getTotal();
             document.getElementById('paymentTotal').textContent = formatRupiah(total);
             document.getElementById('paymentModal').classList.remove('hidden');
@@ -751,6 +761,8 @@
         }
 
         async function processPayment() {
+            // Kunci double-submit: klik 2x / double-tap HP / Enter 2x.
+            if (isProcessing) return;
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const total = getTotal();
             const paid = parseInt(document.getElementById('paidAmount').value) || 0;
@@ -759,7 +771,13 @@
             const outletId = document.getElementById('outletId').value;
             if (!outletId) { alert('Anda belum memiliki akses outlet. Hubungi admin.'); return; }
 
+            isProcessing = true;
+            const processBtn = document.getElementById('processPayBtn');
+            const processBtnLabel = processBtn ? processBtn.textContent : '';
+            if (processBtn) { processBtn.disabled = true; processBtn.textContent = 'Memproses...'; }
+
             const payload = {
+                client_uuid: paymentUuid || newPaymentUuid(),
                 outlet_id: outletId,
                 order_type: document.getElementById('orderType').value,
                 customer_id: parseInt(document.getElementById('customerSelect').value) || null,
@@ -816,6 +834,7 @@
 
                 if (data.success) {
                     hidePayment();
+                    paymentUuid = null;
                     const orderNumber = data.order_number;
                     const queueNumber = data.queue_number;
                     if (queueNumber) {
@@ -833,6 +852,9 @@
                 }
             } catch (e) {
                 alert('Gagal memproses pembayaran: ' + e.message);
+            } finally {
+                isProcessing = false;
+                if (processBtn) { processBtn.disabled = false; processBtn.textContent = processBtnLabel; }
             }
         }
 
