@@ -286,6 +286,19 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
     return redirect()->intended('/admin');
 });
 
+Route::get('/app', [App\Http\Controllers\RetailDashboardController::class, 'index'])->name('tillora.dashboard')->middleware('auth');
+Route::get('/app/{page}', [App\Http\Controllers\RetailPageController::class, 'show'])->name('tillora.page')->middleware('auth');
+Route::get('/tillora/{any}', fn ($any) => redirect('/app/'.$any))->where('any', '.*');
+
+Route::post('/app/store/product', [App\Http\Controllers\RetailStoreController::class, 'storeProduct'])->name('tillora.store.product')->middleware('auth');
+Route::post('/app/store/customer', [App\Http\Controllers\RetailStoreController::class, 'storeCustomer'])->name('tillora.store.customer')->middleware('auth');
+Route::post('/app/store/purchase-order', [App\Http\Controllers\RetailStoreController::class, 'storePurchaseOrder'])->name('tillora.store.po')->middleware('auth');
+Route::post('/app/broadcast-wa', [App\Http\Controllers\RetailStoreController::class, 'storeBroadcast'])->name('tillora.broadcast.send')->middleware('auth');
+Route::post('/app/stock-take', [App\Http\Controllers\RetailStoreController::class, 'storeStockTake'])->name('tillora.stocktake.store')->middleware('auth');
+Route::post('/app/hold-orders', [App\Http\Controllers\RetailStoreController::class, 'storeHeldCart'])->name('tillora.hold.store')->middleware('auth');
+Route::put('/app/profile', [App\Http\Controllers\RetailStoreController::class, 'profileUpdate'])->name('tillora.profile.update')->middleware('auth');
+Route::put('/app/settings', [App\Http\Controllers\RetailStoreController::class, 'settingsUpdate'])->name('tillora.settings.update')->middleware('auth');
+
 Route::redirect('/register', '/admin/login')->name('register');
 Route::redirect('/forgot-password', '/admin/login')->name('password.request');
 

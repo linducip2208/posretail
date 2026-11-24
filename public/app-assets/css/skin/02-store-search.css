@@ -1,0 +1,299 @@
+/* 02-store-search.css — pemilih toko + pencarian global di topbar gelap. */
+
+/* Wadah dropdown pemilih toko. */
+.store-selector {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Tombol pill gelap transparan di atas topbar navy. */
+.store-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: 260px;
+  min-height: 44px;
+  padding: 0.3rem 0.7rem 0.3rem 0.35rem;
+  font-family: var(--app-font);
+  text-align: left;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--app-surface) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-surface) 14%, transparent);
+  border-radius: var(--app-radius-sm);
+}
+
+.store-trigger:hover {
+  background: color-mix(in srgb, var(--app-surface) 13%, transparent);
+  border-color: color-mix(in srgb, var(--app-surface) 22%, transparent);
+}
+
+.store-trigger:focus-visible {
+  outline: 0;
+  border-color: rgba(var(--app-accent-rgb), 0.6);
+  box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.25);
+}
+
+.store-trigger.show {
+  background: color-mix(in srgb, var(--app-surface) 14%, transparent);
+  border-color: rgba(var(--app-accent-rgb), 0.55);
+}
+
+/* Kolom teks: nama toko + sub-info. */
+.store-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+  color: var(--app-surface);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.store-label small {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--app-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ikon kotak di kiri trigger. */
+.store-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--app-surface);
+  background: linear-gradient(140deg, var(--app-accent), var(--app-primary));
+  border-radius: var(--app-radius-xs);
+}
+
+/* Chevron di kanan trigger. */
+.store-caret {
+  flex-shrink: 0;
+  margin-left: 0.1rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--app-subtle);
+  transition: transform 0.18s ease;
+}
+
+.store-trigger.show .store-caret {
+  transform: rotate(180deg);
+}
+
+/* Dropdown daftar toko — selaras dengan Tabler .dropdown-menu. */
+.store-menu.dropdown-menu {
+  min-width: 300px;
+  max-width: 340px;
+  padding: 0.5rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  box-shadow: var(--app-shadow-pop);
+}
+
+.store-menu .dropdown-header {
+  padding: 0.45rem 0.7rem 0.35rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--app-subtle);
+}
+
+/* Baris opsi toko — selaras dengan Tabler .dropdown-item. */
+.store-option.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--app-radius-xs);
+  white-space: normal;
+}
+
+.store-option.dropdown-item:hover {
+  background: var(--app-primary-soft);
+}
+
+.store-option.dropdown-item.active {
+  background: var(--app-primary-soft);
+}
+
+.store-option .store-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.store-option strong {
+  display: block;
+  font-size: 0.83rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--app-heading);
+}
+
+.store-option small {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--app-muted);
+}
+
+.store-option > span:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* Tanda centang opsi aktif. */
+.store-check {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: var(--app-primary);
+  opacity: 0;
+}
+
+.store-option.active .store-check,
+.store-option[aria-checked="true"] .store-check {
+  opacity: 1;
+}
+
+/* Kotak pencarian gelap di topbar. */
+.topbar-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  max-width: 480px;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.topbar-search .form-control {
+  width: 100%;
+  height: 40px;
+  min-height: 40px;
+  padding-left: 2.5rem;
+  padding-right: 4.5rem;
+  font-size: 0.83rem;
+  color: var(--app-surface);
+  background: color-mix(in srgb, var(--app-surface) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-surface) 14%, transparent);
+  border-radius: var(--app-radius-sm);
+}
+
+.topbar-search .form-control::placeholder {
+  color: var(--app-subtle);
+  opacity: 1;
+}
+
+.topbar-search .form-control:focus {
+  color: var(--app-surface);
+  background: color-mix(in srgb, var(--app-surface) 12%, transparent);
+  border-color: rgba(var(--app-accent-rgb), 0.6);
+  box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.22);
+}
+
+.topbar-search > i,
+.topbar-search > svg {
+  position: absolute;
+  left: 0.9rem;
+  font-size: 0.95rem;
+  color: var(--app-subtle);
+  pointer-events: none;
+}
+
+/* Wadah kbd "Ctrl K" di kanan search box. */
+.search-keys {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-keys kbd {
+  padding: 0.12rem 0.4rem;
+  font-family: var(--app-font);
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--app-subtle);
+  background: color-mix(in srgb, var(--app-surface) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-surface) 16%, transparent);
+  border-radius: 6px;
+}
+
+/* Dropdown hasil pencarian. */
+.search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: none;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 0.45rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  box-shadow: var(--app-shadow-pop);
+}
+
+.search-results.is-open {
+  display: block;
+}
+
+.search-results .dropdown-header {
+  padding: 0.45rem 0.7rem 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--app-subtle);
+}
+
+.search-results .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--app-body);
+  border-radius: var(--app-radius-xs);
+}
+
+.search-results .dropdown-item:hover {
+  color: var(--app-heading);
+  background: var(--app-primary-soft);
+}
+
+.search-results .dropdown-item small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--app-muted);
+}

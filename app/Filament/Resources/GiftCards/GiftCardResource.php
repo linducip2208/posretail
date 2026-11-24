@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class GiftCardResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Promo';
+    protected static string|\UnitEnum|null $navigationGroup = 'Marketing';
 
     protected static ?int $navigationSort = 2;
 

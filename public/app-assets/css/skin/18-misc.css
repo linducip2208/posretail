@@ -1,0 +1,406 @@
+/* ==========================================================================
+   18 MISC — alert strip, footer, search dropdown, create menu,
+   mobile nav offcanvas & customizer basics.
+   Memakai token 00-tokens.css (--app-*).
+   ========================================================================== */
+
+/* ---- Alert strip: baris info ikon + teks kecil ---- */
+.alert-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--app-body);
+  background: rgba(var(--app-warning-rgb), 0.09);
+  border: 1px solid var(--app-border);
+  border-left-width: 4px;
+  border-left-color: var(--app-warning);
+  border-radius: var(--app-radius-sm);
+}
+
+.alert-strip.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.alert-strip > i,
+.alert-strip > svg,
+.alert-strip > .bi {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.alert-strip.is-info {
+  background: var(--app-primary-soft);
+  border-left-color: var(--app-primary);
+}
+
+.alert-strip.is-info > i,
+.alert-strip.is-info > svg,
+.alert-strip.is-info > .bi {
+  color: var(--app-primary);
+}
+
+.alert-strip.is-success {
+  background: rgba(var(--app-success-rgb), 0.08);
+  border-left-color: var(--app-success);
+}
+
+.alert-strip.is-success > i,
+.alert-strip.is-success > svg,
+.alert-strip.is-success > .bi {
+  color: var(--app-success);
+}
+
+.alert-strip.is-warning {
+  background: rgba(var(--app-warning-rgb), 0.09);
+  border-left-color: var(--app-warning);
+}
+
+.alert-strip.is-warning > i,
+.alert-strip.is-warning > svg,
+.alert-strip.is-warning > .bi {
+  color: var(--app-warning);
+}
+
+.alert-strip.is-danger {
+  background: rgba(var(--app-danger-rgb), 0.07);
+  border-left-color: var(--app-danger);
+}
+
+.alert-strip.is-danger > i,
+.alert-strip.is-danger > svg,
+.alert-strip.is-danger > .bi {
+  color: var(--app-danger);
+}
+
+.alert-strip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  font-size: 0.8125rem;
+  color: var(--app-body);
+}
+
+.alert-strip-item + .alert-strip-item {
+  margin-left: 0.25rem;
+}
+
+/* ---- Footer kecil ---- */
+.app-footer {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 0.78rem;
+  color: var(--app-muted);
+  background: var(--app-surface);
+  border-top: 1px solid var(--app-border);
+}
+
+.app-footer a {
+  color: var(--app-muted);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  color: var(--app-primary);
+  text-decoration: underline;
+}
+
+.app-footer .footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: var(--app-muted);
+}
+
+.app-footer .footer-status .live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--app-success);
+  border-radius: var(--app-radius-pill);
+  box-shadow: 0 0 0 3px rgba(var(--app-success-rgb), 0.18);
+}
+
+/* ---- Dropdown hasil pencarian global ---- */
+.search-results {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  left: 0;
+  z-index: 1050;
+  display: none;
+  max-height: 22rem;
+  padding: 0.4rem;
+  overflow-y: auto;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+  box-shadow: var(--app-shadow-pop);
+}
+
+.search-results.is-open {
+  display: block;
+}
+
+.search-results a,
+.search-results button,
+.search-results .search-results-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.83rem;
+  color: var(--app-body);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: var(--app-radius-xs);
+}
+
+.search-results a:hover,
+.search-results button:hover,
+.search-results .search-results-item:hover {
+  color: var(--app-heading);
+  background: var(--app-primary-soft);
+}
+
+/* ---- Petunjuk tombol keyboard di kolom cari ---- */
+.search-keys {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.search-keys kbd {
+  display: inline-block;
+  min-width: 1.4rem;
+  padding: 0.1rem 0.35rem;
+  font-family: var(--app-font);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--app-muted);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+}
+
+/* ---- Menu cepat "Buat / Tambah" ---- */
+.create-menu {
+  min-width: 19rem;
+  padding: 0.55rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow-pop);
+}
+
+.create-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.create-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.7rem 0.75rem;
+  color: var(--app-body);
+  text-decoration: none;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+}
+
+.create-item:hover {
+  color: var(--app-heading);
+  background: var(--app-primary-soft);
+  border-color: rgba(var(--app-primary-rgb), 0.3);
+}
+
+.create-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+  color: var(--app-primary);
+  background: var(--app-primary-soft);
+  border-radius: var(--app-radius-xs);
+}
+
+/* ---- Offcanvas navigasi mobile ---- */
+.mobile-nav {
+  background: var(--app-surface);
+}
+
+.mobile-nav .offcanvas-body {
+  padding: 1rem;
+}
+
+.mobile-nav .accordion-button {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--app-heading);
+  background: transparent;
+  box-shadow: none;
+}
+
+.mobile-nav .accordion-button:not(.collapsed) {
+  color: var(--app-primary);
+  background: var(--app-primary-soft);
+}
+
+.mobile-nav .accordion-button:focus {
+  box-shadow: none;
+  border-color: var(--app-border);
+}
+
+.mobile-nav .accordion-body {
+  padding: 0.25rem 0.5rem 0.9rem;
+}
+
+.mobile-nav .mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.87rem;
+  color: var(--app-body);
+  text-decoration: none;
+  border-radius: var(--app-radius-sm);
+}
+
+.mobile-nav .mobile-nav-link i,
+.mobile-nav .mobile-nav-link svg {
+  flex-shrink: 0;
+  font-size: 1rem;
+  color: var(--app-muted);
+}
+
+.mobile-nav .mobile-nav-link:hover {
+  color: var(--app-heading);
+  background: var(--app-primary-soft);
+}
+
+.mobile-nav .mobile-nav-link.active {
+  font-weight: 600;
+  color: var(--app-primary);
+  background: var(--app-primary-soft);
+}
+
+.mobile-nav .mobile-nav-link.active i,
+.mobile-nav .mobile-nav-link.active svg {
+  color: var(--app-primary);
+}
+
+.mobile-nav .mobile-user {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 0.9rem;
+  background: var(--app-primary-soft);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+}
+
+.mobile-nav .mobile-user strong {
+  display: block;
+  font-size: 0.87rem;
+  color: var(--app-heading);
+}
+
+.mobile-nav .mobile-user small {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--app-muted);
+}
+
+/* ---- Customizer (offcanvas kanan), dasar rapi ---- */
+.customizer {
+  background: var(--app-surface);
+}
+
+.customizer .offcanvas-header {
+  border-bottom: 1px solid var(--app-border);
+}
+
+.customizer .offcanvas-body {
+  padding: 1.1rem 1.25rem;
+}
+
+.customizer .offcanvas-footer {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.9rem 1.25rem;
+  border-top: 1px solid var(--app-border);
+}
+
+.customizer .cz-section + .cz-section {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--app-border);
+}
+
+.customizer .cz-title {
+  margin: 0 0 0.15rem;
+  font-family: var(--app-font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--app-heading);
+}
+
+.customizer .cz-desc {
+  margin: 0 0 0.7rem;
+  font-size: 0.78rem;
+  color: var(--app-muted);
+}
+
+.customizer .cz-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+}
+
+.customizer .cz-swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--app-surface);
+  background: var(--app-primary);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-pill);
+}
+
+.customizer .cz-swatch.is-active {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 2px;
+}
+
+[data-bs-theme="dark"] .alert-strip {
+  border-color: var(--app-border);
+}
+
+[data-bs-theme="dark"] .search-keys kbd {
+  background: var(--app-bg);
+}

@@ -1,0 +1,182 @@
+/* 17-lists — daftar bersih ber-divider + selaras Tabler. */
+.list-app {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list-app > li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.25rem;
+  border-bottom: 1px solid var(--app-border);
+  border-radius: var(--app-radius-xs);
+  transition: background-color 0.15s ease;
+}
+
+.list-app > li:first-child {
+  padding-top: 0.25rem;
+}
+
+.list-app > li:last-child {
+  padding-bottom: 0.25rem;
+  border-bottom: 0;
+}
+
+.list-app > li:hover {
+  background: rgba(var(--app-primary-rgb), 0.05);
+}
+
+.list-app > li > .avatar,
+.list-app > li > img {
+  flex-shrink: 0;
+}
+
+/* Blok tengah yang tumbuh mengisi ruang. */
+.list-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.list-title {
+  display: block;
+  overflow: hidden;
+  font-family: var(--app-font);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--app-heading);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+a.list-title:hover {
+  color: var(--app-primary);
+}
+
+.list-sub {
+  display: block;
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--app-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Kolom kanan: badge, harga, atau tombol aksi. */
+.list-end {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-left: auto;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.list-end .badge {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Avatar + dua baris teks; aman dipakai di dalam list maupun sel tabel. */
+.cell-user {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.cell-user .avatar,
+.cell-user img {
+  flex-shrink: 0;
+}
+
+.cell-user > div,
+.cell-user .cell-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.cell-user .cell-title {
+  display: block;
+  overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--app-heading);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cell-user .cell-sub {
+  display: block;
+  overflow: hidden;
+  font-size: 0.75rem;
+  color: var(--app-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Poles ringan list-group Tabler: selaraskan radius & divider. */
+.list-group {
+  border-radius: var(--app-radius-sm);
+}
+
+.list-group-flush {
+  border-radius: 0;
+}
+
+.list-group-flush > .list-group-item {
+  border-right: 0;
+  border-left: 0;
+  border-radius: 0;
+}
+
+.list-group-item {
+  border-color: var(--app-border);
+  transition: background-color 0.15s ease;
+}
+
+.list-group-item:hover {
+  background: rgba(var(--app-primary-rgb), 0.04);
+}
+
+.list-group-item.active {
+  background: rgba(var(--app-primary-rgb), 0.1);
+  border-color: var(--app-primary);
+}
+
+.list-group-item:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.list-group-item:last-child {
+  border-bottom-right-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+/* Reset list tanpa gaya saat dipakai di dalam kartu. */
+.list-unstyled {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.card .list-unstyled > li + li {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--app-border);
+}

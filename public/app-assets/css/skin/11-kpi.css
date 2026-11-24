@@ -1,0 +1,188 @@
+/* 11-kpi.css — kartu KPI + icon-box. Bergantung pada 00-tokens.css (var --app-*). */
+
+.kpi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.1rem 1.15rem 1rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-card);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.kpi-card.grad-indigo {
+  background: linear-gradient(140deg, rgba(var(--app-primary-rgb), 0.12) 0%, rgba(var(--app-primary-rgb), 0.03) 55%, var(--app-surface) 100%);
+  border-color: rgba(var(--app-primary-rgb), 0.22);
+}
+
+.kpi-card.grad-cyan {
+  background: linear-gradient(140deg, rgba(var(--app-accent-rgb), 0.14) 0%, rgba(var(--app-accent-rgb), 0.04) 55%, var(--app-surface) 100%);
+  border-color: rgba(var(--app-accent-rgb), 0.25);
+}
+
+.kpi-card.grad-mint {
+  background: linear-gradient(140deg, rgba(var(--app-teal-rgb), 0.13) 0%, rgba(var(--app-success-rgb), 0.05) 55%, var(--app-surface) 100%);
+  border-color: rgba(var(--app-teal-rgb), 0.24);
+}
+
+.kpi-card.grad-amber {
+  background: linear-gradient(140deg, rgba(var(--app-warning-rgb), 0.16) 0%, rgba(var(--app-warning-rgb), 0.05) 55%, var(--app-surface) 100%);
+  border-color: rgba(var(--app-warning-rgb), 0.32);
+}
+
+.kpi-card.grad-rose {
+  background: linear-gradient(140deg, rgba(var(--app-danger-rgb), 0.11) 0%, rgba(var(--app-danger-rgb), 0.03) 55%, var(--app-surface) 100%);
+  border-color: rgba(var(--app-danger-rgb), 0.22);
+}
+
+.kpi-card.grad-neutral {
+  background: linear-gradient(140deg, var(--app-bg) 0%, var(--app-surface) 70%);
+  border-color: var(--app-border);
+}
+
+.kpi-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.kpi-label {
+  margin: 0;
+  font-family: var(--app-font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--app-muted);
+  line-height: 1.4;
+}
+
+.kpi-value {
+  margin: 0;
+  font-family: var(--app-font-display);
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--app-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--app-muted);
+}
+
+.kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.14rem 0.55rem;
+  border-radius: var(--app-radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.kpi-delta.is-up {
+  background: rgba(var(--app-success-rgb), 0.12);
+  color: var(--app-success);
+}
+
+.kpi-delta.is-down {
+  background: rgba(var(--app-danger-rgb), 0.1);
+  color: var(--app-danger);
+}
+
+.kpi-delta.is-up::before {
+  content: "\2191";
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+.kpi-delta.is-down::before {
+  content: "\2193";
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+.kpi-spark {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  margin-top: 0.1rem;
+}
+
+.kpi-spark svg,
+.kpi-spark canvas {
+  display: block;
+  width: 100%;
+  height: 38px;
+}
+
+.icon-box {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 1.15rem;
+  line-height: 1;
+  background: var(--app-bg);
+  color: var(--app-muted);
+  border: 1px solid transparent;
+}
+
+.icon-box svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-box.tone-primary {
+  background: rgba(var(--app-primary-rgb), 0.12);
+  color: var(--app-primary);
+}
+
+.icon-box.tone-cyan {
+  background: rgba(var(--app-accent-rgb), 0.14);
+  color: var(--app-accent);
+}
+
+.icon-box.tone-success {
+  background: rgba(var(--app-success-rgb), 0.12);
+  color: var(--app-success);
+}
+
+.icon-box.tone-warning {
+  background: rgba(var(--app-warning-rgb), 0.18);
+  color: var(--app-warning);
+}
+
+.icon-box.tone-danger {
+  background: rgba(var(--app-danger-rgb), 0.1);
+  color: var(--app-danger);
+}
+
+.icon-box.tone-violet {
+  background: var(--app-primary-soft);
+  color: var(--app-violet);
+}
+
+.icon-box.tone-neutral {
+  background: var(--app-bg);
+  color: var(--app-muted);
+  border-color: var(--app-border);
+}
+
+/* self-check: kpi-card, grad-indigo, grad-cyan, grad-mint, grad-amber, grad-rose, grad-neutral, kpi-top, kpi-label, kpi-value(tabular-nums), kpi-foot, kpi-delta, is-up, is-down, kpi-spark, icon-box + 7 tone-* — semua ada; kurung kurawal seimbang. */

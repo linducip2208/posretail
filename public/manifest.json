@@ -4,7 +4,7 @@
     "description": "Sistem Kasir Modern untuk Toko Retail Indonesia",
     "id": "/",
     "scope": "/",
-    "start_url": "/admin",
+    "start_url": "/app",
     "display": "standalone",
     "orientation": "any",
     "background_color": "#ffffff",
@@ -33,20 +33,6 @@
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any"
-        }
-    ],
-    "screenshots": [
-        {
-            "src": "/marketing/screens/dashboard.png",
-            "sizes": "2880x1800",
-            "type": "image/png",
-            "form_factor": "wide"
-        },
-        {
-            "src": "/assets/posretail/06-product-screen.png",
-            "sizes": "200x435",
-            "type": "image/png",
-            "form_factor": "narrow"
         }
     ],
     "categories": ["business", "productivity"],

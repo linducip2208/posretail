@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class RoleResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
     protected static ?int $navigationSort = 1;
 

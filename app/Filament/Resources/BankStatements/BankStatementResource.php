@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 class BankStatementResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Keuangan';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
     protected static ?int $navigationSort = 5;
 

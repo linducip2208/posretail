@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UserResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = 'People';
 
     protected static ?int $navigationSort = 1;
 

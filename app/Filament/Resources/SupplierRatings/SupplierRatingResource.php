@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 class SupplierRatingResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Pembelian';
+    protected static string|\UnitEnum|null $navigationGroup = 'Purchasing';
 
     protected static ?int $navigationSort = 2;
 

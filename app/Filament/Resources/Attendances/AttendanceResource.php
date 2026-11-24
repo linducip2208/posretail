@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class AttendanceResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = 'People';
 
     protected static ?int $navigationSort = 2;
 

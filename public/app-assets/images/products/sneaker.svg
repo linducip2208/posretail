@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="sneaker illustration">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FCE9F1"/>
+      <stop offset="1" stop-color="#F8D5E5"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <ellipse cx="200" cy="240" rx="110" ry="12" fill="#831843" opacity=".08"/>
+  <path d="M110 200 v-40 l40 -30 l40 30 h40 l60 30 v10 z" fill="#DB2777"/><rect x="104" y="200" width="200" height="16" rx="8" fill="#831843"/><path d="M160 150 l14 10 M172 140 l14 10" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+</svg>

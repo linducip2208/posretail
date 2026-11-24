@@ -1,0 +1,281 @@
+/* ==========================================================================
+   09 BUTTONS — varian & polesan khas aplikasi (di atas Tabler .btn)
+   Tabler menyediakan .btn / .btn-primary / .btn-light / .btn-sm / .btn-icon.
+   File ini HANYA menambah varian aplikasi. Tidak mengubah .btn-primary
+   maupun .btn-light Tabler secara global.
+   Semua warna memakai variabel --app-* dari 00-tokens.css.
+   ========================================================================== */
+
+/* Base polesan bersama: transisi halus untuk semua varian aplikasi. */
+.btn-ghost,
+.btn-icon,
+.btn-quick,
+.btn-reorder,
+.btn-soft-primary,
+.btn-soft-danger,
+.btn-print-label,
+.btn-label {
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+/* Fokus keyboard yang lembut: ring indigo tipis untuk semua varian. */
+.btn-ghost:focus-visible,
+.btn-icon:focus-visible,
+.btn-quick:focus-visible,
+.btn-reorder:focus-visible,
+.btn-soft-primary:focus-visible,
+.btn-soft-danger:focus-visible,
+.btn-print-label:focus-visible,
+.btn-label:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--app-primary-rgb), 0.22);
+}
+
+/* --- .btn-ghost: tombol transparan, hover tint abu lembut. --- */
+.btn-ghost {
+  color: var(--app-muted);
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.btn-ghost:hover {
+  color: var(--app-heading);
+  background-color: var(--app-bg);
+  border-color: var(--app-border);
+}
+
+.btn-ghost:active {
+  color: var(--app-heading);
+  background-color: var(--app-border);
+  border-color: var(--app-border);
+}
+
+.btn-ghost:disabled,
+.btn-ghost.disabled {
+  color: var(--app-subtle);
+  background-color: transparent;
+  border-color: transparent;
+  opacity: 0.65;
+}
+
+/* --- .btn-icon: kotak ikon 32px, rounded 8-10px. --- */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding-right: 0;
+  padding-left: 0;
+  border-radius: var(--app-radius-sm);
+  line-height: 1;
+}
+
+.btn-icon > svg,
+.btn-icon > i,
+.btn-icon > .bi {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Varian kecil: kotak ikon lebih ramping. */
+.btn-icon.btn-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--app-radius-xs);
+  font-size: 0.8rem;
+}
+
+.btn-icon.btn-sm > svg,
+.btn-icon.btn-sm > i,
+.btn-icon.btn-sm > .bi {
+  font-size: 0.8rem;
+}
+
+/* --- .btn-quick: tombol aksi cepat "Buat" di topbar. --- */
+.btn-quick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 38px;
+  padding: 0.45rem 0.95rem;
+  font-family: var(--app-font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--app-surface);
+  background-color: var(--app-primary);
+  border: 1px solid var(--app-primary);
+  border-radius: var(--app-radius-sm);
+  box-shadow: var(--app-shadow-card);
+  cursor: pointer;
+}
+
+.btn-quick:hover {
+  background-color: var(--app-primary-hover);
+  border-color: var(--app-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--app-shadow-pop);
+}
+
+.btn-quick:active {
+  background-color: var(--app-primary-hover);
+  border-color: var(--app-primary-hover);
+  transform: translateY(0);
+}
+
+/* --- .btn-reorder: tombol kecil "Reorder" outline indigo + ikon keranjang. --- */
+.btn-reorder {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--app-primary);
+  background-color: var(--app-surface);
+  border: 1px solid rgba(var(--app-primary-rgb), 0.4);
+  border-radius: var(--app-radius-sm);
+  cursor: pointer;
+}
+
+.btn-reorder > svg,
+.btn-reorder > i,
+.btn-reorder > .bi {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.btn-reorder:hover {
+  color: var(--app-surface);
+  background-color: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+.btn-reorder:active {
+  color: var(--app-surface);
+  background-color: var(--app-primary-hover);
+  border-color: var(--app-primary-hover);
+}
+
+.btn-reorder:disabled,
+.btn-reorder.disabled {
+  color: var(--app-muted);
+  background-color: var(--app-bg);
+  border-color: var(--app-border);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* --- .btn-soft-primary / .btn-soft-danger: pastel, bg tint + teks kuat. --- */
+.btn-soft-primary {
+  color: var(--app-primary);
+  background-color: var(--app-primary-soft);
+  border: 1px solid rgba(var(--app-primary-rgb), 0.18);
+  border-radius: var(--app-radius-sm);
+}
+
+.btn-soft-primary:hover {
+  color: var(--app-surface);
+  background-color: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+.btn-soft-primary:active {
+  color: var(--app-surface);
+  background-color: var(--app-primary-hover);
+  border-color: var(--app-primary-hover);
+}
+
+.btn-soft-danger {
+  color: var(--app-danger);
+  background-color: rgba(var(--app-danger-rgb), 0.09);
+  border: 1px solid rgba(var(--app-danger-rgb), 0.2);
+  border-radius: var(--app-radius-sm);
+}
+
+.btn-soft-danger:hover {
+  color: var(--app-surface);
+  background-color: var(--app-danger);
+  border-color: var(--app-danger);
+}
+
+.btn-soft-danger:active {
+  color: var(--app-surface);
+  background-color: var(--app-danger);
+  border-color: var(--app-danger);
+  box-shadow: inset 0 1px 3px rgba(var(--app-danger-rgb), 0.35);
+}
+
+/* --- .btn-print-label / .btn-label: tombol kecil untuk label / cetak. --- */
+.btn-print-label,
+.btn-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--app-body);
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-xs);
+  cursor: pointer;
+}
+
+.btn-print-label > svg,
+.btn-print-label > i,
+.btn-label > svg,
+.btn-label > i {
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.btn-print-label:hover,
+.btn-label:hover {
+  color: var(--app-primary);
+  background-color: var(--app-primary-soft);
+  border-color: rgba(var(--app-primary-rgb), 0.35);
+}
+
+.btn-print-label:active,
+.btn-label:active {
+  color: var(--app-primary);
+  background-color: var(--app-primary-soft);
+  border-color: rgba(var(--app-primary-rgb), 0.5);
+}
+
+/* --- Penyesuaian radius ukuran: kecil 10px, besar 12px. --- */
+.btn-sm {
+  border-radius: var(--app-radius-sm);
+}
+
+.btn-lg {
+  border-radius: 12px;
+}
+
+/* Hormati pengguna yang meminta gerakan minimal. */
+@media (prefers-reduced-motion: reduce) {
+  .btn-ghost,
+  .btn-icon,
+  .btn-quick,
+  .btn-reorder,
+  .btn-soft-primary,
+  .btn-soft-danger,
+  .btn-print-label,
+  .btn-label {
+    transition: none;
+  }
+
+  .btn-quick:hover {
+    transform: none;
+  }
+}

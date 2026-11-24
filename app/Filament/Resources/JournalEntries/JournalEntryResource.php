@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class JournalEntryResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Akuntansi';
+    protected static string|\UnitEnum|null $navigationGroup = 'Admin';
 
     protected static ?int $navigationSort = 2;
 

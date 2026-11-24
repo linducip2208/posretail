@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class LoyaltyPointResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Pelanggan';
+    protected static string|\UnitEnum|null $navigationGroup = 'People';
 
     protected static ?int $navigationSort = 4;
 

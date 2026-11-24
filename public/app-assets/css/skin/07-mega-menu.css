@@ -1,0 +1,196 @@
+/* ==========================================================================
+   07 MEGA MENU — dropdown lebar berisi kolom link + panel fitur.
+   Memakai token dari 00-tokens.css (var --app-*). CSS murni saja.
+   Struktur yang diharapkan:
+     .mega-menu[.mega-sm][.has-feature] > .mega-grid > .mega-col / .mega-feature
+   ========================================================================== */
+
+/* Wadah dropdown: putih, rounded, shadow pop. */
+.mega-menu {
+  width: min(720px, 94vw);
+  padding: 0.9rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow-pop);
+}
+
+/* Varian sempit untuk menu dengan sedikit item. */
+.mega-menu.mega-sm {
+  width: min(560px, 94vw);
+}
+
+/* Lebih lebar bila ada panel fitur di kanan. */
+.mega-menu.has-feature {
+  width: min(860px, 94vw);
+}
+
+/* Varian sempit yang tetap membawa panel fitur. */
+.mega-menu.mega-sm.has-feature {
+  width: min(780px, 94vw);
+}
+
+/* Grid kolom link; jumlah kolom diatur via --mega-cols (default 2). */
+.mega-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--mega-cols, 2), minmax(0, 1fr));
+  gap: 0.3rem 0.8rem;
+  align-items: start;
+}
+
+/* Kolom ekstra 230px di kanan untuk panel fitur. */
+.has-feature .mega-grid {
+  grid-template-columns: repeat(var(--mega-cols, 2), minmax(0, 1fr)) 230px;
+}
+
+/* Satu kolom link di dalam grid. */
+.mega-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Judul kolom: uppercase kecil berwarna abu. */
+.mega-title {
+  padding: 0.35rem 0.6rem 0.4rem;
+  font-family: var(--app-font);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--app-subtle);
+}
+
+/* Baris link: ikon kotak + teks judul/deskripsi. */
+.mega-link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.6rem;
+  color: var(--app-body);
+  text-decoration: none;
+  border-radius: var(--app-radius-sm);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.mega-link:hover {
+  color: var(--app-heading);
+  background: var(--app-primary-soft);
+}
+
+.mega-link:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 1px;
+}
+
+/* Kotak ikon pastel di tiap baris link. */
+.mega-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--app-primary);
+  background: var(--app-primary-soft);
+  border-radius: var(--app-radius-sm);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.mega-link:hover .mega-icon {
+  color: var(--app-surface);
+  background: var(--app-primary);
+}
+
+/* Teks link: judul tebal + deskripsi kecil abu. */
+.mega-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mega-text strong {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--app-heading);
+}
+
+.mega-text span {
+  display: block;
+  font-size: 0.73rem;
+  line-height: 1.4;
+  color: var(--app-muted);
+}
+
+/* Panel fitur: kartu gradient navy gelap di kolom kanan. */
+.mega-feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 100%;
+  padding: 1.05rem 1rem;
+  overflow: hidden;
+  color: var(--app-surface);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(var(--app-accent-rgb), 0.28), transparent 55%),
+    linear-gradient(160deg, var(--app-navy-3), var(--app-navy) 75%);
+  border-radius: var(--app-radius-sm);
+}
+
+.mega-feature-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--app-surface);
+  background: rgba(var(--app-accent-rgb), 0.25);
+  border: 1px solid rgba(var(--app-accent-rgb), 0.45);
+  border-radius: var(--app-radius-sm);
+}
+
+.mega-feature-title {
+  font-family: var(--app-font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--app-surface);
+}
+
+.mega-feature-text {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  opacity: 0.78;
+}
+
+.mega-feature-cta {
+  margin-top: auto;
+  padding-top: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--app-primary-soft);
+}
+
+.mega-feature-cta:hover {
+  color: var(--app-surface);
+  text-decoration: underline;
+}
+
+/* Layar sempit: tumpuk semua kolom termasuk panel fitur. */
+@media (max-width: 640px) {
+  .mega-grid,
+  .has-feature .mega-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mega-feature {
+    min-height: 0;
+  }
+}

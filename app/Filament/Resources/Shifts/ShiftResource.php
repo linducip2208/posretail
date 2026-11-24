@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class ShiftResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Operasional';
+    protected static string|\UnitEnum|null $navigationGroup = 'People';
 
     protected static ?int $navigationSort = 3;
 

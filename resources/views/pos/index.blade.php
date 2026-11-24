@@ -1127,5 +1127,39 @@
             });
         }
     </script>
+    <script>
+        /* Handoff keranjang dari Katalog Tillora (/app/pos): tawarkan muat sekali klik. */
+        (function () {
+            try {
+                var KEY = 'posretail_app_cart';
+                var raw = null;
+                try { raw = localStorage.getItem(KEY); } catch (e) { return; }
+                if (!raw) return;
+                var data = null;
+                try { data = JSON.parse(raw); } catch (e) { return; }
+                var items = (data && data.items) || [];
+                if (!items.length || typeof addToCart !== 'function') return;
+                var bar = document.createElement('div');
+                bar.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:9999;background:#0B1530;color:#fff;border:1px solid #26355c;border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 12px 32px rgba(0,0,0,.35);font-size:13px;';
+                bar.innerHTML = '<span><strong>' + items.length + ' item</strong> dari Katalog siap dimuat ke keranjang.</span>' +
+                    '<button id="tilloraLoadCart" style="background:#4F46E5;border:0;color:#fff;border-radius:8px;padding:6px 12px;font-weight:600;cursor:pointer;">Muat</button>' +
+                    '<button id="tilloraDropCart" style="background:transparent;border:1px solid #3b4a73;color:#cbd5e1;border-radius:8px;padding:6px 12px;cursor:pointer;">Abaikan</button>';
+                document.body.appendChild(bar);
+                document.getElementById('tilloraDropCart').onclick = function () { try { localStorage.removeItem(KEY); } catch (e) {} bar.remove(); };
+                document.getElementById('tilloraLoadCart').onclick = function () {
+                    var skipped = 0;
+                    items.forEach(function (it) {
+                        try {
+                            if (it.tracking && it.tracking !== 'none') { skipped++; return; }
+                            for (var k = 0; k < (it.qty || 1); k++) addToCart(it.id, it.name, it.price, 'none');
+                        } catch (e) {}
+                    });
+                    try { localStorage.removeItem(KEY); } catch (e) {}
+                    bar.remove();
+                    if (skipped) alert(skipped + ' item butuh IMEI/nomor seri — tambahkan manual di kasir.');
+                };
+            } catch (e) {}
+        })();
+    </script>
 </body>
 </html>

@@ -15,7 +15,7 @@ class PengaturanSistem extends Page
     use WithFileUploads;
     protected static string|BackedEnum|null $navigationIcon = 'tabler-settings';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Sistem';
+    protected static string|UnitEnum|null $navigationGroup = 'Admin';
 
     protected static ?int $navigationSort = 1;
 

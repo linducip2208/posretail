@@ -1,0 +1,228 @@
+/* ==========================================================================
+   14 CHARTS — wadah Chart.js, legenda & baris peringkat
+   Kontrak: hanya memakai variabel --app-* dari 00-tokens.css.
+   Canvas Chart.js dibiarkan responsive penuh di dalam wadah bertinggi tetap.
+   .progress / .progress-bar TIDAK disentuh global — hanya dalam .rank-bar.
+   ========================================================================== */
+
+/* Wadah chart: tinggi tetap per varian agar canvas Chart.js stabil. */
+.chart-box {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  padding: 0.5rem 0.5rem 0.25rem;
+}
+
+.chart-box canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Varian tinggi — bisa dipakai mandiri atau sebagai modifier .chart-box. */
+.chart-lg {
+  height: 300px;
+}
+
+.chart-sm {
+  height: 180px;
+}
+
+.chart-donut {
+  height: 220px;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.chart-box.chart-lg {
+  height: 300px;
+}
+
+.chart-box.chart-sm {
+  height: 180px;
+}
+
+.chart-box.chart-donut {
+  height: 220px;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+/* Baris legenda kompak di bawah / atas chart. */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem 1rem;
+  margin-top: 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--app-muted);
+}
+
+.chart-legend .legend-dot {
+  flex-shrink: 0;
+}
+
+/* Titik warna legenda — warna aktual diisi via inline style / utilitas. */
+.legend-dot {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-right: 0.375rem;
+  vertical-align: baseline;
+  background: var(--app-subtle);
+  border-radius: var(--app-radius-pill);
+}
+
+/* Daftar label-nilai: tiap baris flex space-between. */
+.legend-list {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4375rem 0;
+  font-size: 0.8125rem;
+  border-bottom: 1px dashed var(--app-border);
+}
+
+.legend-list li:last-child {
+  border-bottom: 0;
+}
+
+.legend-list span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--app-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.legend-list strong {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--app-heading);
+}
+
+/* Varian baris legenda generik (non-list). */
+.legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4375rem 0;
+  font-size: 0.8125rem;
+  border-bottom: 1px dashed var(--app-border);
+}
+
+.legend-row:last-child {
+  border-bottom: 0;
+}
+
+.legend-label {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--app-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.legend-value {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--app-heading);
+}
+
+/* Tumpukan baris peringkat. */
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Baris peringkat: nomor | nama (truncate) | nilai, progress di baris bawah. */
+.rank-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.625rem;
+  row-gap: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.rank-bar > span {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  color: var(--app-heading);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rank-bar > strong {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--app-body);
+}
+
+/* Lingkaran nomor peringkat. */
+.rank-no,
+.rank-num {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-family: var(--app-font-display);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--app-primary);
+  background: var(--app-primary-soft);
+  border-radius: var(--app-radius-pill);
+}
+
+/* Isian bar versi bebas (ketika tidak memakai .progress Tabler). */
+.rank-fill {
+  display: block;
+  height: 100%;
+  min-width: 0.375rem;
+  background: linear-gradient(90deg, var(--app-primary), var(--app-violet));
+  border-radius: inherit;
+}
+
+/* Track progress KHUSUS dalam rank-bar — tidak menyentuh .progress global. */
+.rank-bar .progress {
+  grid-column: 2 / -1;
+  height: 0.375rem;
+  overflow: hidden;
+  background: var(--app-primary-soft);
+  border-radius: var(--app-radius-pill);
+}
+
+/* Fill gradient indigo KHUSUS dalam rank-bar. */
+.rank-bar .progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--app-primary), var(--app-violet));
+  border-radius: inherit;
+}
+
+[data-bs-theme="dark"] .rank-bar .progress {
+  background: rgba(var(--app-primary-rgb), 0.22);
+}

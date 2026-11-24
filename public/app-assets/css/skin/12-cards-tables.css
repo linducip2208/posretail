@@ -1,0 +1,316 @@
+/* 12-cards-tables.css — polesan kartu + tabel data di atas Tabler. */
+.card {
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-card);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 1rem 1.25rem;
+  background-color: transparent;
+  background-image: none;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.card-header > div:first-child {
+  min-width: 0;
+}
+
+.card-header .btn,
+.card-header .dropdown,
+.card-header .card-actions {
+  flex-shrink: 0;
+}
+
+.card-title {
+  margin: 0;
+  font-family: var(--app-font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--app-heading);
+  line-height: 1.35;
+}
+
+.card-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--app-muted);
+  line-height: 1.45;
+}
+
+.card-body {
+  padding: 1.25rem;
+  color: var(--app-body);
+}
+
+.card-body:last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.table-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-card .card-header + .table-toolbar {
+  border-top: 0;
+}
+
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.table-toolbar .form-control,
+.table-toolbar .form-select {
+  font-size: 0.825rem;
+}
+
+.table-toolbar .form-control {
+  min-width: 0;
+}
+
+.table-toolbar .form-select {
+  width: auto;
+  min-width: 9.5rem;
+}
+
+.toolbar-end {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.input-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon > i,
+.input-icon > svg,
+.input-icon .input-icon-addon {
+  position: absolute;
+  left: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  color: var(--app-subtle);
+  pointer-events: none;
+}
+
+.input-icon .form-control {
+  width: 100%;
+  padding-left: 2.25rem;
+}
+
+.input-icon .form-control::placeholder {
+  color: var(--app-subtle);
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive .table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  padding: 0.65rem 1rem;
+  font-family: var(--app-font);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--app-muted);
+  white-space: nowrap;
+  background-color: var(--app-bg);
+  border-bottom: 1px solid var(--app-border);
+}
+
+.table thead th:first-child {
+  padding-left: 1.25rem;
+}
+
+.table thead th:last-child {
+  padding-right: 1.25rem;
+}
+
+.table tbody td {
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  color: var(--app-body);
+  vertical-align: middle;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.table tbody td:first-child {
+  padding-left: 1.25rem;
+}
+
+.table tbody td:last-child {
+  padding-right: 1.25rem;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+.table tbody tr:hover td {
+  background-color: rgba(var(--app-primary-rgb), 0.045);
+}
+
+.table-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+th.table-num,
+td.table-num {
+  text-align: right;
+}
+
+.col-main {
+  min-width: 12rem;
+  font-weight: 600;
+  color: var(--app-heading);
+}
+
+.col-actions {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+th.col-actions,
+td.col-actions {
+  text-align: right;
+}
+
+.col-actions .btn {
+  white-space: nowrap;
+}
+
+.table-id {
+  display: inline-block;
+  font-family: var(--app-font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--app-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.table-id:hover {
+  color: var(--app-primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.list-unstyled {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card .list-unstyled > li {
+  padding: 0.45rem 0;
+}
+
+.card .list-unstyled > li + li {
+  border-top: 1px solid var(--app-border);
+}
+
+.table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  padding: 0.8rem 1.25rem;
+  font-size: 0.8rem;
+  color: var(--app-muted);
+  border-top: 1px solid var(--app-border);
+}
+
+.table-footer .pagination {
+  margin: 0;
+}
+
+.pagination.pagination-sm {
+  gap: 0.25rem;
+}
+
+.pagination.pagination-sm .page-link {
+  min-width: 1.9rem;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--app-body);
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-xs);
+}
+
+.pagination.pagination-sm .page-link:hover {
+  color: var(--app-heading);
+  border-color: var(--app-primary);
+}
+
+.pagination.pagination-sm .page-item.active .page-link {
+  color: var(--app-surface);
+  background-color: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+.pagination.pagination-sm .page-item.disabled .page-link {
+  color: var(--app-subtle);
+  background-color: transparent;
+  opacity: 0.75;
+}
+
+@media (max-width: 576px) {
+  .card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .table-toolbar .toolbar-end {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .table-footer .pagination {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,90 @@
+/* 15-heatmap.css — heatmap jam tersibuk (rapat, sel rounded kecil). */
+
+.heat-grid {
+  display: grid;
+  grid-template-columns: auto repeat(12, minmax(0, 1fr));
+  gap: 4px;
+  align-items: center;
+}
+
+/* Label jam di baris kepala: kecil, abu, rata tengah. */
+.heat-grid > span {
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--app-muted);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Label hari di kolom pertama: kecil, semibold, rata kiri. */
+.heat-label {
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--app-muted);
+  text-align: left;
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+/* Sel heatmap: kotak rounded, intensitas via --heat (0..1) inline. */
+.heat-cell {
+  min-width: 0;
+  min-height: 22px;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  background: rgba(var(--app-primary-rgb), calc(.08 + var(--heat, 0) * .88));
+  border: 1px solid rgba(var(--app-primary-rgb), calc(.06 + var(--heat, 0) * .18));
+  cursor: default;
+}
+
+/* Sel kosong (tanpa data): samar, tetap jaga bentuk grid. */
+.heat-cell:empty {
+  background: rgba(var(--app-primary-rgb), .06);
+  border-color: var(--app-border);
+}
+
+/* Interaksi ringan: tegaskan sel saat hover/fokus. */
+.heat-cell:hover,
+.heat-cell:focus-visible {
+  outline: 2px solid rgba(var(--app-primary-rgb), .45);
+  outline-offset: 1px;
+}
+
+/* Baris legenda: dukung class generik apa pun di dalam wrapper. */
+.heat-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--app-muted);
+}
+
+/* Batang gradasi terang -> pekat (indigo). */
+.heat-legend-bar {
+  flex: 1 1 auto;
+  min-width: 80px;
+  max-width: 220px;
+  height: 8px;
+  border-radius: var(--app-radius-pill);
+  background: linear-gradient(to right, rgba(var(--app-primary-rgb), .08), rgba(var(--app-primary-rgb), .96));
+  border: 1px solid var(--app-border);
+}
+
+/* Teks min/max di ujung legenda. */
+.heat-legend-label {
+  font-size: 10px;
+  color: var(--app-muted);
+  white-space: nowrap;
+}
+
+/* Layar sempit: izinkan geser horizontal agar grid tetap rapat. */
+@media (max-width: 640px) {
+  .heat-grid {
+    overflow-x: auto;
+  }
+}

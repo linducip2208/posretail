@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 class RosterResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Sistem';
+    protected static string|\UnitEnum|null $navigationGroup = 'People';
 
     protected static ?int $navigationSort = 3;
 

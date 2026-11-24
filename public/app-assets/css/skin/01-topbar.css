@@ -1,0 +1,229 @@
+/* ==========================================================================
+   01 TOPBAR — dark navy chrome + layout shell
+   Depends on 00-tokens.css variables (--app-*).
+   Covers: shell, container, topbar structure, brand, divider,
+   actions, register pill, presence / live dots.
+   ========================================================================== */
+
+/* ---- page shell: vertical stack, full viewport height ---- */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---- centered content column, shared by topbar + page body ---- */
+.app-container {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* ---- topbar chrome: very dark navy, sticky ---- */
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  color: var(--app-surface);
+  background: var(--app-navy);
+  background-image: linear-gradient(
+    180deg,
+    var(--app-navy) 0%,
+    var(--app-navy-2) 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ---- main row inside the topbar: fixed 66px height ---- */
+.topbar-main {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  height: 66px;
+}
+
+/* ---- brand lockup: mark + two-line text ---- */
+.topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+  color: var(--app-surface);
+}
+
+/* blue rounded square logo mark */
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  font-family: var(--app-font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--app-surface);
+  background: var(--app-primary);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0) 60%
+  );
+  border-radius: var(--app-radius-sm);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 6px 16px -8px rgba(var(--app-primary-rgb), 0.9);
+}
+
+/* stacked wordmark lines */
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.1;
+}
+
+/* app name: white, bold */
+.brand-name {
+  font-family: var(--app-font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--app-surface);
+  white-space: nowrap;
+}
+
+/* tagline: small grey caption */
+.brand-sub {
+  margin-top: 0.1rem;
+  font-family: var(--app-font);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--app-subtle);
+  white-space: nowrap;
+}
+
+/* ---- thin vertical separator between brand / store / search ---- */
+.topbar-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ---- right-hand utility cluster, pushed to the far end ---- */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* ---- register state pill: translucent green, pill shaped ---- */
+.register-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 32px;
+  padding-inline: 0.8rem;
+  font-family: var(--app-font);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--app-surface);
+  background: rgba(var(--app-success-rgb), 0.18);
+  border: 1px solid rgba(var(--app-success-rgb), 0.45);
+  border-radius: var(--app-radius-pill);
+}
+
+/* throbbing dot inside the register pill */
+.register-status .pulse {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  background: var(--app-success);
+  border-radius: 50%;
+  animation: topbar-pulse 1.8s ease-out infinite;
+}
+
+/* green register pulse ring */
+@keyframes topbar-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--app-success-rgb), 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(var(--app-success-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--app-success-rgb), 0);
+  }
+}
+
+/* ---- online presence dot overlapping an avatar corner ---- */
+.presence {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 11px;
+  height: 11px;
+  background: var(--app-success);
+  border: 2px solid var(--app-navy);
+  border-radius: 50%;
+}
+
+/* ---- standalone live indicator dot (store / websocket status) ---- */
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  background: var(--app-success);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(var(--app-success-rgb), 0.22);
+}
+
+/* ---- responsive horizontal padding for the centered column ---- */
+@media (max-width: 768px) {
+  .app-container {
+    padding-inline: 1rem;
+  }
+
+  .topbar-main {
+    gap: 0.6rem;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .register-status {
+    padding-inline: 0.6rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-container {
+    padding-inline: 2rem;
+  }
+}
+
+/* ---- dark theme: chrome stays navy, inherit surface tokens ---- */
+[data-bs-theme="dark"] .app-topbar {
+  background: var(--app-navy);
+  background-image: linear-gradient(
+    180deg,
+    var(--app-navy) 0%,
+    var(--app-navy-2) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .register-status .pulse {
+    animation: none;
+  }
+}

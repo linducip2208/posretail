@@ -1,0 +1,310 @@
+/* 13-badges.css — pill status, pay chips, severity, avatar, sel tabel. */
+
+/* Pill status kecil. */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: 100%;
+  padding: 0.28rem 0.7rem;
+  overflow: hidden;
+  font-family: var(--app-font);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-radius: var(--app-radius-pill);
+}
+
+/* Dot kecil di depan pill. */
+.status-badge::before {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  content: "";
+  background-color: currentColor;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(var(--app-primary-rgb), 0.12);
+}
+
+.status-success::before,
+.status-danger::before,
+.status-warning::before,
+.status-info::before,
+.status-neutral::before,
+.status-primary::before {
+  box-shadow: 0 0 0 3px currentColor;
+}
+
+/* Varian status: pastel + teks berwarna. */
+.status-success {
+  color: var(--app-success);
+  background-color: rgba(var(--app-success-rgb), 0.12);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-success-rgb), 0.25);
+}
+
+.status-danger {
+  color: var(--app-danger);
+  background-color: rgba(var(--app-danger-rgb), 0.1);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-danger-rgb), 0.24);
+}
+
+.status-warning {
+  color: var(--app-warning);
+  background-color: rgba(var(--app-warning-rgb), 0.16);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-warning-rgb), 0.32);
+}
+
+.status-info {
+  color: var(--app-info);
+  background-color: rgba(var(--app-accent-rgb), 0.13);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-accent-rgb), 0.3);
+}
+
+.status-neutral {
+  color: var(--app-muted);
+  background-color: var(--app-bg);
+  box-shadow: inset 0 0 0 1px var(--app-border);
+}
+
+.status-primary {
+  color: var(--app-primary);
+  background-color: var(--app-primary-soft);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-primary-rgb), 0.22);
+}
+
+/* Chip metode bayar: pill abu terang + ikon bulat berwarna. */
+.pay-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.22rem 0.7rem 0.22rem 0.28rem;
+  font-family: var(--app-font);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--app-body);
+  white-space: nowrap;
+  vertical-align: middle;
+  background-color: var(--app-bg);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-pill);
+}
+
+.pay-chip i,
+.pay-chip svg,
+.pay-chip .pay-ic {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  line-height: 1;
+  background-color: var(--app-surface);
+  border-radius: 50%;
+}
+
+.pay-card i,
+.pay-card svg,
+.pay-card .pay-ic {
+  color: var(--app-primary);
+  background-color: var(--app-primary-soft);
+}
+
+.pay-cash i,
+.pay-cash svg,
+.pay-cash .pay-ic {
+  color: var(--app-success);
+  background-color: rgba(var(--app-success-rgb), 0.14);
+}
+
+.pay-mobile i,
+.pay-mobile svg,
+.pay-mobile .pay-ic {
+  color: var(--app-accent);
+  background-color: rgba(var(--app-accent-rgb), 0.15);
+}
+
+.pay-gift i,
+.pay-gift svg,
+.pay-gift .pay-ic {
+  color: var(--app-violet);
+  background-color: rgba(var(--app-primary-rgb), 0.12);
+}
+
+.pay-split i,
+.pay-split svg,
+.pay-split .pay-ic {
+  color: var(--app-warning);
+  background-color: rgba(var(--app-warning-rgb), 0.18);
+}
+
+/* Label severity kecil uppercase. */
+.sev-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.16rem 0.55rem;
+  font-family: var(--app-font);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: var(--app-muted);
+  background-color: var(--app-bg);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-pill);
+}
+
+/* Avatar lingkaran inisial. */
+.avatar {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  font-family: var(--app-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  border-radius: 50%;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.avatar.lg {
+  width: 48px;
+  height: 48px;
+  font-size: 15px;
+}
+
+/* Tone avatar: pastel bg + teks berwarna. */
+.avatar.tone-primary {
+  color: var(--app-primary);
+  background-color: var(--app-primary-soft);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-primary-rgb), 0.2);
+}
+
+.avatar.tone-neutral {
+  color: var(--app-muted);
+  background-color: var(--app-bg);
+  box-shadow: inset 0 0 0 1px var(--app-border);
+}
+
+.avatar.tone-cyan {
+  color: var(--app-accent);
+  background-color: rgba(var(--app-accent-rgb), 0.13);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-accent-rgb), 0.3);
+}
+
+.avatar.tone-success {
+  color: var(--app-success);
+  background-color: rgba(var(--app-success-rgb), 0.13);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-success-rgb), 0.26);
+}
+
+.avatar.tone-warning {
+  color: var(--app-warning);
+  background-color: rgba(var(--app-warning-rgb), 0.18);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-warning-rgb), 0.32);
+}
+
+.avatar.tone-danger {
+  color: var(--app-danger);
+  background-color: rgba(var(--app-danger-rgb), 0.1);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-danger-rgb), 0.24);
+}
+
+.avatar.tone-violet {
+  color: var(--app-violet);
+  background-color: rgba(var(--app-primary-rgb), 0.12);
+  box-shadow: inset 0 0 0 1px rgba(var(--app-primary-rgb), 0.24);
+}
+
+/* Kotak ikon struk kecil netral. */
+.receipt-icon {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--app-muted);
+  vertical-align: middle;
+  background-color: var(--app-bg);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+}
+
+/* Dot hijau online di sudut avatar. */
+.presence {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  background-color: var(--app-success);
+  border: 2px solid var(--app-surface);
+  border-radius: 50%;
+}
+
+.avatar.lg .presence {
+  width: 13px;
+  height: 13px;
+  border-width: 2px;
+}
+
+/* Baris user & teks dua baris dalam sel tabel. */
+.cell-user {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.cell-title {
+  display: block;
+  overflow: hidden;
+  font-family: var(--app-font);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--app-heading);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-sub {
+  display: block;
+  overflow: hidden;
+  font-family: var(--app-font);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--app-subtle);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-receipt {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}

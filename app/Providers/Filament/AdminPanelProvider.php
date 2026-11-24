@@ -10,7 +10,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -42,24 +42,21 @@ class AdminPanelProvider extends PanelProvider
             ->favicon('/assets/posretail/02-icon-android.png')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => Color::hex('#0878F9'),
+                'primary' => Color::hex('#4F46E5'),
                 'success' => Color::hex('#16A34A'),
                 'warning' => Color::hex('#F59E0B'),
                 'danger' => Color::hex('#DC2626'),
                 'gray' => Color::hex('#64748B'),
             ])
             ->navigationGroups([
-                NavigationGroup::make('Penjualan')->collapsed(false),
-                NavigationGroup::make('Operasional')->collapsed(true),
-                NavigationGroup::make('Inventory')->collapsed(false),
-                NavigationGroup::make('Pembelian')->collapsed(true),
-                NavigationGroup::make('Pelanggan')->collapsed(true),
-                NavigationGroup::make('Promo')->collapsed(true),
-                NavigationGroup::make('Laporan')->collapsed(false),
-                NavigationGroup::make('Keuangan')->collapsed(true),
-                NavigationGroup::make('Akuntansi')->collapsed(true),
-                NavigationGroup::make('Sistem')->collapsed(true),
-                NavigationGroup::make('Website')->collapsed(true),
+                NavigationGroup::make('POS')->collapsed(false),
+                NavigationGroup::make('Sales')->collapsed(false),
+                NavigationGroup::make('Catalog')->collapsed(false),
+                NavigationGroup::make('Purchasing')->collapsed(false),
+                NavigationGroup::make('People')->collapsed(false),
+                NavigationGroup::make('Reports')->collapsed(false),
+                NavigationGroup::make('Marketing')->collapsed(false),
+                NavigationGroup::make('Admin')->collapsed(false),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -77,6 +74,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \App\Http\Middleware\RedirectAdminHomeToApp::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
@@ -85,8 +83,9 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('POS Kasir')
                     ->url('/pos')
                     ->icon('tabler-shopping-cart')
+                    ->group('POS')
                     ->openUrlInNewTab()
-                    ->sort(100)
+                    ->sort(1)
                     ->visible(fn (): bool => auth()->check() && auth()->user()?->hasPermission('pos-access')),
             ])
             ->renderHook(
@@ -98,12 +97,22 @@ class AdminPanelProvider extends PanelProvider
                         // Workaround bug Filament: collapsedGroups default null
                         // (localStorage kosong) -> groupIsCollapsed() throw
                         // "Cannot read properties of null" dan sidebar mati.
+                        // Reset sekali: browser lama menyimpan grup terlipat versi lama,
+                        // sehingga menu terlihat sedikit meski server sudah expand semua.
                         function fixSidebarCollapsedGroups() {
                             try {
                                 var s = window.Alpine && window.Alpine.store('sidebar');
-                                if (s && s.collapsedGroups == null) {
+                                if (!s) return;
+                                if (s.collapsedGroups == null) {
                                     s.collapsedGroups = [];
                                 }
+                                try {
+                                    if (localStorage.getItem('posretail:sidebar:v') !== '2') {
+                                        s.collapsedGroups = [];
+                                        localStorage.removeItem('filament:sidebar:collapsed_groups');
+                                        localStorage.setItem('posretail:sidebar:v', '2');
+                                    }
+                                } catch (e) {}
                             } catch (e) {}
                         }
                         document.addEventListener('alpine:initialized', fixSidebarCollapsedGroups);

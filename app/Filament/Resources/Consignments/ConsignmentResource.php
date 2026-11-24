@@ -18,7 +18,7 @@ use Filament\Tables\Table;
 class ConsignmentResource extends Resource
 {
     use AuthorizesByNavigation;
-    protected static string|\UnitEnum|null $navigationGroup = 'Pembelian';
+    protected static string|\UnitEnum|null $navigationGroup = 'Purchasing';
 
     protected static ?int $navigationSort = 3;
 

@@ -1,0 +1,255 @@
+/* 04-profile.css — topbar profile trigger + dropdown. Token via 00-tokens.css. */
+
+.topbar-profile {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.25rem;
+}
+
+.profile-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.28rem 0.7rem 0.28rem 0.3rem;
+  font-family: var(--app-font);
+  cursor: pointer;
+  background: rgba(var(--app-primary-rgb), 0.16);
+  border: 1px solid rgba(var(--app-primary-rgb), 0.32);
+  border-radius: var(--app-radius-pill);
+}
+
+.profile-trigger:hover {
+  background: rgba(var(--app-primary-rgb), 0.28);
+  border-color: rgba(var(--app-primary-rgb), 0.5);
+}
+
+.profile-avatar {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 2px;
+  background: linear-gradient(140deg, var(--app-accent), var(--app-primary));
+  border-radius: 50%;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--app-surface);
+  border-radius: 50%;
+}
+
+.profile-avatar.lg {
+  width: 54px;
+  height: 54px;
+  padding: 2px;
+}
+
+.profile-name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 0.83rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--app-surface);
+}
+
+.profile-name small {
+  margin-top: 0.1rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--app-surface);
+  opacity: 0.62;
+}
+
+.profile-caret {
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--app-surface);
+  opacity: 0.62;
+}
+
+.profile-menu {
+  min-width: 300px;
+  max-width: 330px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow-pop);
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1rem 0.9rem;
+  background: var(--app-primary-soft);
+  border-bottom: 1px solid var(--app-border);
+}
+
+.profile-card strong {
+  display: block;
+  font-family: var(--app-font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--app-heading);
+}
+
+.profile-card small {
+  display: block;
+  margin-top: 0.1rem;
+  overflow: hidden;
+  font-size: 0.74rem;
+  color: var(--app-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-role {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.4rem;
+  padding: 0.14rem 0.55rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--app-primary);
+  background: var(--app-surface);
+  border: 1px solid rgba(var(--app-primary-rgb), 0.28);
+  border-radius: var(--app-radius-pill);
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  text-align: center;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.profile-stats > div {
+  padding: 0.65rem 0.4rem;
+}
+
+.profile-stats > div + div {
+  border-left: 1px solid var(--app-border);
+}
+
+.profile-stats span {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: var(--app-muted);
+}
+
+.profile-stats strong {
+  display: block;
+  margin-top: 0.12rem;
+  font-family: var(--app-font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--app-heading);
+}
+
+.profile-links {
+  padding: 0.45rem;
+}
+
+.profile-links .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--app-body);
+  border-radius: var(--app-radius-sm);
+}
+
+.profile-links .dropdown-item:hover {
+  color: var(--app-heading);
+  background: var(--app-primary-soft);
+}
+
+.profile-links .dropdown-item > i,
+.profile-links .dropdown-item > svg {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  font-size: 0.92rem;
+  color: var(--app-primary);
+  background: var(--app-primary-soft);
+  border-radius: var(--app-radius-sm);
+}
+
+.profile-links .dropdown-item:hover > i,
+.profile-links .dropdown-item:hover > svg {
+  color: var(--app-surface);
+  background: var(--app-primary);
+}
+
+.profile-links .dropdown-item .dd-hint {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--app-subtle);
+}
+
+.profile-foot {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  background: var(--app-surface);
+  border-top: 1px solid var(--app-border);
+}
+
+.profile-foot > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.3rem;
+  padding: 0.45rem 0.6rem;
+  font-family: var(--app-font);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--app-radius-sm);
+}
+
+.profile-foot > :first-child {
+  color: var(--app-body);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+}
+
+.profile-foot > :first-child:hover {
+  color: var(--app-heading);
+  border-color: var(--app-subtle);
+}
+
+.profile-foot > :last-child {
+  color: var(--app-danger);
+  background: rgba(var(--app-danger-rgb), 0.1);
+  border: 1px solid rgba(var(--app-danger-rgb), 0.22);
+}
+
+.profile-foot > :last-child:hover {
+  color: var(--app-surface);
+  background: var(--app-danger);
+  border-color: var(--app-danger);
+}
+
+/* SELF-CHECK: .topbar-profile OK / .profile-trigger OK / .profile-avatar OK (+.lg OK) / .profile-name OK / .profile-caret OK / .profile-menu OK / .profile-card OK / .profile-role OK / .profile-stats OK / .profile-links OK (+.dropdown-item OK +.dd-hint OK) / .profile-foot OK. Kurung kurawal: 31 buka / 31 tutup — seimbang. */

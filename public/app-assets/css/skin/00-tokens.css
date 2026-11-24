@@ -1,0 +1,65 @@
+/* ==========================================================================
+   00 TOKENS & BASE — kontrak desain untuk semua file skin-*.css
+   Semua agen WAJIB memakai variabel di bawah ini. Jangan hardcode warna
+   di luar daftar ini kecuali rgba() dari *-rgb yang tersedia.
+   ========================================================================== */
+:root {
+  --app-primary: #4F46E5;
+  --app-primary-rgb: 79, 70, 229;
+  --app-primary-hover: #4338CA;
+  --app-primary-soft: #EEF0FF;
+  --app-accent: #06B6D4;
+  --app-accent-rgb: 6, 182, 216;
+  --app-teal: #0D9488;
+  --app-teal-rgb: 13, 148, 133;
+  --app-navy: #0B1530;
+  --app-navy-2: #111D3D;
+  --app-navy-3: #1B2A52;
+  --app-success: #059669;
+  --app-success-rgb: 5, 150, 105;
+  --app-warning: #D97706;
+  --app-warning-rgb: 245, 158, 11;
+  --app-danger: #E11D48;
+  --app-danger-rgb: 225, 17, 72;
+  --app-info: #0284C7;
+  --app-violet: #7C3AED;
+  --app-heading: #0F1E3D;
+  --app-body: #334155;
+  --app-muted: #64748B;
+  --app-subtle: #94A3B8;
+  --app-surface: #FFFFFF;
+  --app-bg: #F2F5FB;
+  --app-border: #E6EAF4;
+  --app-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --app-font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --app-radius-xs: 7px;
+  --app-radius-sm: 10px;
+  --app-radius: 14px;
+  --app-radius-lg: 20px;
+  --app-radius-pill: 999px;
+  --app-shadow-card: 0 1px 2px rgba(16, 24, 64, 0.05), 0 8px 24px -18px rgba(16, 24, 64, 0.25);
+  --app-shadow-pop: 0 12px 32px -8px rgba(16, 24, 64, 0.22);
+}
+
+/* Base: font & latar. Tabler menangani reset lainnya. */
+body {
+  font-family: var(--app-font);
+  color: var(--app-body);
+  background: var(--app-bg);
+}
+h1, h2, h3, .card-title, .page-title {
+  font-family: var(--app-font-display);
+  color: var(--app-heading);
+  letter-spacing: -0.01em;
+}
+
+/* Dark mode: ganti surface/bg saja, komponen menyesuaikan via var. */
+[data-bs-theme="dark"] {
+  --app-heading: #F1F5F9;
+  --app-body: #CBD5E1;
+  --app-muted: #94A3B8;
+  --app-surface: #141D33;
+  --app-bg: #0B1226;
+  --app-border: #26314d;
+  --app-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+}

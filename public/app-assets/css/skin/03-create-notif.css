@@ -1,0 +1,298 @@
+/* ==========================================================================
+   03 CREATE + NOTIF — tombol "+ Buat", dropdown buat-cepat & notifikasi
+   Orisinal untuk skin ini. Hanya memakai variabel --app-* dari 00-tokens.css.
+   ========================================================================== */
+
+/* --- Tombol "+ Buat": gradient indigo -> violet, teks putih --- */
+.btn-quick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1rem;
+  font-family: var(--app-font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+  background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-violet) 100%);
+  border: 0;
+  border-radius: var(--app-radius-sm);
+  box-shadow: var(--app-shadow-card);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.btn-quick:hover {
+  color: #fff;
+  filter: brightness(1.07);
+  box-shadow: var(--app-shadow-pop);
+  transform: translateY(-1px);
+}
+.btn-quick:active {
+  transform: translateY(0);
+  filter: brightness(0.97);
+}
+.btn-quick:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 2px;
+}
+.btn-quick svg,
+.btn-quick .ti {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+/* --- Tombol ikon ghost untuk topbar gelap (bell, dsb.) --- */
+.topbar-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--app-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--app-radius-sm);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.topbar-icon-btn:hover {
+  color: var(--app-heading);
+  background: rgba(var(--app-primary-rgb), 0.12);
+  border-color: var(--app-border);
+}
+.topbar-icon-btn:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 2px;
+}
+.topbar-icon-btn svg,
+.topbar-icon-btn .ti {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* --- Dot merah penanda ada notifikasi baru --- */
+.badge-dot {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.5rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--app-danger);
+  border: 2px solid var(--app-surface);
+  border-radius: var(--app-radius-pill);
+  pointer-events: none;
+}
+
+/* --- Judul seksi kecil uppercase di dalam dropdown --- */
+.dd-heading {
+  margin: 0 0 0.5rem;
+  font-family: var(--app-font);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--app-subtle);
+}
+
+/* --- Dropdown "Buat": panel putih rounded + shadow pop --- */
+.create-menu {
+  min-width: 17rem;
+  padding: 0.9rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow-pop);
+}
+.create-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.create-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: var(--app-radius-xs);
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.create-item:hover {
+  background: rgba(var(--app-primary-rgb), 0.07);
+  border-color: var(--app-border);
+}
+.create-item .create-title {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--app-heading);
+}
+.create-item .create-sub {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--app-muted);
+}
+
+/* --- Kotak ikon berwarna pastel + varian tone --- */
+.create-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: var(--app-radius-xs);
+  font-size: 1.1rem;
+}
+.create-icon svg,
+.create-icon .ti {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+.create-icon.tone-primary {
+  color: var(--app-primary);
+  background: rgba(var(--app-primary-rgb), 0.13);
+}
+.create-icon.tone-cyan {
+  color: var(--app-accent);
+  background: rgba(var(--app-accent-rgb), 0.15);
+}
+.create-icon.tone-violet {
+  color: var(--app-violet);
+  background: rgba(var(--app-primary-rgb), 0.13);
+}
+.create-icon.tone-success {
+  color: var(--app-success);
+  background: rgba(var(--app-success-rgb), 0.13);
+}
+.create-icon.tone-warning {
+  color: var(--app-warning);
+  background: rgba(var(--app-warning-rgb), 0.18);
+}
+.create-icon.tone-danger {
+  color: var(--app-danger);
+  background: rgba(var(--app-danger-rgb), 0.11);
+}
+
+/* --- Dropdown notifikasi: panel ~360px --- */
+.notif-menu {
+  width: min(22.5rem, calc(100vw - 2rem));
+  overflow: hidden;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow-pop);
+}
+.notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--app-border);
+}
+.notif-head .notif-title {
+  font-family: var(--app-font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--app-heading);
+}
+.notif-head .notif-action {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--app-primary);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+.notif-head .notif-action:hover {
+  color: var(--app-primary-hover);
+  text-decoration: underline;
+}
+.notif-list {
+  max-height: 20rem;
+  overflow-y: auto;
+  padding: 0.4rem;
+}
+.notif-item {
+  position: relative;
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  padding: 0.65rem 0.7rem;
+  border-radius: var(--app-radius-xs);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+.notif-item:hover {
+  background: rgba(var(--app-primary-rgb), 0.06);
+}
+.notif-item .notif-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--app-body);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.notif-item .notif-time {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+  color: var(--app-subtle);
+}
+.notif-item.is-unread {
+  background: rgba(var(--app-primary-rgb), 0.08);
+}
+.notif-item.is-unread::after {
+  content: "";
+  flex: none;
+  align-self: center;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--app-primary);
+  border-radius: var(--app-radius-pill);
+}
+.notif-foot {
+  display: block;
+  padding: 0.7rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--app-primary);
+  border-top: 1px solid var(--app-border);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+.notif-foot:hover {
+  color: var(--app-primary-hover);
+  background: rgba(var(--app-primary-rgb), 0.06);
+}
+
+/* --- Responsif kecil: dropdown buat jadi 1 kolom --- */
+@media (max-width: 30rem) {
+  .create-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --- Kurangi gerak untuk yang sensitif animasi --- */
+@media (prefers-reduced-motion: reduce) {
+  .btn-quick,
+  .create-item,
+  .notif-item,
+  .topbar-icon-btn {
+    transition: none;
+  }
+}

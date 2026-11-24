@@ -1,0 +1,226 @@
+/* ==========================================================================
+   05 NAV — bar navigasi horizontal di bawah topbar (tinggi 50px).
+   Navy sedikit lebih terang dari topbar agar menyatu namun tetap terbaca.
+   Hanya memakai token --app-* dari 00-tokens.css. Tanpa @import.
+   ========================================================================== */
+
+/* Bar pembungkus: navy gelap, garis atas samar dari permukaan. */
+.topbar-nav {
+  height: 50px;
+  background: var(--app-navy-2);
+  border-top: 1px solid color-mix(in srgb, var(--app-surface) 10%, transparent);
+}
+
+/* Daftar menu: flex horizontal satu baris dengan gap kecil.
+   Overflow VISIBLE agar dropdown/mega-menu tidak terpotong
+   (topbar-nav disembunyikan di bawah 1200px, jadi scroll horizontal
+   tidak pernah dibutuhkan di desktop). */
+.nav-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 50px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 4px;
+  overflow: visible;
+  scrollbar-width: none;
+}
+
+.nav-menu::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tiap item jadi jangkar posisi untuk dropdown di bawahnya. */
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Tautan menu: teks terang + ikon, bentuk rounded, transisi halus. */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  font-family: var(--app-font);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--app-surface);
+  opacity: 0.82;
+  background: transparent;
+  border: 0;
+  border-radius: var(--app-radius-sm);
+  cursor: pointer;
+  transition: opacity 0.16s ease, background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.nav-link:hover {
+  opacity: 1;
+  color: var(--app-surface);
+  background: color-mix(in srgb, var(--app-surface) 12%, transparent);
+}
+
+.nav-link:focus-visible {
+  opacity: 1;
+  color: var(--app-surface);
+  outline: 2px solid color-mix(in srgb, var(--app-surface) 55%, transparent);
+  outline-offset: 1px;
+}
+
+/* Status aktif: pill gradient indigo sesuai token primer. */
+.nav-link.active {
+  opacity: 1;
+  color: var(--app-surface);
+  background: linear-gradient(135deg, var(--app-primary), var(--app-violet));
+  border-radius: var(--app-radius-pill);
+  box-shadow: 0 4px 14px -4px rgba(var(--app-primary-rgb), 0.65);
+}
+
+/* Status terbuka (dropdown sedang tampil): terang seperti hover. */
+.nav-link.show {
+  opacity: 1;
+  color: var(--app-surface);
+  background: color-mix(in srgb, var(--app-surface) 14%, transparent);
+}
+
+/* Ikon bootstrap di dalam tautan: sejajar teks, sedikit redup. */
+.nav-link > .bi {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.nav-link.active > .bi,
+.nav-link.show > .bi {
+  opacity: 1;
+}
+
+/* Hilangkan caret bawaan bootstrap, ganti chevron mungil dari border. */
+.nav-link.dropdown-toggle::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  padding: 0;
+  border: 0;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  vertical-align: 0;
+  opacity: 0.7;
+  transform: rotate(45deg) translateY(-1px);
+  transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+.nav-link.dropdown-toggle.show::after {
+  opacity: 1;
+  transform: rotate(225deg) translateY(-1px);
+}
+
+/* Dropdown di dalam nav: absolute tepat di bawah item, muncul halus. */
+.topbar-nav .dropdown-menu,
+.nav-menu .dropdown-menu,
+.nav-item .dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1050;
+  min-width: 220px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow-pop);
+  transform-origin: top center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.97);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+/* State tampil: fade + scale-down cepat dari atas tengah. */
+.topbar-nav .dropdown-menu.show,
+.nav-menu .dropdown-menu.show,
+.nav-item .dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* Item dropdown: baris rapi, hover lembut bernuansa primer. */
+.topbar-nav .dropdown-item,
+.nav-menu .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  font-family: var(--app-font);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--app-body);
+  white-space: nowrap;
+  background: transparent;
+  border: 0;
+  border-radius: var(--app-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease;
+}
+
+.topbar-nav .dropdown-item:hover,
+.nav-menu .dropdown-item:hover,
+.topbar-nav .dropdown-item:focus,
+.nav-menu .dropdown-item:focus {
+  color: var(--app-primary);
+  background: var(--app-primary-soft);
+  outline: none;
+}
+
+.topbar-nav .dropdown-item:active,
+.nav-menu .dropdown-item:active {
+  color: var(--app-surface);
+  background: var(--app-primary);
+}
+
+/* Hormati pengguna yang menonaktifkan animasi. */
+@media (prefers-reduced-motion: reduce) {
+  .nav-link,
+  .nav-link.dropdown-toggle::after,
+  .topbar-nav .dropdown-menu,
+  .nav-menu .dropdown-menu,
+  .nav-item .dropdown-menu,
+  .topbar-nav .dropdown-item,
+  .nav-menu .dropdown-item {
+    transition: none;
+  }
+}
+
+/* SELF-CHECK:
+   - .topbar-nav ......... ADA (bar navy 50px)
+   - .nav-menu ........... ADA (flex horizontal + gap)
+   - .nav-item ........... ADA (position relative)
+   - .nav-link ........... ADA (teks terang, padding, rounded, hover)
+   - .nav-link.active .... ADA (pill gradient indigo)
+   - .nav-link.show ...... ADA (status terbuka terang)
+   - .nav-link > .bi .... ADA (ikon sejajar teks)
+   - .nav-link.dropdown-toggle::after ... ADA (caret bawaan dihilangkan, chevron border)
+   - .dropdown-menu ...... ADA (absolute bawah item, fade/slide, origin top center)
+   - .dropdown-menu.show . ADA (visible + scale 1)
+   - .dropdown-item hover  ADA (:hover/:focus dipoles)
+   - Kurung kurawal: seimbang (dibaca ulang per blok, tiap buka ada tutupnya).
+ */
