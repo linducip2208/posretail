@@ -21,7 +21,9 @@ class JournalEntryForm
             ->components([
                 Placeholder::make('journal_number')
                     ->label('Nomor Jurnal')
-                    ->content(fn (?string $state): string => $state ?? '(Auto-generate)'),
+                    // NOTE: jangan inject $state di content Placeholder (rekursi tak berujung di Filament v4).
+                    // Nomor asli dibuat otomatis saat simpan; di sini tampilkan teks statis.
+                    ->content('(Auto-generate)'),
 
                 DatePicker::make('journal_date')
                     ->label('Tanggal Jurnal')

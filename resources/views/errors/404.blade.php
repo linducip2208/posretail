@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Halaman tidak ditemukan · {{ config('app.name', 'POS Retail') }}</title>
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
-    <link rel="stylesheet" href="{{ asset('app-assets/vendor/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('app-assets/vendor/bootstrap-icons/font/bootstrap-icons.min.css') }}">
-    <style>
+    <style> /* mandiri: tanpa framework, agar tetap tampil bila aset lain gagal */
         :root { --app-primary: #4F46E5; --app-navy: #0B1530; }
         body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #F2F5FB; font-family: Inter, system-ui, sans-serif; color: #172B4D; margin: 0; }
         .err-card { text-align: center; background: #fff; border-radius: 20px; padding: 3rem 3.5rem; box-shadow: 0 18px 50px -20px rgba(79,70,229,.35); border: 1px solid #E6EAF5; max-width: 480px; }

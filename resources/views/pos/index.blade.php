@@ -38,25 +38,27 @@
         #barcodeInput { position: absolute; left: -9999px; opacity: 0; }
         .product-card { cursor: pointer; transition: all 0.15s; }
         .product-card:active { transform: scale(0.97); }
+        /* Dropdown option tetap terbaca di semua browser (popup native putih). */
+        #topbar select option { color: #0f172a; background: #fff; }
     </style>
 </head>
 <body class="font-sans bg-gray-50" style="display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden">
     {{-- Hidden barcode input for USB scanner --}}
     <input type="text" id="barcodeInput" autocomplete="off">
 
-    {{-- TOP BAR --}}
-    <header id="topbar" class="bg-white text-slate-700 px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-3 border-b border-slate-200 shadow-sm z-10" style="flex-shrink:0;padding-top:max(0.5rem, env(safe-area-inset-top))">
+    {{-- TOP BAR — navy khas Tillora --}}
+    <header id="topbar" class="px-3 sm:px-4 py-2 flex items-center flex-wrap gap-2 sm:gap-3 border-b shadow-sm z-10" style="flex-shrink:0;padding-top:max(0.5rem, env(safe-area-inset-top));background:#0B1530;border-color:#0B1530;color:#fff">
         <div class="flex items-center gap-2">
-            <span class="w-8 h-8 rounded-lg bg-[#206bc4] text-white flex items-center justify-center font-extrabold">P</span>
-            <div class="font-extrabold text-lg tracking-tight text-slate-800">POS</div>
+            <span class="w-8 h-8 rounded-lg bg-[#4F46E5] text-white flex items-center justify-center font-extrabold">P</span>
+            <div class="font-extrabold text-lg tracking-tight text-white">POS <span class="text-[10px] font-semibold align-middle rounded px-1.5 py-0.5" style="background:rgba(255,255,255,.12);color:#C7D2FE;letter-spacing:.08em">RETAIL OS</span></div>
         </div>
         <div class="flex items-center gap-2 text-sm">
-            <select id="orderType" class="bg-slate-100 text-slate-700 rounded-lg px-2 py-1.5 text-sm border border-slate-200 outline-none focus:border-[#206bc4]">
+            <select id="orderType" class="rounded-lg px-2 py-1.5 text-sm border outline-none" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.14)">
                 @foreach($orderTypes as $type)
                 <option value="{{ $type['value'] }}">{{ $type['label'] }}</option>
                 @endforeach
             </select>
-            <select id="outletId" class="bg-slate-100 text-slate-700 rounded-lg px-2 py-1.5 text-sm border border-slate-200 outline-none focus:border-[#206bc4]">
+            <select id="outletId" class="rounded-lg px-2 py-1.5 text-sm border outline-none" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.14)">
                 @forelse($outlets as $o)
                 <option value="{{ $o->id }}">{{ $o->name }}</option>
                 @empty
@@ -67,31 +69,31 @@
         </div>
         <div class="flex-1"></div>
         <span id="syncQueueBadge" class="bg-[#f59f00] text-white px-2 py-0.5 rounded-full text-xs font-bold mr-1 hidden" title="Transaksi offline pending sync">0</span>
-        <button onclick="window.open('/pos/display?outlet_id=' + (document.getElementById('outletId')?.value || ''),'_blank','width=1024,height=768')" aria-label="Buka customer display" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 mr-1 border border-slate-200 min-h-[40px]" title="Customer Display">
+        <button onclick="window.open('/pos/display?outlet_id=' + (document.getElementById('outletId')?.value || ''),'_blank','width=1024,height=768')" aria-label="Buka customer display" class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 mr-1 border min-h-[40px]" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.14)" title="Customer Display">
             <x-ti name="device-desktop" class="w-4 h-4" />
             <span class="btn-text">Display</span>
         </button>
         @auth
-        <span class="text-xs text-slate-500 flex items-center gap-1.5"><x-ti name="user" class="w-4 h-4" />{{ auth()->user()->name }}</span>
+        <span class="text-xs flex items-center gap-1.5" style="color:rgba(255,255,255,.7)"><x-ti name="user" class="w-4 h-4" />{{ auth()->user()->name }}</span>
         @else
         <a href="/admin/login" class="bg-[#d63939] hover:bg-[#c22f2f] text-white px-3 py-1.5 rounded-lg text-sm font-bold">LOGIN DULU</a>
         @endauth
-        <button onclick="toggleScanner()" aria-label="Scan barcode kamera" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-slate-200 min-h-[40px]">
+        <button onclick="toggleScanner()" aria-label="Scan barcode kamera" class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border min-h-[40px]" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.14)">
             <x-ti name="barcode" class="w-4 h-4" />
             <span class="btn-text">Scan</span>
         </button>
-        <button onclick="connectPrinter()" aria-label="Hubungkan printer" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border border-slate-200 min-h-[40px]">
+        <button onclick="connectPrinter()" aria-label="Hubungkan printer" class="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 border min-h-[40px]" style="background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.14)">
             <x-ti name="printer" class="w-4 h-4" />
             <span class="btn-text">Print</span>
         </button>
-        <a href="/admin" class="bg-[#206bc4]/10 hover:bg-[#206bc4]/20 text-[#206bc4] px-3 py-1.5 rounded-lg text-sm font-semibold">Admin</a>
+        <a href="/app" class="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-3 py-1.5 rounded-lg text-sm font-semibold">Dashboard</a>
     </header>
 
     {{-- MAIN LAYOUT --}}
     <div id="mainLayout" style="display:flex;flex:1;min-height:0;overflow:hidden">
         {{-- CATEGORY RAIL (LEFT) --}}
         <aside id="categoryRail" class="hidden md:flex flex-col bg-white border-r border-slate-200 py-2 px-2 gap-1 overflow-y-auto" style="flex-shrink:0;width:11rem" aria-label="Kategori produk">
-            <button onclick="filterCategory('')" data-cat="" class="cat-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-left bg-[#e7f1fb] text-[#206bc4]">
+            <button onclick="filterCategory('')" data-cat="" class="cat-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-semibold text-left bg-[#EEF2FF] text-[#4F46E5]">
                 <x-ti name="layout-grid" class="w-4 h-4 shrink-0" />Semua
             </button>
             @foreach($categories as $c)
@@ -106,9 +108,9 @@
                 <div class="flex gap-2">
                     <div class="relative flex-1">
                         <x-ti name="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input type="text" id="searchInput" placeholder="Cari produk atau scan barcode... (F1)" aria-label="Cari produk" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#206bc4]/30 focus:border-[#206bc4] outline-none text-sm bg-white">
+                        <input type="text" id="searchInput" placeholder="Cari produk atau scan barcode... (F1)" aria-label="Cari produk" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#4F46E5]/30 focus:border-[#4F46E5] outline-none text-sm bg-white">
                     </div>
-                    <select id="categoryFilter" aria-label="Filter kategori" onchange="syncCategoryRail(this.value);loadProducts(1)" class="md:hidden border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-white text-slate-700 outline-none focus:border-[#206bc4] max-w-[10rem]">
+                    <select id="categoryFilter" aria-label="Filter kategori" onchange="syncCategoryRail(this.value);loadProducts(1)" class="md:hidden border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-white text-slate-700 outline-none focus:border-[#4F46E5] max-w-[10rem]">
                         <option value="">Semua Kategori</option>
                         @foreach($categories as $c)
                         <option value="{{ $c->id }}">{{ $c->name }}</option>
@@ -143,7 +145,7 @@
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-lg">Keranjang</h2>
                     <div class="flex items-center gap-2">
-                        <span id="cartCount" class="bg-[#206bc4]/10 text-[#206bc4] px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+                        <span id="cartCount" class="bg-[#4F46E5]/10 text-[#4F46E5] px-2 py-0.5 rounded-full text-xs font-bold">0</span>
                         <button onclick="closeCart()" class="md:hidden text-gray-400 hover:text-[#d63939] text-2xl leading-none">&times;</button>
                     </div>
                 </div>
@@ -171,27 +173,27 @@
                     <div class="flex justify-between"><span>Diskon</span><span id="discount" class="font-mono text-[#d63939]">Rp 0</span></div>
                     <div class="flex justify-between items-center">
                         <span class="flex items-center gap-2">
-                            <input type="checkbox" id="useTax" checked onchange="updateSummary()" class="w-4 h-4 rounded border-gray-300 text-[#206bc4] focus:ring-[#206bc4]">
+                            <input type="checkbox" id="useTax" checked onchange="updateSummary()" class="w-4 h-4 rounded border-gray-300 text-[#4F46E5] focus:ring-[#4F46E5]">
                             <span>Pajak (<span id="taxRateLabel">{{ $taxPercent }}</span>%)</span>
                         </span>
                         <span id="tax" class="font-mono">Rp 0</span>
                     </div>
-                    <div class="flex justify-between items-center font-bold text-lg border-t-2 border-[#206bc4] bg-[#206bc4]/5 -mx-4 px-4 pt-2 pb-1 mt-2"><span>TOTAL</span><span id="total" class="font-mono text-[#1a569d] text-xl">Rp 0</span></div>
+                    <div class="flex justify-between items-center font-bold text-lg border-t-2 border-[#4F46E5] bg-[#4F46E5]/5 -mx-4 px-4 pt-2 pb-1 mt-2"><span>TOTAL</span><span id="total" class="font-mono text-[#4338CA] text-xl">Rp 0</span></div>
                 </div>
                 <div class="flex gap-2 mt-3">
-                    <button onclick="showPayment()" id="payBtn" class="flex-1 bg-[#206bc4] text-white py-3 rounded-lg font-bold hover:bg-[#1a569d] active:scale-[0.98] transition-all shadow-sm">Bayar</button>
+                    <button onclick="showPayment()" id="payBtn" class="flex-1 bg-[#4F46E5] text-white py-3 rounded-lg font-bold hover:bg-[#4338CA] active:scale-[0.98] transition-all shadow-sm">Bayar</button>
                     <button onclick="holdCart()" class="bg-[#f59f00] text-white px-4 py-3 rounded-lg font-bold hover:bg-[#e89400] active:scale-[0.98] transition-all text-sm shadow-sm" title="Tahan Transaksi">Hold</button>
                 </div>
-                <button onclick="showHeldCarts()" id="heldBadge" class="w-full mt-1.5 text-xs text-[#206bc4] hover:text-[#1a569d] py-1 hidden">0 transaksi ditahan</button>
+                <button onclick="showHeldCarts()" id="heldBadge" class="w-full mt-1.5 text-xs text-[#4F46E5] hover:text-[#4338CA] py-1 hidden">0 transaksi ditahan</button>
                 <button onclick="clearCart()" class="w-full mt-1.5 text-xs text-gray-500 hover:text-[#d63939] py-1">Kosongkan Keranjang</button>
             </div>
         </div>
     </div>
 
     {{-- MOBILE CART FAB --}}
-    <button id="cartFab" onclick="openCart()" style="bottom:calc(1rem + env(safe-area-inset-bottom))" class="md:hidden fixed right-4 z-30 bg-[#206bc4] text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 font-bold hover:bg-[#1a569d] active:scale-95 transition">
+    <button id="cartFab" onclick="openCart()" style="bottom:calc(1rem + env(safe-area-inset-bottom))" class="md:hidden fixed right-4 z-30 bg-[#4F46E5] text-white rounded-full shadow-xl px-5 py-3 flex items-center gap-2 font-bold hover:bg-[#4338CA] active:scale-95 transition">
         <x-ti name="shopping-cart" class="w-6 h-6" />
-        <span id="cartFabCount" class="bg-white text-[#1a569d] rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
+        <span id="cartFabCount" class="bg-white text-[#4338CA] rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
         <span id="cartFabTotal" class="font-mono text-sm">Rp 0</span>
     </button>
     <div id="scannerOverlay" class="fixed inset-0 bg-black/70 z-50 flex flex-col items-center justify-center hidden">
@@ -212,7 +214,7 @@
     <div id="paymentModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden modal-overlay" onclick="hidePayment()">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4" onclick="event.stopPropagation()">
             <h3 class="font-bold text-xl mb-4">Pembayaran</h3>
-            <div id="paymentTotal" class="text-3xl font-extrabold text-[#1a569d] mb-4 font-mono">Rp 0</div>
+            <div id="paymentTotal" class="text-3xl font-extrabold text-[#4338CA] mb-4 font-mono">Rp 0</div>
 
             <label class="block text-sm font-semibold text-gray-700 mb-1">Metode Bayar</label>
             <select id="paymentMethod" class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 text-sm">
@@ -227,7 +229,7 @@
 
             <div class="flex gap-2">
                 <button onclick="hidePayment()" class="flex-1 border border-gray-300 py-2.5 rounded-lg font-semibold hover:bg-gray-50">Batal</button>
-                <button onclick="processPayment()" id="processPayBtn" class="flex-1 bg-[#206bc4] text-white py-2.5 rounded-lg font-bold hover:bg-[#1a569d] disabled:opacity-60">Proses</button>
+                <button onclick="processPayment()" id="processPayBtn" class="flex-1 bg-[#4F46E5] text-white py-2.5 rounded-lg font-bold hover:bg-[#4338CA] disabled:opacity-60">Proses</button>
             </div>
         </div>
     </div>
@@ -258,7 +260,7 @@
             <div class="flex gap-2">
                 <button onclick="cancelSerials()" class="flex-1 border border-gray-300 py-2.5 rounded-lg font-semibold hover:bg-gray-50">Batal</button>
                 <button id="serialSkip" onclick="skipSerials()" class="border border-gray-300 py-2.5 px-3 rounded-lg font-semibold hover:bg-gray-50 text-gray-600" style="display:none">Lewati</button>
-                <button onclick="confirmSerials()" class="flex-1 bg-[#206bc4] text-white py-2.5 rounded-lg font-bold hover:bg-[#1a569d]">Simpan</button>
+                <button onclick="confirmSerials()" class="flex-1 bg-[#4F46E5] text-white py-2.5 rounded-lg font-bold hover:bg-[#4338CA]">Simpan</button>
             </div>
         </div>
     </div>
@@ -337,7 +339,7 @@
             document.querySelectorAll('#categoryRail .cat-btn').forEach(b => {
                 const on = (b.dataset.cat || '') === String(id || '');
                 b.className = 'cat-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] text-left min-h-[42px] ' +
-                    (on ? 'font-semibold bg-[#e7f1fb] text-[#206bc4]' : 'font-medium text-slate-600 hover:bg-slate-100');
+                    (on ? 'font-semibold bg-[#EEF2FF] text-[#4F46E5]' : 'font-medium text-slate-600 hover:bg-slate-100');
             });
         }
         function filterCategory(id) {
@@ -371,7 +373,7 @@
                 renderPagination(data);
                 currentPage = page;
             } catch (e) {
-                grid.innerHTML = '<div class="col-span-full text-center py-16 px-4"><div class="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5.5 12.5a10 10 0 0 1 13 0"/><path d="M9 16a5 5 0 0 1 6 0"/><path d="M12 19.5h.01"/></svg></div><div class="font-bold text-slate-700 mb-1">Gagal memuat produk</div><div class="text-sm text-slate-500 mb-4">Periksa koneksi lalu coba lagi.</div><button onclick="loadProducts(' + page + ')" class="bg-[#206bc4] hover:bg-[#1a569d] text-white font-semibold text-sm px-5 py-2.5 rounded-lg min-h-[42px]">Coba Lagi</button></div>';
+                grid.innerHTML = '<div class="col-span-full text-center py-16 px-4"><div class="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5.5 12.5a10 10 0 0 1 13 0"/><path d="M9 16a5 5 0 0 1 6 0"/><path d="M12 19.5h.01"/></svg></div><div class="font-bold text-slate-700 mb-1">Gagal memuat produk</div><div class="text-sm text-slate-500 mb-4">Periksa koneksi lalu coba lagi.</div><button onclick="loadProducts(' + page + ')" class="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold text-sm px-5 py-2.5 rounded-lg min-h-[42px]">Coba Lagi</button></div>';
             }
         }
 
@@ -388,12 +390,12 @@
                 const stockLabel = out ? 'Stok 0' : p.current_stock;
                 const cardClass = out
                     ? 'bg-white rounded-lg border border-slate-200 overflow-hidden relative opacity-60 grayscale'
-                    : 'product-card bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-[#206bc4] hover:shadow-md relative';
+                    : 'product-card bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-[#4F46E5] hover:shadow-md relative';
                 const clickAttr = out
                     ? 'style="cursor:not-allowed" onclick="alert(\'Stok habis — tidak bisa ditambahkan\')"'
                     : `onclick="addToCart(${p.id}, '${escapeHtml(p.name)}', ${p.selling_price}, '${p.serial_tracking || 'none'}')"`;
                 const badge = out ? '<div class="absolute top-1 right-1 bg-[#d63939] text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">HABIS</div>'
-                    : ((p.variants && p.variants.length > 0) ? '<div class="absolute top-1 right-1 bg-[#206bc4] text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">' + p.variants.length + ' VARIAN</div>' : '');
+                    : ((p.variants && p.variants.length > 0) ? '<div class="absolute top-1 right-1 bg-[#4F46E5] text-white text-[9px] font-bold px-1.5 py-0.5 rounded z-10">' + p.variants.length + ' VARIAN</div>' : '');
                 return `
                 <div class="${cardClass}" ${clickAttr}>
                     ${badge}
@@ -402,7 +404,7 @@
                     </div>
                     <div class="p-2">
                         <div class="text-xs font-semibold text-gray-800 line-clamp-2 leading-tight">${escapeHtml(p.name)}</div>
-                        <div class="text-[#1a569d] font-bold text-xs font-mono mt-1">${formatRupiah(p.selling_price)}</div>
+                        <div class="text-[#4338CA] font-bold text-xs font-mono mt-1">${formatRupiah(p.selling_price)}</div>
                         <div class="flex items-center justify-between mt-1">
                             <span class="text-[10px] text-gray-400 truncate max-w-[60px]">${p.sku || '-'}</span>
                             <span class="text-[10px] ${stockClass} font-semibold">${stockLabel}</span>
@@ -420,7 +422,7 @@
             }
             let html = '';
             for (let i = 1; i <= data.last_page; i++) {
-                html += `<button onclick="loadProducts(${i})" class="px-3 py-1 rounded-md text-sm font-medium ${i === currentPage ? 'bg-[#206bc4] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${i}</button>`;
+                html += `<button onclick="loadProducts(${i})" class="px-3 py-1 rounded-md text-sm font-medium ${i === currentPage ? 'bg-[#4F46E5] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${i}</button>`;
             }
             container.innerHTML = html;
         }
@@ -631,12 +633,12 @@
                             <span class="w-8 text-center font-mono text-sm">${item.qty}</span>
                             <button onclick="updateQty(${i}, 1)" class="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-sm font-bold">+</button>
                         </div>
-                        <span class="font-mono font-bold text-sm text-[#1a569d]">${formatRupiah(item.price * item.qty)}</span>
+                        <span class="font-mono font-bold text-sm text-[#4338CA]">${formatRupiah(item.price * item.qty)}</span>
                     </div>
                     ${(item.serials && item.serials.length)
                         ? `<div class="mt-1 text-[10px] text-gray-500 font-mono truncate">IMEI: ${item.serials.map(s => escapeHtml(s)).join(', ')}</div>`
                         : (item.serialTracking === 'optional'
-                            ? `<div class="mt-1"><button onclick="addImeiToItem(${i})" class="text-[10px] text-[#206bc4] hover:text-[#1a569d] font-semibold">+ Tambah IMEI</button></div>`
+                            ? `<div class="mt-1"><button onclick="addImeiToItem(${i})" class="text-[10px] text-[#4F46E5] hover:text-[#4338CA] font-semibold">+ Tambah IMEI</button></div>`
                             : '')}
                 </div>
             `).join('');
@@ -999,9 +1001,9 @@
                             <span class="text-xs text-gray-400">${h.time}</span>
                         </div>
                         <div class="text-sm text-gray-500 mb-2">${h.items.length} item &bull; ${h.items.map(i=>i.qty).reduce((a,b)=>a+b,0)} pcs</div>
-                        <div class="font-mono font-bold text-[#206bc4] mb-3">${formatRupiah(total)}</div>
+                        <div class="font-mono font-bold text-[#4F46E5] mb-3">${formatRupiah(total)}</div>
                         <div class="flex gap-2">
-                            <button onclick="recallHeld(${h.id})" class="bg-[#206bc4] text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-[#1a569d]">Lanjutkan</button>
+                            <button onclick="recallHeld(${h.id})" class="bg-[#4F46E5] text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-[#4338CA]">Lanjutkan</button>
                             <button onclick="removeHeld(${h.id})" class="border border-[#e8a3a3] text-[#d63939] px-4 py-1.5 rounded-lg text-sm hover:bg-[#d63939]/8">Hapus</button>
                         </div>
                     </div>`;

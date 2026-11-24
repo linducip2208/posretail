@@ -49,8 +49,7 @@ class SalesTargetsTable
 
                 TextColumn::make('achievement_percent')
                     ->label('Pencapaian')
-                    ->state(fn (SalesTarget $record): array => self::computeAchievement($record))
-                    ->formatStateUsing(fn (array $state): string => number_format($state['percent'], 1) . '%')
+                    ->state(fn (SalesTarget $record): string => number_format(self::computeAchievement($record)['percent'], 1) . '%')
                     ->description(fn (SalesTarget $record): string => 'Rp ' . number_format(self::computeAchievement($record)['actual'], 0, ',', '.'))
                     ->color(fn (SalesTarget $record): string => self::computeAchievement($record)['percent'] >= 100 ? 'success' : 'warning'),
             ])
