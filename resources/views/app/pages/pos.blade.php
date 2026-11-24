@@ -74,13 +74,17 @@
                             <div class="pos-grid" id="posGrid">
                                 @forelse($products as $p)
                                 <div class="card pos-item" data-id="{{ $p->id }}" data-cat="{{ $p->category_id }}" data-name="{{ strtolower($p->name.' '.$p->sku) }}">
-                                    <div class="card-body">
-                                        <div class="cell-user"><span class="avatar tone-neutral"><i class="bi bi-box-seam"></i></span><div><span class="cell-title">{{ $p->name }}</span><span class="cell-sub">{{ $p->sku }}{{ $p->category ? ' · '.$p->category->name : '' }}</span></div></div>
-                                        <div class="d-flex justify-content-between align-items-center mt-2">
-                                            <strong>{{ tillora_rp($p->selling_price) }}</strong>
-                                            <small class="text-muted">Stok: {{ $p->current_stock }}</small>
-                                        </div>
-                                        <button type="button" class="btn btn-primary btn-sm w-100 mt-2" data-add="{{ $p->id }}"><i class="bi bi-cart-plus"></i>Tambah</button>
+                                    <div class="pos-item-media">
+                                        <img src="{{ tillora_pimg($p->image) }}" alt="{{ $p->name }}" loading="lazy" onerror="this.onerror=null;this.src='/app-assets/images/products/mug.svg'">
+                                    </div>
+                                    <div class="pos-item-body">
+                                        <span class="pos-item-name">{{ $p->name }}</span>
+                                        <span class="pos-item-meta">{{ $p->sku }}{{ $p->category ? ' · '.$p->category->name : '' }}</span>
+                                        <span class="pos-item-meta">Stok: {{ $p->current_stock }}</span>
+                                    </div>
+                                    <div class="pos-item-foot">
+                                        <strong class="pos-item-price">{{ tillora_rp($p->selling_price) }}</strong>
+                                        <button type="button" class="btn btn-primary btn-sm pos-add-btn" data-add="{{ $p->id }}"><i class="bi bi-cart-plus"></i>Tambah</button>
                                     </div>
                                 </div>
                                 @empty
@@ -237,14 +241,21 @@
   }
   if (input) input.addEventListener('input', applyLocal);
   document.querySelectorAll('#posCategoryChips [data-cat]').forEach(b => b.addEventListener('click', () => { cat = b.dataset.cat; applyLocal(); }));
+  function imgUrl(v){
+    v = String(v == null ? '' : v);
+    if (!v) return '/app-assets/images/products/mug.svg';
+    if (/^https?:\/\//.test(v)) return v;
+    return v.charAt(0) === '/' ? v : (v.indexOf('storage/') === 0 ? '/' + v : '/storage/' + v);
+  }
   function cardHtml(p){
     const inCart = (cart.items.find(i => i.id === p.id) || {}).qty || 0;
     return '<div class="card pos-item" data-id="'+p.id+'" data-cat="'+(p.cat||'')+'" data-name="'+esc(((p.name||'')+' '+(p.sku||'')).toLowerCase())+'">' +
-      '<div class="card-body"><div class="cell-user"><span class="avatar tone-neutral"><i class="bi bi-box-seam"></i></span><div>' +
-      '<span class="cell-title">'+esc(p.name)+'</span><span class="cell-sub">'+esc(p.sku||'')+(p.catName?' · '+esc(p.catName):'')+'</span></div></div>' +
-      '<div class="d-flex justify-content-between align-items-center mt-2"><strong>'+fmt(p.price)+'</strong>' +
-      '<small class="text-muted">Stok: '+p.stock+(inCart?' · di keranjang: '+inCart:'')+'</small></div>' +
-      '<button type="button" class="btn btn-primary btn-sm w-100 mt-2" data-api-add="'+p.id+'"><i class="bi bi-cart-plus"></i>Tambah</button></div></div>';
+      '<div class="pos-item-media"><img src="'+esc(imgUrl(p.img))+'" alt="'+esc(p.name||'Produk')+'" loading="lazy" onerror="this.onerror=null;this.src=\'/app-assets/images/products/mug.svg\'"></div>' +
+      '<div class="pos-item-body"><span class="pos-item-name">'+esc(p.name)+'</span>' +
+      '<span class="pos-item-meta">'+esc(p.sku||'')+(p.catName?' · '+esc(p.catName):'')+'</span>' +
+      '<span class="pos-item-meta">Stok: '+p.stock+(inCart?' · di keranjang: '+inCart:'')+'</span></div>' +
+      '<div class="pos-item-foot"><strong class="pos-item-price">'+fmt(p.price)+'</strong>' +
+      '<button type="button" class="btn btn-primary btn-sm pos-add-btn" data-api-add="'+p.id+'"><i class="bi bi-cart-plus"></i>Tambah</button></div></div>';
   }
   if (input) input.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
@@ -253,7 +264,7 @@
     if (!q) { applyLocal(); return; }
     fetch('/api/pos/products?search=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } })
       .then(r => r.json()).then(j => {
-        const list = (j.data || j).map(x => ({ id:x.id, name:x.name, sku:x.sku, price:Number(x.selling_price||0), stock:Number(x.current_stock||0), cat:x.category_id, catName:x.category&&x.category.name, tracking:x.serial_tracking||'none' }));
+        const list = (j.data || j).map(x => ({ id:x.id, name:x.name, sku:x.sku, price:Number(x.selling_price||0), stock:Number(x.current_stock||0), cat:x.category_id, catName:x.category&&x.category.name, tracking:x.serial_tracking||'none', img:(x.image_url || x.image || '') }));
         list.forEach(p => { byId[p.id] = p; });
         grid.innerHTML = list.length ? list.map(cardHtml).join('') : '<div class="card"><div class="card-body text-center text-muted py-4">Tidak ketemu — coba kata kunci lain.</div></div>';
         $('posResultInfo').textContent = list.length + ' hasil dari database untuk "' + q + '"';

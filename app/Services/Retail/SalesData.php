@@ -205,7 +205,7 @@ class SalesData
             'id' => $p->id, 'name' => $p->name, 'sku' => $p->sku,
             'price' => (float) $p->selling_price, 'stock' => (int) $p->current_stock,
             'cat' => $p->category_id, 'catName' => optional($p->category)->name,
-            'tracking' => $p->serial_tracking ?? 'none',
+            'tracking' => $p->serial_tracking ?? 'none', 'img' => $p->image_url,
         ])->values()->all();
 
         return compact('products', 'categories', 'heldCount', 'methods', 'taxPercent', 'customers', 'catalogJson');
